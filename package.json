@@ -8,9 +8,8 @@
 		"build": "astro check && astro build",
 		"preview": "astro preview",
 		"astro": "astro",
-		"format": "prettier ./ --write --cache",
-		"format:check": "prettier ./ --check --cache",
-		"format:check:ci": "prettier ./ --check",
+		"format": "prettier ./ --write",
+		"format:check": "prettier ./ --check",
 		"lint": "astro check"
 	},
 	"dependencies": {
