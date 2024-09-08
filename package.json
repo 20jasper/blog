@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier ./ --write --cache",
-    "format:check": "prettier ./ --check --cache"
+    "format:check": "prettier ./ --check --cache",
+    "lint": "astro check"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.3",
@@ -19,5 +20,8 @@
     "astro": "^4.15.4",
     "astro-compressor": "^0.4.1",
     "typescript": "^5.5.4"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
   }
 }
