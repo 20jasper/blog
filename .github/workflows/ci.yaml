@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    env:
+      CI: true
+      ASTRO_TELEMETRY_DISABLED: true
+
+    name: ci
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        id: pnpm-install
+        with:
+          version: 8
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm i
+      - name: Check formatting
+        run: pnpm run format:check
+      - name: Lint
+        run: pnpm run lint
+      - name: Build project
+        run: pnpm run build
