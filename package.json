@@ -10,6 +10,7 @@
 		"astro": "astro",
 		"format": "prettier ./ --write --cache",
 		"format:check": "prettier ./ --check --cache",
+		"format:check:ci": "prettier ./ --check",
 		"lint": "astro check"
 	},
 	"dependencies": {
