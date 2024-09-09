@@ -3,7 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
+import BlogArticle from '../components/BlogArticle.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
@@ -18,44 +18,17 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		/>
 	</head>
 
-	<body
-		class:list={[
-			'mx-auto',
-			'prose lg:prose-xl',
-			'prose-inline-code:rounded-sm prose-inline-code:bg-[rgb(var(--gray-light))] prose-inline-code:p-0.5',
-		]}
-	>
+	<body>
 		<Header />
-		<main class="w-full">
-			<article>
-				{
-					heroImage && (
-						<img
-							width={1020}
-							height={510}
-							src={heroImage}
-							alt=""
-							class="mx-auto block w-full rounded-xl shadow-[var(--box-shadow)]"
-						/>
-					)
-				}
-				<div class="max-w-prose p-4 text-[rgb(var(--gray-dark))]">
-					<div class="title mb-2 py-2 text-center">
-						<h1>{title}</h1>
-						<div class="mb-1 text-[rgb(var(--gray))]">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="italic">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-					</div>
-					<slot />
-				</div>
-			</article>
+		<main class="m-auto w-full">
+			<BlogArticle
+				title={title}
+				pubDate={pubDate}
+				updatedDate={updatedDate}
+				heroImage={heroImage}
+			>
+				<slot />
+			</BlogArticle>
 		</main>
 		<Footer />
 	</body>
