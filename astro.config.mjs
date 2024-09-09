@@ -9,8 +9,5 @@ import compressor from 'astro-compressor';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://jacobasper.com',
-	redirects: {
-		'/projects/[...slug]/': '/',
-	},
 	integrations: [mdx(), sitemap(), compressor()],
 });
