@@ -1,5 +1,6 @@
 {
 	"prettier.documentSelectors": ["**/*.astro"],
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"prettier.enable": true
+	"prettier.enable": true,
+	"tailwindCSS.includeLanguages": { "astro": "html" }
 }
