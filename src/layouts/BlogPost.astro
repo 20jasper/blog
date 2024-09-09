@@ -29,13 +29,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				text-align: center;
 				line-height: 1;
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
 		</style>
 	</head>
 
@@ -65,7 +58,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				<div class="max-w-prose p-4 text-[rgb(var(--gray-dark))]">
 					<div class="title">
 						<h1>{title}</h1>
-						<div class="date">
+						<div class="mb-1 text-[rgb(var(--gray))]">
 							<FormattedDate date={pubDate} />
 							{
 								updatedDate && (
