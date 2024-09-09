@@ -23,7 +23,7 @@ const posts = (await getCollection('blog')).sort(
 		<Header />
 		<main class="w-xl">
 			<section>
-				<ul class="flex flex-col gap-8 list-none m-0 p-0">
+				<ul class="m-0 flex list-none flex-col gap-8 p-0">
 					{
 						posts.map((post) => (
 							<li>
@@ -31,10 +31,10 @@ const posts = (await getCollection('blog')).sort(
 									href={`/blog/${post.slug}/`}
 									class="block"
 								>
-									<h4 class="text-[rgb(var(--black))] leading-none m-0">
+									<h4 class="m-0 leading-none text-[rgb(var(--black))]">
 										{post.data.title}
 									</h4>
-									<p class="text-[rgb(var(--gray))] m-0">
+									<p class="m-0 text-[rgb(var(--gray))]">
 										<FormattedDate date={post.data.pubDate} />
 									</p>
 								</a>
