@@ -1,9 +1,12 @@
 ---
+import { NAME } from '../consts';
+
 const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Your name here. All rights reserved.
+	&copy; {today.getFullYear()}
+	{NAME}. All rights reserved.
 	<div class="social-links">
 		<a
 			href="https://m.webtoo.ls/@astro"
