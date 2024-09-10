@@ -28,13 +28,13 @@ const posts = (await getCollection('blog')).sort(
 						<li>
 							<a
 								href={`/blog/${post.slug}/`}
-								class="block"
+								class="block hover:text-accent"
 							>
 								<h4 class="leading-none">{post.data.title}</h4>
-								<p class="m-0 text-foreground-secondary">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
 							</a>
+							<p class="m-0 text-foreground-secondary">
+								<FormattedDate date={post.data.pubDate} />
+							</p>
 						</li>
 					))
 				}
