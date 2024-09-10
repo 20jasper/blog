@@ -30,10 +30,8 @@ const posts = (await getCollection('blog')).sort(
 								href={`/blog/${post.slug}/`}
 								class="block"
 							>
-								<h4 class="leading-none text-[rgb(var(--black))]">
-									{post.data.title}
-								</h4>
-								<p class="m-0 text-[rgb(var(--gray))]">
+								<h4 class="leading-none">{post.data.title}</h4>
+								<p class="text-foreground-secondary m-0">
 									<FormattedDate date={post.data.pubDate} />
 								</p>
 							</a>

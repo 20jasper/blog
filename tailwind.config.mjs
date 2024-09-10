@@ -11,6 +11,7 @@ export default {
 				foreground: 'rgb(var(--foreground))',
 				accent: 'rgb(var(--accent))',
 				'background-secondary': 'rgb(var(--background-secondary))',
+				'foreground-secondary': 'rgb(var(--foreground-secondary))',
 			},
 		},
 	},
