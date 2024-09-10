@@ -20,7 +20,10 @@ const { title, description } = Astro.props;
 		/>
 	</head>
 
-	<body>
+	<body
+		bg-background
+		text-foreground
+	>
 		<Header />
 		<slot />
 		<Footer />

@@ -6,6 +6,10 @@ export default {
 			fontFamily: {
 				sans: ['Poppins', 'sans-serif'],
 			},
+			colors: {
+				background: 'linear-gradient(var(--gray-gradient)) no-repeat',
+				foreground: 'rgb(var(--gray-dark))',
+			},
 		},
 	},
 	plugins: [
