@@ -7,7 +7,7 @@ export default {
 				sans: ['Poppins', 'sans-serif'],
 			},
 			colors: {
-				background: 'linear-gradient(var(--gray-gradient)) no-repeat',
+				background: 'rgb(var(--background))',
 				foreground: 'rgb(var(--foreground))',
 			},
 		},
