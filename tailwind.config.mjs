@@ -9,6 +9,7 @@ export default {
 			colors: {
 				background: 'rgb(var(--background))',
 				foreground: 'rgb(var(--foreground))',
+				accent: 'rgb(var(--accent))',
 			},
 		},
 	},
