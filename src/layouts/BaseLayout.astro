@@ -21,10 +21,10 @@ const today = new Date();
 		/>
 	</head>
 
-	<body class="bg-background text-foreground text-xl">
+	<body class="bg-background text-xl text-foreground">
 		<Header />
 		<slot />
-		<footer class="text-foreground-secondary pt-4 text-center">
+		<footer class="pt-4 text-center text-foreground-secondary">
 			&copy; {today.getFullYear()}
 			{NAME}. All rights reserved.
 		</footer>
