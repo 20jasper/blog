@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import { NAME } from '../consts';
 
 type Props = {
 	title: string;
@@ -9,6 +9,7 @@ type Props = {
 };
 
 const { title, description } = Astro.props;
+const today = new Date();
 ---
 
 <!doctype html>
@@ -23,6 +24,9 @@ const { title, description } = Astro.props;
 	<body class="bg-background text-xl text-foreground">
 		<Header />
 		<slot />
-		<Footer />
+		<footer class="bg-background pt-4 text-center text-foreground">
+			&copy; {today.getFullYear()}
+			{NAME}. All rights reserved.
+		</footer>
 	</body>
 </html>
