@@ -9,7 +9,7 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
 
 <article
 	class:list={[
-		'mx-auto px-4 py-8',
+		'mx-auto py-8',
 		'prose prose-invert lg:prose-xl',
 		'prose-inline-code:rounded-sm prose-inline-code:bg-background-secondary prose-inline-code:p-0.5',
 		'hover:prose-a:text-accent',
@@ -27,7 +27,7 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
 			/>
 		)
 	}
-	<div class="max-w-prose p-4 text-foreground">
+	<div class="max-w-prose p-4">
 		<div class="mb-2 py-2 text-center">
 			<h1>{title}</h1>
 			<div class="mb-1 text-foreground-secondary">
