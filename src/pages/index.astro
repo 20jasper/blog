@@ -13,8 +13,9 @@ const posts = (await getCollection('blog')).sort(
 	title={SITE_TITLE}
 	description={SITE_DESCRIPTION}
 >
-	<main class="m-auto max-w-sm text-xl">
+	<main class="m-auto max-w-prose text-xl">
 		<section>
+			<h2 class="mb-4 text-2xl font-semibold">Blogs</h2>
 			<ul class="flex flex-col gap-8">
 				{
 					posts.map((post) => (
