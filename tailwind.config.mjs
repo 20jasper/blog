@@ -8,7 +8,7 @@ export default {
 			},
 			colors: {
 				background: 'linear-gradient(var(--gray-gradient)) no-repeat',
-				foreground: 'rgb(var(--gray-dark))',
+				foreground: 'rgb(var(--foreground))',
 			},
 		},
 	},
