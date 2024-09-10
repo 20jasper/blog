@@ -29,15 +29,6 @@
 	font-style: normal;
 	font-display: swap;
 }
-body {
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
-}
 main {
 	width: 720px;
 	max-width: calc(100% - 2em);
@@ -92,4 +83,8 @@ hr {
 	main {
 		padding: 1em;
 	}
+}
+
+* {
+	box-sizing: border-box;
 }
