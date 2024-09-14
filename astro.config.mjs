@@ -8,5 +8,8 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://jacobasper.com',
+	redirects: {
+		'/': '/blog',
+	},
 	integrations: [mdx(), sitemap(), tailwind(), compressor()],
 });
