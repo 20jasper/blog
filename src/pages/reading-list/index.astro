@@ -32,6 +32,11 @@ const books = (await getCollection('book')).sort(
 							>
 								<h4 class="leading-none">{post.data.title}</h4>
 							</a>
+							{post.data.description && (
+								<p class="pt-2 text-foreground-secondary">
+									{post.data.description}
+								</p>
+							)}
 							<p class="m-0 text-foreground-secondary">
 								<FormattedDate date={post.data.readDate} />
 							</p>
