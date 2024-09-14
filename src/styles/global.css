@@ -36,6 +36,9 @@
 }
 a {
 	text-decoration: underline;
+	transition:
+		color 0.2s ease,
+		border-bottom-color 0.2s ease;
 }
 a:hover {
 	color: rgb(var(--accent));
