@@ -7,7 +7,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://jacobasper.com',
+	site: 'https://blog.jacobasper.com',
 	redirects: {
 		'/': '/blog',
 	},
