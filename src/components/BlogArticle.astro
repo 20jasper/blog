@@ -1,10 +1,15 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
 
-type Props = Omit<CollectionEntry<'blog'>['data'], 'description'>;
+type Props = {
+	title: string;
+	date: Date;
+	updatedDate?: Date | undefined;
+	heroImage?: string | undefined;
+	children: any;
+};
 
-const { title, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, date, updatedDate, heroImage } = Astro.props;
 ---
 
 <article
@@ -31,7 +36,7 @@ const { title, pubDate, updatedDate, heroImage } = Astro.props;
 		<div class="mb-2 py-2 text-center">
 			<h1>{title}</h1>
 			<div class="mb-1 text-foreground-secondary">
-				<FormattedDate date={pubDate} />
+				<FormattedDate date={date} />
 				{
 					updatedDate && (
 						<div class="italic">
