@@ -1,5 +1,11 @@
 ---
 import HeaderLink from './HeaderLink.astro';
+
+type Props = {
+	border: 'top' | 'bottom';
+};
+
+const { border } = Astro.props;
 ---
 
 <header class="py-2">
@@ -9,6 +15,7 @@ import HeaderLink from './HeaderLink.astro';
 				<HeaderLink
 					class="px-2 py-4"
 					href="/blog"
+					border={border}
 					>Blog</HeaderLink
 				>
 			</li>
@@ -16,6 +23,7 @@ import HeaderLink from './HeaderLink.astro';
 				<HeaderLink
 					class="px-2 py-4"
 					href="/reading-list"
+					border={border}
 					>Reading List</HeaderLink
 				>
 			</li>
@@ -23,6 +31,7 @@ import HeaderLink from './HeaderLink.astro';
 				<HeaderLink
 					class="px-2 py-4"
 					href="/about"
+					border={border}
 					>About</HeaderLink
 				>
 			</li>
