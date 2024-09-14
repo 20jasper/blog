@@ -27,7 +27,7 @@ const books = (await getCollection('book')).sort(
 					books.map((post) => (
 						<li>
 							<a
-								href={`/blog/${post.slug}/`}
+								href={`${Astro.url}/${post.slug}/`}
 								class="block"
 							>
 								<h4 class="leading-none">{post.data.title}</h4>
