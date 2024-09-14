@@ -1,0 +1,44 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const books = (await getCollection('book')).sort(
+	(a, b) => b.data.readDate.valueOf() - a.data.readDate.valueOf(),
+);
+---
+
+<BaseLayout
+	title={SITE_TITLE}
+	description={SITE_DESCRIPTION}
+>
+	<main class="mx-auto my-4 max-w-prose text-xl">
+		<h1 class="my-5 text-3xl font-bold">Reading List</h1>
+		<p class="mb-4">
+			Here's some books I've read, some I want to read, and some notable
+			articles 😀
+		</p>
+		<p class="mb-4">My goal is to read a technical book a month</p>
+		<section class="py-6">
+			<h2 class="mb-4 text-2xl font-semibold">Books I've Read</h2>
+			<ul class="flex flex-col gap-8">
+				{
+					books.map((post) => (
+						<li>
+							<a
+								href={`/blog/${post.slug}/`}
+								class="block"
+							>
+								<h4 class="leading-none">{post.data.title}</h4>
+							</a>
+							<p class="m-0 text-foreground-secondary">
+								<FormattedDate date={post.data.readDate} />
+							</p>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+	</main>
+</BaseLayout>
