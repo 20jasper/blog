@@ -28,7 +28,7 @@ const posts = (await getCollection('blog')).sort(
 						<li>
 							<a
 								href={`/blog/${post.slug}/`}
-								class="block hover:text-accent"
+								class="block"
 							>
 								<h4 class="leading-none">{post.data.title}</h4>
 							</a>
