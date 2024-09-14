@@ -1,9 +1,9 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<'a'> & { border: 'top' | 'bottom' };
 
-const { href, class: className, ...props } = Astro.props;
+const { href, class: className, border, ...props } = Astro.props;
 
 const { pathname } = Astro.url;
 const subpath = pathname.match(/[^\/]+/g);
@@ -15,7 +15,8 @@ const isActive = href === pathname || href === '/' + subpath?.[0];
 	class:list={[
 		className,
 		{ 'border-accent': isActive },
-		'border-b-4 no-underline',
+		`${border === 'bottom' ? 'border-b-4' : 'border-t-4'}`,
+		'no-underline',
 	]}
 	{...props}
 >
