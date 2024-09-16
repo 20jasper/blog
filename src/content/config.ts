@@ -17,7 +17,7 @@ const book = defineCollection({
 		title: z.string(),
 		author: z.string().optional(),
 		link: z.string().optional(),
-		description: z.string().optional(),
+		description: z.string().max(160).optional(),
 		readDate: z.coerce.date(),
 	}),
 });
