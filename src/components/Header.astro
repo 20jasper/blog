@@ -8,33 +8,31 @@ type Props = {
 const { border } = Astro.props;
 ---
 
-<header class="py-2">
-	<nav>
-		<ul class="mx-auto flex justify-center">
-			<li class="px-2 py-4">
-				<HeaderLink
-					class="px-2 py-4"
-					href="/blog"
-					border={border}
-					>Blog</HeaderLink
-				>
-			</li>
-			<li class="px-2 py-4">
-				<HeaderLink
-					class="px-2 py-4"
-					href="/reading-list"
-					border={border}
-					>Reading List</HeaderLink
-				>
-			</li>
-			<li class="px-2 py-4">
-				<HeaderLink
-					class="px-2 py-4"
-					href="/about"
-					border={border}
-					>About</HeaderLink
-				>
-			</li>
-		</ul>
-	</nav>
-</header>
+<nav class'py-2'>
+	<ul class="mx-auto flex justify-center">
+		<li class="px-2 py-4">
+			<HeaderLink
+				class="px-2 py-4"
+				href="/blog"
+				border={border}
+				>Blog</HeaderLink
+			>
+		</li>
+		<li class="px-2 py-4">
+			<HeaderLink
+				class="px-2 py-4"
+				href="/reading-list"
+				border={border}
+				>Reading List</HeaderLink
+			>
+		</li>
+		<li class="px-2 py-4">
+			<HeaderLink
+				class="px-2 py-4"
+				href="/about"
+				border={border}
+				>About</HeaderLink
+			>
+		</li>
+	</ul>
+</nav>
