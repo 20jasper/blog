@@ -5,9 +5,8 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import syntaxTheme from './orange-theme';
 
-// https://astro.build/config
 export default defineConfig({
-	site: 'https://blog.jacobasper.com',
+	site: 'https://jacobasper.com',
 	redirects: {
 		'/': '/blog',
 	},
