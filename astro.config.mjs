@@ -9,6 +9,7 @@ export default defineConfig({
 	site: 'https://jacobasper.com',
 	redirects: {
 		'/': '/blog',
+		'/projects/1': '/blog',
 	},
 	markdown: {
 		shikiConfig: {
