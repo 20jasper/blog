@@ -1,0 +1,47 @@
+---
+type Link = {
+	href: string;
+	text: string;
+};
+const data: Link[] = [
+	{
+		href: '/posts.xml',
+		text: 'Subscribe to my RSS feed',
+	},
+	{
+		href: 'https://www.youtube.com/@jacobasper',
+		text: 'Subscribe on YouTube',
+	},
+	{
+		href: 'https://twitter.com/asper_jacob',
+		text: 'Follow me on Twitter',
+	},
+	{
+		href: 'https://bsky.app/profile/jacobasper.com',
+		text: 'Follow me on Bluesky',
+	},
+	{
+		href: 'https://github.com/20jasper',
+		text: 'Follow me on GitHub',
+	},
+	{
+		href: 'https://www.linkedin.com/in/jacobasper191/',
+		text: 'Follow me on LinkedIn',
+	},
+];
+---
+
+<ul>
+	{
+		data.map((link) => (
+			<li class="py-2">
+				<a
+					href={link.href}
+					target="_blank"
+				>
+					{link.text}
+				</a>
+			</li>
+		))
+	}
+</ul>
