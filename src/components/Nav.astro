@@ -1,5 +1,5 @@
 ---
-import HeaderLink from './NavLink.astro';
+import NavLink from './NavLink.astro';
 
 type Props = {
 	border: 'top' | 'bottom';
@@ -11,27 +11,19 @@ const { border } = Astro.props;
 <nav class'py-2'>
 	<ul class="mx-auto flex justify-center">
 		<li class="px-2 py-4">
-			<HeaderLink
+			<NavLink
 				class="px-2 py-4"
 				href="/blog"
 				border={border}
-				>Blog</HeaderLink
+				>Blog</NavLink
 			>
 		</li>
 		<li class="px-2 py-4">
-			<HeaderLink
+			<NavLink
 				class="px-2 py-4"
 				href="/reading-list"
 				border={border}
-				>Reading List</HeaderLink
-			>
-		</li>
-		<li class="px-2 py-4">
-			<HeaderLink
-				class="px-2 py-4"
-				href="/about"
-				border={border}
-				>About</HeaderLink
+				>Reading List</NavLink
 			>
 		</li>
 	</ul>
