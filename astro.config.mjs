@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import compressor from 'astro-compressor';
 import tailwind from '@astrojs/tailwind';
 import syntaxTheme from './orange-theme';
 
@@ -20,5 +19,5 @@ export default defineConfig({
 	experimental: {
 		contentIntellisense: true,
 	},
-	integrations: [mdx(), sitemap(), tailwind(), compressor()],
+	integrations: [mdx(), sitemap(), tailwind()],
 });
