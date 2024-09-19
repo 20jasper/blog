@@ -1,4 +1,5 @@
 ---
+import { SITE_TITLE } from '../consts';
 import '../styles/global.css';
 import GoogleAnalytics from './GoogleAnalytics.astro';
 
@@ -27,6 +28,14 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <meta
 	name="generator"
 	content={Astro.generator}
+/>
+
+<!-- RSS -->
+<link
+	rel="alternate"
+	type="application/rss+xml"
+	title={SITE_TITLE}
+	href={new URL('rss.xml', Astro.site)}
 />
 
 <!-- Font preloads -->
