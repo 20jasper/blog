@@ -110,4 +110,4 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 />
 
 <!-- Google tag (gtag.js) -->
-<GoogleAnalytics />
+<GoogleAnalytics id={import.meta.env.GOOGLE_ANALYTICS_ID} />
