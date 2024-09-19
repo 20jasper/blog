@@ -26,9 +26,6 @@ importers:
       astro:
         specifier: ^4.15.6
         version: 4.15.6(rollup@4.21.2)(typescript@5.6.2)
-      astro-compressor:
-        specifier: ^0.4.1
-        version: 0.4.1
       tailwindcss:
         specifier: ^3.4.11
         version: 3.4.11
@@ -761,9 +758,6 @@ packages:
   astring@1.9.0:
     resolution: {integrity: sha512-LElXdjswlqjWrPpJFg1Fx4wpkOCxj1TDHlSV4PlaRxHGWko024xICaa97ZkMfs6DRKlCguiAI+rbXv5GWwXIkg==}
     hasBin: true
-
-  astro-compressor@0.4.1:
-    resolution: {integrity: sha512-IAgYAlxYRMolaptsFB9quH7RxX4eUeC4UfULCPhT+ILcg7m1kbaxuyUKqGg9Hh+KZ+FNPPDAz7DqUfl+HDWhQg==}
 
   astro@4.15.6:
     resolution: {integrity: sha512-SWcUNwm8CiVRaIbh4w5byh62BNihpsovlCd4ElvC7cL/53D24HcI7AaGFsPrromCamQklwQmIan/QS7x/3lLuQ==}
@@ -3126,8 +3120,6 @@ snapshots:
   array-iterate@2.0.1: {}
 
   astring@1.9.0: {}
-
-  astro-compressor@0.4.1: {}
 
   astro@4.15.6(rollup@4.21.2)(typescript@5.6.2):
     dependencies:
