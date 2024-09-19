@@ -1,4 +1,5 @@
 ---
+import CheckEnv from '../CheckEnv.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Nav.astro';
 import { NAME } from '../consts';
@@ -24,6 +25,7 @@ const today = new Date();
 	<body
 		class="flex h-screen flex-col bg-background px-4 text-xl text-foreground"
 	>
+		<CheckEnv />
 		<Header border="bottom" />
 		<slot />
 		<div class="mt-auto">
