@@ -14,8 +14,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 ---
 
-<CheckEnv />
-
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta
@@ -108,6 +106,8 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 	property="twitter:image"
 	content={new URL(image, Astro.url)}
 />
+
+<CheckEnv />
 
 <!-- Google tag (gtag.js) -->
 <GoogleAnalytics id={import.meta.env.GOOGLE_ANALYTICS_ID} />
