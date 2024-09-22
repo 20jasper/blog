@@ -1,6 +1,6 @@
 ---
 title: 'Pulling changes from forked repositories'
-pubDate: 'Dec 30 2022'
+pubDate: '2022-12-30'
 description: "Imagine this—you are working on a feature in an open–source GitHub repo with a few others. You don't have write access, so you will need to make forks. If everyone is comfortable, one person can make a fork and give everyone else write access, but that's not always the easy to coordinate"
 ---
 

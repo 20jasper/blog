@@ -1,6 +1,6 @@
 ---
 title: 'Implement `Pick` in TypeScript'
-pubDate: 'Dec 22 2022'
+pubDate: '2022-12-22'
 description: 'Implement `Pick` in TypeScript without any Utility Types!'
 ---
 

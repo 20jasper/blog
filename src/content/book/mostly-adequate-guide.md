@@ -3,7 +3,7 @@ title: Professor Frisby's Mostly Adequate Guide to Functional Programming
 author: Brian Lonsdorf
 link: https://mostly-adequate.gitbook.io/mostly-adequate-guide
 description: A humorous guide to functional programming without the jargon
-readDate: 'Aug 19 2023'
+readDate: '2023-08-19'
 ---
 
 I read this book a year ago, so I'd like to revisit it and provide more thorough feedback. I figure my Rust knowledge will transfer well, and I'm planning on learning Gleam, so it can't hurt!
