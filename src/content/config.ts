@@ -15,10 +15,10 @@ const book = defineCollection({
 	type: 'content',
 	schema: z.object({
 		title: z.string(),
+		description: z.string().max(160),
+		readDate: z.coerce.date(),
 		author: z.string().optional(),
 		link: z.string().optional(),
-		description: z.string().max(160).optional(),
-		readDate: z.coerce.date(),
 	}),
 });
 
