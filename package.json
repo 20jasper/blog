@@ -26,6 +26,6 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"prettier": "^3.3.3",
 		"prettier-plugin-astro": "^0.14.1",
-		"prettier-plugin-tailwindcss": "^0.6.6"
+		"prettier-plugin-tailwindcss": "^0.6.8"
 	}
 }
