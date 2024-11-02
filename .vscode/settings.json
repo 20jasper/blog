@@ -3,5 +3,6 @@
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"prettier.enable": true,
 	"tailwindCSS.includeLanguages": { "astro": "html" },
-	"astro.content-intellisense": true
+	"astro.content-intellisense": true,
+	"cSpell.words": ["rabbithole"]
 }
