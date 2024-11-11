@@ -1,7 +1,7 @@
 ---
 interface Props {
 	start: Date;
-	end: Date;
+	end: Date | null;
 }
 
 const { start, end } = Astro.props;
@@ -19,7 +19,11 @@ const formatDate = (date: Date): string =>
 		{formatDate(start)}
 	</time>
 	–
-	<time datetime={end.toISOString()}>
-		{formatDate(end)}
-	</time>
+	{
+		end === null ? (
+			<span>Present</span>
+		) : (
+			<time datetime={end.toISOString()}>{formatDate(end)}</time>
+		)
+	}
 </span>

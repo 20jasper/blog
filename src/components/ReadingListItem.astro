@@ -10,18 +10,19 @@ const { slug, title, description, readDate, author } = Astro.props;
 ---
 
 {
-	slug !== undefined ? (
-		<a
-			href={`${Astro.url}/${slug}/`}
-			class="block"
-		>
-			<h4 class="leading-none">
-				{title} by {author}
-			</h4>
-		</a>
-	) : (
+	(
 		<h4 class="leading-none">
-			{title} by {author}
+			{slug !== undefined ? (
+				<a
+					href={`${Astro.url}/${slug}/`}
+					class="block"
+				>
+					<cite>{title}</cite>
+				</a>
+			) : (
+				<cite>{title}</cite>
+			)}
+			{` by ${author}`}
 		</h4>
 	)
 }
@@ -30,7 +31,7 @@ const { slug, title, description, readDate, author } = Astro.props;
 </p>
 <p class="text-foreground-secondary">
 	<FormattedDateRange
-		start={readDate.end}
-		end={readDate.start}
+		start={readDate.start}
+		end={readDate.end}
 	/>
 </p>
