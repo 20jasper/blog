@@ -2,11 +2,19 @@
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import FormattedDateRange from '../../components/FormattedDateRange.astro';
+import { booksWithoutArticles } from '../../content/blog/books-without-articles';
+import ReadingListItem from '../../components/ReadingListItem.astro';
+import type { Book } from '../../content/config';
 
-const bookArticles = (await getCollection('book')).sort(
-	(a, b) => b.data.readDate.end.valueOf() - a.data.readDate.end.valueOf(),
-);
+const articles = (await getCollection('book')).map(({ slug, data }) => ({
+	slug,
+	...data,
+}));
+
+const books: ({ slug?: string } & Book)[] = [
+	...booksWithoutArticles,
+	...articles,
+].sort((a, z) => z.readDate.end.valueOf() - a.readDate.end.valueOf());
 ---
 
 <BaseLayout
@@ -24,23 +32,15 @@ const bookArticles = (await getCollection('book')).sort(
 			<h2 class="mb-4 text-2xl font-semibold">Books I've Read</h2>
 			<ul class="flex flex-col gap-8">
 				{
-					bookArticles.map((post) => (
+					books.map(({ slug, title, description, readDate, author }) => (
 						<li>
-							<a
-								href={`${Astro.url}/${post.slug}/`}
-								class="block"
-							>
-								<h4 class="leading-none">{post.data.title}</h4>
-							</a>
-							<p class="pt-2 text-foreground-secondary">
-								{post.data.description}
-							</p>
-							<p class="text-foreground-secondary">
-								<FormattedDateRange
-									start={post.data.readDate.end}
-									end={post.data.readDate.start}
-								/>
-							</p>
+							<ReadingListItem
+								{...(slug && { slug })}
+								title={title}
+								description={description}
+								readDate={readDate}
+								author={author}
+							/>
 						</li>
 					))
 				}

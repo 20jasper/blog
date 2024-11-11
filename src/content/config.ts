@@ -11,15 +11,18 @@ const blog = defineCollection({
 	}),
 });
 
+const bookSchema = z.object({
+	title: z.string(),
+	description: z.string().max(160),
+	readDate: z.object({ start: z.coerce.date(), end: z.coerce.date() }),
+	author: z.string(),
+});
+
 const book = defineCollection({
 	type: 'content',
-	schema: z.object({
-		title: z.string(),
-		description: z.string().max(160),
-		readDate: z.coerce.date(),
-		author: z.string().optional(),
-		link: z.string().optional(),
-	}),
+	schema: bookSchema,
 });
+
+export type Book = z.infer<typeof bookSchema>;
 
 export const collections = { blog, book };
