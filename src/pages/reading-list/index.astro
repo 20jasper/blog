@@ -1,11 +1,11 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDateRange from '../../components/FormattedDateRange.astro';
 
-const books = (await getCollection('book')).sort(
-	(a, b) => b.data.readDate.valueOf() - a.data.readDate.valueOf(),
+const bookArticles = (await getCollection('book')).sort(
+	(a, b) => b.data.readDate.end.valueOf() - a.data.readDate.end.valueOf(),
 );
 ---
 
@@ -24,7 +24,7 @@ const books = (await getCollection('book')).sort(
 			<h2 class="mb-4 text-2xl font-semibold">Books I've Read</h2>
 			<ul class="flex flex-col gap-8">
 				{
-					books.map((post) => (
+					bookArticles.map((post) => (
 						<li>
 							<a
 								href={`${Astro.url}/${post.slug}/`}
@@ -36,7 +36,10 @@ const books = (await getCollection('book')).sort(
 								{post.data.description}
 							</p>
 							<p class="text-foreground-secondary">
-								<FormattedDate date={post.data.readDate} />
+								<FormattedDateRange
+									start={post.data.readDate.end}
+									end={post.data.readDate.start}
+								/>
 							</p>
 						</li>
 					))
