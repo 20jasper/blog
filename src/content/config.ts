@@ -11,15 +11,22 @@ const blog = defineCollection({
 	}),
 });
 
+const bookSchema = z.object({
+	title: z.string(),
+	description: z.string().max(160),
+	readDate: z.object({
+		start: z.coerce.date(),
+		end: z.coerce.date().nullable(),
+	}),
+	author: z.string(),
+	articleWriteDate: z.coerce.date(),
+});
+
 const book = defineCollection({
 	type: 'content',
-	schema: z.object({
-		title: z.string(),
-		description: z.string().max(160),
-		readDate: z.coerce.date(),
-		author: z.string().optional(),
-		link: z.string().optional(),
-	}),
+	schema: bookSchema,
 });
+
+export type Book = Omit<z.infer<typeof bookSchema>, 'articleWriteDate'>;
 
 export const collections = { blog, book };

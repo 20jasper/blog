@@ -1,12 +1,26 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReadingListItem from '../../components/ReadingListItem.astro';
 
-const books = (await getCollection('book')).sort(
-	(a, b) => b.data.readDate.valueOf() - a.data.readDate.valueOf(),
-);
+import { booksWithoutArticles } from '../../content/blog/books-without-articles';
+
+import type { Book } from '../../content/config';
+
+const articles = (await getCollection('book')).map(({ slug, data }) => ({
+	slug,
+	...data,
+}));
+
+const books: ({ slug?: string } & Book)[] = [
+	...booksWithoutArticles,
+	...articles,
+].sort((a, z) => {
+	const zEnd = z.readDate.end?.valueOf() ?? Infinity;
+	const aEnd = a.readDate.end?.valueOf() ?? Infinity;
+	return zEnd - aEnd;
+});
 ---
 
 <BaseLayout
@@ -21,23 +35,18 @@ const books = (await getCollection('book')).sort(
 		</p>
 		<p class="mb-4">My goal is to read a technical book a month</p>
 		<section class="py-6">
-			<h2 class="mb-4 text-2xl font-semibold">Books I've Read</h2>
+			<h2 class="mb-4 text-2xl font-semibold">Books I've started</h2>
 			<ul class="flex flex-col gap-8">
 				{
-					books.map((post) => (
+					books.map(({ slug, title, description, readDate, author }) => (
 						<li>
-							<a
-								href={`${Astro.url}/${post.slug}/`}
-								class="block"
-							>
-								<h4 class="leading-none">{post.data.title}</h4>
-							</a>
-							<p class="pt-2 text-foreground-secondary">
-								{post.data.description}
-							</p>
-							<p class="text-foreground-secondary">
-								<FormattedDate date={post.data.readDate} />
-							</p>
+							<ReadingListItem
+								slug={slug}
+								title={title}
+								description={description}
+								readDate={readDate}
+								author={author}
+							/>
 						</li>
 					))
 				}
