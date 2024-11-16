@@ -19,6 +19,7 @@ const bookSchema = z.object({
 		end: z.coerce.date().nullable(),
 	}),
 	author: z.string(),
+	articleWriteDate: z.coerce.date(),
 });
 
 const book = defineCollection({
@@ -26,6 +27,6 @@ const book = defineCollection({
 	schema: bookSchema,
 });
 
-export type Book = z.infer<typeof bookSchema>;
+export type Book = Omit<z.infer<typeof bookSchema>, 'articleWriteDate'>;
 
 export const collections = { blog, book };

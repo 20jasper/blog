@@ -41,7 +41,7 @@ const books: ({ slug?: string } & Book)[] = [
 					books.map(({ slug, title, description, readDate, author }) => (
 						<li>
 							<ReadingListItem
-								{...(slug && { slug })}
+								slug={slug}
 								title={title}
 								description={description}
 								readDate={readDate}
