@@ -3,5 +3,7 @@
 	"compilerOptions": {
 		"strictNullChecks": true,
 		"exactOptionalPropertyTypes": false
-	}
+	},
+	"include": [".astro/types.d.ts", "**/*"],
+	"exclude": ["dist"]
 }
