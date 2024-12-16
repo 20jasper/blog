@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
@@ -14,6 +14,14 @@ export default defineConfig({
 	markdown: {
 		shikiConfig: {
 			theme: syntaxTheme,
+		},
+	},
+	env: {
+		schema: {
+			GOOGLE_ANALYTICS_ID: envField.string({
+				context: 'client',
+				access: 'public',
+			}),
 		},
 	},
 	experimental: {
