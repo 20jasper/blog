@@ -2,6 +2,7 @@
 import { SITE_TITLE } from '../consts';
 import '../styles/global.css';
 import GoogleAnalytics from './GoogleAnalytics.astro';
+import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
 
 interface Props {
 	title: string;
@@ -86,4 +87,4 @@ const { title, description } = Astro.props;
 />
 
 <!-- Google tag (gtag.js) -->
-<GoogleAnalytics id={import.meta.env.GOOGLE_ANALYTICS_ID} />
+<GoogleAnalytics id={GOOGLE_ANALYTICS_ID} />
