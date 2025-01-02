@@ -1,7 +1,6 @@
 ---
 title: Professor Frisby's Mostly Adequate Guide to Functional Programming
 author: Brian Lonsdorf
-description: A humorous guide to functional programming without the jargon
 readDate:
   start: '2023-06-19'
   end: '2023-08-19'

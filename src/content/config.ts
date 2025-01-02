@@ -13,7 +13,6 @@ const blog = defineCollection({
 
 const bookSchema = z.object({
 	title: z.string(),
-	description: z.string().max(160),
 	readDate: z.object({
 		start: z.coerce.date(),
 		end: z.coerce.date().nullable(),

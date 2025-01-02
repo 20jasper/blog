@@ -7,7 +7,7 @@ type Props = {
 	slug?: string;
 } & Book;
 
-const { slug, title, description, readDate, author, rating } = Astro.props;
+const { slug, title, readDate, author, rating } = Astro.props;
 ---
 
 {
@@ -27,9 +27,6 @@ const { slug, title, description, readDate, author, rating } = Astro.props;
 		</h4>
 	)
 }
-<p class="pt-2 text-foreground-secondary">
-	{description}
-</p>
 <div class="flex flex-col justify-between sm:flex-row">
 	<p class="text-foreground-secondary">
 		<FormattedDateRange
