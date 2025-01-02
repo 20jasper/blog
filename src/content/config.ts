@@ -11,16 +11,32 @@ const blog = defineCollection({
 	}),
 });
 
-const bookSchema = z.object({
+const bookBase = z.object({
 	title: z.string(),
-	readDate: z.object({
-		start: z.coerce.date(),
-		end: z.coerce.date().nullable(),
-	}),
 	author: z.string(),
 	articleWriteDate: z.coerce.date(),
+});
+
+const finishedBook = z.object({
+	readDate: z.object({
+		start: z.coerce.date(),
+		end: z.coerce.date(),
+	}),
 	rating: z.number().min(0).max(5),
 });
+
+const unfinishedBook = z.object({
+	readDate: z.object({
+		start: z.coerce.date(),
+		end: z.null(),
+	}),
+	rating: z.null(),
+});
+
+const bookSchema = z.intersection(
+	z.union([finishedBook, unfinishedBook]),
+	bookBase,
+);
 
 const book = defineCollection({
 	type: 'content',

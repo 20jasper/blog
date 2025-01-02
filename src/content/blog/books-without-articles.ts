@@ -11,11 +11,10 @@ export const booksWithoutArticles: Book[] = [
 		rating: 5,
 	},
 	{
-		title:
-			'Forget a Mentor, Find a Sponsor: The New Way to Fast-Track Your Career',
+		title: 'Forget a Mentor, Find a Sponsor',
 		readDate: {
 			start: new Date('2024-10-03'),
-			end: null,
+			end: new Date('2024-10-29'),
 		},
 		author: 'Sylvia Ann Hewlett',
 		rating: 5,
@@ -37,5 +36,23 @@ export const booksWithoutArticles: Book[] = [
 		},
 		author: 'Miran Lipovaca',
 		rating: 4,
+	},
+	{
+		title: 'The Subtle Art of Not Giving a F*ck',
+		readDate: {
+			start: new Date('2024-12-21'),
+			end: new Date('2025-01-02'),
+		},
+		author: 'Mark Manson',
+		rating: 3,
+	},
+	{
+		title: 'Asynchronous Programming in Rust',
+		readDate: {
+			start: new Date('2025-1-2'),
+			end: null,
+		},
+		author: 'Carl Fredrik Samson',
+		rating: null,
 	},
 ];

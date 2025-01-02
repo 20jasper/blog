@@ -27,12 +27,14 @@ const { slug, title, readDate, author, rating } = Astro.props;
 		</h4>
 	)
 }
-<div class="flex flex-col justify-between sm:flex-row">
-	<p class="text-foreground-secondary">
+<div
+	class="flex flex-col justify-between text-foreground-secondary sm:flex-row"
+>
+	<p>
 		<FormattedDateRange
 			start={readDate.start}
 			end={readDate.end}
 		/>
 	</p>
-	<Rating filled={rating} />
+	{rating === null ? <p>Rating pending</p> : <Rating filled={rating} />}
 </div>
