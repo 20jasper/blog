@@ -6,6 +6,7 @@ readDate:
   start: '2023-06-19'
   end: '2023-08-19'
 articleWriteDate: '2024-09-14'
+rating: 5
 ---
 
 I read this book a year ago, so I'd like to revisit it and provide more thorough feedback. I figure my Rust knowledge will transfer well, and I'm planning on learning Gleam, so it can't hurt!

@@ -20,6 +20,7 @@ const bookSchema = z.object({
 	}),
 	author: z.string(),
 	articleWriteDate: z.coerce.date(),
+	rating: z.number().min(0).max(5),
 });
 
 const book = defineCollection({

@@ -9,6 +9,7 @@ export const booksWithoutArticles: Book[] = [
 			end: new Date('2024-10-13'),
 		},
 		author: 'Andy Hunt and Dave Thomas',
+		rating: 5,
 	},
 	{
 		title:
@@ -19,6 +20,7 @@ export const booksWithoutArticles: Book[] = [
 			end: null,
 		},
 		author: 'Sylvia Ann Hewlett',
+		rating: 5,
 	},
 	{
 		title: 'The Rust Programming Language',
@@ -28,6 +30,7 @@ export const booksWithoutArticles: Book[] = [
 			end: new Date('2024-09-07'),
 		},
 		author: 'Steve Klabnik and Carol Nichols',
+		rating: 5,
 	},
 	{
 		title: "Learn You a Haskell for Great Good! A Beginner's Guide",
@@ -37,5 +40,6 @@ export const booksWithoutArticles: Book[] = [
 			end: null,
 		},
 		author: 'Miran Lipovaca',
+		rating: 4,
 	},
 ];
