@@ -38,14 +38,14 @@ const books: ({ slug?: string } & Book)[] = [
 			<h2 class="mb-4 text-2xl font-semibold">Books I've started</h2>
 			<ul class="flex flex-col gap-8">
 				{
-					books.map(({ slug, title, description, readDate, author }) => (
+					books.map(({ slug, title, readDate, author, rating }) => (
 						<li>
 							<ReadingListItem
 								slug={slug}
 								title={title}
-								description={description}
 								readDate={readDate}
 								author={author}
+								rating={rating}
 							/>
 						</li>
 					))

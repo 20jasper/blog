@@ -1,12 +1,13 @@
 ---
 import type { Book } from '../content/config';
 import FormattedDateRange from './FormattedDateRange.astro';
+import Rating from './rating/Rating.astro';
 
 type Props = {
 	slug?: string;
 } & Book;
 
-const { slug, title, description, readDate, author } = Astro.props;
+const { slug, title, readDate, author, rating } = Astro.props;
 ---
 
 {
@@ -26,12 +27,14 @@ const { slug, title, description, readDate, author } = Astro.props;
 		</h4>
 	)
 }
-<p class="pt-2 text-foreground-secondary">
-	{description}
-</p>
-<p class="text-foreground-secondary">
-	<FormattedDateRange
-		start={readDate.start}
-		end={readDate.end}
-	/>
-</p>
+<div
+	class="flex flex-col justify-between pt-1 text-foreground-secondary sm:flex-row"
+>
+	<p>
+		<FormattedDateRange
+			start={readDate.start}
+			end={readDate.end}
+		/>
+	</p>
+	{rating === null ? <p>Rating pending</p> : <Rating filled={rating} />}
+</div>

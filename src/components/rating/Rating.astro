@@ -1,0 +1,34 @@
+---
+import Star from './Star.astro';
+
+type Props = {
+	filled: number;
+};
+
+const { filled } = Astro.props;
+const MAX = 5;
+const unfilled = Math.max(0, MAX - filled);
+---
+
+<div class="flex items-center gap-2">
+	<p class="text-foreground-secondary">{`${filled}/${MAX} stars`}</p>
+	<ul
+		class="flex"
+		aria-hidden="true"
+	>
+		{
+			Array.from({ length: filled }, () => (
+				<li>
+					<Star className="w-3 fill-foreground" />
+				</li>
+			))
+		}
+		{
+			Array.from({ length: unfilled }, () => (
+				<li>
+					<Star className="w-3 fill-foreground-secondary" />
+				</li>
+			))
+		}
+	</ul>
+</div>
