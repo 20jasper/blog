@@ -19,7 +19,12 @@ const books: ({ slug?: string } & Book)[] = [
 ].sort((a, z) => {
 	const zEnd = z.readDate.end?.valueOf() ?? Infinity;
 	const aEnd = a.readDate.end?.valueOf() ?? Infinity;
-	return zEnd - aEnd;
+
+	if (zEnd !== aEnd) return zEnd - aEnd;
+
+	const zStart = z.readDate.start?.valueOf() ?? Infinity;
+	const aStart = a.readDate.start?.valueOf() ?? Infinity;
+	return zStart - aStart;
 });
 ---
 
