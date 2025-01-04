@@ -31,7 +31,7 @@ export const booksWithoutArticles: Book[] = [
 	{
 		title: "Learn You a Haskell for Great Good! A Beginner's Guide",
 		readDate: {
-			start: new Date('2023-10-31'),
+			start: new Date('2024-10-31'),
 			end: null,
 		},
 		author: 'Miran Lipovaca',
