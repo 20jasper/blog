@@ -5,7 +5,7 @@ import BaseLayout from './BaseLayout.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate } = Astro.props;
 ---
 
 <BaseLayout
@@ -17,7 +17,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			title={title}
 			date={pubDate}
 			updatedDate={updatedDate}
-			heroImage={heroImage}
 		>
 			<slot />
 		</BlogArticle>
