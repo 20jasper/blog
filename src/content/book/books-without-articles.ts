@@ -41,10 +41,19 @@ export const booksWithoutArticles: Book[] = [
 		title: 'The Subtle Art of Not Giving a F*ck',
 		readDate: {
 			start: new Date('2024-12-21'),
-			end: new Date('2025-01-02'),
+			end: new Date('2025-01-09'),
 		},
 		author: 'Mark Manson',
 		rating: 3,
+	},
+	{
+		title: 'Never Eat Alone',
+		readDate: {
+			start: new Date('2025-01-09'),
+			end: null,
+		},
+		author: 'Keith Ferrazzi',
+		rating: null,
 	},
 	{
 		title: 'Asynchronous Programming in Rust',
