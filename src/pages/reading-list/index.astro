@@ -14,15 +14,17 @@ const articles = (await getCollection('book')).map(({ slug, data }) => ({
 	...data,
 }));
 
-const byDateDesc = (key: keyof Book) =>
-	Order.mapInput(Option.getOrder(Order.reverse(Order.number)), ({ readDate }) =>
-		Option.fromNullable(readDate[key]),
+type BookWithMetadata = { slug?: string } & Book;
+
+const byDateDesc = (key: keyof BookWithMetadata['readDate']) =>
+	Order.mapInput(
+		Option.getOrder(Order.reverse(Order.Date)),
+		({ readDate }: BookWithMetadata) => Option.fromNullable(readDate[key]),
 	);
 
-const books: ({ slug?: string } & Book)[] = [
-	...booksWithoutArticles,
-	...articles,
-].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
+const books: BookWithMetadata[] = [...booksWithoutArticles, ...articles].sort(
+	Order.combine(byDateDesc('end'), byDateDesc('start')),
+);
 ---
 
 <BaseLayout
