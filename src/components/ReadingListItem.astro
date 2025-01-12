@@ -3,26 +3,15 @@ import type { Book } from '../content/config';
 import FormattedDateRange from './date/FormattedDateRange.astro';
 import Rating from './rating/Rating.astro';
 
-type Props = {
-	slug?: string;
-} & Book;
+type Props = Book;
 
-const { slug, title, readDate, author, rating } = Astro.props;
+const { title, readDate, author, rating } = Astro.props;
 ---
 
 {
 	(
 		<h4 class="leading-none">
-			{slug !== undefined ? (
-				<a
-					href={`${Astro.url}/${slug}/`}
-					class="block"
-				>
-					<cite>{title}</cite>
-				</a>
-			) : (
-				<cite>{title}</cite>
-			)}
+			<cite>{title}</cite>
 			{` by ${author}`}
 		</h4>
 	)
