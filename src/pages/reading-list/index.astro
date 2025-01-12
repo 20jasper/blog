@@ -7,13 +7,12 @@ import ReadingListItem from '../../components/ReadingListItem.astro';
 import { booksWithoutArticles } from '../../content/book/books-without-articles';
 
 import type { Book } from '../../content/config';
+import { Option, Order } from 'effect';
 
 const articles = (await getCollection('book')).map(({ slug, data }) => ({
 	slug,
 	...data,
 }));
-
-import { Option, Order } from 'effect';
 
 const byDateDesc = (key: keyof Book) =>
 	Order.mapInput(Option.getOrder(Order.reverse(Order.number)), ({ readDate }) =>
