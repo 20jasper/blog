@@ -5,8 +5,10 @@ import FormattedDate from '../../components/date/FormattedDate.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 
+import { Order } from 'effect';
+
 const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	Order.mapInput(Order.reverse(Order.Date), ({ data }) => data.pubDate),
 );
 ---
 

@@ -13,19 +13,17 @@ const articles = (await getCollection('book')).map(({ slug, data }) => ({
 	...data,
 }));
 
+import { Option, Order } from 'effect';
+
+const byDateDesc = (key: keyof Book) =>
+	Order.mapInput(Option.getOrder(Order.reverse(Order.number)), ({ readDate }) =>
+		Option.fromNullable(readDate[key]),
+	);
+
 const books: ({ slug?: string } & Book)[] = [
 	...booksWithoutArticles,
 	...articles,
-].sort((a, z) => {
-	const zEnd = z.readDate.end?.valueOf() ?? Infinity;
-	const aEnd = a.readDate.end?.valueOf() ?? Infinity;
-
-	if (zEnd !== aEnd) return zEnd - aEnd;
-
-	const zStart = z.readDate.start?.valueOf() ?? Infinity;
-	const aStart = a.readDate.start?.valueOf() ?? Infinity;
-	return zStart - aStart;
-});
+].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 ---
 
 <BaseLayout
