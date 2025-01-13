@@ -1,6 +1,14 @@
 import type { Book } from '../config';
 
-export const booksWithoutArticles: Book[] = [
+import { Option, Order } from 'effect';
+
+const byDateDesc = (key: keyof Book['readDate']) =>
+	Order.mapInput(
+		Option.getOrder(Order.reverse(Order.Date)),
+		({ readDate }: Book) => Option.fromNullable(readDate[key]),
+	);
+
+export const books: Book[] = [
 	{
 		title: 'The Pragmatic Programmer',
 		readDate: {
@@ -64,4 +72,13 @@ export const booksWithoutArticles: Book[] = [
 		author: 'Carl Fredrik Samson',
 		rating: null,
 	},
-];
+	{
+		title: "Professor Frisby's Mostly Adequate Guide to Functional Programming",
+		readDate: {
+			start: new Date('2023-06-19'),
+			end: new Date('2023-08-19'),
+		},
+		author: 'Brian Lonsdorf',
+		rating: 5,
+	},
+].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
