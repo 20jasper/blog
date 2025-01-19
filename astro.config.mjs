@@ -4,6 +4,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import syntaxTheme from './orange-theme';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
 	site: 'https://jacobasper.com',
@@ -16,6 +18,8 @@ export default defineConfig({
 			theme: syntaxTheme,
 			wrap: true,
 		},
+		remarkPlugins: [remarkMath],
+		rehypePlugins: [rehypeKatex],
 	},
 	env: {
 		schema: {

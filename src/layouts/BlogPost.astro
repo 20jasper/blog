@@ -5,12 +5,13 @@ import BaseLayout from './BaseLayout.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate } = Astro.props;
+const { math, title, description, pubDate, updatedDate } = Astro.props;
 ---
 
 <BaseLayout
 	title={title}
 	description={description}
+	math={math}
 >
 	<main class="m-auto w-full">
 		<BlogArticle

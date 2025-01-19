@@ -7,11 +7,12 @@ import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
 interface Props {
 	title: string;
 	description: string;
+	math?: boolean;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description } = Astro.props;
+const { math, title, description } = Astro.props;
 ---
 
 <head>
@@ -86,6 +87,15 @@ const { title, description } = Astro.props;
 		property="twitter:description"
 		content={description}
 	/>
+
+	{
+		math && (
+			<link
+				rel="stylesheet"
+				href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+			/>
+		)
+	}
 
 	<!-- Google tag (gtag.js) -->
 	<GoogleAnalytics id={GOOGLE_ANALYTICS_ID} />

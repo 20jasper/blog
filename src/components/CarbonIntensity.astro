@@ -1,0 +1,21 @@
+---
+import carbonIntensity from '../images/carbon-intensity-fifa.png';
+---
+
+<figure>
+	<img
+		src={carbonIntensity.src}
+		alt=""
+	/>
+	<figcaption>
+		<slot />
+		<cite
+			>Adapted from Carbon-intensity of flight events.
+			<a href="https://doi.org/10.1038/s43247-024-01775-z"
+				>Gössling, S., Humpe, A. & Leitão, J.C. Private aviation is making a
+				growing contribution to climate change. Commun Earth Environ 5, 666
+				(2024)</a
+			>
+		</cite>
+	</figcaption>
+</figure>
