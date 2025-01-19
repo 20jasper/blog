@@ -20,3 +20,11 @@ a:hover {
 * {
 	box-sizing: border-box;
 }
+
+[data-footnote-ref]::after {
+	content: ']';
+}
+
+[data-footnote-ref]::before {
+	content: '[';
+}
