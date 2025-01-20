@@ -30,8 +30,8 @@ importers:
         specifier: ^5.1.5
         version: 5.1.5(jiti@1.21.6)(rollup@4.28.1)(typescript@5.7.3)(yaml@2.5.1)
       effect:
-        specifier: ^3.12.1
-        version: 3.12.1
+        specifier: ^3.12.5
+        version: 3.12.5
       rehype-katex:
         specifier: ^7.0.1
         version: 7.0.1
@@ -1061,8 +1061,8 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  effect@3.12.1:
-    resolution: {integrity: sha512-aAZdh56Yp1ehOFYeMcHHctTtxfqm6kkOdZFTXK6Zf0QoaKKc1hPG6ocjrKOc0axE8JbG4eZw351ogNLrM4vo9w==}
+  effect@3.12.5:
+    resolution: {integrity: sha512-hP+ev9NTjYcvySbPOOgrYiwCYxiIcjuvtR8WXMoSZEZEshOyQlDwgo1Z56kVezv1rTxz20PEGVqZGlXwxe6Ofw==}
 
   electron-to-chromium@1.5.55:
     resolution: {integrity: sha512-6maZ2ASDOTBtjt9FhqYPRnbvKU5tjG0IN9SztUOWYw2AzNDNpKJYLJmlK0/En4Hs/aiWnB+JZ+gW19PIGszgKg==}
@@ -3527,7 +3527,7 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
-  effect@3.12.1:
+  effect@3.12.5:
     dependencies:
       fast-check: 3.23.2
 
