@@ -2,7 +2,15 @@
 	"extends": "astro/tsconfigs/strictest",
 	"compilerOptions": {
 		"strictNullChecks": true,
-		"exactOptionalPropertyTypes": false
+		"exactOptionalPropertyTypes": false,
+		"baseUrl": ".",
+		"paths": {
+			"@components/*": ["src/components/*"],
+			"@layouts/*": ["src/layouts/*"],
+			"@images/*": ["src/images/*"],
+			"@content/*": ["src/content/*"],
+			"@src/*": ["src/*"]
+		}
 	},
 	"include": [".astro/types.d.ts", "**/*"],
 	"exclude": ["dist"]
