@@ -8,7 +8,7 @@ const byDateDesc = (key: keyof Book['readDate']) =>
 		({ readDate }: Book) => Option.fromNullable(readDate[key]),
 	);
 
-export const books: Book[] = [
+export const booksStarted: Book[] = [
 	{
 		title: 'The Pragmatic Programmer',
 		readDate: {
@@ -82,3 +82,38 @@ export const books: Book[] = [
 		rating: 5,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
+
+type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
+const toRead: UnreadBook[] = [
+	{
+		title: 'Zero to Production In Rust',
+		author: 'Luca Palmieri',
+	},
+	{
+		title: 'Pragmatic Type-Level Design',
+		author: 'Alexander Granin',
+	},
+	{
+		title: 'Linchpin',
+		author: 'Seth Godin',
+	},
+	{
+		title: 'Seven Habits of Highly Effective People',
+		author: 'Stephen Covey',
+	},
+	{
+		title: 'The Way of the Shepherd',
+		author: 'Kevin Leman and William Pentak',
+	},
+	{
+		title: 'The Effective Engineer',
+		author: 'Edmond Lau',
+		// https://writings.edmondlau.co/p/what-i-got-wrong-from-the-effective
+	},
+];
+
+export const booksToRead: Book[] = toRead.map((x) => ({
+	...x,
+	readDate: { start: null, end: null },
+	rating: null,
+}));

@@ -1,9 +1,9 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import ReadingListItem from '@components/ReadingListItem.astro';
+import Book from '@components/Book.astro';
 
-import { books } from '@content/book/books-without-articles';
+import { booksStarted, booksToRead } from '@content/book/books';
 ---
 
 <BaseLayout
@@ -21,9 +21,26 @@ import { books } from '@content/book/books-without-articles';
 			<h2 class="mb-4 text-2xl font-semibold">Books I've started</h2>
 			<ul class="flex flex-col gap-8">
 				{
-					books.map(({ title, readDate, author, rating }) => (
+					booksStarted.map(({ title, readDate, author, rating }) => (
 						<li>
-							<ReadingListItem
+							<Book
+								title={title}
+								readDate={readDate}
+								author={author}
+								rating={rating}
+							/>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+		<section class="py-6">
+			<h2 class="mb-4 text-2xl font-semibold">Books I want to read</h2>
+			<ul class="flex flex-col gap-8">
+				{
+					booksToRead.map(({ title, readDate, author, rating }) => (
+						<li>
+							<Book
 								title={title}
 								readDate={readDate}
 								author={author}

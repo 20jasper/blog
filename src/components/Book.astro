@@ -1,0 +1,27 @@
+---
+import type { Book } from '../content/config';
+import FormattedDateRange from '@components/date/FormattedDateRange.astro';
+import Rating from '@components/rating/Rating.astro';
+
+type Props = Book;
+
+const { title, readDate, author, rating } = Astro.props;
+---
+
+<h4 class="leading-none">
+	<cite>{title}</cite>
+	{` by ${author}`}
+</h4>
+{
+	readDate.start !== null && (
+		<div class="flex flex-col justify-between pt-1 text-foreground-secondary sm:flex-row">
+			<p>
+				<FormattedDateRange
+					start={readDate.start}
+					end={readDate.end}
+				/>
+			</p>
+			{rating === null ? <p>Rating pending</p> : <Rating filled={rating} />}
+		</div>
+	)
+}

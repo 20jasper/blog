@@ -14,7 +14,7 @@ const blog = defineCollection({
 const bookSchema = z.object({
 	title: z.string(),
 	readDate: z.object({
-		start: z.coerce.date(),
+		start: z.coerce.date().nullable(),
 		end: z.coerce.date().nullable(),
 	}),
 	author: z.string(),
