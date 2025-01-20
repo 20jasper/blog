@@ -110,6 +110,14 @@ const toRead: UnreadBook[] = [
 		author: 'Edmond Lau',
 		// https://writings.edmondlau.co/p/what-i-got-wrong-from-the-effective
 	},
+	{
+		title: 'Refactoring UI',
+		author: 'Adam Wathan and Steve Schoger',
+	},
+	{
+		title: 'UNIX and Linux System Administration Handbook',
+		author: 'Evi Nemeth, Garth Snyder, Trent Hein, Ben Whaley, and Dan Mackin',
+	},
 ];
 
 export const booksToRead: Book[] = toRead.map((x) => ({
