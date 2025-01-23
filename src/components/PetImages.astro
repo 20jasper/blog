@@ -6,11 +6,18 @@ import mituSleep from '@images/mitu-sleep.webp';
 import catFight from '@images/cat-fight.webp';
 import catQueen from '@images/cat-queen.webp';
 
-const images = [
+import type { HTMLAttributes } from 'astro/types';
+
+type Image = {
+	caption: string;
+} & HTMLAttributes<'img'>;
+
+const images: Image[] = [
 	{
 		src: beatriceAndCricket.src,
 		caption:
 			'A black cat relaxing on someone wearing yellow pants. Their paw is on a large golden doodle sleeping to their right',
+		loading: 'eager',
 	},
 	{
 		src: cricketNoseScratch.src,
@@ -44,8 +51,9 @@ const images = [
 	images.map((image) => (
 		<figure class="py-2">
 			<img
-				src={image.src}
 				alt=""
+				{...image}
+				loading={image.loading ?? 'lazy'}
 			/>
 			<figcaption>
 				<p>{image.caption}</p>
