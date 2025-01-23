@@ -3,7 +3,6 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
 import { getCollection } from 'astro:content';
 import FormattedDate from '@components/date/FormattedDate.astro';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import SocialLinks from '@components/SocialLinks.astro';
 
 import { Order } from 'effect';
 
@@ -23,15 +22,11 @@ const posts = (await getCollection('blog')).sort(
 				I write about everything from Rust, to personal development, to traffic
 				design
 			</p>
-			<p>
+			<p class="pb-4">
 				My goal is to be weird. We need more blogs with personality out here.
 				Don't be scared to be different—be weird
 			</p>
-		</section>
-
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">Follow me on my Socials</h2>
-			<SocialLinks />
+			<a href="/blog/rss.xml">Subscribe to my RSS feed</a>
 		</section>
 
 		<section class="py-4">

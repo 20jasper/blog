@@ -1,0 +1,31 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+import SocialLinks from '@components/SocialLinks.astro';
+import PetImages from '@components/PetImages.astro';
+---
+
+<BaseLayout
+	title={SITE_TITLE}
+	description={SITE_DESCRIPTION}
+>
+	<main class="mx-auto my-4 max-w-prose text-xl">
+		<section class="py-4">
+			<h2 class="mb-4 text-2xl font-semibold">Stuff I made</h2>
+			<a
+				href="https://legacy.jacobasper.com/"
+				target="_blank"
+				>Check out my first website</a
+			>
+		</section>
+		<section class="py-4">
+			<h2 class="mb-4 text-2xl font-semibold">Follow me on my Socials</h2>
+			<SocialLinks />
+		</section>
+		<section class="py-4">
+			<h2 class="mb-4 text-2xl font-semibold">Pet Zone</h2>
+			<PetImages />
+		</section>
+	</main>
+</BaseLayout>

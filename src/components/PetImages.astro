@@ -1,0 +1,55 @@
+---
+import beatriceAndCricket from '@images/beatrice-and-cricket.webp';
+import cricketNoseScratch from '@images/cricket-nose-scratch.webp';
+import cricketBandana from '@images/cricket-bandana.webp';
+import mituSleep from '@images/mitu-sleep.webp';
+import catFight from '@images/cat-fight.webp';
+import catQueen from '@images/cat-queen.webp';
+
+const images = [
+	{
+		src: beatriceAndCricket.src,
+		caption:
+			'A black cat relaxing on someone wearing yellow pants. Their paw is on a large golden doodle sleeping to their right',
+	},
+	{
+		src: cricketNoseScratch.src,
+		caption:
+			'A large golden doodle with a seatbelt on scratching their nose by moving far to the side, revealing their teeth',
+	},
+	{
+		src: cricketBandana.src,
+		caption:
+			'A large golden doodle with a wonderous expression on their face. They are wearing a halloween collar and a red bandana',
+	},
+	{
+		src: mituSleep.src,
+		caption:
+			'A very relaxed chihuahua sleeping on a couch wearing a pink, purple, and blue sweater',
+	},
+	{
+		src: catFight.src,
+		caption:
+			'Two grey and white cats play fighting on a rug in from of the sun. A black cat is looking up at the camera in front of the rug',
+	},
+	{
+		src: catQueen.src,
+		caption:
+			"A black cat wearing a burger king crown around their torso. They don't seem too bothered",
+	},
+];
+---
+
+{
+	images.map((image) => (
+		<figure class="py-2">
+			<img
+				src={image.src}
+				alt=""
+			/>
+			<figcaption>
+				<p>{image.caption}</p>
+			</figcaption>
+		</figure>
+	))
+}
