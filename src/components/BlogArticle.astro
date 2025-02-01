@@ -23,7 +23,7 @@ const { title, date, updatedDate } = Astro.props;
 	<div class="max-w-prose p-4">
 		<div class="mb-2 py-2 text-center">
 			<h1>{title}</h1>
-			<div class="mb-1 text-foreground-secondary">
+			<div class="text-foreground-secondary mb-1">
 				<FormattedDate date={date} />
 				{
 					updatedDate && (

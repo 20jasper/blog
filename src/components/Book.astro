@@ -14,7 +14,7 @@ const { title, readDate, author, rating } = Astro.props;
 </h4>
 {
 	readDate.start !== null && (
-		<div class="flex flex-col justify-between pt-1 text-foreground-secondary sm:flex-row">
+		<div class="text-foreground-secondary flex flex-col justify-between pt-1 sm:flex-row">
 			<p>
 				<FormattedDateRange
 					start={readDate.start}

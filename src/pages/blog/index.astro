@@ -41,7 +41,7 @@ const posts = (await getCollection('blog')).sort(
 							>
 								<h4 class="leading-none">{post.data.title}</h4>
 							</a>
-							<p class="m-0 pt-2 text-foreground-secondary">
+							<p class="text-foreground-secondary m-0 pt-2">
 								<FormattedDate date={post.data.pubDate} />
 							</p>
 						</li>
