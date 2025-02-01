@@ -1,3 +1,6 @@
+@import 'tailwindcss';
+@config "../../tailwind.config.mjs";
+
 :root {
 	--accent: 255 152 0;
 	--foreground: 241 230 216;

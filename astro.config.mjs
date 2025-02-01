@@ -2,7 +2,7 @@
 import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import tailwind from '@astrojs/tailwind';
+import tailwind from '@tailwindcss/vite';
 import syntaxTheme from './orange-theme';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -32,5 +32,6 @@ export default defineConfig({
 	experimental: {
 		contentIntellisense: true,
 	},
-	integrations: [mdx(), sitemap(), tailwind()],
+	integrations: [mdx(), sitemap()],
+	vite: { plugins: [tailwind()] },
 });
