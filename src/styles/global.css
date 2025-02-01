@@ -1,9 +1,15 @@
-:root {
-	--accent: 255 152 0;
-	--foreground: 241 230 216;
-	--background: 0 0 19;
-	--background-secondary: 48 42 79;
-	--foreground-secondary: 147 147 147;
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+@custom-variant prose-inline-code (&.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)));
+
+@theme {
+	--color-background: rgb(0, 0, 19);
+	--color-foreground: rgb(241, 230, 216);
+	--color-accent: rgb(255, 152, 0);
+	--color-background-secondary: rgb(48, 42, 79);
+	--color-foreground-secondary: rgb(147, 147, 147);
+	--font-sans: 'Arial', 'sans-serif';
 }
 
 a {
@@ -14,7 +20,7 @@ a {
 }
 
 a:hover {
-	color: rgb(var(--accent));
+	color: var(--color-accent);
 }
 
 * {

@@ -2,6 +2,7 @@
 import BaseHead from '@components/BaseHead.astro';
 import Header from '@components/nav/Nav.astro';
 import { NAME } from '@src/consts';
+import '@src/styles/global.css';
 
 type Props = {
 	title: string;
@@ -22,14 +23,14 @@ const today = new Date();
 	/>
 
 	<body
-		class="flex h-screen flex-col bg-background px-4 text-xl text-foreground"
+		class="bg-background text-foreground flex h-screen flex-col px-4 font-sans text-xl"
 	>
 		<Header border="bottom" />
 		<slot />
 		<div class="mt-auto">
 			<Header border="top" />
 			<footer class="p-4">
-				<p class="text-center text-sm text-foreground-secondary">
+				<p class="text-foreground-secondary text-center text-sm">
 					&copy; {today.getFullYear()}
 					{NAME}. &copy; 2020 VSCode Orange Theme <a
 						href="https://marketplace.visualstudio.com/items?itemName=Rax.vscode-orange-theme"
