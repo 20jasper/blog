@@ -12,25 +12,23 @@
 	--font-sans: 'Arial', 'sans-serif';
 }
 
-a {
-	text-decoration: underline;
-	transition:
-		color 0.2s ease,
-		border-bottom-color 0.2s ease;
-}
+@layer base {
+	a {
+		text-decoration: underline;
+		transition:
+			color 0.2s ease,
+			border-bottom-color 0.2s ease;
+	}
 
-a:hover {
-	color: var(--color-accent);
-}
+	a:hover {
+		color: var(--color-accent);
+	}
 
-* {
-	box-sizing: border-box;
-}
+	[data-footnote-ref]::after {
+		content: ']';
+	}
 
-[data-footnote-ref]::after {
-	content: ']';
-}
-
-[data-footnote-ref]::before {
-	content: '[';
+	[data-footnote-ref]::before {
+		content: '[';
+	}
 }
