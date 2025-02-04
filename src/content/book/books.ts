@@ -67,10 +67,10 @@ export const booksStarted: Book[] = [
 		title: 'Asynchronous Programming in Rust',
 		readDate: {
 			start: new Date('2025-1-2'),
-			end: null,
+			end: new Date('2025-2-3'),
 		},
 		author: 'Carl Fredrik Samson',
-		rating: null,
+		rating: 5,
 	},
 	{
 		title: "Professor Frisby's Mostly Adequate Guide to Functional Programming",
@@ -80,6 +80,15 @@ export const booksStarted: Book[] = [
 		},
 		author: 'Brian Lonsdorf',
 		rating: 5,
+	},
+	{
+		title: 'UNIX and Linux System Administration Handbook',
+		author: 'Evi Nemeth, Garth Snyder, Trent Hein, Ben Whaley, and Dan Mackin',
+		readDate: {
+			start: new Date('2025-2-4'),
+			end: null,
+		},
+		rating: null,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
@@ -113,10 +122,6 @@ const toRead: UnreadBook[] = [
 	{
 		title: 'Refactoring UI',
 		author: 'Adam Wathan and Steve Schoger',
-	},
-	{
-		title: 'UNIX and Linux System Administration Handbook',
-		author: 'Evi Nemeth, Garth Snyder, Trent Hein, Ben Whaley, and Dan Mackin',
 	},
 ];
 
