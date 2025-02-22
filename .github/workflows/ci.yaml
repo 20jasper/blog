@@ -28,7 +28,9 @@ jobs:
           node-version-file: '.nvmrc'
           cache: pnpm
       - name: Install dependencies
-        run: GOOGLE_ANALYTICS_ID=${{secrets.GOOGLE_ANALYTICS_ID}} pnpm i
+        env:
+          GOOGLE_ANALYTICS_ID: ''
+        run: pnpm i
       - name: Check formatting
         run: pnpm run format:check
       - name: Lint
