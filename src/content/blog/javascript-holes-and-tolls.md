@@ -7,14 +7,14 @@ description: "Compiler optimizations that you shouldn't worry about but are cool
 Is there a functional difference between the following two code blocks?
 
 ```js
-const array = Array(99).fill(10);
+const array = Array(10).fill(10);
 ```
 
 ```js
-const array = Array.from({ length: 10 }, () => 10);
+const array = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
 ```
 
-If you said "Obviously, the first is written in such a way that v8 cannot perform certain optimizations due to `array` being holey" then you are a big nerd[^touchGrass] or you read ahead in the article. That's creepy, how did you have that specific of an answer ready in such a short time???
+If you said "Obviously, the first is written in such a way that v8 cannot perform certain optimizations due to `array` being holey" then you are a big nerd[^touchGrass] or you read ahead in the article. That's weird, how did you have that specific of an answer ready in such a short time???
 
 [^touchGrass]: This is for you. Please go outside. The sun misses you ![Grass with dew on it](@images/touchGrass.webp)
 
@@ -22,7 +22,7 @@ If you said it's purely stylistic, then you are safely only a medium sized nerd 
 
 ---
 
-**Huge disclaimer—everything I say will be specific to V8, and I do not work on the engine, so I could definitely be very wrong despite any research done for this article**
+**Huge disclaimer—everything I say will be specific to V8, and I do not work on the engine, so take everything with a grain of salt**
 
 ## What's going on here?
 
@@ -49,7 +49,7 @@ The elements kind is `HOLEY_SMI_ELEMENTS` here, meaning the engine marked this a
 Now what about the latter option?
 
 ```js
-d8> %DebugPrint(Array.from({length: 10}, () => 10))
+d8> %DebugPrint([10, 10, 10, 10, 10, 10, 10, 10, 10, 10])
 DebugPrint: 0x3d3700288655: [JSArray]
  - elements: 0x3d3700288665 <FixedArray[10]> [PACKED_SMI_ELEMENTS]
  - length: 10
@@ -65,6 +65,18 @@ DebugPrint: 0x3d3700288655: [JSArray]
 This array has an elements kind of `PACKED_SMI_ELEMENTS`, so v8 can perform some optimizations now that it knows there aren't any missing elements
 
 I'd expect that packed arrays are stored as—well—arrays, and holey arrays are likely stored as hashmaps
+
+Note that it _is_ possible to make a packed array of a certain length without using a literal. For example, the following are all packed
+
+```js
+Array.from({ length: 10 }, () => 10); // PACKED_SMI_ELEMENTS
+
+const arr = [];
+for (let i = 0; i < 10; i++) {
+	arr.push(10);
+}
+// arr is PACKED_SMI_ELEMENTS
+```
 
 ## What is a hole?
 
@@ -232,6 +244,21 @@ Here's a variety of interactions with holes—some ignore them, some remove them
 [,,,,].push(10) // [, , , , 10]
 [,,,].values().next() // {value: undefined, done: false}
 ```
+
+## Not all packed arrays are made equal
+
+Beyond packed and unpacked arrays, arrays can be optimized based on their elements' types
+
+```js
+Array.from({ length: 10 }, () => 10); // PACKED_SMI_ELEMENTS
+Array.from({ length: 10 }).fill(10); // PACKED_ELEMENTS
+```
+
+These seem equivalent, but the second option is suboptimal. `SMI` stands for "small integer," and `ELEMENTS` is a generic element
+
+Since it lacks a `mapFn`, the second array is filled with `undefined`, demoting the array to `PACKED_ELEMENTS`. Like how an unpacked array can never become packed again, the more generic `ELEMENTS` can never become the more specific `SMI`. Filling a `PACKED_ELEMENTS` array does not transition it to `PACKED_SMI_ELEMENTS`
+
+Long story short, create your arrays as specifically as you can, so the engine can help you out the most!
 
 ## What if I have holey arrays in my code right now?!?
 
