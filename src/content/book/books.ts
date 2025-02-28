@@ -19,6 +19,15 @@ export const booksStarted: Book[] = [
 		rating: 5,
 	},
 	{
+		title: 'Learn Bash the Hard Way',
+		readDate: {
+			start: new Date('2025-2-28'),
+			end: null,
+		},
+		author: 'Andy Hunt and Dave Thomas',
+		rating: null,
+	},
+	{
 		title: 'Forget a Mentor, Find a Sponsor',
 		readDate: {
 			start: new Date('2024-10-03'),
