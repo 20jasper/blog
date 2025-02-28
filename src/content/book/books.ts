@@ -82,13 +82,13 @@ export const booksStarted: Book[] = [
 		rating: 5,
 	},
 	{
-		title: 'UNIX and Linux System Administration Handbook',
+		title: 'UNIX and Linux System Administration Handbook (First Half)',
 		author: 'Evi Nemeth, Garth Snyder, Trent Hein, Ben Whaley, and Dan Mackin',
 		readDate: {
 			start: new Date('2025-2-4'),
-			end: null,
+			end: new Date('2025-2-27'),
 		},
-		rating: null,
+		rating: 5,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
