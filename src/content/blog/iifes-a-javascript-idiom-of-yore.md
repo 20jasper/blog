@@ -1,5 +1,5 @@
 ---
-title: 'IIFEs — a JavaScript idiom of yore'
+title: 'IIFEs — a JavaScript Idiom of Yore'
 pubDate: '2025-03-13'
 description: 'IIFEs were very useful back in the day, but modern JavaScript has made them irrelevant'
 ---
