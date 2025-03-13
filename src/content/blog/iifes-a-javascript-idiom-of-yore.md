@@ -1,7 +1,7 @@
 ---
 title: 'IIFEs — a JavaScript idiom of yore'
 pubDate: '2025-03-13'
-description: 'Implement `Pick` in TypeScript without any Utility Types!'
+description: 'IIFEs were very useful back in the day, but modern JavaScript has made them irrelevant'
 ---
 
 I work with lots of legacy code, so IIFEs are my best friend. The build system I work with doesn't allow for modules, so I have to make due with older idioms like our favorite initialism, the IIFE!
