@@ -18,12 +18,11 @@ All of these functions are, as the name suggests, called after they are declared
 (function unnecessarilyNamed { console.log('suspicious') })();
 !(function () { console.log('iife time') })();
 void function () { console.log('fishy 🤔🤔🤔') }(); 
+```
 
 It's pronounced iffy (/ˈɪfi/)[^iifePronunciation], not to be confused with something of dubious authenticity, like your haircut
 
 [^iifePronunciation]: https://en.wiktionary.org/wiki/IIFE
-
-```
 
 Ironically enough, the arguments for using IIFEs nowadays are often quite questionable. In a world without block scoping, top level `await`, or modules, IIFEs are far less relevant
 
