@@ -22,10 +22,10 @@ export const booksStarted: Book[] = [
 		title: 'Learn Bash the Hard Way',
 		readDate: {
 			start: new Date('2025-2-28'),
-			end: null,
+			end: new Date('2025-3-22'),
 		},
 		author: 'Andy Hunt and Dave Thomas',
-		rating: null,
+		rating: 5,
 	},
 	{
 		title: 'Forget a Mentor, Find a Sponsor',
