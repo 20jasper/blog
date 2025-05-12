@@ -76,7 +76,7 @@ export const booksStarted: Book[] = [
 		title: 'Never Eat Alone',
 		readDate: {
 			start: new Date('2025-01-09'),
-			end: null,
+			end: new Date('2025-4-15'),
 		},
 		author: 'Keith Ferrazzi',
 		rating: 4,
@@ -108,6 +108,24 @@ export const booksStarted: Book[] = [
 		},
 		rating: 5,
 	},
+	{
+		title: 'Linchpin',
+		author: 'Seth Godin',
+		readDate: {
+			start: new Date('2025-4-15'),
+			end: null,
+		},
+		rating: null,
+	},
+	{
+		title: 'REST in Practice',
+		author: 'Ian Robinson, Jim Webber, and Savas Parastatidis',
+		readDate: {
+			start: new Date('2025-4-15'),
+			end: null,
+		},
+		rating: null,
+	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
 type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
@@ -119,10 +137,6 @@ const toRead: UnreadBook[] = [
 	{
 		title: 'Pragmatic Type-Level Design',
 		author: 'Alexander Granin',
-	},
-	{
-		title: 'Linchpin',
-		author: 'Seth Godin',
 	},
 	{
 		title: 'Seven Habits of Highly Effective People',
