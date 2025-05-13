@@ -113,9 +113,9 @@ export const booksStarted: Book[] = [
 		author: 'Seth Godin',
 		readDate: {
 			start: new Date('2025-4-15'),
-			end: null,
+			end: new Date('2025-5-11'),
 		},
-		rating: null,
+		rating: 4,
 	},
 	{
 		title: 'REST in Practice',
@@ -124,7 +124,25 @@ export const booksStarted: Book[] = [
 			start: new Date('2025-4-15'),
 			end: null,
 		},
+		rating: 4,
+	},
+	{
+		title: 'Seven Habits of Highly Effective People',
+		author: 'Stephen Covey',
+		readDate: {
+			start: new Date('2025-5-12'),
+			end: null,
+		},
 		rating: null,
+	},
+	{
+		title: 'DNS and BIND',
+		author: 'Cricket Liu and Paul Albitz',
+		readDate: {
+			start: new Date('2025'),
+			end: new Date('2025-3-19'),
+		},
+		rating: 5,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
@@ -137,10 +155,6 @@ const toRead: UnreadBook[] = [
 	{
 		title: 'Pragmatic Type-Level Design',
 		author: 'Alexander Granin',
-	},
-	{
-		title: 'Seven Habits of Highly Effective People',
-		author: 'Stephen Covey',
 	},
 	{
 		title: 'The Way of the Shepherd',
