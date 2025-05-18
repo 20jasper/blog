@@ -140,7 +140,7 @@ export type And<T extends boolean, U extends boolean> = T extends true
 
 Remember that `extends` means `T` must be assignable to `boolean`, so `boolean`, `true`, `false`, or `never`[^neverUnion] will be valid here, though we'll pass only the literals `true` and `false` in our case
 
-[^neverUnion]: `never` is a part of every union. For example, `string` is technically `string` | `never`
+[^neverUnion]: `never` is a part of every union. For example, `string` is technically `string | never`
 
 </details>
 
@@ -515,7 +515,9 @@ I started down this rabbithole after being challenged to do a CodeWars on the sa
 
 CodeWars uses an older version of TypeScript with a lower recursion limit, so I had to do more shenanigans to get it working
 
-For reference, I've read the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) and have been doing similar code challenges including from the [TypeScript Type Challenges](https://github.com/type-challenges/type-challenges) repo, advent of TypeScript, and so on for a few years now
+For reference, I've read the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) and have been doing similar code challenges including from the [TypeScript Type Challenges](https://github.com/type-challenges/type-challenges)[^add] repo, advent of TypeScript, and so on for a few years now
+
+[^add]: Add is an example in the extreme challenge!
 
 My first blog from 2 years and 4 months ago—[Implement `Pick` in TypeScript](https://jacobasper.com/blog//implement-pick-in-typescript/)—was on the same topic!
 
