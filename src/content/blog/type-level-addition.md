@@ -12,7 +12,7 @@ Ok, now let's get into it!
 
 ## No JavaScript Allowed
 
-This will be done entirely on the type level at compile time—there will be no runtime representation
+We'll work entirely on the type level—there will be no runtime representation
 
 ```ts
 // absolutely not
@@ -31,25 +31,19 @@ Note that the syntax `// ^?` is a twoslash, which shows what each type resolves 
 
 We'll use practical pieces to build something impractical—I'll show just how impractical at the end!
 
-- Not useful on its own
-- Good to get an understanding of the Type System
-- It's fun stop judging me
+It's great to get a better handle on the TypeScript type system or push the boundaries if you're a big nerd like me
+
+Plus it's fun—stop judging me 😡
 
 ## Who's this talk for?
 
-To fully understand this, you'd need to have doven deep into TypeScript metaprogramming, maybe writing a library requiring complex types or doing type challenges for the sake of it. This is more of a proof of concept rather than something to be fully understood, so don't fret if you don't fit the above criteria.
-
-Ideally you have the following
-
-- some programming fundamentals
-- would be nice to have some experience with a typed language, but not required
-- it's expected most won't understand everything! Come along for the ride!
+To fully understand, you'd need to have doven deep into TypeScript metaprogramming, maybe writing a library or doing type challenges for the sake of it. Don't fret if you're not a pro!
 
 ## Agenda
 
 These are the building blocks we'll need to eventually build up to type level addition
 
-I list these here since it's tough to find more information on these without the correct terminology. If you look up "how to find the last item of a TypeScript array type," you'll only find runtime examples like `arr.at(-1)` and `arr[arr.length - 1]`. If you write "how to find the last item of a TypeScript tuple type," you'll get the type level version!
+It's tough to find more information without the correct terminology. If you look up "how to find the last item of a TypeScript array type," you'll only find runtime examples like `arr.at(-1)` and `arr[arr.length - 1]`. If you write "how to find the last item of a TypeScript tuple type," you'll get the type version!
 
 - generics/generic constraints
 - conditionals
@@ -63,7 +57,7 @@ I list these here since it's tough to find more information on these without the
 
 Generics are type level parameters—we can derive one type from another. In this case, they stop us from needing to create a new type and function for every item that could be held in an array. Instead of `StringArray`, `NumberArray` and `NumberAndStringArray`, we can have an `Array<T>` where `T` is any type
 
-JavaScript arrays don't directly act on the items inside, so there's no need to reimplement `pop` or `push` for each element type
+JavaScript arrays don't care about the implementation of their items, so there's no need to reimplement `pop` or `push` for each element type
 
 ```ts
 type MyArray<T> = {
@@ -78,9 +72,9 @@ type SlushyMaker<Flavor> = {
 
 ## TypeScript input types
 
-Before moving on, why do we care about types in the first place?
+Why do we care about types?
 
-They are used when we care about some property of the input. In this case, we want to add two numbers as opposed to concatenating or throwing like if we allowed any type of data
+They are used when we care about some property of the input. In this case, we want to add two numbers as opposed to string concatenating for example
 
 ```ts
 const add = (x: number, y: number): number => x + y;
@@ -88,7 +82,7 @@ const add = (x: number, y: number): number => x + y;
 
 ## Generic Constraints
 
-This same concept applies on the type level, for example, we may care that a type has a length property or indexable by a string
+This same concept applies on the type level—for example, we may care that a type has a length property or is indexable by a string
 
 `SlushyFlavor` is a sum type here, meaning it can be one of `"Lemonade"`, `"Orange Fanta"` or so on.
 
@@ -180,7 +174,7 @@ The generic constraint is required to let TypeScript know we can spread this typ
 
 ## Infer
 
-In conditional types, we can extract types with `infer`. `infer` is only usable in a conditional—the `false` branch is unreachable since `T` is constrained to arrays. `never` is an arbitrary value since we need _something_ there
+In conditional types, we can extract types with `infer`. `infer` is only usable in a conditional—the `false` branch returning `never` is unreachable since `T` is constrained to arrays
 
 ```ts
 type Element<T extends unknown[]> = T extends Array<infer Item> ? Item : never;
@@ -216,7 +210,7 @@ type LastExampleEmpty = Last<[], 42>;
 
 <details>
 
-<summary>Make a type that takes in a tuple and returns a copy without the last element</summary>
+<summary>Make a type taking in a tuple and returning a copy without the last element</summary>
 
 This is almost exactly the same as our `Last` example, but we keep the start of the tuple instead of the end
 
@@ -238,7 +232,7 @@ Make a type that takes in two numbers and returns their sum
 
 ### Adding Small Numbers
 
-This could be done with an addition table like the following. `Table[1][1]` would give us `2`
+This could be done with an addition table. `Table[1][1]` would give us `2`
 
 ```ts
 type Table = [
@@ -289,7 +283,7 @@ There is a limitation of 999 items per tuple with this method before hitting the
 
 Since we can't add numbers larger than 999, we need to take matters into our own hands and go back to grade school. I'm sorry to say, but in addition to programming fundamentals, we need to know how to do basic arithmetic as well
 
-We need to add left to right, and if the sum of a column is greater than 10, we must carry over the 10s place and leave the 1s place behind
+We need to add left to right. If the sum of a column is greater than 10, we carry the 10s place and leave the 1s place behind
 
 ```math
 \begin{array}{cc}
@@ -302,7 +296,7 @@ We need to add left to right, and if the sum of a column is greater than 10, we 
 
 To add 15 and 6. First, we add 5 and 6
 
-This adds to 11, so we take the 1 from the tens place and carry it over to the next calculation and leave behind the 1 from the ones place
+This adds to 11, so we take the 1 from the tens place and carry it over. The 1 from the ones place goes into the resultant ones column
 
 ```math
 \begin{array}{cc}
@@ -348,7 +342,7 @@ func add(num1, num2) {
 
 ### Split into digits
 
-I recommend looking at these implementations one by one, they can be a bit much to look at. You have everything you need to understand them, but the syntax can be overwhelming
+I recommend looking at these implementations one by one—they can be a bit much to look at. You have everything you need to understand them, but the syntax can be overwhelming
 
 <details>
 <summary>Convert a number into its individual digits</summary>
@@ -425,7 +419,7 @@ type GetDigitExample1 = GetDigit<12>;
 
 Remember, there's no for loop in the type level, we must use recursion
 
-The base case is when no more to add from either number or the carry
+The base case is when there are no more numbers to add
 
 ```ts
 And<
