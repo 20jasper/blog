@@ -88,12 +88,11 @@ const add = (x: number, y: number): number => x + y;
 
 ## Generic Constraints
 
-This same concept applies on the type level, for example, we may care that a type has a length property or that its indexable by a string
+This same concept applies on the type level, for example, we may care that a type has a length property or indexable by a string
 
-SlushyFlavor is a sum type here, meaning it can be one of `"Lemonade"`, `"Orange Fanta"` or so on. Beans flavor isn't supported, so the consumer of our API gets feedback through a type error
+`SlushyFlavor` is a sum type here, meaning it can be one of `"Lemonade"`, `"Orange Fanta"` or so on.
 
-- constraints show we care about certain properties of a type
-- extends means left type must be assignable to the right
+`extends` requires that the left type must be assignable to the right. `"beans"` is not assignable to `SlushyFlavor`, so the consumer of our API gets feedback through a type error
 
 ```ts
 type SlushyFlavor =
@@ -113,7 +112,7 @@ type BeansSlushyMaker = SlushyMaker<'beans'>;
 
 ## Conditionals
 
-There is no if statement on the type level—conditionals are done via ternary expressions. However, instead of taking a boolean expression, they instead check if a type is assignable to another just like when we constrain generics
+There is no if statement on the type level—conditionals are done via ternary expressions. However, instead of taking a boolean expression, they check if a type is assignable to another—just like generic constraints
 
 ```ts
 type SlushyFlavor =
@@ -131,7 +130,11 @@ type IsDelicious<T extends SlushyFlavor> = T extends 'Peach' ? false : true;
 Pay attention to all these examples—we'll be using them in our final result!
 
 <details>
-<summary>Code a type `And` that takes in two booleans and returns `true` if both are `true` and false otherwise</summary>
+<summary>
+Code a type <code>And</code> that takes in two booleans and returns <code>true</code> if both are <code>true</code> and <code>false</code> otherwise
+</summary>
+
+If `T` and `U` are both the literal `true`, then `true` will be returned
 
 ```ts
 export type And<T extends boolean, U extends boolean> = T extends true
@@ -141,11 +144,13 @@ export type And<T extends boolean, U extends boolean> = T extends true
 	: false;
 ```
 
+Remember that `extends` means `T` must be assignable to `boolean`, so `boolean`, `true`, `false`, or `never` will be valid here, though we'll pass only the literals `true` and `false` in our case
+
 </details>
 
 ## Mapped Types
 
-Mapped types allow us to modify values in an object. Similar to runtime JavaScript, tuples are also mappable, as they have numeric keys
+Mapped types allow us to loop through object keys and change their values. Similar to runtime JavaScript, tuples act as objects with numeric keys, so they can be mapped with the same helper
 
 ```ts
 type Cheesify<T> = {
@@ -165,19 +170,17 @@ type CheesifiedTuple = Cheesify<[1, 2]>;
 
 Variadic tuples are very similar to the spread operator in JavaScript (`...`). For example, we can take two tuples and concatenate them like so
 
-The generic constraint is required to let TypeScript know we can spread this type
-
 ```ts
 type Concat<T extends unknown[], U extends unknown[]> = [...T, ...U];
 type Delicious = Concat<['garlic'], ['bread', 'is', 'scrumptious']>;
 //   ^? ["garlic", "bread", "is", "scrumptious"]
 ```
 
+The generic constraint is required to let TypeScript know we can spread this type
+
 ## Infer
 
-In conditional types, we can extract types with `infer`. `never` is the TS bottom type, and should never be reached here. `infer` can only be used in conditionals, so this value is ultimately arbitrary
-
-`infer` has a _lot_ of use cases beyond this
+In conditional types, we can extract types with `infer`. `infer` is only usable in a conditional—the `false` branch is unreachable since `T` is constrained to arrays. `never` is an arbitrary value since we need _something_ there
 
 ```ts
 type Element<T extends unknown[]> = T extends Array<infer Item> ? Item : never;
@@ -186,11 +189,13 @@ type Num = Element<number[]>;
 //   ^? number
 ```
 
+`infer` has a _lot_ of use cases beyond this, and we'll explore a few more in this article!
+
 ## Last
 
 Combining variadic tuple types and `infer`, we can grab the last item in a tuple
 
-This can also get the last character in a string as well, albeit with different syntax
+The default of `0` will come in handy later!
 
 ```ts
 export type Last<T extends unknown[], Default = 0> = T extends [
@@ -205,20 +210,24 @@ type LastExampleEmpty = Last<[], 42>;
 //   ^? 42
 ```
 
+`infer` can also get the last character in a string as well, albeit with different syntax
+
 ## Exercise 2 - Pop
 
 <details>
 
 <summary>Make a type that takes in a tuple and returns a copy without the last element</summary>
 
+This is almost exactly the same as our `Last` example, but we keep the start of the tuple instead of the end
+
 ```ts
 export type Pop<T extends unknown[]> = T extends [...infer Head, infer _]
 	? Head
 	: [];
 type PopExample = Pop<[1, 2, 3, 4]>;
-//   ^?
+//   ^? [1, 2, 3]
 type PopExampleEmpty = Pop<[]>;
-//   ^?
+//   ^? []
 ```
 
 </details>
@@ -229,10 +238,10 @@ Make a type that takes in two numbers and returns their sum
 
 ### Adding Small Numbers
 
-This could be done with an addition table like the following
+This could be done with an addition table like the following. `Table[1][1]` would give us `2`
 
 ```ts
-[
+type Table = [
   [0, 1, ...],
   [1, 2, ...],
   ...
@@ -241,12 +250,30 @@ This could be done with an addition table like the following
 
 For our implementation, we'll instead use the `length` property on tuples
 
+We can make two tuples and combine them together and get the new length at the end!
+
+<details>
+<summary>Tuple of length <code>N</code></summary>
+
+We must use recursion to loop `N` times since there is no native looping construct like a `for` or `while` loop in the type system.
+
+If the length of the resultant tuple is `N`, then stop recursing. If not, add an arbitrary value to the tuple, in this case `never`.
+
 ```ts
 type TupleLengthN<
 	N extends number,
 	T extends never[] = [],
 > = N extends T['length'] ? T : TupleLengthN<N, [...T, never]>;
+```
 
+</details>
+
+<details>
+<summary>Add digits</summary>
+
+Now that we can create tuples of arbitrary length, we can concatenate them and grab the new length
+
+```ts
 export type AddDigits<M extends number, N extends number> = [
 	...TupleLengthN<M>,
 	...TupleLengthN<N>,
@@ -254,7 +281,9 @@ export type AddDigits<M extends number, N extends number> = [
 	number;
 ```
 
-There is a limitation of 999 items per tuple with this method before hitting the recursion limit
+There is a limitation of 999 items per tuple with this method before hitting the recursion limit, so we'll need to find another approach. We likely could manually make a huge addition table, but that's no fun!
+
+</details>
 
 ### Manual Adding
 
@@ -324,6 +353,8 @@ I recommend looking at these implementations one by one, they can be a bit much 
 <details>
 <summary>Convert a number into its individual digits</summary>
 
+We'll see implementation details for `MapNums` and `Split` soon—don't worry about them for now
+
 ```ts
 export type Digits<T extends NumLike> = MapNums<Split<`${T}`>>;
 type DigitsExample = Digits<289>;
@@ -334,6 +365,8 @@ type DigitsExample = Digits<289>;
 
 <details>
 <summary>Split a string into an array of its characters</summary>
+
+This is very similar to splitting up our tuples, but with some new syntax to handle strings!
 
 ```ts
 export type Split<S extends string> = S extends `${infer Head}${infer Rest}`
@@ -378,6 +411,7 @@ type GetCarryExample1 = GetCarry<12>;
 
 <details>
 <summary>Get last digit of a number</summary>
+This could be implemented similarly to <code>GetCarry</code>, but this is pretty elegant, so why not!
 
 ```ts
 export type GetDigit<T extends number> = ToNumber<Last<Split<`${T}`>>>;
@@ -389,7 +423,7 @@ type GetDigitExample1 = GetDigit<12>;
 
 ### Looping
 
-There's no for loop in the type level, we must use recursion
+Remember, there's no for loop in the type level, we must use recursion
 
 The base case is when no more to add from either number or the carry
 
@@ -400,12 +434,14 @@ And<
 > extends true
 ```
 
-This is the most complex the code will get—take some time to understand what it's doing
+This following is the most complex the code will get—take some time to understand what it's doing
 
 <details>
 <summary>Recursive Adder Implementation</summary>
 
 `Sum` is set as a default to mimic a variable in JavaScript—it could be directly in the code, but it looks nicer this way
+
+If there's no more numbers to add, end. If there are, add the ones place to the resultant tuple and continue on with the carry and pop from the 2 num arrays
 
 ```ts
 type Adder<
@@ -424,6 +460,8 @@ type AdderExample = Adder<[9, 2, 3, 4], [5, 4, 3, 2]>;
 //   ^? [1, 4, 6, 6, 6]
 ```
 
+Got it? I understand if not, this is a lot to get through 😅
+
 </details>
 
 ### Joining the result
@@ -439,10 +477,10 @@ export type Add<M extends NumLike, N extends NumLike> =
 		: never;
 ```
 
-You may see a wacky `extends infer R extends number[]` in there, this is done to get around the recursion/type instantiation depth limit. How exactly does this work? I'm not quite sure, but it's necessary with this implementation at least
+You may see a wacky `extends infer R extends number[]` in there, this is done to get around the recursion/type instantiation depth limit
 
 With this, you can add numbers up until 64 bit floating point numbers can accurately describe them!
-Maybe if we used BigInts we could go even further!
+Maybe if we used `BigInt`s we could go even further!
 
 ### Let's take a look at the code!
 
@@ -450,9 +488,7 @@ Maybe if we used BigInts we could go even further!
 
 ## But could you actually use this in a codebase?
 
-Yes, but should you?
-
-It only works well if you know the literal type
+Yes, but should you? It only works well if you know the literal type
 
 You can either know the type at compile time
 
@@ -475,18 +511,14 @@ if (num === 10) {
 }
 ```
 
-## Resources
-
-- [TypeScript Type Challenges](https://github.com/type-challenges/type-challenges) where Add is indeed a challenge in the extreme section!
-- [TypeScript: Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [TypeScript types can run DOOM - YouTube](https://youtu.be/0mCsluv5FXA) (WASM runtime in TS)
-
 ---
 
-I found Add as a 4kyu code challenge on CodeWars after someone challenged me to do it, and I said it couldn't be _that_ hard. It ended up taking me 4 hours 😅
+I started down this rabbithole after being challenged to do a CodeWars on the same topic. I said it couldn't be _that_ hard. It ended up taking me 4 hours 😅
 
-CodeWars uses an older version of TypeScript with a lower recursion limit, so I had to do more shenanigans to get it working. I did all this with the latest version as of writing
+CodeWars uses an older version of TypeScript with a lower recursion limit, so I had to do more shenanigans to get it working
 
-For reference, I've been doing similar code challenges including from the TypeScript Type Challenges repo, advent of TypeScript, and so on for a few years now
+For reference, I've read the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) and have been doing similar code challenges including from the [TypeScript Type Challenges](https://github.com/type-challenges/type-challenges) repo, advent of TypeScript, and so on for a few years now
 
-I decided to give a talk on this after realizing that most TypeScript devs haven't gone this deep with it and it's always fun to see how far things can go!
+My first blog from 2 years and 4 months ago—[Implement `Pick` in TypeScript](https://jacobasper.com/blog//implement-pick-in-typescript/)—was on the same topic!
+
+Thanks for coming along this journey with me, and hopefully I'll see you soon!
