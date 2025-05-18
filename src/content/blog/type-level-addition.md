@@ -70,11 +70,9 @@ type SlushyMaker<Flavor> = {
 };
 ```
 
-## TypeScript input types
+## Why do we care about types?
 
-Why do we care about types?
-
-They are used when we care about some property of the input. In this case, we want to add two numbers as opposed to string concatenating for example
+Types are used when we care about some property of the input. In this case, we want to add two numbers as opposed to string concatenating for example
 
 ```ts
 const add = (x: number, y: number): number => x + y;
@@ -84,9 +82,7 @@ const add = (x: number, y: number): number => x + y;
 
 This same concept applies on the type level—for example, we may care that a type has a length property or is indexable by a string
 
-`SlushyFlavor` is a sum type here, meaning it can be one of `"Lemonade"`, `"Orange Fanta"` or so on.
-
-`extends` requires that the left type must be assignable to the right. `"beans"` is not assignable to `SlushyFlavor`, so the consumer of our API gets feedback through a type error
+`SlushyFlavor` is a sum type, meaning it can be one of `"Lemonade"`, `"Orange Fanta"` or so on.
 
 ```ts
 type SlushyFlavor =
@@ -95,7 +91,11 @@ type SlushyFlavor =
 	| 'Mountain Dew'
 	| 'Motor Oil'
 	| 'Peach';
+```
 
+`extends` requires that the left type must be assignable to the right. `"beans"` is not assignable to `SlushyFlavor`, so the consumer of our API gets feedback through a type error
+
+```ts
 type SlushyMaker<Flavor extends SlushyFlavor> = {
 	makeSlushy: (flavor: Flavor) => Slushy<Flavor>;
 };
@@ -106,7 +106,7 @@ type BeansSlushyMaker = SlushyMaker<'beans'>;
 
 ## Conditionals
 
-There is no if statement on the type level—conditionals are done via ternary expressions. However, instead of taking a boolean expression, they check if a type is assignable to another—just like generic constraints
+There is no if statement on the type level—conditionals are done via ternary expressions. However, instead of operating on a boolean expression, they check if a type is assignable to another—just like generic constraints
 
 ```ts
 type SlushyFlavor =
@@ -138,13 +138,15 @@ export type And<T extends boolean, U extends boolean> = T extends true
 	: false;
 ```
 
-Remember that `extends` means `T` must be assignable to `boolean`, so `boolean`, `true`, `false`, or `never` will be valid here, though we'll pass only the literals `true` and `false` in our case
+Remember that `extends` means `T` must be assignable to `boolean`, so `boolean`, `true`, `false`, or `never`[^neverUnion] will be valid here, though we'll pass only the literals `true` and `false` in our case
+
+[^neverUnion]: `never` is a part of every union. For example, `string` is technically `string` | `never`
 
 </details>
 
 ## Mapped Types
 
-Mapped types allow us to loop through object keys and change their values. Similar to runtime JavaScript, tuples act as objects with numeric keys, so they can be mapped with the same helper
+Mapped types allow us to loop through object keys and change their values. Similar to JavaScript, tuples types act as objects with numeric keys, so they can be mapped equivalently
 
 ```ts
 type Cheesify<T> = {
@@ -212,7 +214,7 @@ type LastExampleEmpty = Last<[], 42>;
 
 <summary>Make a type taking in a tuple and returning a copy without the last element</summary>
 
-This is almost exactly the same as our `Last` example, but we keep the start of the tuple instead of the end
+This is almost exactly the same as our `Last` example, but we keep the starting elements
 
 ```ts
 export type Pop<T extends unknown[]> = T extends [...infer Head, infer _]
@@ -478,7 +480,9 @@ Maybe if we used `BigInt`s we could go even further!
 
 ### Let's take a look at the code!
 
-[Take a look through the GitHub Repo](https://github.com/nvaccess/nvda/issues/17667) if you're so inclined!
+[Take a look through the GitHub Repo](https://github.com/20jasper/type-level-addition) if you're so inclined!
+
+[Play around with the code in a TypeScript Playground](https://www.typescriptlang.org/play/?#code/KYDwDg9gTgLgBDAnmYcAqEByBXAtgI2CgB4BlOUGYAOwBMBnOemKAS2oHMA+OAXjnKUaDOAAMAJAG92AMyJxMFEFTqNqeQlAC+ogLAAoOHAD8Cg0YBccasABuRANwGkKdFg1EAoiACGuMAA2qPwYOARExABEAIwATADMkVxO+gD0qUZwAHrGBgagkLAIyKgAMj7MxGhKKiLY1ADW1BAA7tQA2gC6ADRwACLAMj7YAfD8AAw8ITXCjO3mcAB0y7LyAPrdC6tQcKUGnQume4ZwVgNDIzApLmUVMN5+gcG7d8Tt0b2xvfG9ACydyQM6UyOWcJRezAe-iCnn8SD4EJgbx6cF+sUBaQyRlB+ny4Gg8BucAAChAwFUZqo4PUmq0OgCEdUhFT2stFts4AAJYA+Wi9DlrA4nUzc3kLKxda7g0lgKFPBEyt4fOBfOA-VEAlLA7G5fREmVymFwxAKsnIjHa7K6vGFQnggCyPjAYXoFOZImYbE4XSmcEkC3aAGk4Ow4A1gIgIDJ0J0rKEPCQ0EHNQYtFLXI7nXh6IbnpmXW8YpFepFYsW4JFEinMSDrfoCgTiq5SIFWEjBMpZkwWOxuAiO7VGBJpNQ5DtRbQtFIOQAlYDMHSHODtCe9NktgJt4hz5hcIWWZeddOoDdt3P91tImIJX4AViSWqxVrBzcvudhYHh-FPV4fQKfOI2o2RIAFIQOwbqdlS6jhFAPqMpSIjzCcHITohagJpsJxsrO87wO6GGwV0+xLsOE5TpIYEQTuMBcIuJxWJEkTHnAVHUOe-BsUqnzfH81aWoB9b4kURIAIJ0JBg5wPgEAQEEPjUL0ACq6HSbJ8nUL6TJQSILDYMAS4qQRCBQPpCxGKYekGScB5DAE9DWbZPj2cALHibQuZoKZzzucQVm9FZFoAbqYl0LmABizkOQivn+XAdkOUFtYvqg7m5gAQhAMAABaRS5MUSQlwC9EVSU6nkQm2k2qBhKUrDhgiMGaHAAA+0msBw7DwG1nq9ikQEieCfQdW2rraVJtX1cAvr5tmZCXsQw5oDoXAYkSw2dTAOa+NCzwbaNxCxAAHAAnPEx1lc+epDSNW25qQPacAi+1bVEcTxHef41uV12uC922PEE6UdQAktQYz9LdrrvXeABsADsp2aY+yW4r9qBoNgTylDQHA5ZgxALIoxlNUQWFGONXY2PYcGdAixH6L6xM6YwSaREEnA5ZEdOmNUcZY0EOOc9lBOYL0rLLGgvTU0Q1YDXariibQtD-cQ9qqaTUC9MzUma76yFGGymPY7j+Nq1w5NLJLAvAELeMi8QmBcPs7Ts6b2Xc3AABkCya25yv-RxcBKyrUPECdEe9BHkwo5kV3y9VcAAOLADAADCPhQFAiCSVTCZTAsS06Kpw4cmnFEChXo7rMXvPuLBxBpzwVjjCxKfp5n2e5tECLtxnWc53El04kSfed4guaxL3qf99n4fD3WDaDa47cvbn0H54y9eaMQ5SVD+i1SMtoirWt4Kr7d3fTzAa9D7HV2j6nL2T9fa8nQvFVEiD9AAFpEBA68RB6wQsZcYJgTL6VOPFKKrlP7ghDhEImeAe4kwTF0S2YQp6oKIj0BYs8TSgNanAHuExLakDwBrBMMUA5h3wb0EOqs95IjCNEC2iJHZ4HRKtAwvpfILF8t-P+UAAEsNdhze23M2GCP-hw3AsQxHu0kRbBY0jhGN3Hs7RmqkrJLgZgeCWiwEEkEVCwthJjOFsLHgPMgeBVq9AvptGxuA9z+1oF4Ha8p+BGLeCdHiao+Li1vH8XiKp+LBQqkvBWqVlZq1UpNcM2s4l4DquGXhytEEnFVvaZRmSw5Ox4apWclCcFLnjA3LiM5uEMWsHYRwcDFbKyvl4mJN4Ei+JVB9BI4xum-Eug-eBjSPFBCns02g4deh33-HHEeAyPJDOAPEahYzo6KQrHEL6lorRAA)
 
 ## But could you actually use this in a codebase?
 
