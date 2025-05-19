@@ -136,6 +136,15 @@ export const booksStarted: Book[] = [
 		rating: null,
 	},
 	{
+		title: 'Joy of React',
+		author: 'Josh Comeau',
+		readDate: {
+			start: new Date('2025-5-11'),
+			end: null,
+		},
+		rating: null,
+	},
+	{
 		title: 'DNS and BIND',
 		author: 'Cricket Liu and Paul Albitz',
 		readDate: {
