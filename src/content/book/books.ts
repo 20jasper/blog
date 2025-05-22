@@ -136,13 +136,13 @@ export const booksStarted: Book[] = [
 		rating: null,
 	},
 	{
-		title: 'Joy of React',
+		title: "Joy of React (not a book but I dont' care)",
 		author: 'Josh Comeau',
 		readDate: {
 			start: new Date('2025-5-11'),
 			end: null,
 		},
-		rating: null,
+		rating: 5,
 	},
 	{
 		title: 'Effective Rust',
