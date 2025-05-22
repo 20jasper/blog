@@ -148,8 +148,17 @@ export const booksStarted: Book[] = [
 		title: 'DNS and BIND',
 		author: 'Cricket Liu and Paul Albitz',
 		readDate: {
-			start: new Date('2025'),
+			start: new Date('2025-3-01'),
 			end: new Date('2025-3-19'),
+		},
+		rating: 5,
+	},
+	{
+		title: 'Effective Rust',
+		author: 'David Drysdale',
+		readDate: {
+			start: new Date('2025-5-20'),
+			end: null,
 		},
 		rating: 5,
 	},
