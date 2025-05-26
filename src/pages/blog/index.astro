@@ -1,14 +1,10 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION, ATOM_PATH, RSS_PATH } from '@src/consts';
-import { getCollection } from 'astro:content';
 import FormattedDate from '@components/date/FormattedDate.astro';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { getPostsDescending } from '@src/utils/posts';
 
-import { Order } from 'effect';
-
-const posts = (await getCollection('blog')).sort(
-	Order.mapInput(Order.reverse(Order.Date), ({ data }) => data.pubDate),
-);
+const posts = await getPostsDescending();
 ---
 
 <BaseLayout

@@ -1,4 +1,3 @@
-import { getCollection } from 'astro:content';
 import {
 	SITE_TITLE,
 	SITE_DESCRIPTION,
@@ -8,11 +7,12 @@ import {
 } from '@src/consts';
 import { Feed } from 'feed';
 import { cache } from '@src/utils/cache';
+import { getPostsDescending } from '@src/utils/posts';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
 
 export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
-	const posts = await getCollection('blog');
+	const posts = await getPostsDescending();
 
 	const feed = new Feed({
 		title: SITE_TITLE,
