@@ -1,14 +1,10 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
-import { getCollection } from 'astro:content';
+import { SITE_TITLE, SITE_DESCRIPTION, ATOM_PATH, RSS_PATH } from '@src/consts';
 import FormattedDate from '@components/date/FormattedDate.astro';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { getPostsDescending } from '@src/utils/posts';
 
-import { Order } from 'effect';
-
-const posts = (await getCollection('blog')).sort(
-	Order.mapInput(Order.reverse(Order.Date), ({ data }) => data.pubDate),
-);
+const posts = await getPostsDescending();
 ---
 
 <BaseLayout
@@ -26,7 +22,12 @@ const posts = (await getCollection('blog')).sort(
 				My goal is to be weird. We need more blogs with personality out here.
 				Don't be scared to be different—be weird
 			</p>
-			<a href="/blog/rss.xml">Subscribe to my RSS feed</a>
+			<p>
+				<a href={ATOM_PATH}>Subscribe to my atom feed</a>
+			</p>
+			<p>
+				<a href={RSS_PATH}>Subscribe to my RSS feed</a>
+			</p>
 		</section>
 
 		<section class="py-4">
