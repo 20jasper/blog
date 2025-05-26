@@ -1,5 +1,11 @@
 import { getCollection } from 'astro:content';
-import { SITE_TITLE, SITE_DESCRIPTION, RSS_PATH, ATOM_PATH } from '@src/consts';
+import {
+	SITE_TITLE,
+	SITE_DESCRIPTION,
+	RSS_PATH,
+	ATOM_PATH,
+	NAME,
+} from '@src/consts';
 import { Feed } from 'feed';
 import { cache } from '@src/utils/cache';
 
@@ -17,10 +23,9 @@ export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
 			atom: `${baseUrl}${ATOM_PATH}`,
 			rss: `${baseUrl}${RSS_PATH}`,
 		},
-		// TODO fix
-		copyright: 'Jacob Asper',
+		copyright: `&copy; ${new Date().getFullYear()} ${NAME}. All Rights Reserved`,
 		author: {
-			name: 'Jacob Asper',
+			name: NAME,
 			email: 'jacobasper191@gmail.com',
 		},
 	});

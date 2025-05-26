@@ -11,7 +11,6 @@ type Props = {
 };
 
 const { math, title, description } = Astro.props;
-const today = new Date();
 ---
 
 <!doctype html>
@@ -31,7 +30,7 @@ const today = new Date();
 			<Header border="top" />
 			<footer class="p-4">
 				<p class="text-foreground-secondary text-center text-sm">
-					&copy; {today.getFullYear()}
+					&copy; {new Date().getFullYear()}
 					{NAME}. &copy; 2020 VSCode Orange Theme <a
 						href="https://marketplace.visualstudio.com/items?itemName=Rax.vscode-orange-theme"
 						>Rax Team</a
