@@ -38,6 +38,12 @@ const { math, title, description } = Astro.props;
 		title={SITE_TITLE}
 		href={new URL('/blog/rss.xml', Astro.site)}
 	/>
+	<link
+		rel="alternate"
+		type="application/atom+xml"
+		title={SITE_TITLE}
+		href={new URL('/blog/atom.xml', Astro.site)}
+	/>
 
 	<!-- Canonical URL -->
 	<link
