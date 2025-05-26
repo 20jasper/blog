@@ -122,7 +122,7 @@ export const booksStarted: Book[] = [
 		author: 'Ian Robinson, Jim Webber, and Savas Parastatidis',
 		readDate: {
 			start: new Date('2025-4-15'),
-			end: null,
+			end: new Date('2025-5-20'),
 		},
 		rating: 4,
 	},
@@ -136,7 +136,7 @@ export const booksStarted: Book[] = [
 		rating: null,
 	},
 	{
-		title: "Joy of React (not a book but I dont' care)",
+		title: 'Joy of React',
 		author: 'Josh Comeau',
 		readDate: {
 			start: new Date('2025-5-11'),
@@ -147,6 +147,15 @@ export const booksStarted: Book[] = [
 	{
 		title: 'Effective Rust',
 		author: 'David Drysdale',
+		readDate: {
+			start: new Date('2025-5-20'),
+			end: null,
+		},
+		rating: 5,
+	},
+	{
+		title: 'Learn System Design in a Hurry',
+		author: 'hellointerview.com',
 		readDate: {
 			start: new Date('2025-5-20'),
 			end: null,
@@ -177,6 +186,10 @@ const toRead: UnreadBook[] = [
 	{
 		title: 'Refactoring UI',
 		author: 'Adam Wathan and Steve Schoger',
+	},
+	{
+		title: 'Testing JavaScript',
+		author: 'Kent C. Dodds',
 	},
 ];
 
