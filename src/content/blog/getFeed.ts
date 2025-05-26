@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
+import { SITE_TITLE, SITE_DESCRIPTION, RSS_PATH, ATOM_PATH } from '@src/consts';
 import { Feed } from 'feed';
 import { cache } from '@src/utils/cache';
 
@@ -14,8 +14,8 @@ export const getFeed = cache(async (site: string): Promise<Feed> => {
 		id,
 		link: site,
 		feedLinks: {
-			atom: `${site}/blog/atom.xml`,
-			rss: `${site}/blog/rss.xml`,
+			atom: `${site}${ATOM_PATH}`,
+			rss: `${site}${RSS_PATH}`,
 		},
 		// TODO fix
 		copyright: 'Jacob Asper',

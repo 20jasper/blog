@@ -1,5 +1,5 @@
 ---
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, RSS_PATH, ATOM_PATH } from '../consts';
 import '../styles/global.css';
 import GoogleAnalytics from './GoogleAnalytics.astro';
 import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
@@ -36,13 +36,13 @@ const { math, title, description } = Astro.props;
 		rel="alternate"
 		type="application/rss+xml"
 		title={SITE_TITLE}
-		href={new URL('/blog/rss.xml', Astro.site)}
+		href={new URL(RSS_PATH, Astro.site)}
 	/>
 	<link
 		rel="alternate"
 		type="application/atom+xml"
 		title={SITE_TITLE}
-		href={new URL('/blog/atom.xml', Astro.site)}
+		href={new URL(ATOM_PATH, Astro.site)}
 	/>
 
 	<!-- Canonical URL -->
