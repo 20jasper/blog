@@ -5,17 +5,17 @@ import { cache } from '@src/utils/cache';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
 
-export const getFeed = cache(async (site: string): Promise<Feed> => {
+export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
 	const posts = await getCollection('blog');
 
 	const feed = new Feed({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
 		id,
-		link: site,
+		link: baseUrl,
 		feedLinks: {
-			atom: `${site}${ATOM_PATH}`,
-			rss: `${site}${RSS_PATH}`,
+			atom: `${baseUrl}${ATOM_PATH}`,
+			rss: `${baseUrl}${RSS_PATH}`,
 		},
 		// TODO fix
 		copyright: 'Jacob Asper',
@@ -29,7 +29,7 @@ export const getFeed = cache(async (site: string): Promise<Feed> => {
 		feed.addItem({
 			title: data.title,
 			description: data.description,
-			link: `/blog/${slug}/`,
+			link: `${baseUrl}/blog/${slug}/`,
 			date: new Date(data.pubDate),
 		});
 	});
