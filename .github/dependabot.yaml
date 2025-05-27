@@ -9,3 +9,10 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    ignore:
+      - update-types:
+          - 'version-update:semver-patch'
+    groups:
+      tailwind:
+        patterns:
+          - tailwindcss
