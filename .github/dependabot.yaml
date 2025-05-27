@@ -12,6 +12,7 @@ updates:
     ignore:
       - update-types:
           - 'version-update:semver-patch'
+        dependency-name: '*'
     groups:
       tailwind:
         patterns:
