@@ -4,6 +4,19 @@ pubDate: '2025-03-22'
 description: 'DNS'
 ---
 
+<!--
+What is a domain
+Why is domain authority necessary
+What is a TLD
+  Who controls them
+  Root nameservers
+  What is a zone
+  What is a registry
+How does name resolution work?
+DNS records
+  common types
+ -->
+
 Strap in for an exciting ride—today we'll be talking about DNS and my insatiable desire for garlic bread!
 
 <!-- TODO add image of garlic bread here. Probably the pic I put in playful -->
@@ -12,7 +25,7 @@ If you're feeling a bit hungry after seeing this delicious 5 cheese garlic bread
 
 ## What is DNS?
 
-If you've been doing your duolingo, you may say, "this is a blog about programming, what does Desoxyribonukleinsäure have to do with anything?"
+If you've been doing your duolingo, you may say, "this is a blog about programming, what does <span lang="de">Desoxyribonukleinsäure</span> have to do with anything?"
 
 I'm proud you know how to say DNA in German, but your 38 day Duolingo streak won't help here. I'm sorry to say that we are talking about the Domain Name System here, which is very much inorganic[^thatsWhatTheyWantYouToThink]
 
@@ -24,7 +37,7 @@ I'm proud you know how to say DNA in German, but your 38 day Duolingo streak won
 
 DNS is the phone book of the internet. Phone books map names to information about a person, like phone numbers and address. DNS maps domain names to information about IP addresses and redirects
 
-## Why do we need DNS?
+## Why do we need Domain Names?
 
 An IP address makes sense to a computer, but not to a human
 
