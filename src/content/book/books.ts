@@ -140,7 +140,7 @@ export const booksStarted: Book[] = [
 		author: 'Josh Comeau',
 		readDate: {
 			start: new Date('2025-5-11'),
-			end: null,
+			end: new Date('2025-6-9'),
 		},
 		rating: 5,
 	},
@@ -149,7 +149,7 @@ export const booksStarted: Book[] = [
 		author: 'David Drysdale',
 		readDate: {
 			start: new Date('2025-5-20'),
-			end: null,
+			end: new Date('2025-6-9'),
 		},
 		rating: 5,
 	},
