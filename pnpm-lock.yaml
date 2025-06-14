@@ -27,8 +27,8 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3(@types/node@24.0.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@4.43.0)(typescript@5.8.3)(yaml@2.7.0)
       effect:
-        specifier: ^3.15.4
-        version: 3.15.4
+        specifier: ^3.16.7
+        version: 3.16.7
       rehype-katex:
         specifier: ^7.0.1
         version: 7.0.1
@@ -1127,8 +1127,8 @@ packages:
     resolution: {integrity: sha512-2QF/g9/zTaPDc3BjNcVTGoBbXBgYfMTTceLaYcFJ/W9kggFUkhxD/hMEeuLKbugyef9SqAx8cpgwlIP/jinUTA==}
     engines: {node: '>=4'}
 
-  effect@3.15.4:
-    resolution: {integrity: sha512-bcikyXIhzIEsUNjlgNhEC3J6xAn8iDM8z/x9k52fb3daN5iKm1rlr6Ho3TNgXM48tUUYBnTAyunk+kVzx/u8kA==}
+  effect@3.16.7:
+    resolution: {integrity: sha512-UEE1lXpXrx3h+HGgKDaNlyBpHanpjBdSbxAPl0lEQJ6dFyc8Fs22D6zLMp2HkS22H50GS7ZEVpSeO52He+9oTw==}
 
   emmet@2.4.11:
     resolution: {integrity: sha512-23QPJB3moh/U9sT4rQzGgeyyGIrcM+GH5uVYg2C6wZIxAIJq7Ng3QLT79tl8FUwDXhyq9SusfknOrofAKqvgyQ==}
@@ -3579,7 +3579,7 @@ snapshots:
 
   dset@3.1.4: {}
 
-  effect@3.15.4:
+  effect@3.16.7:
     dependencies:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
