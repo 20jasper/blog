@@ -84,7 +84,7 @@ Disaster strikes at the worst time—Giovanni from Garlic Bread Gazebo has hatch
 > FW: You just got garliced!!
 > ![A skeleton with cool glasses holding garlic bread. The caption reads "you just got garliced! share with 5 friends to get ungarliced](@images/garlicBread.webp)
 
-## Arpanet
+## ARPAnet
 
 GarlicNet was an allegory for ARPAnet and the Stanford Research Institute maintained the `HOSTS.TXT` file
 
@@ -97,8 +97,6 @@ Of course Giovanni's dastardly plot was just a hypothetical, but ARPAnet experie
 Modifying `HOSTS.TXT` was no small task, ARPAnet admins emailed their changes and retrieved the updated `HOSTS.TXT` through FTP
 
 As more hosts joined ARPAnet, the central server sharing `HOSTS.TXT` became overloaded. Modifications due to new hosts or changed addresses became more frequent, meaning just like garlic bread left out overnight, copies of `HOSTS.TXT` were often stale
-
-Scaling issues were evident at even 400 hosts[^simson]!
 
 [^simson]: https://simson.net/ref/2001/WebHosting_HistoryOfDNS.htm
 
@@ -128,7 +126,13 @@ NET : 7.0.0.0 : EDN-TEMP :
 
 ## A more scalable solution
 
+Scaling issues were evident at even 400 hosts[^simson]!
+
 ## Other
+
+## Dns is like an inverted tree
+
+Why is this tree inverted? Because computer scientists never touched grass. Trees usually grow downwards up so this is a perfectly right side up tree in my opinion, but alas
 
 ### DNS allows for redirects
 
