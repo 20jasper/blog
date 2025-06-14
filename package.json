@@ -18,7 +18,7 @@
 		"@astrojs/sitemap": "^3.4.0",
 		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4.1.7",
-		"astro": "^5.8.0",
+		"astro": "^5.9.3",
 		"effect": "^3.15.4",
 		"rehype-katex": "^7.0.1",
 		"remark-math": "^6.0.0",
