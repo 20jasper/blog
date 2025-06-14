@@ -130,7 +130,7 @@ Scaling issues were evident at even 400 hosts[^simson]!
 
 ## Other
 
-## Dns is like an inverted tree
+## DNS is like an inverted tree
 
 Why is this tree inverted? Because computer scientists never touched grass. Trees usually grow downwards up so this is a perfectly right side up tree in my opinion, but alas
 
