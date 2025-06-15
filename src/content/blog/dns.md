@@ -156,7 +156,17 @@ There are far more than 1 billion IPV4 addresses with a domain name attached to 
 
 ### Top Level Domains
 
-To understand how DNS stores and resolves domain names, we need to first understand Top Level Domains (TLDs)
+To understand how DNS stores and resolves domain names, we need to first understand <abbr>TLD</abbr>s (Top Level Domains)
+
+Top Level Domains are the rightmost portion of a URL, after the dot. For example, `playfulprogramming.com` has a TLD of `.com`
+
+Generic TLDs <abbr>gTLD</abbr> like `.com`, `.net`, and `.org`. These can be used by anyone
+
+Country Code TLDs <abbr>ccTLD</abbr> like `.us`, `.mx`, `.uk`, are restricted to territories. Ironically, these do not necessarily need to be used for hosts within that country. Notably, `.tv` is used for Twitch and `.rs` is used for Rust related sites instead of Tuvaluan or Serbian related content
+
+<!-- TODO -->
+
+Sponsored TLDs
 
 ## Other
 
