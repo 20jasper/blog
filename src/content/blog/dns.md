@@ -132,7 +132,31 @@ NET : 7.0.0.0 : EDN-TEMP :
 
 ## A more scalable solution
 
-Scaling issues were evident at even 400 hosts[^simson]!
+<blockquote cite="https://www.rfc-editor.org/rfc/rfc799">
+ Even now, with over four hundred names and nicknames in the combined ARPANET-DCNET tables, this has become awkward
+</blockquote>
+— David Mills <cite><a href="https://www.rfc-editor.org/rfc/rfc799">RFC 799 - Internet Name Domains</a></cite>
+
+Scaling issues were evident at even 400 hosts in 1981! David Mill's solution was intended to scale for thousands of hosts and it's still being used to this day!
+
+There are far more than 1 billion IPV4 addresses with a domain name attached to them as of 2019[^amountOfHosts], according to the Internet Systems Consortium[^ISCReport]. Of course, this does not exactly describe the amount of hosts there are, but it's a good starting point to understand the sheer scale of DNS. _At least_ 1 billion IPs are attached to a domain name, as this doesn't account for IPV6 addresses
+
+[^ISCReport]: https://ftp.isc.org/www/survey/reports/current/
+
+<!-- TODO link to section where reverse lookups are described -->
+
+[^amountOfHosts]:
+    The Internet Domain Survey measures IP addresses attached to domains rather than the reverse. Originally, hosts were counted, but due to newfound zone transfer limitations, reverse mapping was used post 1981 [^ISCAbout]
+
+    The survey was discontinued after 2019 since the results became misleading with the prevalence of IPV6 and private networks[^ISCSurveyEnds]
+
+[^ISCAbout]: https://www.isc.org/survey-about/
+
+[^ISCSurveyEnds]: https://www.isc.org/blogs/domain-survey-ends/
+
+### Top Level Domains
+
+To understand how DNS stores and resolves domain names, we need to first understand Top Level Domains (TLDs)
 
 ## Other
 
@@ -185,3 +209,7 @@ ICANN is inherantly political https://www.youtube.com/watch?v=Rw96pH_Kdxo
 Interview with first mass spam https://moosend.com/blog/gary-thuerk-people-make-the-same-mistakes-over-and-over-again/
 
 https://simson.net/ref/2001/WebHosting_HistoryOfDNS.htm
+
+The Berkeley Internet Name Domain Server https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/5957.html https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/CSD-84-182.pdf
+
+DNS and Bind https://www.oreilly.com/library/view/dns-and-bind/0596100574/
