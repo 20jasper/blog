@@ -19,9 +19,15 @@ DNS records
 
 Strap in for an exciting ride—today we'll be talking about DNS and my insatiable desire for garlic bread!
 
+If you're feeling a bit hungry after seeing this delicious 5 cheese garlic bread, I don't blame you. It's recommended to make some garlic bread before continuing
+
 <!-- TODO add image of garlic bread here. Probably the pic I put in playful -->
 
-If you're feeling a bit hungry after seeing this delicious 5 cheese garlic bread, I don't blame you. It's recommended to make some garlic bread before continuing
+## Agenda
+
+<!-- TODO consider if this is necessary and clean up wording-->
+
+First, we'll learn about what [DNS and domains](#what-is-dns) are, [initial solutions to mapping IPs to a domain, `HOSTS.TXT`](#hoststxt) and why this didn't scale well. If you aren't familiar with IP, consider checking out the [IP section of Networking 101: UDP & TCP](https://playfulprogramming.com/posts/networking-101-udp-and-tcp#ip-address) for a refresher. Afterwards, we'll learn about [`HOSTS.TXT`'s successor, the Domain Name System](#a-more-scalable-solution) itself. This includes going over Top level domains, name servers and resolution, and some common DNS records
 
 ## What is DNS?
 
@@ -37,7 +43,7 @@ I'm proud you know how to say DNA in German, but your 38 day Duolingo streak won
 
 DNS is the phone book of the internet. Phone books map names to information about a person, like phone numbers and address. DNS maps domain names to information about IP addresses and redirects
 
-## What's a domain?
+### What's a domain?
 
 An IP address makes sense to a computer, but not to a human. A domain simply identifies a location on the internet
 
@@ -84,7 +90,7 @@ Disaster strikes at the worst time—Giovanni from Garlic Bread Gazebo has hatch
 > FW: You just got garliced!!
 > ![A skeleton with cool glasses holding garlic bread. The caption reads "you just got garliced! share with 5 friends to get ungarliced](@images/garlicBread.webp)
 
-## ARPAnet
+### ARPAnet
 
 GarlicNet was an allegory for ARPAnet and the Stanford Research Institute maintained the `HOSTS.TXT` file
 
