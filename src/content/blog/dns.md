@@ -160,13 +160,17 @@ To understand how DNS stores and resolves domain names, we need to first underst
 
 Top Level Domains are the rightmost portion of a URL, after the dot. For example, `playfulprogramming.com` has a TLD of `.com`
 
-Generic TLDs <abbr>gTLD</abbr> like `.com`, `.net`, and `.org`. These can be used by anyone
+<!-- TODO move this extra info after explaining more about zones and authorities and whatnot -->
 
-Country Code TLDs <abbr>ccTLD</abbr> like `.us`, `.mx`, `.uk`, are restricted to territories. Ironically, these do not necessarily need to be used for hosts within that country. Notably, `.tv` is used for Twitch and `.rs` is used for Rust related sites instead of Tuvaluan or Serbian related content
+Generic TLDs (<abbr>gTLD</abbr>) like `.com`, `.net`, and `.org`. These can be used by anyone
 
-<!-- TODO -->
+Sponsored TLDs (<abbr>sTLD</abbr>) like `.gov` and `.edu` have more stringent eligibility requirements, like being a US government or educational entity
 
-Sponsored TLDs
+Country Code TLDs (<abbr>ccTLD</abbr>) like `.us`, `.mx`, `.uk`, are managed by territories. Ironically, these do not necessarily need to be used for hosts within that country. Each country can decide registration rules.
+
+On the looser side, `.tv` is used for Twitch and `.rs` is used for Rust related sites instead of Tuvaluan or Serbian related content. `.us` TLDs have far stricter rules, requiring the registrant to have ties to the US[^usTLDNexus]
+
+[^usTLDNexus]: https://www.about.us/documents/policies/usTLD_Nexus_Requirements_Policy.pdf
 
 ## Other
 
