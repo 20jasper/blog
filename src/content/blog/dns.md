@@ -31,7 +31,7 @@ First, we'll learn about what [DNS and domains](#what-is-dns) are, [initial solu
 
 ## What is DNS?
 
-If you've been doing your duolingo, you may say, "this is a blog focused on programming, what does <span lang="de">Desoxyribonukleinsäure</span> have to do with anything?"
+If you've been doing your Duolingo, you may say, "this is a blog focused on programming, what does <span lang="de">Desoxyribonukleinsäure</span> have to do with anything?"
 
 I'm proud you know how to say DNA in German, but your 38 day Duolingo streak won't help here. I'm sorry to say that we are talking about the Domain Name System here, which is very much inorganic[^thatsWhatTheyWantYouToThink]
 
@@ -214,7 +214,7 @@ https://datatracker.ietf.org/doc/html/rfc952
 
 List of host table examples https://gunkies.org/wiki/Host_table
 
-ICANN is inherantly political https://www.youtube.com/watch?v=Rw96pH_Kdxo
+ICANN is inherently political https://www.youtube.com/watch?v=Rw96pH_Kdxo
 
 Interview with first mass spam https://moosend.com/blog/gary-thuerk-people-make-the-same-mistakes-over-and-over-again/
 
@@ -223,3 +223,5 @@ https://simson.net/ref/2001/WebHosting_HistoryOfDNS.htm
 The Berkeley Internet Name Domain Server https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/5957.html https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/CSD-84-182.pdf
 
 DNS and Bind https://www.oreilly.com/library/view/dns-and-bind/0596100574/
+
+TLD cloudflare https://www.cloudflare.com/learning/dns/top-level-domain/
