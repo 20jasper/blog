@@ -156,11 +156,17 @@ There are far more than 1 billion IPV4 addresses with a domain name attached to 
 
 ### Top Level Domains
 
+<!-- TODO cite
+The Berkeley Internet Name Domain Server https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/5957.html https://www2.eecs.berkeley.edu/Pubs/TechRpts/1984/CSD-84-182.pdf
+-->
+
 The key difference between `HOSTS.TXT` and DNS is distribution. Instead of one central source of truth, administration is delegated to sub-administrations. For example, `.com` domains are managed by Verasign[^verasignCom]
 
 [^verasignCom]: https://itp.cdn.icann.org/en/files/registry-agreements/com/com-agreement-html-01-12-2024-en.htm
 
-`com` is a <abbr>TLD</abbr> (Top Level Domain). Top Level Domains are the rightmost portion of a URL, after the dot. For example, `legacy.jacobasper.com`[^legacy] has a TLD of `com`, a second level domain of `jacobasper`, and third level domain of `legacy`. If you so choose, you can add even more subdomains up to 253 characters[^maxLength]
+Domains are made of sections, known as labels, separated by dots
+
+`com` is a <abbr>TLD</abbr> (Top Level Domain). Top Level Domains are the rightmost label of a domain name. For example, `legacy.jacobasper.com`[^legacy] has a TLD of `com`, a second level domain of `jacobasper`, and third level domain of `legacy`. If you so choose, you can add even more subdomains up to 253 characters[^maxLength]
 
 ![](/domain-segments.webp)
 
@@ -169,11 +175,28 @@ The key difference between `HOSTS.TXT` and DNS is distribution. Instead of one c
 [^legacy]: Visit at your own risk https://legacy.jacobasper.com/
 
 [^maxLength]:
-    [RFC 1035 - DOMAIN NAMES - IMPLEMENTATION AND SPECIFICATION](https://datatracker.ietf.org/doc/html/rfc1035#section-2.3.4) says that a max length of the Fully Qualified Domain Name must be 255 characters or left, but this is accounting for the implied `.` at the end of a domain and the the length byte. that's to say, `playfulprogramming.com` is shorthand for `playfulprogramming.com.`. There are 25 total characters, 18 for `playfulprogramming`, 2 for the `.` and length byte, and 3 for `com` and the implied `.` and terminating length byte
+    [RFC 1035 - DOMAIN NAMES - IMPLEMENTATION AND SPECIFICATION](https://datatracker.ietf.org/doc/html/rfc1035#section-2.3.4) says that a max length of the Fully Qualified Domain Name must be 255 characters or left, but this is accounting for the implied `.` at the end of a domain and the the length byte[^byteDisclaimer]. That's to say, `playfulprogramming.com` is shorthand for `playfulprogramming.com.`. There are 25 total characters, 18 for `playfulprogramming`, 2 for the `.` and length byte, and 3 for `com` and the implied `.` and terminating length byte
 
     There are more restrictions beyond just the length limit in the RFC if you're interested!
 
-The owner of the `.bread` TLD is overburdened by managing `.garlic.bread` domains. There is simply too much garlic related lore for the bread administrators to handle. Avocado toast and sourdough is all good and well, but they don't know the first thing about the Garlic Councils restrictions on proper garlic press selection[^amateurs]. Luckily, the Garlic Council is glad to put any compliance issues on their plate so that the breadministration doesn't knead to!
+[^byteDisclaimer]: Whenever I mention byte, I mean 8 bits. For historical reasons[^historicalReasons], 8 bits is referred to as an octet, but I'm so used to just saying byte, so bear with me 😅
+
+[^historicalReasons]: [WHY IS A BYTE 8 BITS? OR IS IT?](https://web.archive.org/web/20010627215719/http://www.bobbemer.com/BYTE.HTM)
+
+## Zones
+
+<!-- TODO talk about root zones and FQDN -->
+<!-- RFC 1034 4.2 how zones are divided -->
+
+DNS looks like a tree. The root zone is represented by a dot here. More on that later
+
+<!-- Info showing off domains we've seen and then describe how DNS servers are broken up -->
+
+Here,
+
+![diagram showing a hierarchical treelike structure of the DNS](/dns-tree.svg)
+
+The manager of the `.bread` TLD is overburdened by managing `.garlic.bread` domains. There is simply too much garlic related lore for the bread administrators to handle. Avocado toast and sourdough is all good and well, but they don't know the first thing about the Garlic Councils restrictions on proper garlic press selection[^amateurs]. Luckily, the Garlic Council is glad to put any compliance issues on their plate so that the breadministration doesn't knead to!
 
 [^amateurs]: Amateurs
 
