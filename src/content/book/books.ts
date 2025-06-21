@@ -162,6 +162,24 @@ export const booksStarted: Book[] = [
 		},
 		rating: 5,
 	},
+	{
+		title: 'Testing JavaScript',
+		author: 'Kent C. Dodds',
+		readDate: {
+			start: new Date('2025-6-20'),
+			end: null,
+		},
+		rating: null,
+	},
+	{
+		title: 'Designing Data–Intensive Applications (1st Edition)',
+		author: 'Martin Kleppmann',
+		readDate: {
+			start: new Date('2025-6-16'),
+			end: null,
+		},
+		rating: null,
+	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
 type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
@@ -186,10 +204,6 @@ const toRead: UnreadBook[] = [
 	{
 		title: 'Refactoring UI',
 		author: 'Adam Wathan and Steve Schoger',
-	},
-	{
-		title: 'Testing JavaScript',
-		author: 'Kent C. Dodds',
 	},
 ];
 
