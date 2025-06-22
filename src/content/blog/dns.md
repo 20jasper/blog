@@ -183,18 +183,22 @@ Domains are made of sections, known as labels, separated by dots
 
 [^historicalReasons]: [WHY IS A BYTE 8 BITS? OR IS IT?](https://web.archive.org/web/20010627215719/http://www.bobbemer.com/BYTE.HTM)
 
-## Zones
+## The DNS Tree
 
 <!-- TODO talk about root zones and FQDN -->
 <!-- RFC 1034 4.2 how zones are divided -->
 
-DNS looks like a tree. The root zone is represented by a dot here. More on that later
+Of course, `legacy.jacobasper.com` is just one choice of many. DNS looks more like a tree in reality. `com` has many second level domains, including `wikipedia` and `jacobasper`
+
+<!-- TODO add stuffs on millions of com domains https://www.dnib.com/articles/the-domain-name-industry-brief-q1-2023 -->
+
+![diagram showing a hierarchical treelike structure of the DNS. The parent node has several top level domains, which are further broken up into second and third level domains](/dns-tree.svg)
+
+The root zone is represented by a dot. Domain names have an implicit 0 length label, so the Fully Qualified Domain Name <abbr>(FQDN)</abbr> for `garlic.bread` is `garlic.bread.`, though as you may have guessed, the terminating `.` is usually omitted for brevity
 
 <!-- Info showing off domains we've seen and then describe how DNS servers are broken up -->
 
-Here,
-
-![diagram showing a hierarchical treelike structure of the DNS](/dns-tree.svg)
+So how does this help resolve the scaling issues from `HOSTS.TXT`?
 
 The manager of the `.bread` TLD is overburdened by managing `.garlic.bread` domains. There is simply too much garlic related lore for the bread administrators to handle. Avocado toast and sourdough is all good and well, but they don't know the first thing about the Garlic Councils restrictions on proper garlic press selection[^amateurs]. Luckily, the Garlic Council is glad to put any compliance issues on their plate so that the breadministration doesn't knead to!
 
