@@ -100,6 +100,13 @@ The United States Department of Defense funded ARPA[^DARPA], or Advanced Researc
 
 Of course Giovanni's dastardly plot was just a hypothetical, but ARPAnet experienced many other issues relevant to GarlicNet
 
+- No mechanism to prevent name collisions
+- Reliance on manual updates
+- New hosts led to
+  - a larger `HOSTS.TXT` file to distribute on relatively weak infrastructure
+  - a higher fan out factor—each new host needs informed of each update
+- Slow update times led to stale information
+
 Modifying `HOSTS.TXT` was no small task, ARPAnet admins emailed their changes and retrieved the updated `HOSTS.TXT` through FTP
 
 As more hosts joined ARPAnet, the central server sharing `HOSTS.TXT` became overloaded. Modifications due to new hosts or changed addresses became more frequent, meaning just like garlic bread left out overnight, copies of `HOSTS.TXT` were often stale
@@ -183,7 +190,7 @@ Domains are made of sections, known as labels, separated by dots
 
 [^historicalReasons]: [WHY IS A BYTE 8 BITS? OR IS IT?](https://web.archive.org/web/20010627215719/http://www.bobbemer.com/BYTE.HTM)
 
-## The DNS Tree
+### The DNS Tree
 
 <!-- TODO talk about root zones and FQDN -->
 <!-- RFC 1034 4.2 how zones are divided -->
@@ -192,17 +199,23 @@ Of course, `legacy.jacobasper.com` is just one choice of many. DNS looks more li
 
 <!-- TODO add stuffs on millions of com domains https://www.dnib.com/articles/the-domain-name-industry-brief-q1-2023 -->
 
-![diagram showing a hierarchical treelike structure of the DNS. The parent node has several top level domains, which are further broken up into second and third level domains](/dns-tree.svg)
+![diagram showing a hierarchical treelike structure of the DNS. The parent node has several top level domains, which are further broken up into second and third level domains](@images/dns-tree.svg)
 
 The root zone is represented by a dot. Domain names have an implicit 0 length label, so the Fully Qualified Domain Name <abbr>(FQDN)</abbr> for `garlic.bread` is `garlic.bread.`, though as you may have guessed, the terminating `.` is usually omitted for brevity
 
 <!-- Info showing off domains we've seen and then describe how DNS servers are broken up -->
 
+### Zones
+
 So how does this help resolve the scaling issues from `HOSTS.TXT`?
+
+Instead of a central source of truth, DNS is a distributed Database, with authority delegated into zones
 
 The manager of the `.bread` TLD is overburdened by managing `.garlic.bread` domains. There is simply too much garlic related lore for the bread administrators to handle. Avocado toast and sourdough is all good and well, but they don't know the first thing about the Garlic Councils restrictions on proper garlic press selection[^amateurs]. Luckily, the Garlic Council is glad to put any compliance issues on their plate so that the breadministration doesn't knead to!
 
 [^amateurs]: Amateurs
+
+![A DNS tree with circles surrounding each zone. A piece of the breadministration zone is delegated to the garlic council](@images/dns-zones.svg)
 
 In practice ...
 
