@@ -209,7 +209,7 @@ The root zone is represented by a dot. Domain names have an implicit 0 length la
 
 So how does this help resolve the scaling issues from `HOSTS.TXT`?
 
-Instead of a central source of truth, DNS is a distributed Database, with authority delegated into zones
+Instead of a central source of truth, DNS is a distributed Database, with authority delegated into zones, which are simply a portion of the DNS tree
 
 The manager of the `.bread` TLD is overburdened by managing `.garlic.bread` domains. There is simply too much garlic related lore for the bread administrators to handle. Avocado toast and sourdough is all good and well, but they don't know the first thing about the Garlic Councils restrictions on proper garlic press selection[^amateurs]. Luckily, the Garlic Council is glad to put any compliance issues on their plate so that the breadministration doesn't knead to!
 
@@ -217,7 +217,102 @@ The manager of the `.bread` TLD is overburdened by managing `.garlic.bread` doma
 
 ![A DNS tree with circles surrounding each zone. A piece of the breadministration zone is delegated to the garlic council](@images/dns-zones.svg)
 
-In practice ...
+Authority over `garlic.bread` is now delegated to the Garlic Council. Their servers are now the place to go to get information about `garlic.bread` and its subdomains!
+
+### Name Resolution
+
+Let's look at a real example of zones in action! We'll find each of the zones traversed before reaching the authoritative zone for `legacy.jacobasper.com.`
+
+We'll be running the following command
+
+```bash
+dig legacy.jacobasper.com. +trace +nodnssec | grep -Ev "unreachable|no servers"
+```
+
+Let's break it down
+
+<!-- TODO breakdancing gif -->
+<!-- TODO describe what a nameserver is before this -->
+
+[`dig`](digManual) is a utility to DNS lookups. `+trace` will enable following the delegation path—it will start at the root name servers and follow their referrals until finding the authoritative name server. `+nodnssec` and piping to `grep` will filter information about DNSSEC and failed IPV6 lookups respectively
+
+[digManual]: https://linux.die.net/man/1/dig
+
+```
+dig legacy.jacobasper.com. +trace +nodnssec | grep -Ev "unreachable|no servers"
+
+; <<>> DiG 9.18.30-0ubuntu0.20.04.2-Ubuntu <<>> legacy.jacobasper.com. +trace
+;; global options: +cmd
+
+.			0	IN	NS	c.root-servers.net.
+.			0	IN	NS	d.root-servers.net.
+;;          omitted for brevity
+.			0	IN	NS	a.root-servers.net.
+.			0	IN	NS	b.root-servers.net.
+;; Received 432 bytes from 192.168.144.1#53(192.168.144.1) in 0 ms
+```
+
+Note that `;` are used as comments, used here for some debug information and by myself to make the output easier to follow 😀. There is no difference in using one or more semicolons, but 2 are often used for readability
+
+There are 13 root name servers[^why13RootServers], labeled `a` to `m`. Note that this does not mean there are 13 physical servers—13 IP addresses distribute load amongst more than 1500 servers[^1500Servers] across the globe
+
+[^why13RootServers]: [Reason for Limited number of Root DNS Servers](https://lists.isc.org/pipermail/bind-users/2011-November/085653.html)
+
+[^1500Servers]: As of June 10th, 2025, [there were "1954 instances operated by the 12 independent root server operators" according to root-servers.org](https://web.archive.org/web/20250610122946/https://root-servers.org/)
+
+A name server answers queries about a particular domain name. The root servers are responsible for information in the root zone, in this case about where to find the Top Level Domain Name servers
+
+#### So what are each of the columns in the `dig` output?
+
+<!-- TODO link to where we talk about other common records -->
+<!-- TODO link to more about caching, (TTL, secondary servers) -->
+
+From left to right, we have the domain we're looking for, in this case the root domain. Then the <abbr>TTL</abbr>, or Time To Live, which specifies how long records can be cached for. More on caching later. The Class is `IN`, meaning Internet. There are other values, but today they are exceedingly rare, if used at all. The Type is the kind of record, in this case `NS` for Name Server. We'll go over more types of records later. Finally, we have the Fully Qualified Domain Name (FQDN) of the root name server
+
+I'll include these column header comments for convenience from now on
+
+```
+;; domain       TTL Class Type  FQDN
+   .        	0	IN	  NS	a.root-servers.net.
+```
+
+### `com` name servers
+
+Root name server `a` very kindly refers us to the `com.` name servers, again ranging from `a` to `m`
+
+Note the TTL for these records are 2 days
+
+```
+;; domain       TTL     Class Type  FQDN
+   com.			172800	IN    NS  	l.gtld-servers.net.
+   com.			172800	IN    NS  	j.gtld-servers.net.
+;; omitted for brevity
+   com.			172800	IN    NS  	c.gtld-servers.net.
+   com.			172800	IN    NS  	e.gtld-servers.net.
+;; Received 846 bytes from 198.41.0.4#53(a.root-servers.net) in 29 ms
+```
+
+The `com.` name servers refer us to the zone for `jacobasper.com.`, which are operated by DNSONE. I could use any DNS server to be authoritative for my domains, but I chose to use Netlify, which seems to use DNSONE!
+
+```
+;; domain               TTL     Class Type  FQDN
+   jacobasper.com.		172800	IN	  NS	dns1.p08.nsone.net.
+   jacobasper.com.		172800	IN    NS	dns2.p08.nsone.net.
+   jacobasper.com.		172800	IN	  NS	dns3.p08.nsone.net.
+   jacobasper.com.		172800	IN    NS	dns4.p08.nsone.net.
+;; Received 139 bytes from 192.41.162.30#53(l.gtld-servers.net) in 29 ms
+```
+
+Finally, we reach the records we're after! `A` records stand for address, and describe the IPV4 address of a domain
+
+```
+;; domain                   TTL Class Type  FQDN
+   legacy.jacobasper.com.	120	IN	  A 	34.234.106.80
+   legacy.jacobasper.com.	120	IN	  A 	100.28.201.155
+;; Received 82 bytes from 198.51.45.8#53(dns2.p08.nsone.net) in 29 ms
+```
+
+### Kinds of TLDs
 
 <!-- TODO move this extra info after explaining more about zones and authorities and whatnot -->
 
@@ -288,3 +383,5 @@ The Berkeley Internet Name Domain Server https://www2.eecs.berkeley.edu/Pubs/Tec
 DNS and Bind https://www.oreilly.com/library/view/dns-and-bind/0596100574/
 
 TLD cloudflare https://www.cloudflare.com/learning/dns/top-level-domain/
+
+Barry Brown DNS series (short and sweet overview) https://www.youtube.com/playlist?list=PL5DDE6309C9057EEA
