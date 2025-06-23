@@ -264,6 +264,7 @@ A name server answers queries about a particular domain name. The root servers a
 
 #### So what are each of the columns in the `dig` output?
 
+<!-- TODO these are DNS records right? -->
 <!-- TODO link to where we talk about other common records -->
 <!-- TODO link to more about caching, (TTL, secondary servers) -->
 
@@ -275,8 +276,6 @@ I'll include these column header comments for convenience from now on
 ;; domain       TTL Class Type  FQDN
    .        	0	IN	  NS	a.root-servers.net.
 ```
-
-### `com` name servers
 
 Root name server `a` very kindly refers us to the `com.` name servers, again ranging from `a` to `m`
 
@@ -311,6 +310,16 @@ Finally, we reach the records we're after! `A` records stand for address, and de
    legacy.jacobasper.com.	120	IN	  A 	100.28.201.155
 ;; Received 82 bytes from 198.51.45.8#53(dns2.p08.nsone.net) in 29 ms
 ```
+
+To sum it up, there was a DNS zone for the root zone, which referred us to the `.com` zone, which then referred us to the `jacobasper.com.` zone, which then knew where `legacy.jacobasper.com.` lives!
+
+`legacy.jacobasper.com.` and `jacobasper.com` are both under this zone, as well as any arbitrary amount of subdomains I choose. I could also delegate further if I so chose, but I don't have too many domains to worry about, so the current setup is fine for me!
+
+### Registering a domain
+
+Speaking of, how did I manage to register `jacobasper.com.`?
+
+How could I register a domain?
 
 ### Kinds of TLDs
 
