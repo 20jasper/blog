@@ -274,7 +274,7 @@ I'll include these column header comments for convenience from now on
 
 ```
 ;; domain       TTL Class Type  FQDN
-   .        	0	IN	  NS	a.root-servers.net.
+   .            0   IN    NS    a.root-servers.net.
 ```
 
 Root name server `a` very kindly refers us to the `com.` name servers, again ranging from `a` to `m`
@@ -283,11 +283,11 @@ Note the TTL for these records are 2 days
 
 ```
 ;; domain       TTL     Class Type  FQDN
-   com.			172800	IN    NS  	l.gtld-servers.net.
-   com.			172800	IN    NS  	j.gtld-servers.net.
+   com.         172800  IN    NS     l.gtld-servers.net.
+   com.         172800  IN    NS     j.gtld-servers.net.
 ;; omitted for brevity
-   com.			172800	IN    NS  	c.gtld-servers.net.
-   com.			172800	IN    NS  	e.gtld-servers.net.
+   com.         172800  IN    NS     c.gtld-servers.net.
+   com.         172800  IN    NS     e.gtld-servers.net.
 ;; Received 846 bytes from 198.41.0.4#53(a.root-servers.net) in 29 ms
 ```
 
@@ -295,19 +295,19 @@ The `com.` name servers refer us to the zone for `jacobasper.com.`, which are op
 
 ```
 ;; domain               TTL     Class Type  FQDN
-   jacobasper.com.		172800	IN	  NS	dns1.p08.nsone.net.
-   jacobasper.com.		172800	IN    NS	dns2.p08.nsone.net.
-   jacobasper.com.		172800	IN	  NS	dns3.p08.nsone.net.
-   jacobasper.com.		172800	IN    NS	dns4.p08.nsone.net.
+   jacobasper.com.      172800  IN    NS   dns1.p08.nsone.net.
+   jacobasper.com.      172800  IN    NS   dns2.p08.nsone.net.
+   jacobasper.com.      172800  IN    NS   dns3.p08.nsone.net.
+   jacobasper.com.      172800  IN    NS   dns4.p08.nsone.net.
 ;; Received 139 bytes from 192.41.162.30#53(l.gtld-servers.net) in 29 ms
 ```
 
 Finally, we reach the records we're after! `A` records stand for address, and describe the IPV4 address of a domain
 
 ```
-;; domain                   TTL Class Type  FQDN
-   legacy.jacobasper.com.	120	IN	  A 	34.234.106.80
-   legacy.jacobasper.com.	120	IN	  A 	100.28.201.155
+;; domain                   TTL   Class Type  FQDN
+   legacy.jacobasper.com.   120   IN    A     34.234.106.80
+   legacy.jacobasper.com.   120   IN    A     100.28.201.155
 ;; Received 82 bytes from 198.51.45.8#53(dns2.p08.nsone.net) in 29 ms
 ```
 
