@@ -315,15 +315,76 @@ To sum it up, there was a DNS zone for the root zone, which referred us to the `
 
 `legacy.jacobasper.com.` and `jacobasper.com` are both under this zone, as well as any arbitrary amount of subdomains I choose. I could also delegate further if I so chose, but I don't have too many domains to worry about, so the current setup is fine for me!
 
+### Kinds of Records
+
+<!--
+SOA (statement of authority) for the zone
+NS (lists name servers for the zone)
+Other Records
+A (name to address mapping)
+PTR (address to name mapping)
+CNAME (maps alias to canonical name)
+## SOA
+
+Refresh is time until asking authoritative name server for updated info
+Retry is period to wait before retrying
+Expire is max time to attempt to connect
+Negative caching TTL
+
+Will batch retries and wait some time in between
+
+## Mail
+MX (mail exchange) records specify a mail exchange and a preference. A mail exchange is a server accepting email for a recipient. Higher preference exchanges will be tried first
+SMTP
+
+Because it’s easier to send mail to one server, they will be sent to one domain like “Gmail.com” and each will have an alias for the right host or a POP or IMAP server to allow remote reading
+
+If the destination doesn’t have an MX record and has an A, most mailers will try to send there
+
+Ideally you should send mail to the canonical address so you don’t risk the server not recognizing the address and making a mail loop
+
+### SPF
+Sender Policy Framework says “these servers are allowed to send info from our domain”
+
+DMARC and DKIM came to be after DNS and BIND released
+
+DKIM is cryptographic signing of emails
+DMARC says what should be done if SPF and DKIM fail
+ -->
+
 ### Registering a domain
 
-Speaking of, how did I manage to register `jacobasper.com.`?
+A registry handles the database of TLDs and registrant metadata. For example, Verasign operates the registry for the `.com` TLD
 
-How could I register a domain?
+A registrant is TODO
+
+A registrar like GoDaddy (Go Father) is an intermediary that provide services like domain lookup and sending zone information to the registrar
+
+To put it simply, registrants register registrations with a registrar that registers registrations regularly with a registry regulating regions and general domains
+
+---
+
+#### Pricing
+
+So why not just skip the registrar and send your information straight to the registry? I could find a better use for my 12$ like producing 9–12 pounds of garlic[^garlicProduction]
+
+[^garlicProduction]: According to Rutgers, "[non-specialty] garlic costs about $1.00–1.25 per pound to produce" https://njaes.rutgers.edu/fs1289/
+
+Unfortunately for you,
+
+<!-- TODO list services out there "Apparently 100% availability for 27 years straight is hard or something" -->
+
+Verasign charges $10.26 as of September 1st, 2024[^verasignMyths]
+
+[^verasignMyths]: https://blog.verisign.com/domain-names/myths-vs-facts-about-dot-com/
+
+ICANN charges 18 cents per transactions for registrars https://www.icann.org/en/contracted-parties/accredited-registrars/how-to-become-a-registrar/registrar-fees-10-08-2018-en
+
+Registrars charge a fee on top
 
 ### Kinds of TLDs
 
-<!-- TODO move this extra info after explaining more about zones and authorities and whatnot -->
+<!-- TODO find nice spot for this -->
 
 Generic TLDs (<abbr>gTLD</abbr>) like `.com`, `.net`, and `.org`. These can be used by anyone
 
@@ -336,10 +397,6 @@ On the looser side, `.tv` is used for Twitch and `.rs` is used for Rust related 
 [^usTLDNexus]: https://www.about.us/documents/policies/usTLD_Nexus_Requirements_Policy.pdf
 
 ## Other
-
-## DNS is like an inverted tree
-
-Why is this tree inverted? Because computer scientists never touched grass. Trees usually grow downwards up so this is a perfectly right side up tree in my opinion, but alas
 
 ### DNS allows for redirects
 
@@ -370,6 +427,12 @@ Listen 80
 ### Why don't ISPs just assign static IP addresses?
 
 If you remember from [the previous article on IP addresses](https://playfulprogramming.com/posts/networking-101-udp-and-tcp#ipv4-vs-ipv6) from the networking series, We've long since run out of public IP addresses
+
+## FUnee meme
+
+<!-- TODO link to monads are like a burrito -->
+
+DNS is like garlic bread
 
 ## Big nerd reading
 
