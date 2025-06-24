@@ -382,6 +382,8 @@ ICANN charges 18 cents per transactions for registrars https://www.icann.org/en/
 
 Registrars charge a fee on top
 
+https://webmasters.stackexchange.com/questions/61467/if-icann-only-charges-18%C2%A2-per-domain-name-why-am-i-paying-10
+
 ### Kinds of TLDs
 
 <!-- TODO find nice spot for this -->
