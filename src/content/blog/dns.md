@@ -21,7 +21,7 @@ Strap in for an exciting ride—today we'll be talking about DNS and my insatiab
 
 If you're feeling a bit hungry after seeing this delicious 5 cheese garlic bread, I don't blame you. It's recommended to make some garlic bread before continuing
 
-<!-- TODO add image of garlic bread here. Probably the pic I put in playful -->
+![Cheesey garlic bread laid out in a spiral pattern on a plate](@images/fancy-garlic-bread.webp)
 
 ## Agenda
 
@@ -39,8 +39,16 @@ I'm proud you know how to say DNA in German, but your 38 day Duolingo streak won
 
 <!-- TODO alt text with figure -->
 
-![](@images/duolingoDns.webp)
+<figure>
+<img alt="" src="/duolingoDns.webp"/>
+<figcaption>
+<details>
+<summary>Duolingo DNS alt text</summary>
 
+<p>A mock Duolingo screenshot. The English answer is "If don't learn the domain name system, your home will go missing". In Spanish, it says <span lang="es">"Si no aprendes el sistema de nombres de dominio, se deaparecera tu domicilio"</span></p>
+</details>
+</figcaption>
+</figure>
 DNS is the phone book of the internet. Phone books map names to information about a person, like phone numbers and address. DNS maps domain names to information about IP addresses and redirects
 
 ### What's a domain?
@@ -55,7 +63,7 @@ I don't know about you, but as much as I love garlic bread, I wouldn't remember 
 
 Now we're talking. Pardon me while I empty out my bank account and give up my first born child
 
-<!-- picture of sad spongebob after I give them up for bread -->
+![Sad Spongebob animation captioned "my son my son when I give them up for bread"](/spongebob-bread.webp)
 
 ### But I love memorizing long piles of numbers!
 
@@ -85,10 +93,7 @@ Sounds great right? Unfortunately not
 
 Disaster strikes at the worst time—Giovanni from Garlic Bread Gazebo has hatched a dubiously devious plan. They register their own Garl-IP for garlicbread.com—twirling their mustache mustachiously—and their dastardly deed disrupts service before the launch of the Garlic Glide Butter Blastinator 5000&trade;! Anyone who had requested the latest `HOSTS.TXT` would be sent to the wrong address
 
-<!-- TODO change to "totally garlic them" -->
-
-> FW: You just got garliced!!
-> ![A skeleton with cool glasses holding garlic bread. The caption reads "you just got garliced! share with 5 friends to get ungarliced](@images/garlicBread.webp)
+![A skeleton with cool glasses holding garlic bread. The caption reads "you just got garliced! share with 5 friends to totally garlic them](@images/garlicBread.webp)
 
 ### ARPAnet
 
