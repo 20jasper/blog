@@ -37,7 +37,7 @@ const posts = await getPostsDescending();
 					posts.map((post) => (
 						<li>
 							<a
-								href={post.slug}
+								href={`${Astro.url.pathname}/${post.slug}`}
 								class="block"
 							>
 								<h4 class="leading-none">{post.data.title}</h4>
