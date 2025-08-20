@@ -1,0 +1,120 @@
+---
+title: 'It takes 31 yottabytes of RAM to typecheck a union of Safe Integers'
+pubDate: '2025-08-17'
+description: 'Do It'
+math: true
+---
+
+First of all, before you smelly nerds start complaining, I know this benchmark means literally nothing—I just did it for fun. I'm sure it isn't perfect, and I doubt my measurements say anything particularly important
+
+I am aware TSGO is not released. I'd expect it to have variance in performance due potentially missing out on certain features and being new
+
+## Criteria
+
+### What exactly are we measuring here?
+
+A Safe Integer is defined as JavaScript's `Number.MIN_SAFE_INTEGER` to `Number.MAX_SAFE_INTEGER` inclusive, or $$[-(2^{53} - 1), 2^{53} - 1]$$
+
+The titular metric describes the following—if a file containing a TypeScript union of all Safe Integers were to be type checked using `tsc`, theoretically, the process would require 31 yottabytes of physical RAM
+
+We will also measure RAM, CPU, and time taken for file generation and typechecking with TSGO
+
+[GitHub]: https://github.com/20jasper/typescript-union-benchmarking
+
+[Check out the Source Code for benchmarks][GitHub] if you'd like to run them yourself or see what exactly is being run
+
+More specifics will be described as relevant
+
+### Uhhh what is a yottabyte??????
+
+What is a Yottabyte? That's 1,000,000,000,000,000,000,000,000 (1 septillion) bytes, or 1 trillion terabytes, or 1 trillion trillion bytes. I don't know about you, but I don't have that much RAM on my computer. If anyone has an extra 31 yottabytes of RAM laying around collecting dust, let me know!
+
+### Specs
+
+My computer has 12 logical processors and 64 GB of RAM. This test was run on WSL using Ubuntu 20.04.6 LTS and afforded 48GB of RAM
+
+```
+Processor	AMD Ryzen 5 5600X 6-Core Processor                3.70 GHz
+Installed RAM	64.0 GB
+Storage	932 GB SSD CT1000T500SSD8, 954 GB SSD SPCC M.2 PCIe SSD
+Graphics Card	AMD Radeon RX 6600 (8 GB)
+```
+
+## Pretty graphs
+
+Let's get some common assumptions out the way before we get any further
+
+- RAM: physical RAM used by the process
+- Time: wall clock time
+
+Okay! Onto the main event!
+
+### File Creation
+
+{/* TODO this should prob go last in the graphs */}
+
+Time to generate a TypeScript file in the following format. [See the source code][GitHub]
+
+The program is written in Rust and run in debug mode.
+
+The following is example output where a union of -1..=1 is generated. File size was minimized beyond keeping statements on separate lines for legibility
+
+{/* <!-- prettier-ignore --> */}
+
+```typescript
+type SafeInteger = -1 | 0 | 1;
+const y: SafeInteger = 0;
+// @ts-expect-error
+const X: SafeInteger = Infinity;
+```
+
+![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode. The time increases linearly, with 10GB taking around 100 seconds to generate](/file-creation-time-vs-file-size.svg)
+
+I only measured up to around 10GB. If the trendline were followed until the full union of safe integers was created, it would require approximately 315 zettabytes
+
+I found a trendline of $$\left(x\log_{10} x \cdot 16\right) + 101$$ was reasonable. Assuming a union of size $$x$$, there will be $$x$$ numbers of size $$x\log_{10} x$$, since digits increase with every power of 10. A file containing a union of size 1 takes 101 bytes
+
+Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\times10^{17}$$ MB, or 315 ZB
+
+### Typechecking
+
+#### Time
+
+{/* TODO fix alt stuffs */}
+![alt](/tsc-typechecking-time-vs-file-size.svg)
+I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
+
+{/* TODO alt */}
+
+![alt](/tsgo-typechecking-time-vs-file-size.svg)
+TSGO is far faster for this very niche usecase. CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64GB[^swap]
+
+[^swap]: I know I could have used swap to get more RAM, but I'd expect this to be very slow and heavily skew the numbers. After a 3 minute typecheck, who knows how slow it would get
+
+#### RAM
+
+TODO
+
+#### CPU
+
+TODO
+
+## Is there even enough storage in the world?
+
+{/* TODO should this live closer to the benchmark? */}
+
+According to Business Wire's report on the IDC's Global StorageSphere forecast[^costsTooManyDollars], the amount of data being stored globally is <quote>expected to grow to 8.9ZB by 2024</quote>. The `SafeInteger` union would take 315 ZB, or around 35x that number. Maybe in 20 years I'll ask everyone to pool their storage space for the sake of type safety!
+
+[^costsTooManyDollars]: I am using Business Wire as a Proxy since the actual report costs 7500$ 😭
+
+## Just Download more RAM
+
+Back in the day, gramma tried to jailbreak their VCR, but they accidentally downloaded infinite ram. They scrambled to hit the internet shutoff valve, but it was too late. They opened up task manager and it showed 1 yottabyte of RAM
+
+Grandpa turned on Nord VPN to buy some time, but depleting the world's RAM supply has dire ramifications
+
+> ERROR: NORDVPN ULTIMATE REQUIRED FOR RAM-EVADE MANEUVERS. YOU HAVE 3 MINUTES BEFORE IP LEAK
+
+Grandma was never seen again, and their steam account was completely wiped
+
+Don't risk it—use an untraceable method like stealing RAM sticks from your local library, and if you need lots of RAM, yottabyte!
