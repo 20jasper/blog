@@ -34,7 +34,7 @@ More specifics will be described as relevant
 
 ### Uhhh what is a yottabyte??????
 
-What is a Yottabyte? That's 1,000,000,000,000,000,000,000,000 (1 septillion) bytes, or 1 trillion terabytes, or 1 trillion trillion bytes. I don't know about you, but I don't have that much RAM on my computer. If anyone has an extra 26 yottabytes of RAM laying around collecting dust, let me know!
+That's 1,000,000,000,000,000,000,000,000 (1 septillion) bytes, or 1 trillion terabytes, or 1 trillion trillion bytes. I don't know about you, but I don't have that much RAM on my computer. If anyone has an extra 26 yottabytes of RAM laying around collecting dust, let me know!
 
 ### Specs
 
@@ -48,12 +48,6 @@ Graphics Card	AMD Radeon RX 6600 (8 GB)
 ```
 
 ## Pretty graphs
-
-Let's get some common assumptions out the way before we get any further
-
-- Time: wall clock time
-
-Okay! Onto the main event!
 
 ### File Creation
 
@@ -73,6 +67,8 @@ const X: SafeInteger = Infinity;
 ```
 
 #### File Creation Time
+
+Time is defined as wall clock time
 
 ![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode](/file-creation-time-vs-file-size.svg)
 
@@ -94,6 +90,8 @@ Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\
 ### Typechecking
 
 #### Time
+
+Time is defined as wall clock time
 
 ![TSC typechecking time vs file size](/tsc-typechecking-time-vs-file-size.svg)
 69MB takes around 4.5 hours and 2MB takes around 4 seconds to typecheck with TSC
