@@ -19,6 +19,13 @@ The titular metric describes the following—if a file containing a TypeScript u
 {/* TODO skip here for this */}
 We will also measure RAM, CPU, and time taken for file generation and typechecking with TSGO
 
+If you'd like to skip to the pretty graphs, here's a table of contents!
+
+- [File Creation](#file-creation)
+- [Type checking time](#file-creation-time)
+- [Type checking RAM](#ram)
+- [Type checking CPU](#cpu)
+
 [GitHub]: https://github.com/20jasper/typescript-union-benchmarking
 
 [Check out the Source Code for benchmarks][GitHub] if you'd like to run them yourself or see what exactly is being run
@@ -65,7 +72,7 @@ const y: SafeInteger = 0;
 const X: SafeInteger = Infinity;
 ```
 
-#### Time
+#### File Creation Time
 
 ![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode](/file-creation-time-vs-file-size.svg)
 
