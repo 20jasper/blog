@@ -1,5 +1,5 @@
 ---
-title: 'It takes 31 yottabytes of RAM to typecheck a union of Safe Integers'
+title: 'It takes 26 yottabytes of RAM to typecheck a union of Safe Integers'
 pubDate: '2025-08-17'
 description: 'Do It'
 math: true
@@ -15,8 +15,8 @@ I am aware TSGO is not released. I'd expect it to have variance in performance d
 
 A Safe Integer is defined as JavaScript's `Number.MIN_SAFE_INTEGER` to `Number.MAX_SAFE_INTEGER` inclusive, or $$[-(2^{53} - 1), 2^{53} - 1]$$
 
-The titular metric describes the following—if a file containing a TypeScript union of all Safe Integers were to be type checked using `tsc`, theoretically, the process would require 31 yottabytes of physical RAM
-
+The titular metric describes the following—if a file containing a TypeScript union of all Safe Integers were to be type checked using `tsc`, theoretically, the process would require 26 yottabytes of physical RAM
+{/* TODO skip here for this */}
 We will also measure RAM, CPU, and time taken for file generation and typechecking with TSGO
 
 [GitHub]: https://github.com/20jasper/typescript-union-benchmarking
@@ -27,7 +27,7 @@ More specifics will be described as relevant
 
 ### Uhhh what is a yottabyte??????
 
-What is a Yottabyte? That's 1,000,000,000,000,000,000,000,000 (1 septillion) bytes, or 1 trillion terabytes, or 1 trillion trillion bytes. I don't know about you, but I don't have that much RAM on my computer. If anyone has an extra 31 yottabytes of RAM laying around collecting dust, let me know!
+What is a Yottabyte? That's 1,000,000,000,000,000,000,000,000 (1 septillion) bytes, or 1 trillion terabytes, or 1 trillion trillion bytes. I don't know about you, but I don't have that much RAM on my computer. If anyone has an extra 26 yottabytes of RAM laying around collecting dust, let me know!
 
 ### Specs
 
@@ -44,35 +44,43 @@ Graphics Card	AMD Radeon RX 6600 (8 GB)
 
 Let's get some common assumptions out the way before we get any further
 
-- RAM: physical RAM used by the process
 - Time: wall clock time
 
 Okay! Onto the main event!
 
 ### File Creation
 
-{/* TODO this should prob go last in the graphs */}
+I ran a Rust program that builds a string in memory then writes to the file system in memory
+[See the source code][GitHub]
 
-Time to generate a TypeScript file in the following format. [See the source code][GitHub]
-
-The program is written in Rust and run in debug mode.
+The program is run in debug mode (as all good benchmarks must). Ultimately it doesn't matter since this is the least interesting bit of the benchmark
 
 The following is example output where a union of -1..=1 is generated. File size was minimized beyond keeping statements on separate lines for legibility
 
-{/* <!-- prettier-ignore --> */}
-
+{/* prettier-ignore */}
 ```typescript
-type SafeInteger = -1 | 0 | 1;
+type SafeInteger = -1|0|1;
 const y: SafeInteger = 0;
 // @ts-expect-error
 const X: SafeInteger = Infinity;
 ```
 
-![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode. The time increases linearly, with 10GB taking around 100 seconds to generate](/file-creation-time-vs-file-size.svg)
+#### Time
 
-I only measured up to around 10GB. If the trendline were followed until the full union of safe integers was created, it would require approximately 315 zettabytes
+![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode](/file-creation-time-vs-file-size.svg)
 
-I found a trendline of $$\left(x\log_{10} x \cdot 16\right) + 101$$ was reasonable. Assuming a union of size $$x$$, there will be $$x$$ numbers of size $$x\log_{10} x$$, since digits increase with every power of 10. A file containing a union of size 1 takes 101 bytes
+File creation time scales linearly with the file size. A 10GB file takes around 100 seconds to generate. I could have gone further, but I couldn't be bothered to clear up more space on my SSD
+
+#### File Size
+
+{/* todo alt */}
+![alt](/file-size-vs-union-size.svg)
+
+File size scales logarithmically with union size. The amount of digits increases with every power of 10
+
+If the trend line were followed until the full union of safe integers was created, it would require approximately 315 zettabytes
+
+I found a trend line of $$\left(x\log_{10} x \cdot 16\right) + 101$$ was reasonable. A file containing a union of size 1 is 101 bytes
 
 Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\times10^{17}$$ MB, or 315 ZB
 
@@ -85,7 +93,6 @@ Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\
 I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
 
 {/* TODO alt */}
-
 ![alt](/tsgo-typechecking-time-vs-file-size.svg)
 TSGO is far faster for this very niche usecase. CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64GB[^swap]
 
@@ -93,7 +100,18 @@ TSGO is far faster for this very niche usecase. CPU was no longer the limiting f
 
 #### RAM
 
-TODO
+RAM is physical RAM used by the process in this case
+
+{/* TODO alt */}
+![alt](/peak-ram-usage-by-file-size.svg)
+
+RAM usage scales linearly with file size. TSC has a baseline of around 170MB, and TSGO around 65–70MB
+
+Now how did we get to that 31 Yottabytes of RAM?
+
+We previously calculated that [a file with a SafeInteger union would be 315ZB](#file-creation). If we plug that into the TSC trend line of $$83.9x$$, we get $$2.64\times10^{19}$$MB, or 26 yottabytes of RAM
+
+TSGO would take around $$2.18\times10^{19}$$MB, or 22 yottabytes due to its trend line of $$67.2x$$—a huge improvement!
 
 #### CPU
 
