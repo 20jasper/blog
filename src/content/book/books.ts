@@ -131,9 +131,9 @@ export const booksStarted: Book[] = [
 		author: 'Stephen Covey',
 		readDate: {
 			start: new Date('2025-5-12'),
-			end: null,
+			end: new Date('2025-7-19'),
 		},
-		rating: null,
+		rating: 4,
 	},
 	{
 		title: 'Joy of React',
@@ -158,7 +158,7 @@ export const booksStarted: Book[] = [
 		author: 'hellointerview.com',
 		readDate: {
 			start: new Date('2025-5-20'),
-			end: null,
+			end: new Date('2025-7-18'),
 		},
 		rating: 5,
 	},
@@ -167,27 +167,44 @@ export const booksStarted: Book[] = [
 		author: 'Kent C. Dodds',
 		readDate: {
 			start: new Date('2025-6-20'),
-			end: null,
+			end: new Date('2025-7-18'),
 		},
-		rating: null,
+		rating: 5,
 	},
 	{
 		title: 'Designing Data–Intensive Applications (1st Edition)',
 		author: 'Martin Kleppmann',
 		readDate: {
 			start: new Date('2025-6-16'),
+			end: new Date('2025-7-18'),
+		},
+		rating: 5,
+	},
+	{
+		title: 'Zero to Production In Rust',
+		author: 'Luca Palmieri',
+		readDate: { start: new Date('2025-8-20'), end: null },
+		rating: null,
+	},
+	{
+		title: 'AI Engineering',
+		author: 'Chip Huyen',
+		readDate: { start: new Date('2025-8-22'), end: null },
+		rating: null,
+	},
+	{
+		title: 'The Pragmatic Programmer',
+		readDate: {
+			start: new Date('2025-8-22'),
 			end: null,
 		},
+		author: 'Andy Hunt and Dave Thomas',
 		rating: null,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
 type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
 const toRead: UnreadBook[] = [
-	{
-		title: 'Zero to Production In Rust',
-		author: 'Luca Palmieri',
-	},
 	{
 		title: 'Pragmatic Type-Level Design',
 		author: 'Alexander Granin',
