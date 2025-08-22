@@ -88,13 +88,13 @@ Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\
 
 #### Time
 
-{/* TODO fix alt stuffs */}
-![alt](/tsc-typechecking-time-vs-file-size.svg)
-I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
+![TSC typechecking time vs file size](/tsc-typechecking-time-vs-file-size.svg)
+69MB takes around 4.5 hours and 2MB takes around 4 seconds to typecheck with TSC
 
-{/* TODO alt */}
-![alt](/tsgo-typechecking-time-vs-file-size.svg)
-TSGO is far faster for this very niche usecase. CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64GB[^swap]
+I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items (140MB) and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
+
+![TSGO typechecking time vs file size](/tsgo-typechecking-time-vs-file-size.svg)
+TSGO is far faster for this very niche usecase. The same 69MB file takes around 17 seconds—almost 1000x faster! CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64GB[^swap]
 
 [^swap]: I know I could have used swap to get more RAM, but I'd expect this to be very slow and heavily skew the numbers. After a 3 minute typecheck, who knows how slow it would get
 
