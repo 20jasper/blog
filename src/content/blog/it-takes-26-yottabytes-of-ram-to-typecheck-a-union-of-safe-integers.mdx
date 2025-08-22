@@ -17,12 +17,12 @@ A Safe Integer is defined as JavaScript's `Number.MIN_SAFE_INTEGER` to `Number.M
 
 The titular metric describes the following—if a file containing a TypeScript union of all Safe Integers were to be type checked using `tsc`, theoretically, the process would require 26 yottabytes of physical RAM
 
-We'll go over RAM, time, CPU, for TSC, TSGO and file creation
+We'll go over file creation, time, RAM, and CPU for TSC and TSGO
 
-If you'd like to skip to the pretty graphs, here's a table of contents!
+If you'd like to skip to the pretty graphs, here's a table of contents:
 
 - [File Creation](#file-creation)
-- [Type checking time](#file-creation-time)
+- [Type checking time](#time)
 - [Type checking RAM](#ram)
 - [Type checking CPU](#cpu)
 
@@ -38,7 +38,7 @@ That's 1,000,000,000,000,000,000,000,000 (1 septillion) bytes, or 1 trillion ter
 
 ### Specs
 
-My computer has 12 logical processors and 64 GB of RAM. This test was run on WSL using Ubuntu 20.04.6 LTS and afforded 48GB of RAM
+My computer has 12 logical processors and 64 GB of RAM. This test was run on WSL using Ubuntu 20.04.6 LTS and 48 GB of RAM
 
 ```
 Processor	AMD Ryzen 5 5600X 6-Core Processor                3.70 GHz
@@ -73,7 +73,7 @@ Time is defined as wall clock time
 
 ![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode](/file-creation-time-vs-file-size.svg)
 
-File creation time scales linearly with the file size. A 10GB file takes around 100 seconds to generate. I could have gone further, but I couldn't be bothered to clear up more space on my SSD
+File creation time scales linearly with the file size. A 10 GB file takes around 100 seconds to generate. I could have gone further, but I couldn't be bothered to clear up more space on my SSD
 
 #### File Size
 
@@ -85,7 +85,7 @@ If the trend line were followed until the full union of safe integers was create
 
 I found a trend line of $$\left(x\log_{10} x \cdot 16\right) + 101$$ was reasonable. A file containing a union of size 1 is 101 bytes
 
-Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\times10^{17}$$ MB, or 315 ZB
+Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields $$3.15\times10^{17}$$ MB, or 315 ZB
 
 ### Typechecking
 
@@ -94,12 +94,12 @@ Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields us $$3.15\
 Time is defined as wall clock time
 
 ![TSC typechecking time vs file size](/tsc-typechecking-time-vs-file-size.svg)
-69MB takes around 4.5 hours and 2MB takes around 4 seconds to typecheck with TSC
+69 MB takes around 4.5 hours and 2 MB takes around 4 seconds to typecheck with TSC
 
-I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items (140MB) and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
+I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items (140 MB) and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
 
 ![TSGO typechecking time vs file size](/tsgo-typechecking-time-vs-file-size.svg)
-TSGO is far faster for this very niche usecase. The same 69MB file takes around 17 seconds—almost 1000x faster! CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64GB[^swap]
+TSGO is far faster for this very niche use case. The same 69 MB file takes around 17 seconds—almost 1000x faster! CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64 GB[^swap]
 
 [^swap]: I know I could have used swap to get more RAM, but I'd expect this to be very slow and heavily skew the numbers. After a 3 minute typecheck, who knows how slow it would get
 
@@ -109,13 +109,13 @@ RAM is physical RAM used by the process
 
 ![Peak RAM usage by File Size](/peak-ram-usage-by-file-size.svg)
 
-RAM usage scales linearly with file size. TSC has a baseline of around 170MB, and TSGO around 65–70MB
+RAM usage scales linearly with file size. TSC has a baseline of around 170 MB, and TSGO around 65–70 MB
 
-Now how did we get to that 31 Yottabytes of RAM?
+Now how did we get to that 26 yottabytes of RAM?
 
-We previously calculated that [a file with a SafeInteger union would be 315ZB](#file-creation). If we plug that into the TSC trend line of $$83.9x$$, we get $$2.64\times10^{19}$$MB, or 26 yottabytes of RAM
+We previously calculated that [a file with a SafeInteger union would be 315 ZB](#file-creation). If we plug that into the TSC trend line of $$83.9x$$, we get $$2.64\times10^{19}$$ MB, or 26 yottabytes of RAM
 
-TSGO would take around $$2.18\times10^{19}$$MB, or 22 yottabytes due to its trend line of $$67.2x$$—a huge improvement!
+TSGO would take around $$2.18\times10^{19}$$ MB, or 22 yottabytes due to its trend line of $$67.2x$$—a huge improvement!
 
 #### CPU
 
@@ -125,18 +125,18 @@ TSC trends towards an average of using 100% of one logical processor, while TSGO
 
 ## Is there even enough storage in the world?
 
-According to Business Wire's report on the IDC's Global StorageSphere forecast[^costsTooManyDollars], the amount of data being stored globally is <quote>expected to grow to 8.9ZB by 2024</quote>. The `SafeInteger` union would take 315 ZB, or around 35x that number. Maybe in 20 years I'll ask everyone to pool their storage space for the sake of type safety!
+According to Business Wire's report on the IDC's Global StorageSphere forecast[^costsTooManyDollars], the amount of data being stored globally is expected to grow to 8.9 ZB by 2024. The `SafeInteger` union would take 315 ZB, or around 35x that number. Maybe in 20 years I'll ask everyone to pool their storage space for the sake of type safety!
 
-[^costsTooManyDollars]: I am using Business Wire as a Proxy since the actual report costs 7500$ 😭
+[^costsTooManyDollars]: I am using Business Wire as a proxy since the actual report costs $7,500 😭
 
 ## Just Download more RAM
 
-Back in the day, gramma tried to jailbreak their VCR, but they accidentally downloaded infinite ram. They scrambled to hit the internet shutoff valve, but it was too late. They opened up task manager and it showed 1 yottabyte of RAM
+Back in the day, gramma tried to jailbreak their VCR, but they accidentally downloaded infinite RAM. They scrambled to hit the internet shutoff valve, but it was too late. They opened up task manager and it showed 1 yottabyte of RAM
 
 Grandpa turned on Nord VPN to buy some time, but depleting the world's RAM supply has dire ramifications
 
 > ERROR: NORDVPN ULTIMATE REQUIRED FOR RAM-EVADE MANEUVERS. YOU HAVE 3 MINUTES BEFORE IP LEAK
 
-Gramma was never seen again, and their steam account was completely wiped
+Gramma was never seen again, and their Steam account was completely wiped
 
 Don't risk it—use an untraceable method like stealing RAM sticks from your local library, and if you need lots of RAM, yottabyte!
