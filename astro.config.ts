@@ -11,6 +11,7 @@ export default defineConfig({
 	redirects: {
 		'/': '/blog',
 		'/projects/1': '/blog',
+		'passwords.txt': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 	},
 	markdown: {
 		shikiConfig: {
