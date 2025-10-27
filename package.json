@@ -30,7 +30,7 @@
 		"feed": "^5.1.0",
 		"prettier": "^3.6.0",
 		"prettier-plugin-astro": "^0.14.1",
-		"prettier-plugin-tailwindcss": "^0.6.11"
+		"prettier-plugin-tailwindcss": "^0.7.1"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
