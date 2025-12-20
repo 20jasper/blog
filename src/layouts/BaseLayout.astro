@@ -29,6 +29,22 @@ const { math, title, description } = Astro.props;
 		<div class="mt-auto">
 			<Header border="top" />
 			<footer class="p-4">
+				<nav
+					aria-label="webring"
+					class="gap-2 pb-4 text-center"
+				>
+					<a href="https://webring.jacobasper.com/prev/20jasper"
+						><span aria-hidden="true">←</span>Previous</a
+					>
+					<a
+						class="px-2"
+						href="https://webring.jacobasper.com/"
+						>Really Cool Blogger Web Ring</a
+					>
+					<a href="https://webring.jacobasper.com/next/20jasper"
+						>next<span aria-hidden="true">→</span></a
+					>
+				</nav>
 				<p class="text-foreground-secondary text-center text-sm">
 					&copy; {new Date().getFullYear()}
 					{NAME}. &copy; 2020 VSCode Orange Theme <a
