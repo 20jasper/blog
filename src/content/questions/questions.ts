@@ -29,7 +29,8 @@ export const questions: Question[] = [
 	},
 	{
 		json: 'true',
-		explanation: 'top level scalars are chill',
+		explanation:
+			'Top level scalars are chill. `true`, `false`, `null`, objects, numbers, strings and arrays are all valid top level JSON values as of RFC7158',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-3',
 		answer: 'valid',
 	},
