@@ -1,0 +1,19 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'button'>;
+const { class: _class, ...rest } = Astro.props;
+---
+
+<button
+	type="button"
+	{...rest}
+	class:list={[
+		'bg-background-secondary text-foreground hover:bg-background-secondary/80 hover:text-accent rounded-md px-4 py-2 font-medium',
+		'transition-colors duration-200 ease-in',
+
+		_class,
+	]}
+>
+	<slot />
+</button>

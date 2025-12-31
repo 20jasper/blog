@@ -1,0 +1,189 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Code from '@components/Code.astro';
+import Prose from '@components/Prose.astro';
+import Button from '@components/Button.astro';
+import { questions, options } from '@content/questions/questions';
+
+const index = 0;
+const question = questions[index]!;
+---
+
+<BaseLayout
+	title={'JSON WTF - Jacob Asper'}
+	description={'A totally normal and not hard quiz about JSON'}
+>
+	<Prose>
+		<main class="w-full pb-4 text-xl">
+			<h2 class="text-2xl font-semibold">Really cool JSON quiz</h2>
+			<div id="question-container">
+				<p>
+					These questions aren't meant to trick you. You can trust a character
+					exists if the string says so. Answers are based on rfc8259
+				</p>
+				<h3 id="question">question {index + 1} of {questions.length}</h3>
+				<Code
+					id="question-code"
+					code={question.json}
+					class={'break-all'}
+				/>
+				<div
+					class="invisible min-h-50"
+					id="explanation-container"
+				>
+					<p id="valid-or-not"></p>
+					<p id="explanation">
+						{question.explanation}
+					</p>
+					<p
+						id="citation"
+						class="mt-2"
+					>
+						<a
+							id="citation-link"
+							href="#"
+							target="_blank"
+							rel="noopener noreferrer"
+						></a>
+					</p>
+				</div>
+				<div class="flex justify-center">
+					<ul
+						id="options"
+						class="not-prose flex list-none gap-2 whitespace-nowrap"
+					>
+						{
+							options.map((opt) => (
+								<li>
+									<Button id={opt}>{opt}</Button>
+								</li>
+							))
+						}
+					</ul>
+					<Button
+						id="next"
+						class="mx-auto hidden"
+						>Next</Button
+					>
+				</div>
+			</div>
+			<div
+				class="hidden"
+				id="final-score-container"
+			>
+				<blockquote id="final-score"></blockquote>
+				<h2>shout outs</h2>
+				<p>
+					Shout out to Nicolas Seriot for their great article <a
+						href="https://seriot.ch/software/parsing_json.html"
+						>Parsing JSON is a Minefield</a
+					>. I learned most of these fun facts from their conformance test suite
+					and article while writing my own JSON parser, <a
+						href="https://github.com/20jasper/JJPWRGEM">JJPWRGEM</a
+					>! Give their article a read for a more technical version of this quiz
+				</p>
+				<p>
+					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration. Check
+					out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
+						href="https://jsdate.wtf/">jsdate.wtf</a
+					> if you liked this quiz!
+				</p>
+				<p></p>
+			</div>
+		</main>
+	</Prose>
+	<script>
+		import { questions, type Option } from '@content/questions/questions';
+		let index = 0;
+		let correctAnswers = 0;
+
+		const elements = {
+			options: document.querySelector('#options')!,
+			next: document.querySelector('#next')!,
+			question: document.querySelector('#question')!,
+			questionCode: document.querySelector('#question-code')!,
+			explanation: document.querySelector('#explanation')!,
+			citation: document.querySelector('#citation')!,
+			citationLink: document.querySelector(
+				'#citation-link',
+			) as HTMLAnchorElement,
+			explanationContainer: document.querySelector('#explanation-container')!,
+			validOrNot: document.querySelector('#valid-or-not')!,
+			finalScoreContainer: document.querySelector('#final-score-container')!,
+			finalScore: document.querySelector('#final-score')!,
+			questionContainer: document.querySelector('#question-container')!,
+		};
+
+		renderQuestion(index);
+
+		const onClick = (event: Event) => {
+			console.log('option clicked');
+			const question = questions[index];
+			if (!question) throw new Error('No question found');
+
+			const target = event.target as Element | null;
+			const selected = target?.id;
+			if (selected === question.answer) {
+				correctAnswers += 1;
+			}
+
+			const validOrNotText = `${
+				selected === question.answer ? 'Correct ✅' : 'Wrong ❌'
+			}: ${getValidOrNotText(question.answer)}`;
+			elements.validOrNot.textContent = validOrNotText;
+			elements.explanationContainer.classList.remove('invisible');
+			elements.options.classList.add('hidden');
+			elements.next.classList.remove('hidden');
+		};
+		elements.options.addEventListener('click', onClick);
+
+		elements.next.addEventListener('click', () => {
+			console.log('next clicked');
+			index += 1;
+			elements.next.classList.add('hidden');
+			elements.options.classList.remove('hidden');
+
+			const question = questions[index];
+			if (!question) {
+				elements.questionContainer.classList.add('hidden');
+				elements.finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on jsonwtf.org and all I got was this lousy text to share on social media`;
+				elements.finalScoreContainer.classList.remove('hidden');
+				return;
+			}
+
+			renderQuestion(index);
+		});
+
+		function getCitationLabel(url: string): string {
+			const m = url.match(/#section-([0-9.]+)/);
+			if (m && m[1]) return `RFC 8259 §${m[1]}`;
+			return 'RFC 8259';
+		}
+
+		function renderQuestion(index: number) {
+			const question = questions[index];
+			if (!question) throw new Error('No question found');
+			elements.question.textContent = `question ${index + 1} of ${questions.length}`;
+			elements.questionCode.textContent = question.json;
+			elements.explanation.textContent = question.explanation;
+
+			elements.citationLink.href = question.citation;
+			elements.citationLink.textContent = getCitationLabel(question.citation);
+
+			elements.explanationContainer.classList.add('invisible');
+		}
+
+		function getValidOrNotText(option: Option): string {
+			switch (option) {
+				case 'valid':
+					return 'This is valid';
+				case 'invalid':
+					return 'This is invalid';
+				case 'maybe valid':
+					return 'This may be valid';
+				default:
+					throw new Error('Unknown option');
+			}
+		}
+	</script>
+</BaseLayout>

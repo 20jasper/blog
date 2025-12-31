@@ -4,6 +4,7 @@
 @custom-variant prose-inline-code (&.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)));
 
 @theme {
+	--color-*: initial;
 	--color-background: rgb(0, 0, 19);
 	--color-foreground: rgb(241, 230, 216);
 	--color-accent: rgb(255, 152, 0);
