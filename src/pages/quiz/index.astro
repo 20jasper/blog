@@ -22,14 +22,16 @@ const question = questions[index]!;
 				<p>You will have three options for each JSON snippet</p>
 				<ul>
 					<li>
-						<span class="font-bold">valid</span>: valid according to RFC8259
+						<span class="font-bold">valid</span>: parsers should accept the
+						input according to RFC8259
 					</li>
 					<li>
-						<span class="font-bold">invalid</span>: invalid according to RFC8259
+						<span class="font-bold">invalid</span>: parsers should reject the
+						input according to RFC8259
 					</li>
 					<li>
 						<span class="font-bold">maybe valid</span>: up to the parser to
-						decide or otherwise ambiguous
+						decide whether to accept the input or otherwise ambiguous
 					</li>
 				</ul>
 				<p>
