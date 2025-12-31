@@ -99,7 +99,7 @@ export const questions: Question[] = [
 	{
 		json: '28828283828383838288282282828282828282828282828387374747474747474747447473733773737377373737372882818192.093290230990392399230239039290',
 		explanation:
-			"Parsers are allowed to deny large numbers if they so choose. IEEE 754 float doubles are recommended for interop, but there's nothing stopping a parser from accepting arbitrarily high precision or only allowing very low precision. Does that mean that pretty much any syntactically valid number can be accepted or rejected? Ye",
+			"Parsers are allowed to deny large numbers if they so choose. IEEE 754 float doubles are recommended for interop, but there's nothing stopping a parser from accepting arbitrarily high precision or only allowing very low precision. Does that mean that pretty much any syntactically valid number can be accepted or rejected? Yep!",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
 		answer: 'maybe valid',
 	},
@@ -134,7 +134,7 @@ export const questions: Question[] = [
 	{
 		json: '[[[[[[[[[[[[[[[[[[[[\n[[[[[[[[[[[[[[[[[[[[\n"this is balanced" ]]]]]]]]]]]]]]]]]]]]\n]]]]]]]]]]]]]]]]]]]]\n',
 		explanation:
-			'"An implementation may set limits on the size of texts that it accepts. An implementation may set limits on the maximum depth of nesting". Does this mean that pretty much any json is maybe valid? Ye. Am I going to change the rest of the quiz? Na',
+			'"An implementation may set limits on the size of texts that it accepts. An implementation may set limits on the maximum depth of nesting". Does this mean that pretty much any json is maybe valid? Yep. Am I going to change the rest of the quiz? Nah',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259',
 		answer: 'maybe valid',
 	},
