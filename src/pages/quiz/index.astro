@@ -16,11 +16,33 @@ const question = questions[index]!;
 	<Prose>
 		<main class="w-full pb-4 text-xl">
 			<h2 class="text-2xl font-semibold">Really cool JSON quiz</h2>
-			<div id="question-container">
+			<div id="starting-explanation">
+				<p>A totally normal and not hard quiz about JSON</p>
+				<h3>What you're getting yourself into</h3>
+				<p>You will have three options for each JSON snippet</p>
+				<ul>
+					<li>
+						<span class="font-bold">valid</span>: valid according to RFC8259
+					</li>
+					<li>
+						<span class="font-bold">invalid</span>: invalid according to RFC8259
+					</li>
+					<li>
+						<span class="font-bold">maybe valid</span>: up to the parser to
+						decide or otherwise ambiguous
+					</li>
+				</ul>
 				<p>
-					These questions aren't meant to trick you. You can trust a character
-					exists if the string says so. Answers are based on rfc8259
+					The questions aren't meant to trick you. There won't be any gotcha
+					whitespace or unannounced unprintable characters. There's enough
+					weirdness to to go around as is!
 				</p>
+				<Button id="start-quiz">Start Quiz</Button>
+			</div>
+			<div
+				class="hidden"
+				id="question-container"
+			>
 				<h3 id="question">question {index + 1} of {questions.length}</h3>
 				<Code
 					id="question-code"
@@ -83,8 +105,8 @@ const question = questions[index]!;
 					>! Give their article a read for a more technical version of this quiz
 				</p>
 				<p>
-					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration. Check
-					out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
+					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration.
+					Check out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
 						href="https://jsdate.wtf/">jsdate.wtf</a
 					> if you liked this quiz!
 				</p>
@@ -107,14 +129,15 @@ const question = questions[index]!;
 			citationLink: document.querySelector(
 				'#citation-link',
 			) as HTMLAnchorElement,
+			startScreen: document.querySelector('#starting-explanation')!,
+			startButton: document.querySelector('#start-quiz')!,
 			explanationContainer: document.querySelector('#explanation-container')!,
+
 			validOrNot: document.querySelector('#valid-or-not')!,
 			finalScoreContainer: document.querySelector('#final-score-container')!,
 			finalScore: document.querySelector('#final-score')!,
 			questionContainer: document.querySelector('#question-container')!,
 		};
-
-		renderQuestion(index);
 
 		const onClick = (event: Event) => {
 			console.log('option clicked');
@@ -136,6 +159,14 @@ const question = questions[index]!;
 			elements.next.classList.remove('hidden');
 		};
 		elements.options.addEventListener('click', onClick);
+
+		elements.startButton.addEventListener('click', () => {
+			index = 0;
+			correctAnswers = 0;
+			elements.startScreen.classList.add('hidden');
+			elements.questionContainer.classList.remove('hidden');
+			renderQuestion(index);
+		});
 
 		elements.next.addEventListener('click', () => {
 			console.log('next clicked');
