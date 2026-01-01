@@ -23,7 +23,7 @@ export const questions: Question[] = [
 	},
 	{
 		json: '[',
-		explanation: 'Arrays must be closed with a closing square brace',
+		explanation: 'Arrays must be closed with a closing square bracket (`]`)',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-5',
 		answer: 'invalid',
 	},
@@ -73,7 +73,8 @@ export const questions: Question[] = [
 	},
 	{
 		json: '0x10',
-		explanation: 'Hexadecimal is not allowed in numbers',
+		explanation:
+			"Hexadecimal is not allowed in numbers. If you thought this was multiplication—that's not allowed either",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
 		answer: 'invalid',
 	},
@@ -106,7 +107,7 @@ export const questions: Question[] = [
 	{
 		json: 'NaN',
 		explanation:
-			'NaN is not a valid JSON number literal. Despite recommending using the IEEE 754 float double range, not all values are allowed. Numbers without digits are not allowed',
+			'`NaN` is not a valid JSON number literal. Despite recommending using the IEEE 754 float double range, not all values are allowed. Numbers without digits are not allowed',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
 		answer: 'invalid',
 	},
@@ -120,7 +121,7 @@ export const questions: Question[] = [
 	{
 		json: '"line\u2028separator"',
 		explanation:
-			'U+2028 and U+2029 may appear in JSON strings. Fun fact, JavaScript does not allow these characters, so sorry to say, JSON is not a strict subset of JavaScript despite the goals of the format',
+			'`U+2028` and `U+2029` may appear in JSON strings. Fun fact, JavaScript does not allow these characters, so sorry to say, JSON is not a strict subset of JavaScript despite the goals of the format',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'valid',
 	},
@@ -186,7 +187,7 @@ export const questions: Question[] = [
 	},
 	{
 		json: '"\\n"',
-		explanation: 'Escaped newline (\n) inside a string is valid.',
+		explanation: 'Escaped newline inside a string is valid.',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'valid',
 	},
@@ -204,21 +205,23 @@ export const questions: Question[] = [
 		answer: 'valid',
 	},
 	{
-		json: '" unescaped del character"',
+		json: '" unescaped DEL character"',
 		explanation:
-			'DEL character is not considered a control character for some reason',
+			"The DEL`character (`U+007F`) is not considered a control character in JSON, likely since it's uncommon today. It originally was used in punched tape systems and punched a hole in all 8 bits, causing the character to be skipped. Nowadays, DEL is sometimes used as a backspace equivalent in Unix-like operating systems",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'valid',
 	},
 	{
-		json: '"\u0000 null character"',
-		explanation: 'The null character must be escaped',
+		json: '"\u0000 NULL character"',
+		explanation:
+			'The NULL character (`U+0000`) is considered a control character and must be escaped',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
 	{
 		json: '"\\h\\i"',
-		explanation: '\\h and \\i are invalid escapes',
+		explanation:
+			'`\\h` and `\\i` are invalid escapes. Valid special cased escapes are `\\"`, `\\\\`, `\\/`, `\\b`, `\\f`, `\\n`, `\\r`, `\\t`',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
