@@ -18,7 +18,7 @@ const question = questions[index]!;
 			class="w-full pb-4 text-xl"
 			aria-live="polite"
 		>
-			<h2 class="text-2xl font-semibold">Really cool JSON quiz</h2>
+			<h2 class="text-2xl font-semibold">JSON WTF</h2>
 			<div id="starting-explanation">
 				<p>A totally normal and not hard quiz about JSON</p>
 				<h3>What you're getting yourself into</h3>
@@ -99,7 +99,7 @@ const question = questions[index]!;
 				id="final-score-container"
 			>
 				<blockquote id="final-score"></blockquote>
-				<h2>shout outs</h2>
+				<h2>Shout outs</h2>
 				<p>
 					Shout out to Nicolas Seriot for their great article <a
 						href="https://seriot.ch/software/parsing_json.html"
@@ -110,12 +110,24 @@ const question = questions[index]!;
 					>! Give their article a read for a more technical version of this quiz
 				</p>
 				<p>
-					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration. Check
-					out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
+					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration.
+					Check out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
 						href="https://jsdate.wtf/">jsdate.wtf</a
 					> if you liked this quiz!
 				</p>
-				<p></p>
+				<h2>Playtesting scores</h2>
+				<ul>
+					<li>Average score: 15.5/40</li>
+					<li>Median score: 15/40</li>
+					<li>Highest score: 27/40</li>
+					<li>Lowest score: 14/40</li>
+				</ul>
+				<p>
+					All who tested were at least tangentially familiar with JSON.
+					Ironically web developers tend to score lower since they are biased
+					towards JavaScript's rules. The higher scores came from those who
+					Googled and read the RFC as they went
+				</p>
 			</div>
 		</main>
 	</Prose>
@@ -190,7 +202,6 @@ const question = questions[index]!;
 			renderQuestion(index);
 		});
 
-
 		function createExplanationFragment(text: string) {
 			const frag = document.createDocumentFragment();
 			const re = /`([^`]+)`/g;
@@ -223,7 +234,7 @@ const question = questions[index]!;
 			);
 
 			elements.citationLink.href = question.citation;
-		elements.citationLink.textContent = question.citationLabel;
+			elements.citationLink.textContent = question.citationLabel;
 			elements.explanationContainer.classList.add('invisible');
 		}
 
