@@ -149,7 +149,7 @@ export const questions: Question[] = [
 		json: '"pretend I\'m utf-8 encoded"',
 		explanation: 'utf8 is the default encoding and very swell',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
-		answer: 'maybe valid',
+		answer: 'valid',
 	},
 	{
 		json: '"pretend I\'m utf-16 encoded"',
