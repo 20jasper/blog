@@ -276,6 +276,24 @@ export const questions: Question[] = [
 		citationLabel: 'RFC 8259 §7',
 		answer: 'valid',
 	},
+
+	{
+		json: '"\\uDEAD single unpaired UTF-16 surrogate"',
+		explanation:
+			"Valid Unicode escapes that don't decode as a character are allowed, but how they are parsed is not defined",
+		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.2',
+		citationLabel: 'RFC 8259 §8.2',
+		answer: 'valid',
+	},
+
+	{
+		json: '"\uDEAD raw invalid Unicode"',
+		explanation: 'Invalid unicode is not allowed',
+		citation: 'https://datatracker.ietf.org/doc/html/rfc7159#section-8.1',
+		citationLabel: 'RFC 7159 §8.1',
+		answer: 'invalid',
+	},
+
 	{
 		json: '"\\uaB0c"',
 		explanation: 'Mixed case Unicode escapes are fine',
