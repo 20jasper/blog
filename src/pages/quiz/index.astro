@@ -110,8 +110,8 @@ const question = questions[index]!;
 					>! Give their article a read for a more technical version of this quiz
 				</p>
 				<p>
-					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration.
-					Check out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
+					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration. Check
+					out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
 						href="https://jsdate.wtf/">jsdate.wtf</a
 					> if you liked this quiz!
 				</p>
@@ -196,38 +196,42 @@ const question = questions[index]!;
 			return 'RFC 8259';
 		}
 
-	function createExplanationFragment(text: string) {
-		const frag = document.createDocumentFragment();
-		const re = /`([^`]+)`/g;
-		let lastIndex = 0;
-		let match: RegExpExecArray | null;
-		while ((match = re.exec(text)) !== null) {
-			if (match.index > lastIndex) {
-				frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+		function createExplanationFragment(text: string) {
+			const frag = document.createDocumentFragment();
+			const re = /`([^`]+)`/g;
+			let lastIndex = 0;
+			let match: RegExpExecArray | null;
+			while ((match = re.exec(text)) !== null) {
+				if (match.index > lastIndex) {
+					frag.appendChild(
+						document.createTextNode(text.slice(lastIndex, match.index)),
+					);
+				}
+				const code = document.createElement('code');
+				code.textContent = match[1] ?? '';
+				frag.appendChild(code);
+				lastIndex = match.index + match[0].length;
 			}
-			const code = document.createElement('code');
-			code.textContent = match[1] ?? '';
-			frag.appendChild(code);
-			lastIndex = match.index + match[0].length;
+			if (lastIndex < text.length) {
+				frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+			}
+			return frag;
 		}
-		if (lastIndex < text.length) {
-			frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+
+		function renderQuestion(index: number) {
+			const question = questions[index];
+			if (!question) throw new Error('No question found');
+			elements.question.textContent = `question ${index + 1} of ${questions.length}`;
+			elements.questionCode.textContent = question.json;
+			elements.explanation.replaceChildren(
+				createExplanationFragment(question.explanation),
+			);
+
+			elements.citationLink.href = question.citation;
+			elements.citationLink.textContent = getCitationLabel(question.citation);
+
+			elements.explanationContainer.classList.add('invisible');
 		}
-		return frag;
-	}
-
-	function renderQuestion(index: number) {
-		const question = questions[index];
-		if (!question) throw new Error('No question found');
-		elements.question.textContent = `question ${index + 1} of ${questions.length}`;
-		elements.questionCode.textContent = question.json;
-		elements.explanation.replaceChildren(createExplanationFragment(question.explanation));
-
-		elements.citationLink.href = question.citation;
-		elements.citationLink.textContent = getCitationLabel(question.citation);
-
-		elements.explanationContainer.classList.add('invisible');
-	}
 
 		function getValidOrNotText(option: Option): string {
 			switch (option) {
