@@ -11,7 +11,7 @@ export type Question = {
 export const questions: Question[] = [
 	{
 		json: '{  "am i"    : "valid?"  }',
-		explanation: 'whitespace is allowed between all json tokens',
+		explanation: 'Whitespace is allowed between all JSON tokens',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-2',
 		answer: 'valid',
 	},
@@ -37,13 +37,13 @@ export const questions: Question[] = [
 	{
 		json: 'True',
 		explanation:
-			"literal names must be exactly `true`, `false`, or `null`. I'm sorry python devs",
+			"Literal names must be exactly `true`, `false`, or `null`. I'm sorry python devs",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-3',
 		answer: 'invalid',
 	},
 	{
 		json: '10',
-		explanation: 'scalars are still chill. 10 is a valid integer',
+		explanation: 'Scalars are still chill. 10 is a valid integer',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
 		answer: 'valid',
 	},
@@ -134,47 +134,47 @@ export const questions: Question[] = [
 	{
 		json: '[[[[[[[[[[[[[[[[[[[[\n[[[[[[[[[[[[[[[[[[[[\n"this is balanced" ]]]]]]]]]]]]]]]]]]]]\n]]]]]]]]]]]]]]]]]]]]\n',
 		explanation:
-			'"An implementation may set limits on the size of texts that it accepts. An implementation may set limits on the maximum depth of nesting". Does this mean that pretty much any json is maybe valid? Yep. Am I going to change the rest of the quiz? Nah',
+			'Parsers can set limits on nesting and input size. Does this mean almost any input is maybe valid? Yep. Am I going to change the rest of the quiz? Nah',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259',
 		answer: 'maybe valid',
 	},
 	{
 		json: '{ "hi": null, "hi": null }',
 		explanation:
-			"YOu sure can have duplicate keys, but please don't unless you really like interoperability issues.",
+			"You sure can have duplicate keys, but please don't unless you really like interoperability issues.",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-4',
 		answer: 'valid',
 	},
 	{
-		json: '"pretend I\'m utf-8 encoded"',
-		explanation: 'utf8 is the default encoding and very swell',
+		json: '"pretend I\'m UTF-8 encoded"',
+		explanation: 'UTF-8 is the default encoding and very swell',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
 		answer: 'valid',
 	},
 	{
-		json: '"pretend I\'m utf-16 encoded"',
+		json: '"pretend I\'m UTF-16 encoded"',
 		explanation:
-			"utf16 is allowed in internal systems that don't go over the network",
+			"UTF-16 is allowed in internal systems that don't go over the network",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
 		answer: 'maybe valid',
 	},
 	{
-		json: '"pretend I\'m utf-32 encoded"',
+		json: '"pretend I\'m UTF-32 encoded"',
 		explanation:
-			"utf32 is allowed in internal systems that don't go over the network",
+			"UTF-32 is allowed in internal systems that don't go over the network",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
 		answer: 'maybe valid',
 	},
 	{
-		json: '"pretend I\'m utf-7 encoded"',
-		explanation: 'utf 7 is not very swell',
+		json: '"pretend I\'m UTF-7 encoded"',
+		explanation: 'UTF-7 is not very swell',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
 		answer: 'invalid',
 	},
 	{
 		json: '\ufeff"prefixed by byte order marker (BOM)"',
 		explanation:
-			'A leading byte order marker (BOM) is allowed in non network transmitted json and it can be ignored in network transmitted JSON',
+			'A leading byte order mark (BOM) is allowed in non-network-transmitted JSON and can be ignored in network-transmitted JSON',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
 		answer: 'maybe valid',
 	},
@@ -192,26 +192,27 @@ export const questions: Question[] = [
 	},
 	{
 		json: '"are unescaped newlines\n allowed?"',
-		explanation: "control characters aren't allowed in strings",
+		explanation: "Control characters aren't allowed in strings",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
 	{
 		json: '"\\u000A unicode escaped newline"',
-		explanation: "You're allowed to uescape newlines too!",
+		explanation:
+			"You're allowed to use Unicode escapes for newlines too! In fact, any character can be Unicode escaped",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'valid',
 	},
 	{
 		json: '" unescaped del character"',
 		explanation:
-			'del character is not considered a control character for some reason',
+			'DEL character is not considered a control character for some reason',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'valid',
 	},
 	{
-		json: '"� null character"',
-		explanation: 'null character must be escaped',
+		json: '"\u0000 null character"',
+		explanation: 'The null character must be escaped',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
@@ -223,7 +224,7 @@ export const questions: Question[] = [
 	},
 	{
 		json: '\\n[]',
-		explanation: 'escapes must be in a string',
+		explanation: 'Escapes must be in a string',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
@@ -235,31 +236,33 @@ export const questions: Question[] = [
 	},
 	{
 		json: '"\\uaB0c"',
-		explanation: 'mixed case unicode escapes are fine',
+		explanation: 'Mixed case Unicode escapes are fine',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'valid',
 	},
 	{
 		json: '"\\uaB0"',
-		explanation: 'unicode escape must have 4 digits',
+		explanation: 'Unicode escapes must have 4 hex digits',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
 	{
 		json: '"\\U1234"',
-		explanation: 'the u in a uescape must be lowercase',
+		explanation:
+			"The 'u' in a Unicode escape must be lowercase (i.e. '\\uXXXX')",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
 	{
 		json: '"\\uZZZZ"',
-		explanation: 'non hex digits are not allowed in uescapes',
+		explanation: 'Non-hex digits are not allowed in Unicode escapes',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		answer: 'invalid',
 	},
 	{
 		json: '',
-		explanation: "Nothing is invalid JSON. This isn't yaml!",
+		explanation:
+			"This wasn't a trick—there wasn't anything in the box! JSON requires at least one value. This isn't YAML!",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259',
 		answer: 'invalid',
 	},
