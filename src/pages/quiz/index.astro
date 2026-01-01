@@ -190,11 +190,6 @@ const question = questions[index]!;
 			renderQuestion(index);
 		});
 
-		function getCitationLabel(url: string): string {
-			const m = url.match(/#section-([0-9.]+)/);
-			if (m && m[1]) return `RFC 8259 §${m[1]}`;
-			return 'RFC 8259';
-		}
 
 		function createExplanationFragment(text: string) {
 			const frag = document.createDocumentFragment();
@@ -228,8 +223,7 @@ const question = questions[index]!;
 			);
 
 			elements.citationLink.href = question.citation;
-			elements.citationLink.textContent = getCitationLabel(question.citation);
-
+		elements.citationLink.textContent = question.citationLabel;
 			elements.explanationContainer.classList.add('invisible');
 		}
 
