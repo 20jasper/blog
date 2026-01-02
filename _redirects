@@ -1,3 +1,9 @@
-/*  https://jacobasper.com/:splat  301!  !/quiz  Host=jsonwtf.org
+/*  https://jacobasper.com/:splat  301!  Host=jsonwtf.org  !/quiz
 
-/quiz  https://jsonwtf.org/quiz  301!
+# quiz
+/quiz  https://jsonwtf.org/quiz  301!  Host=jsonwtf.org
+/  /quiz  301!  Host=jsonwtf.org
+
+# old main pages
+/  /blog  301!  Host=jacobasper.com
+/projects/*  /blog  301!  Host=jacobasper.com
