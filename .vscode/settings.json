@@ -1,18 +1,14 @@
 {
-  "prettier.documentSelectors": [
-    "**/*.astro"
-  ],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.enable": true,
-  "tailwindCSS.includeLanguages": {
-    "astro": "html"
-  },
-  "astro.content-intellisense": true,
-  "deno.enable": true,
-  "deno.enablePaths": [
-    "netlify/edge-functions"
-  ],
-  "deno.unstable": true,
-  "deno.importMap": ".netlify/edge-functions-import-map.json",
-  "deno.path": "/home/jacob/.config/netlify/deno-cli/deno"
+	"prettier.documentSelectors": ["**/*.astro"],
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"prettier.enable": true,
+	"tailwindCSS.includeLanguages": {
+		"astro": "html"
+	},
+	"astro.content-intellisense": true,
+	"deno.enable": true,
+	"deno.enablePaths": ["netlify/edge-functions"],
+	"deno.unstable": true,
+	"deno.importMap": ".netlify/edge-functions-import-map.json",
+	"deno.path": "/home/jacob/.config/netlify/deno-cli/deno"
 }
