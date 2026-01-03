@@ -160,8 +160,8 @@ export const questions: Question[] = [
 		json: '[[[[[[[[[[[[[[[[[[[[\n[[[[[[[[[[[[[[[[[[[[\n"this is balanced"\n]]]]]]]]]]]]]]]]]]]]\n]]]]]]]]]]]]]]]]]]]]\n',
 		explanation:
 			'Parsers can set limits on nesting and input size. Does this mean almost any input is maybe valid? Yep. Am I going to change the rest of the quiz? Nah',
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259',
-		citationLabel: 'RFC 8259',
+		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-9',
+		citationLabel: 'RFC 8259 §9',
 		answer: 'maybe valid',
 	},
 	{
