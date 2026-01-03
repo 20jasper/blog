@@ -9,6 +9,7 @@ import rehypeKatex from 'rehype-katex';
 export default defineConfig({
 	site: 'https://jacobasper.com',
 	redirects: {
+		'/projects/1/': 'https://jacobasper.com/blog',
 		'passwords.txt': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 	},
 	markdown: {
