@@ -1,5 +1,6 @@
 ---
 import FormattedDate from '@components/date/FormattedDate.astro';
+import Prose from '@components/Prose.astro';
 
 type Props = {
 	title: string;
@@ -11,29 +12,19 @@ type Props = {
 const { title, date, updatedDate } = Astro.props;
 ---
 
-<article
-	class:list={[
-		'mx-auto py-8',
-		'prose prose-invert lg:prose-xl',
-		'prose-inline-code:rounded-sm prose-inline-code:bg-background-secondary prose-inline-code:p-0.5',
-		'prose-a:text-foreground',
-		'prose-headings:text-foreground',
-	]}
->
-	<div class="max-w-prose p-4">
-		<div class="mb-2 py-2 text-center">
-			<h1>{title}</h1>
-			<div class="text-foreground-secondary mb-1">
-				<FormattedDate date={date} />
-				{
-					updatedDate && (
-						<div class="italic">
-							Last updated on <FormattedDate date={updatedDate} />
-						</div>
-					)
-				}
-			</div>
+<Prose>
+	<div class="mb-2 py-2 text-center">
+		<h1>{title}</h1>
+		<div class="text-foreground-secondary mb-1">
+			<FormattedDate date={date} />
+			{
+				updatedDate && (
+					<div class="italic">
+						Last updated on <FormattedDate date={updatedDate} />
+					</div>
+				)
+			}
 		</div>
-		<slot />
 	</div>
-</article>
+	<slot />
+</Prose>

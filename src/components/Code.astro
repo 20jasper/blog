@@ -1,0 +1,15 @@
+---
+import type { ComponentProps } from 'astro/types';
+import { Code as AstroCode } from 'astro:components';
+import theme from '../../orange-theme';
+
+type Props = ComponentProps<typeof AstroCode>;
+
+const props = Astro.props;
+---
+
+<AstroCode
+	theme={theme}
+	wrap
+	{...props}
+/>

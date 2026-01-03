@@ -1,0 +1,271 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Code from '@components/Code.astro';
+import Prose from '@components/Prose.astro';
+import Button from '@components/Button.astro';
+import {
+	questions,
+	options,
+	TITLE,
+	DESCRIPTION,
+} from '@content/questions/questions';
+
+const index = 0;
+const question = questions[index]!;
+---
+
+<BaseLayout
+	title={TITLE}
+	description={DESCRIPTION}
+>
+	<Prose>
+		<main
+			class="w-full pb-4 text-xl"
+			aria-live="polite"
+		>
+			<h2 class="text-2xl font-semibold">JSON WTF</h2>
+			<div id="starting-explanation">
+				<p>{DESCRIPTION}</p>
+				<h3>What you're getting yourself into</h3>
+				<p>You will have three options for each JSON snippet</p>
+				<ul>
+					<li>
+						<span class="font-bold">valid</span>: parsers should accept the
+						input according to RFC 8259
+					</li>
+					<li>
+						<span class="font-bold">invalid</span>: parsers should reject the
+						input according to RFC 8259
+					</li>
+					<li>
+						<span class="font-bold">maybe valid</span>: up to the parser to
+						decide whether to accept the input or otherwise ambiguous
+					</li>
+				</ul>
+				<p>
+					The questions aren't meant to trick you. There won't be any gotcha
+					whitespace or unannounced unprintable characters. If a string says
+					"pretend I'm encoded in UTF-8", then trust it. There's enough
+					weirdness to go around as is!
+				</p>
+				<Button id="start-quiz">Start Quiz</Button>
+			</div>
+			<div
+				class="hidden"
+				id="question-container"
+			>
+				<h3 id="question">question {index + 1} of {questions.length}</h3>
+				<Code
+					id="question-code"
+					code={question.json}
+					class={'break-all'}
+				/>
+				<div
+					class="invisible min-h-50"
+					id="explanation-container"
+				>
+					<p id="valid-or-not"></p>
+					<p id="explanation">
+						{question.explanation}
+					</p>
+					<p
+						id="citation"
+						class="mt-2"
+					>
+						Read More: <a
+							id="citation-link"
+							href="#"
+							target="_blank"
+							rel="noopener noreferrer"
+						></a>
+					</p>
+				</div>
+				<div class="flex justify-center">
+					<ul
+						id="options"
+						class="not-prose flex list-none gap-2 whitespace-nowrap"
+					>
+						{
+							options.map((opt) => (
+								<li>
+									<Button id={opt}>{opt}</Button>
+								</li>
+							))
+						}
+					</ul>
+					<Button
+						id="next"
+						class="mx-auto hidden"
+						>Next</Button
+					>
+				</div>
+			</div>
+			<div
+				class="hidden"
+				id="final-score-container"
+			>
+				<blockquote id="final-score"></blockquote>
+				<h2>Shout outs</h2>
+				<p>
+					Shout out to Nicolas Seriot for their great article <a
+						href="https://seriot.ch/software/parsing_json.html"
+						>Parsing JSON is a Minefield</a
+					>. I learned most of these fun facts from their conformance test suite
+					and article while writing my own JSON parser, <a
+						href="https://github.com/20jasper/JJPWRGEM">JJPWRGEM</a
+					>! Give their article a read for a more technical dive into what this
+					quiz provides
+				</p>
+				<p>
+					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration. Check
+					out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
+						href="https://jsdate.wtf/">jsdate.wtf</a
+					> if you liked this quiz!
+				</p>
+				<h2>Play testing scores</h2>
+				<p>Note: I added more questions post play testing</p>
+				<ul>
+					<li>Average score: 15.5/40</li>
+					<li>Median score: 15/40</li>
+					<li>Highest score: 27/40</li>
+					<li>Lowest score: 14/40</li>
+				</ul>
+				<p>
+					All who tested were at least tangentially familiar with JSON.
+					Ironically web developers tend to score lower since they are biased
+					towards JavaScript's rules. The higher scores came from those who
+					Googled and read the RFC as they went
+				</p>
+				<p>
+					I thought everyone would get like 35 right, but apparently building a
+					JSON parser will color your experience. [Relevant
+					XKCD](https://xkcd.com/2501/)
+				</p>
+			</div>
+		</main>
+	</Prose>
+	<script>
+		import {
+			JSONWTF_BASE_URL,
+			questions,
+			type Option,
+		} from '@content/questions/questions';
+		let index = 0;
+		let correctAnswers = 0;
+
+		const elements = {
+			options: document.querySelector('#options')!,
+			next: document.querySelector('#next')!,
+			question: document.querySelector('#question')!,
+			questionCode: document.querySelector('#question-code')!,
+			explanation: document.querySelector('#explanation')!,
+			citation: document.querySelector('#citation')!,
+			citationLink: document.querySelector(
+				'#citation-link',
+			) as HTMLAnchorElement,
+			startScreen: document.querySelector('#starting-explanation')!,
+			startButton: document.querySelector('#start-quiz')!,
+			explanationContainer: document.querySelector('#explanation-container')!,
+
+			validOrNot: document.querySelector('#valid-or-not')!,
+			finalScoreContainer: document.querySelector('#final-score-container')!,
+			finalScore: document.querySelector('#final-score')!,
+			questionContainer: document.querySelector('#question-container')!,
+		};
+
+		const onClick = (event: Event) => {
+			console.log('option clicked');
+			const question = questions[index];
+			if (!question) throw new Error('No question found');
+
+			const target = event.target as Element | null;
+			const selected = target?.id;
+			if (selected === question.answer) {
+				correctAnswers += 1;
+			}
+
+			const validOrNotText = `${
+				selected === question.answer ? 'Correct ✅' : 'Wrong ❌'
+			}: ${getValidOrNotText(question.answer)}`;
+			elements.validOrNot.textContent = validOrNotText;
+			elements.explanationContainer.classList.remove('invisible');
+			elements.options.classList.add('hidden');
+			elements.next.classList.remove('hidden');
+		};
+		elements.options.addEventListener('click', onClick);
+
+		elements.startButton.addEventListener('click', () => {
+			index = 0;
+			correctAnswers = 0;
+			elements.startScreen.classList.add('hidden');
+			elements.questionContainer.classList.remove('hidden');
+			renderQuestion(index);
+		});
+
+		elements.next.addEventListener('click', () => {
+			console.log('next clicked');
+			index += 1;
+			elements.next.classList.add('hidden');
+			elements.options.classList.remove('hidden');
+
+			const question = questions[index];
+			if (!question) {
+				elements.questionContainer.classList.add('hidden');
+				elements.finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on ${JSONWTF_BASE_URL} and all I got was this lousy text to share on social media`;
+				elements.finalScoreContainer.classList.remove('hidden');
+				return;
+			}
+
+			renderQuestion(index);
+		});
+
+		function createExplanationFragment(text: string) {
+			const frag = document.createDocumentFragment();
+			const re = /`([^`]+)`/g;
+			let lastIndex = 0;
+			let match: RegExpExecArray | null;
+			while ((match = re.exec(text)) !== null) {
+				if (match.index > lastIndex) {
+					frag.appendChild(
+						document.createTextNode(text.slice(lastIndex, match.index)),
+					);
+				}
+				const code = document.createElement('code');
+				code.textContent = match[1] ?? '';
+				frag.appendChild(code);
+				lastIndex = match.index + match[0].length;
+			}
+			if (lastIndex < text.length) {
+				frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+			}
+			return frag;
+		}
+
+		function renderQuestion(index: number) {
+			const question = questions[index];
+			if (!question) throw new Error('No question found');
+			elements.question.textContent = `question ${index + 1} of ${questions.length}`;
+			elements.questionCode.textContent = question.json;
+			elements.explanation.replaceChildren(
+				createExplanationFragment(question.explanation),
+			);
+
+			elements.citationLink.href = question.citation;
+			elements.citationLink.textContent = question.citationLabel;
+			elements.explanationContainer.classList.add('invisible');
+		}
+
+		function getValidOrNotText(option: Option): string {
+			switch (option) {
+				case 'valid':
+					return 'This is valid';
+				case 'invalid':
+					return 'This is invalid';
+				case 'maybe valid':
+					return 'This may be valid';
+				default:
+					throw new Error('Unknown option');
+			}
+		}
+	</script>
+</BaseLayout>

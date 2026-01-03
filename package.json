@@ -15,7 +15,9 @@
 	"dependencies": {
 		"@astrojs/check": "^0.9.4",
 		"@astrojs/mdx": "^4.3.0",
+		"@astrojs/netlify": "^6.6.3",
 		"@astrojs/sitemap": "^3.6.0",
+		"@netlify/edge-functions": "^3.0.3",
 		"@tailwindcss/typography": "^0.5.16",
 		"@tailwindcss/vite": "^4.1.7",
 		"astro": "^5.16.0",
