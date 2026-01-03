@@ -1,4 +1,4 @@
-import type { Config, EdgeFunction } from '@netlify/edge-functions';
+import type { EdgeFunction } from '@netlify/edge-functions';
 
 const JSONWTF_BASE = new URL('https://jsonwtf.org');
 const JACOBASPER = new URL('https://jacobasper.com');
@@ -6,8 +6,25 @@ const JACOBASPER = new URL('https://jacobasper.com');
 const matchesPath = (expected: string, actual: string): boolean =>
 	expected === actual || expected + '/' === actual;
 
+const FILE_EXTENSIONS = [
+	'.css',
+	'.js',
+	'.webp',
+	'.png',
+	'.jpg',
+	'.jpeg',
+	'.gif',
+	'.svg',
+	'.ico',
+];
+
+const isFile = (path: string) =>
+	path.startsWith('/_astro/') ||
+	FILE_EXTENSIONS.some((ext) => path.endsWith(ext));
+
 const redirect = (url: URL) => {
-	return Response.redirect(url, 301);
+	const res = Response.redirect(url, 301);
+	return res;
 };
 
 const handler: EdgeFunction = (request, _context) => {
@@ -15,6 +32,10 @@ const handler: EdgeFunction = (request, _context) => {
 	const host = url.hostname;
 	const path = url.pathname;
 	console.log({ host, path });
+
+	if (isFile(path)) {
+		return;
+	}
 
 	// only serve jsonwtf urls from jsonwtf.org
 	if (host === JSONWTF_BASE.hostname) {
@@ -40,20 +61,3 @@ const handler: EdgeFunction = (request, _context) => {
 };
 
 export default handler;
-
-export const config: Config = {
-	cache: 'manual',
-	path: '/*',
-	excludedPattern: [
-		'/_astro/*',
-		'*.css',
-		'*.js',
-		'*.webp',
-		'*.png',
-		'*.jpg',
-		'*.jpeg',
-		'*.gif',
-		'*.svg',
-		'*.ico',
-	],
-};
