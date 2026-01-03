@@ -3,15 +3,20 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Code from '@components/Code.astro';
 import Prose from '@components/Prose.astro';
 import Button from '@components/Button.astro';
-import { questions, options } from '@content/questions/questions';
+import {
+	questions,
+	options,
+	TITLE,
+	DESCRIPTION,
+} from '@content/questions/questions';
 
 const index = 0;
 const question = questions[index]!;
 ---
 
 <BaseLayout
-	title={'JSON WTF - Jacob Asper'}
-	description={'A totally normal and not hard quiz about JSON'}
+	title={TITLE}
+	description={DESCRIPTION}
 >
 	<Prose>
 		<main
@@ -20,17 +25,17 @@ const question = questions[index]!;
 		>
 			<h2 class="text-2xl font-semibold">JSON WTF</h2>
 			<div id="starting-explanation">
-				<p>A totally normal and not hard quiz about JSON</p>
+				<p>{DESCRIPTION}</p>
 				<h3>What you're getting yourself into</h3>
 				<p>You will have three options for each JSON snippet</p>
 				<ul>
 					<li>
 						<span class="font-bold">valid</span>: parsers should accept the
-						input according to RFC8259
+						input according to RFC 8259
 					</li>
 					<li>
 						<span class="font-bold">invalid</span>: parsers should reject the
-						input according to RFC8259
+						input according to RFC 8259
 					</li>
 					<li>
 						<span class="font-bold">maybe valid</span>: up to the parser to
@@ -140,7 +145,11 @@ const question = questions[index]!;
 		</main>
 	</Prose>
 	<script>
-		import { questions, type Option } from '@content/questions/questions';
+		import {
+			JSONWTF_BASE_URL,
+			questions,
+			type Option,
+		} from '@content/questions/questions';
 		let index = 0;
 		let correctAnswers = 0;
 
@@ -202,7 +211,7 @@ const question = questions[index]!;
 			const question = questions[index];
 			if (!question) {
 				elements.questionContainer.classList.add('hidden');
-				elements.finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on jsonwtf.org and all I got was this lousy text to share on social media`;
+				elements.finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on ${JSONWTF_BASE_URL} and all I got was this lousy text to share on social media`;
 				elements.finalScoreContainer.classList.remove('hidden');
 				return;
 			}

@@ -1,3 +1,5 @@
+import type { Item } from 'feed';
+
 export const options = ['valid', 'maybe valid', 'invalid'] as const;
 export type Option = (typeof options)[number];
 
@@ -34,7 +36,7 @@ export const questions: Question[] = [
 	{
 		json: 'true',
 		explanation:
-			'Top level scalars are chill. `true`, `false`, `null`, objects, numbers, strings and arrays are all valid top level JSON values as of RFC7158',
+			'Top level scalars are chill. `true`, `false`, `null`, objects, numbers, strings and arrays are all valid top level JSON values as of RFC 7158',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-3',
 		citationLabel: 'RFC 8259 §3',
 		answer: 'valid',
@@ -95,7 +97,7 @@ export const questions: Question[] = [
 	{
 		json: '0.00000E0000',
 		explanation:
-			"Exponent part may include leading zeros. I don't know why you'd do that but you can I guess",
+			"Exponent part may include leading zeros. I don't know why you'd do that, but you can I guess",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
 		citationLabel: 'RFC 8259 §6',
 		answer: 'valid',
@@ -332,3 +334,14 @@ export const questions: Question[] = [
 		answer: 'invalid',
 	},
 ];
+
+export const TITLE = 'JSON WTF - Jacob Asper';
+export const DESCRIPTION = 'A totally normal and not hard quiz about JSON';
+export const JSONWTF_BASE_URL = 'https://jsonwtf.org';
+
+export const feedItem: Item = {
+	title: TITLE,
+	description: DESCRIPTION,
+	link: `${JSONWTF_BASE_URL}`,
+	date: new Date('2026-1-3'),
+};
