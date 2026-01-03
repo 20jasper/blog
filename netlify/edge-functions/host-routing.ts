@@ -26,6 +26,8 @@ const handler: EdgeFunction = (request, _context) => {
 			return Response.redirect(new URL('/quiz', JSONWTF_BASE), 301);
 		}
 	}
+
+	return;
 };
 
 export default handler;
