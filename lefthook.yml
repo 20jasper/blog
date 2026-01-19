@@ -1,0 +1,13 @@
+pre-commit:
+  commands:
+    format:
+      glob: '*.{ts,tsx,js,jsx,json,astro,md,mdx,css}'
+      run: pnpm prettier {staged_files} --write
+      stage_fixed: true
+
+pre-push:
+  commands:
+    format-check:
+      run: pnpm format:check
+    lint:
+      run: pnpm lint
