@@ -183,23 +183,29 @@ export const booksStarted: Book[] = [
 	{
 		title: 'Zero to Production In Rust',
 		author: 'Luca Palmieri',
-		readDate: { start: new Date('2025-8-20'), end: null },
-		rating: null,
+		readDate: { start: new Date('2025-8-20'), end: new Date('2025-9-21') },
+		rating: 5,
 	},
 	{
 		title: 'AI Engineering',
 		author: 'Chip Huyen',
-		readDate: { start: new Date('2025-8-22'), end: null },
-		rating: null,
+		readDate: { start: new Date('2025-8-22'), end: new Date('2025-9-21') },
+		rating: 5,
 	},
 	{
 		title: 'The Pragmatic Programmer',
 		readDate: {
 			start: new Date('2025-8-22'),
-			end: null,
+			end: new Date('2025-9-21'),
 		},
 		author: 'Andy Hunt and Dave Thomas',
-		rating: null,
+		rating: 5,
+	},
+	{
+		title: 'Writing for Developers: Blogs that Get Read',
+		author: 'Cynthia Dunlop and Piotr Sarna',
+		readDate: { start: new Date('2025-12-15'), end: null },
+		rating: 5,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
