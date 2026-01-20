@@ -3,6 +3,7 @@ title: 'TypeScript Type Level Addition'
 pubDate: '2025-05-17'
 description: 'Metaprogramming and type level shennanigans'
 math: true
+tags: ['typescript']
 ---
 
 This blog is adapted from the slide deck for my Columbus Code and Coffee talk. [Watch the talk version](https://www.youtube.com/watch?v=DjcC6p_8fpE)

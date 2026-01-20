@@ -2,6 +2,7 @@
 title: 'Committing to learning Go in 2026'
 pubDate: '2026-01-16'
 description: 'Time to learn Golanguage'
+tags: []
 ---
 
 Every year, I like to learn a new language to force myself to think differently. It's easy to get stuck in your ways. When I only knew JavaScript, I would exclusively use indexed for loops. Python and Rust showed me the magic of a good `for in` loop (or `for of` in JavaScript land 😵)

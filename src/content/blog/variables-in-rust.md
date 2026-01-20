@@ -2,6 +2,7 @@
 title: 'Variables in Rust - Rust for TypeScript Developers'
 pubDate: '2023-02-12'
 description: 'Learn about the differences in scope, initialization, and declaration for variables in TypeScript and Rust'
+tags: ['rust', 'typescript']
 ---
 
 ## Table Of Contents
