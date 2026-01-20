@@ -2,6 +2,7 @@
 title: 'How I read technical books and documentation'
 pubDate: '2026-01-18'
 description: "Don't skip out on a book just because it's long!"
+tags: ['opinion']
 ---
 
 By technical books and documentation, I mean any sort of nonfiction longform content—detailed blogs, books, or courses. I'll refer mostly to books, but these same concepts apply

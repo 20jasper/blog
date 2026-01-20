@@ -1,0 +1,18 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BlogList from '@layouts/BlogList.astro';
+import { getPostsDescending } from '@src/utils/posts';
+import { blogTags } from '@content/config';
+
+export const getStaticPaths = (() => {
+	return blogTags.map((tag) => ({ params: { tag } }));
+}) satisfies GetStaticPaths;
+
+const { tag } = Astro.params;
+
+const posts = (await getPostsDescending()).filter(({ data }) =>
+	data.tags.includes(tag),
+);
+---
+
+<BlogList posts={posts} />

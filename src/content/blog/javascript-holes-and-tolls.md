@@ -2,6 +2,7 @@
 title: 'JavaScript Holes and Tolls (on performance)'
 pubDate: '2025-02-21'
 description: "Compiler optimizations that you shouldn't worry about but are cool"
+tags: ['javascript']
 ---
 
 Is there a functional difference between the following two code blocks?

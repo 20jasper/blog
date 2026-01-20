@@ -1,0 +1,22 @@
+---
+import type { BlogTag } from '@content/config';
+
+type Props = {
+	tags: BlogTag[];
+};
+
+const { tags } = Astro.props;
+---
+
+<div class="text-foreground-secondary flex gap-x-1">
+	<p>tags:</p>
+	<ul class="flex gap-x-1.5">
+		{
+			tags.map((tag) => (
+				<li>
+					<a href={`/blog/tag/${tag}`}>{tag}</a>
+				</li>
+			))
+		}
+	</ul>
+</div>

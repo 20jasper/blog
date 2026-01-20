@@ -2,6 +2,7 @@
 title: 'Implement `Pick` in TypeScript'
 pubDate: '2022-12-22'
 description: 'Implement `Pick` in TypeScript without any Utility Types!'
+tags: ['typescript']
 ---
 
 This type challenge is to create your own version of `Pick`. I decided not to use any utility types

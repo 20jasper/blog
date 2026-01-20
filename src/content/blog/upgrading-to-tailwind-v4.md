@@ -2,6 +2,7 @@
 title: 'Upgrading to Tailwind v4'
 pubDate: '2025-02-01'
 description: 'Upgrading my blog to Tailwind v4'
+tags: []
 ---
 
 I just updated this very blog to Tailwind v4—here's what I had to change!
