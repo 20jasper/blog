@@ -107,7 +107,7 @@ It's not _that_ different, but the convenience is nice
 I use `@tailwindcss/typography` to make this blog look beautiful—if the `@plugin` directive didn't exist, I'dn't've updated!
 
 ```css
-@plugin "@tailwindcss/typography";
+@plugin '@tailwindcss/typography';
 ```
 
 It seems the analog to v3 plugins are just CSS files now. I wonder how many projects will use the new <abbr title="Domain Specific Language">DSL</abbr> over good old JavaScript
