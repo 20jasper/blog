@@ -1,6 +1,50 @@
 ---
-import BlogList from '@layouts/BlogList.astro';
+import { SITE_TITLE, SITE_DESCRIPTION, ATOM_PATH, RSS_PATH } from '@src/consts';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { getPostsDescending } from '@src/utils/posts';
+import BlogList from '@components/BlogList.astro';
+
+const posts = await getPostsDescending();
+const featuredSlugs = [
+	'it-takes-26-yottabytes-of-ram-to-typecheck-a-union-of-safe-integers',
+	'iifes-a-javascript-idiom-of-yore',
+	'do-it',
+];
+const featuredPosts = posts.filter((post) => featuredSlugs.includes(post.slug));
+const otherPosts = posts.filter((post) => !featuredSlugs.includes(post.slug));
 ---
 
-<BlogList posts={await getPostsDescending()} />
+<BaseLayout
+	title={SITE_TITLE}
+	description={SITE_DESCRIPTION}
+>
+	<main class="mx-auto my-4 max-w-prose text-xl">
+		<section class="pb-4">
+			<h1 class="my-5 text-3xl font-bold">Jacob Asper's site!</h1>
+			<p class="pb-4">
+				I write about everything from Rust, to personal development, to traffic
+				design
+			</p>
+			<p class="pb-4">
+				My goal is to be weird. We need more blogs with personality out here.
+				Don't be scared to be different—be weird
+			</p>
+			<p>
+				<a href={ATOM_PATH}>Subscribe to my atom feed</a>
+			</p>
+			<p>
+				<a href={RSS_PATH}>Subscribe to my RSS feed</a>
+			</p>
+		</section>
+
+		<section class="py-4">
+			<h2 class="mb-4 text-2xl font-semibold">Featured (really good blogs)</h2>
+			<BlogList posts={featuredPosts} />
+		</section>
+
+		<section class="py-4">
+			<h2 class="mb-4 text-2xl font-semibold">All Blogs</h2>
+			<BlogList posts={otherPosts} />
+		</section>
+	</main>
+</BaseLayout>

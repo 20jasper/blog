@@ -1,7 +1,9 @@
 ---
-import type { GetStaticPaths } from 'astro';
-import BlogList from '@layouts/BlogList.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
+import BaseLayout from '@layouts/BaseLayout.astro';
 import { getPostsDescending } from '@src/utils/posts';
+import BlogList from '@components/BlogList.astro';
+import type { GetStaticPaths } from 'astro';
 import { blogTags } from '@content/config';
 
 export const getStaticPaths = (() => {
@@ -15,4 +17,19 @@ const posts = (await getPostsDescending()).filter(({ data }) =>
 );
 ---
 
-<BlogList posts={posts} />
+<BaseLayout
+	title={SITE_TITLE}
+	description={SITE_DESCRIPTION}
+>
+	<main class="mx-auto my-4 max-w-prose text-xl">
+		<section class="pb-4">
+			<h1 class="my-5 text-3xl font-bold">Blogs tagged "{tag}"</h1>
+			<a href="/blog">Go back to all blogs</a>
+		</section>
+
+		<section>
+			<h2 class="mb-4 text-2xl font-semibold">Blogs</h2>
+			<BlogList posts={posts} />
+		</section>
+	</main>
+</BaseLayout>
