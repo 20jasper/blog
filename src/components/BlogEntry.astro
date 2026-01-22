@@ -1,0 +1,25 @@
+---
+import FormattedDate from './date/FormattedDate.astro';
+import TagsList from './TagsList.astro';
+import type { BlogTag } from '@content/config';
+
+type Props = {
+	slug: string;
+	title: string;
+	date: Date;
+	tags: BlogTag[];
+};
+
+const { slug, title, date, tags } = Astro.props;
+---
+
+<a
+	href={`/blog/${slug}`}
+	class="block"
+>
+	<h4 class="leading-none">{title}</h4>
+</a>
+<div class="text-foreground-secondary m-0 pt-2">
+	{tags.length > 0 && <TagsList tags={tags} />}
+	<FormattedDate date={date} />
+</div>

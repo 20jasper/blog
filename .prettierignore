@@ -1,2 +1,5 @@
 pnpm-lock.yaml
 .astro
+
+# really annoying whitespace breakage :(
+TagsList.astro 

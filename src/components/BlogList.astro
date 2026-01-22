@@ -1,0 +1,28 @@
+---
+import type { Blog } from '@content/config';
+import BlogEntry from './BlogEntry.astro';
+
+type Props = {
+	posts: {
+		slug: string;
+		data: Blog;
+	}[];
+};
+
+const { posts } = Astro.props;
+---
+
+<ul class="flex flex-col gap-6">
+	{
+		posts.map((post) => (
+			<li>
+				<BlogEntry
+					slug={post.slug}
+					title={post.data.title}
+					date={post.data.pubDate}
+					tags={post.data.tags}
+				/>
+			</li>
+		))
+	}
+</ul>
