@@ -6,9 +6,9 @@ import BlogList from '@components/BlogList.astro';
 
 const posts = await getPostsDescending();
 const featuredSlugs = [
+	'llms-dont-own-em-dashes-i-do',
 	'it-takes-26-yottabytes-of-ram-to-typecheck-a-union-of-safe-integers',
 	'iifes-a-javascript-idiom-of-yore',
-	'do-it',
 ];
 const featuredPosts = posts.filter((post) => featuredSlugs.includes(post.slug));
 const otherPosts = posts.filter((post) => !featuredSlugs.includes(post.slug));
@@ -43,7 +43,7 @@ const otherPosts = posts.filter((post) => !featuredSlugs.includes(post.slug));
 		</section>
 
 		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">All Blogs</h2>
+			<h2 class="mb-4 text-2xl font-semibold">More Blogs</h2>
 			<BlogList posts={otherPosts} />
 		</section>
 	</main>
