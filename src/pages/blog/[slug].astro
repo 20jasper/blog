@@ -13,8 +13,12 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await post.render();
+const emDashCount = post.body.match(/—/g)?.length ?? 0;
 ---
 
-<BlogPost {...post.data}>
+<BlogPost
+	{...post.data}
+	emDashCount={emDashCount}
+>
 	<Content />
 </BlogPost>

@@ -6,24 +6,30 @@ type Props = {
 	title: string;
 	date: Date;
 	updatedDate?: Date | undefined;
+	emDashCount: number;
 	children: any;
 };
 
-const { title, date, updatedDate } = Astro.props;
+const { title, date, updatedDate, emDashCount } = Astro.props;
 ---
 
 <Prose>
 	<div class="mb-2 py-2 text-center">
 		<h1>{title}</h1>
-		<div class="text-foreground-secondary mb-1">
-			<FormattedDate date={date} />
-			{
-				updatedDate && (
-					<div class="italic">
-						Last updated on <FormattedDate date={updatedDate} />
-					</div>
-				)
-			}
+		<div class="not-prose text-foreground-secondary">
+			<p class="m-0 text-lg font-semibold">
+				Em dashes: {emDashCount}
+			</p>
+			<p class="mb-1">
+				<FormattedDate date={date} />
+				{
+					updatedDate && (
+						<div class="italic">
+							Last updated on <FormattedDate date={updatedDate} />
+						</div>
+					)
+				}
+			</p>
 		</div>
 	</div>
 	<slot />
