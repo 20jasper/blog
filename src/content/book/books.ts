@@ -24,7 +24,7 @@ export const booksStarted: Book[] = [
 			start: new Date('2025-2-28'),
 			end: new Date('2025-3-22'),
 		},
-		author: 'Andy Hunt and Dave Thomas',
+		author: 'Ian Miell',
 		rating: 5,
 	},
 	{
