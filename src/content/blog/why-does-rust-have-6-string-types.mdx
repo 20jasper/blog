@@ -1,0 +1,155 @@
+---
+title: 'Why does Rust have 6 string types?'
+pubDate: '2026-01-22'
+description: 'TODO'
+tags: ['rust']
+---
+
+import FigCaption from '@components/FigCaption.astro';
+
+Strings are really complicated, and Rust gives us some very nice tools to deal with it
+
+To be very specific, Rust the language has 1 string type—`str`—and 5 more from the standard library—`String`, `OsStr`, `OsString`, `CStr`, and `CString`. [Many more types like `&[u8]` are claimed to also be string types](#but-the-memes-say-there-are-insert-bigger-number-than-6-string-types-in-rust), but they are not meaningfully different
+
+Rust distinguishes [views into data and owned data](#owned-versus-borrowed-data) (`str` vs `String`) as well as [guarantees like encodings that make interoperability smoother](#interoperability)
+
+{/* todo pick this list */}
+[Strings in JavaScript, Python, Go, or C all make different tradeoffs between safety, flexibility, abstraction, and performance](#how-do-other-languages-compare)
+
+Now let's dive a bit deeper!
+
+## Strings are complicated
+
+```js
+TODO whatever, blah
+```
+
+## But the memes say there are _\<insert bigger number than 6>_ string types in Rust
+
+If you've been around the programming world, you may have seen this meme
+
+<FigCaption src="/rust-string-meme.webp">
+A meme comparing how Rust and C programmers see strings. The Rust programmer has more precise categories, while the C programmer groups everything into one category
+
+Before using Rust
+
+- `char *`
+
+After using Rust
+
+- `&str`
+- `String`
+- `&[u8]`
+- `&[u8; N]`
+- `Vec<u8>`
+- `&u8`
+- `OsStr`
+- `OsString`
+- `Path`
+- `PathBuf`
+- `CStr`
+- `CString`
+- `&'static str`
+
+This meme is derived from [a generalization of how genders categorize colors](https://neilpatel.com/blog/gender-and-color/)
+
+</FigCaption>
+
+If you're unfamiliar with C, `char *` is a pointer to the first character in a string. We'll learn more about [how C represents strings](#interoperability) later
+
+There's some truth to it, but it's reasonably played up for humor. A full explanation of why many of these overlap is out of scope—but here's a few examples to tide you over
+
+- [`Path` is backed by `OsStr`](https://doc.rust-lang.org/src/std/path.rs.html#2313-2315)
+- `Vec<u8>` and `&[u8]` holds no guarantees about the bytes it holds
+- `&[u8; N]` is the same as `&[u8]` beyond holding a fixed size of bytes
+
+With that out of the way, let's instead get into the meaningful differences!
+
+## Owned versus Borrowed data
+
+A `String` owns its data—it can mutate the data, resize it, deallocates memory
+
+```rs
+let mut s = String::from("🦀");
+s += "🦀";
+```
+
+A `&str` borrows data. It cannot mutate the data, resize it, or deallocate its memory. That would be very rude of it
+
+```rs
+let s_ref: &str = s.trim();
+```
+
+Note that a `&mut str` borrows data mutably. It can mutate the data, but still cannot resize or deallocate. I would be very cross with it if it decided to break the rules of the programming language
+
+```rs
+let s = String::from("hi");
+let mut_s_ref: &mut str = &mut s; // hi
+mut_s_ref.make_ascii_uppercase(); // HI
+```
+
+This pattern applies for the other string types as well. Thanks for the consistent naming scheme Rust! That makes my job easier 😃
+
+| Owned      | Borrowed |
+| ---------- | -------- |
+| `String`   | `&str`   |
+| `OsString` | `OsStr`  |
+| `CString`  | `CStr`   |
+
+Now let's get into what these types bring to the table
+
+## Interoperability and guarantees
+
+If you want to interop with other languages and platforms, you'll have to play by their rules
+
+Rust's `str` and `String` guarantee valid UTF8 encodings, but that's not always what we want
+
+If you want to interoperate with C compatible ABIs like Python's, you'll want to use `CString` or `CStr`. C doesn't store a length—it ends strings with a null byte (`\0`). If you put it in the middle, then the string will be cut short. If you forget it, then C will read past the intended end of the string causing all sorts of fun undefined behavior like crashes and memory corruption! It will treat whatever happens to be next in memory as a part of the string. For this reason, C strings guarantee a terminating null byte and no interior null bytes. They do not require any encodings
+
+```rs
+let c_str = c"I am null terminated";
+```
+
+`OsString` and `OsStr` are—you guessed it—used to interoperate with operating systems, for example, with environment variables, paths, and system calls. As with C, Operating Systems have different guarantees about their strings. Nor Unix nor Windows enforce a particular encoding
+
+If you'd like to read more, see [Rust's Foreign Function Interface docs](https://doc.rust-lang.org/std/ffi/index.html) and [The Big Book of Rust Interop's String Section](https://nrc.github.io/big-book-ffi/reference/strings.html)
+
+## How do other languages compare?
+
+_Warning_ - you are about to enter the big nerd zone ⚠
+
+I'm not even going to pretend
+
+JS string internals
+https://iliazeus.lol/articles/js-string-optimizations-en/
+https://v8.dev/blog/json-stringify
+https://v8.dev/blog/json-stringify#handling-different-string-representations
+
+In higher level languages, you are far less likely to get performance guarantees. The only time I'm aware of the Js spec saying this is with Maps https://tc39.es/ecma262/multipage/keyed-collections.html#sec-map-objects, and it only requires access times are sublinear
+
+JS
+
+> String contents as sequences of Unicode code points encoded in UTF-16 must account for ill-formed subsequences
+> https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-ecmascript-language-types-string-type
+
+### Perf
+
+It does not guaruntee any performance in the spec, so the engines are free to implement as they wish. This means that it's harder to reason about performance characteristics. Is appending to a string linear or constant time?
+
+Is `.length` constant time? It probably is constant in any mature engine, but you can never be sure without reading engine source code
+https://iliazeus.lol/articles/js-string-optimizations-en/
+
+Normalize
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize
+
+Now I am less familiar with Python, but it's a similar story here
+Python internals
+https://rushter.com/blog/python-strings-and-memory/
+
+## Further reading
+
+https://fasterthanli.me/articles/working-with-strings-in-rust
+
+TODO something on how strings are hard. js split emoji reverse
+https://manishearth.github.io/blog/2017/01/14/stop-ascribing-meaning-to-unicode-code-points/
+https://inpursuitoflaziness.blogspot.com/
