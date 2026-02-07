@@ -27,13 +27,6 @@ export const questions: Question[] = [
 		answer: 'invalid',
 	},
 	{
-		json: '[',
-		explanation: 'Arrays must be closed with a closing square bracket (`]`)',
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-5',
-		citationLabel: 'RFC 8259 §5',
-		answer: 'invalid',
-	},
-	{
 		json: 'true',
 		explanation:
 			'Top level scalars are chill. `true`, `false`, `null`, objects, numbers, strings and arrays are all valid top level JSON values as of RFC 7158',
@@ -50,15 +43,8 @@ export const questions: Question[] = [
 		answer: 'invalid',
 	},
 	{
-		json: '10',
-		explanation: 'Scalars are still chill. 10 is a valid integer',
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
-		citationLabel: 'RFC 8259 §6',
-		answer: 'valid',
-	},
-	{
 		json: '-10',
-		explanation: 'Negative numbers are cool',
+		explanation: 'Scalars are still chill. Negative numbers are cool',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-6',
 		citationLabel: 'RFC 8259 §6',
 		answer: 'valid',
@@ -182,15 +168,7 @@ export const questions: Question[] = [
 	{
 		json: '"pretend I\'m UTF-16 encoded"',
 		explanation:
-			"UTF-16 is allowed in internal systems that don't go over the network",
-		citation: 'https://datatracker.ietf.org/doc/html/rfc7159#section-8.1',
-		citationLabel: 'RFC 7159 §8.1',
-		answer: 'maybe valid',
-	},
-	{
-		json: '"pretend I\'m UTF-32 encoded"',
-		explanation:
-			"UTF-32 is allowed in internal systems that don't go over the network",
+			"UTF-16 and UTF-32 is allowed in internal systems that don't go over the network",
 		citation: 'https://datatracker.ietf.org/doc/html/rfc7159#section-8.1',
 		citationLabel: 'RFC 7159 §8.1',
 		answer: 'maybe valid',
@@ -211,13 +189,6 @@ export const questions: Question[] = [
 		answer: 'maybe valid',
 	},
 	{
-		json: '"\\u20AC euro sign escape"',
-		explanation: 'Unicode escapes are valid in strings.',
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
-		citationLabel: 'RFC 8259 §7',
-		answer: 'valid',
-	},
-	{
 		json: '"\\n"',
 		explanation: 'Escaped newline inside a string is valid.',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
@@ -230,14 +201,6 @@ export const questions: Question[] = [
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		citationLabel: 'RFC 8259 §7',
 		answer: 'invalid',
-	},
-	{
-		json: '"\\u000A unicode escaped newline"',
-		explanation:
-			"You're allowed to use Unicode escapes for newlines too! In fact, any character can be Unicode escaped",
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
-		citationLabel: 'RFC 8259 §7',
-		answer: 'valid',
 	},
 
 	{
@@ -297,32 +260,18 @@ export const questions: Question[] = [
 	},
 
 	{
-		json: '"\\uaB0c"',
-		explanation: 'Mixed case Unicode escapes are fine',
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
-		citationLabel: 'RFC 8259 §7',
-		answer: 'valid',
-	},
-	{
-		json: '"\\uaB0"',
-		explanation: 'Unicode escapes must have 4 hex digits',
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
-		citationLabel: 'RFC 8259 §7',
-		answer: 'invalid',
-	},
-	{
-		json: '"\\U1234"',
-		explanation:
-			"The 'u' in a Unicode escape must be lowercase (i.e. '\\uXXXX')",
-		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
-		citationLabel: 'RFC 8259 §7',
-		answer: 'invalid',
-	},
-	{
 		json: '"\\uZZZZ"',
 		explanation: 'Non-hex digits are not allowed in Unicode escapes',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-7',
 		citationLabel: 'RFC 8259 §7',
+		answer: 'invalid',
+	},
+	{
+		json: '[',
+		explanation:
+			"Arrays must be closed with a closing square bracket (`]`). Hopefully this didn't give you too much of an existential crisis",
+		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-5',
+		citationLabel: 'RFC 8259 §5',
 		answer: 'invalid',
 	},
 	{
