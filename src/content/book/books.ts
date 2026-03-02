@@ -204,8 +204,14 @@ export const booksStarted: Book[] = [
 	{
 		title: 'Writing for Developers: Blogs that Get Read',
 		author: 'Cynthia Dunlop and Piotr Sarna',
-		readDate: { start: new Date('2025-12-15'), end: null },
+		readDate: { start: new Date('2025-12-15'), end: new Date('2026-3-1') },
 		rating: 5,
+	},
+	{
+		title: "Computer Science: A Programmer's Perspective",
+		author: 'J. Glenn Brookshear and Dennis Brylow',
+		readDate: { start: new Date('2026-2-4'), end: null },
+		rating: null,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
