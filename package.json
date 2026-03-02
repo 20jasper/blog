@@ -19,7 +19,7 @@
 		"@astrojs/sitemap": "^3.7.0",
 		"@netlify/edge-functions": "^3.0.3",
 		"@tailwindcss/typography": "^0.5.16",
-		"@tailwindcss/vite": "^4.1.7",
+		"@tailwindcss/vite": "^4.2.1",
 		"astro": "^5.17.2",
 		"effect": "^3.19.3",
 		"rehype-katex": "^7.0.1",
