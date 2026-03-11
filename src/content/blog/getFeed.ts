@@ -33,10 +33,10 @@ export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
 	});
 
 	const items = [
-		...posts.map(({ data, slug }) => ({
+		...posts.map(({ data, id }) => ({
 			title: data.title,
 			description: data.description,
-			link: `${baseUrl}/blog/${slug}/`,
+			link: `${baseUrl}/blog/${id}/`,
 			date: new Date(data.pubDate),
 		})),
 		jsonwtf.feedItem,

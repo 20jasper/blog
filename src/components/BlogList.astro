@@ -1,10 +1,10 @@
 ---
-import type { Blog } from '@content/config';
+import type { Blog } from '@src/content.config';
 import BlogEntry from './BlogEntry.astro';
 
 type Props = {
 	posts: {
-		slug: string;
+		id: string;
 		data: Blog;
 	}[];
 };
@@ -17,7 +17,7 @@ const { posts } = Astro.props;
 		posts.map((post) => (
 			<li>
 				<BlogEntry
-					slug={post.slug}
+					slug={post.id}
 					title={post.data.title}
 					date={post.data.pubDate}
 					tags={post.data.tags}

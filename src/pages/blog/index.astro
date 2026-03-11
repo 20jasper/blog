@@ -10,8 +10,8 @@ const featuredSlugs = [
 	'it-takes-26-yottabytes-of-ram-to-typecheck-a-union-of-safe-integers',
 	'iifes-a-javascript-idiom-of-yore',
 ];
-const featuredPosts = posts.filter((post) => featuredSlugs.includes(post.slug));
-const otherPosts = posts.filter((post) => !featuredSlugs.includes(post.slug));
+const featuredPosts = posts.filter((post) => featuredSlugs.includes(post.id));
+const otherPosts = posts.filter((post) => !featuredSlugs.includes(post.id));
 ---
 
 <BaseLayout

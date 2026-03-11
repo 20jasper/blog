@@ -4,7 +4,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import { getPostsDescending } from '@src/utils/posts';
 import BlogList from '@components/BlogList.astro';
 import type { GetStaticPaths } from 'astro';
-import { blogTags } from '@content/config';
+import { blogTags } from '@src/content.config';
 
 export const getStaticPaths = (() => {
 	return blogTags.map((tag) => ({ params: { tag } }));
