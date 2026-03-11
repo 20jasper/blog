@@ -1,4 +1,4 @@
-import type { Book } from '@content/config';
+import type { Book } from '@src/content.config';
 
 import { Option, Order } from 'effect';
 

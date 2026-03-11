@@ -1,4 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 
 export const blogTags = [
 	'opinion',
@@ -24,7 +26,7 @@ const blogSchema = z.object({
 });
 
 const blog = defineCollection({
-	type: 'content',
+	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
 	schema: blogSchema,
 });
 
@@ -39,7 +41,7 @@ const bookSchema = z.object({
 });
 
 const book = defineCollection({
-	type: 'content',
+	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/book' }),
 	schema: bookSchema,
 });
 
