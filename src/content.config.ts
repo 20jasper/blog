@@ -1,4 +1,3 @@
-import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 
@@ -30,7 +29,7 @@ const blog = defineCollection({
 	schema: blogSchema,
 });
 
-const bookSchema = z.object({
+export const bookSchema = z.object({
 	title: z.string(),
 	readDate: z.object({
 		start: z.coerce.date().nullable(),
@@ -40,13 +39,8 @@ const bookSchema = z.object({
 	rating: z.number().min(0).max(5).nullable(),
 });
 
-const book = defineCollection({
-	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/book' }),
-	schema: bookSchema,
-});
-
 export type Book = z.infer<typeof bookSchema>;
 export type Blog = z.infer<typeof blogSchema>;
 export type BlogTag = (typeof blogTags)[number];
 
-export const collections = { blog, book };
+export const collections = { blog };
