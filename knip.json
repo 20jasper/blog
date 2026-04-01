@@ -1,0 +1,6 @@
+{
+	"entry": ["netlify/edge-functions/**/*.ts"],
+	"ignoreDependencies": [],
+	"ignoreExportsUsedInFile": true,
+	"include": ["files", "dependencies", "unlisted"]
+}
