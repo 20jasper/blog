@@ -5,6 +5,7 @@ import tailwind from '@tailwindcss/vite';
 import syntaxTheme from './orange-theme';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeExternalLinks from 'rehype-external-links';
 
 export default defineConfig({
 	site: 'https://jacobasper.com',
@@ -18,7 +19,17 @@ export default defineConfig({
 			wrap: true,
 		},
 		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex],
+		rehypePlugins: [
+			rehypeKatex,
+			[
+				rehypeExternalLinks,
+				{
+					rel: ['noopener', 'noreferrer'],
+					target: '_blank',
+					properties: { class: 'link-external' },
+				},
+			],
+		],
 	},
 	env: {
 		schema: {
