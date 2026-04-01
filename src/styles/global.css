@@ -25,6 +25,17 @@
 		color: var(--color-accent);
 	}
 
+	.prose a.link-external::after {
+		content: '';
+		display: inline-block;
+		width: 0.8rem;
+		height: 0.8rem;
+		background-color: currentColor;
+		mask: url(/link-external.svg) center / contain no-repeat;
+		margin-left: 0.2em;
+		vertical-align: middle;
+	}
+
 	[data-footnote-ref]::after {
 		content: ']';
 	}
