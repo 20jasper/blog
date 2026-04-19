@@ -1,49 +1,91 @@
 ---
-title: 'Killing a `Cow` made my JSON formatter 30% faster and prettier started it all'
+title: 'Killing a `Cow` made my JSON formatter 30% faster and Prettier started it all'
 pubDate: '2026-04-20'
 description: 'Early optimization is bad'
 tags: ['rust', 'performance']
 ---
 
-Over the past year, I've been building a JSON formatter in Rust called [JJPWRGEM](TODO). I was excited for some friendly competition after hearing oxfmt, a drop in prettier replacement written in Rust, now supports all filetypes prettier does! Most other fast JSON formatters lack complex features such as Prettier's width aware formatting. My formatter, JJPWRGEM, formats 40-75x faster[^cliBenchmarks] than prettier, and I assumed oxfmt would be faster. Reasonably so, oxfmt does not natively implement formatting for all filetypes, delegating to prettier for JSON, making it 10-20% slower than prettier[^respectOxfmt]
+import FigCaption from '@components/FigCaption.astro';
 
-[^respectOxfmt]: I love everything oxfmt has done so far, so this is not meant to put down oxmft. It's the only prettier compatible tooling I've found that doesn't crash when formatting larger JSON files and there are some amazing architectural decisions they've made that I am thoroughly impressed with. Open source is a lot of work
+Over the past year, I've been building a JSON formatter in Rust called [JJPWRGEM](https://github.com/20jasper/JJPWRGEM). Most formatters have either features or run quickly, so I was hopeful when [Oxfmt hit beta](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html), announcing Prettier compatible JSON support and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
 
-This sparked something in me. Could I format JSON just like prettier without sacrificing speed? Prettier normalizes numbers, for example `1E+05` becomes `1e5`. [Specific normalization rules will be explained later in the article](#number-normalization). I sped up my formatter by 30% while normalizing numbers just like prettier, and here's how I did it
+I immediately added Oxfmt to my CLI benchmarks. Oxfmt is 10-20% slower than Prettier for JSON since it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
 
-[^cliBenchmarks]: TODO link to amazing benchmarks and call out all the caveats like mine does not support
+[^respectOxfmt]: I love everything Oxfmt has done so far, so this is not meant to put down Oxfmt. It's the only Prettier compatible tooling I've found that doesn't crash when formatting larger JSON files. I've seen some amazing architectural decisions they've made. Open source is a lot of work
+
+<FigCaption src="/cow/pretty-canada.webp">
+
+JSON pretty print Canada Benchmark - Execution time
+
+Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
+
+<details>
+	<summary>See tabular benchmarks</summary>
+	{/* prettier-ignore */}
+	<div>
+
+| Command  | Median Time |
+| -------- | ----------- |
+| jsonxf   | 14.0ms      |
+| jjp      | 31.0ms      |
+| bun      | 70.0ms      |
+| node     | 89.0ms      |
+| jq       | 112.0ms     |
+| dprint   | 665.0ms     |
+| prettier | 1149.0ms    |
+| oxfmt    | 1218.0ms    |
+
+    </div>
+
+</details>
+
+</FigCaption>
+
+This sparked something in me. Could I format JSON just like Prettier without sacrificing speed? I started by [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I sped up my formatter by 30% while normalizing numbers just like Prettier, and here's how I did it
+
+[^cliBenchmarks]: At the moment, this is not a totally fair comparison since Prettier and JJPWRGEM format differently. TODO link to amazing benchmarks and call out all the caveats like mine does not support
 
 ## What's a `Cow` anyways?
 
-For my JSON formatter, I initially aimed for flexibility via data types like Clone On Write (`Cow`) . As the name implies, a `Cow` will only duplicate its data when mutated, which is helpful for operations that may or may not need to mutate data. A `Cow` can own its data or hold a reference
+`Cow` stands for Clone On Write—referencing data until mutated, when it's duplicated. This is useful when most values will be untouched, but you might want to mutate some later
 
-Imagine you have a string to lowercase—if it's already lowercase, you can just return a reference to the same string!
+For a `to_lowercase` function—if the string is already lowercase, you can just return a reference to the same string! In Rust terms, the data is "borrowed"
 
-```py
-function cow_to_lowercase(string):
-    if string.is_lowercase():
-        # return reference to same string
-        return string
-    # make a new string
-    return string.clone().to_lowercase()
-```
-
-Sounds great right? I anticipated needing to either own or borrow my data, but I could always borrow pieces of the input string and never mutated, so the flexibility was just a small amount of overhead per item that adds up over hundreds of thousands of potential calls. If the `Cow` owns its data, it must clean up, or drop, its data once it goes out of scope
-
-Even worse, JSON has more tokens than just numbers, so it would need to check if there was any cleanup for every token going out of scope. For example, an `OpenCurlyBrace` has no data attached to it, but it must be checked every time a `Token` goes out of scope, which is _a lot_
-
-```rs
-pub enum Token<'a> {
-      Number(Cow<'a, str>),
-      OpenCurlyBrace,
-      ClosedCurlyBrace,
-      String(&'a str),
-      Null,
-      // omitted 5 more tokens for brevity
+```rust
+fn to_lowercase(string: &str) -> Cow<'_, str> {
+    if string.is_lowercase() {
+        // reference input string
+        Cow::Borrowed(string)
+    } else {
+        // make a new string
+        Cow::Owned(string.to_lowercase())
+    }
 }
 ```
 
-Changing to the `Number` to hold a reference to a `str` removes around 20% of unnecessary instructions (around 12 million for a 1.7MB file). I'll link a followup deep dive into LLVM IR proving it's not memory layout or branch predictions
+<FigCaption src="/cow/lowercase-cow.webp">
+	Diagram showing a call to `to_lowercase` with an already-lowercase `&str`
+	returns a `Cow::Borrowed` pointing to the same memory, avoiding allocation
+</FigCaption>
+
+Now imagine an uppercase input. A new allocation is made to avoid changing the referenced string. The `Cow` "owns" the new data and can modify within the allocated capacity without reallocating
+
+<FigCaption src="/cow/uppercase-cow.webp">
+	Diagram showing a call to `to_lowercase` with an uppercase `&str` returns a
+	`Cow::Owned` pointing to a new allocation
+</FigCaption>
+
+## premature optimization is bad
+
+Around 20% of instructions were unnecessary due to using a `Cow<str>` instead of a `&str`
+
+I jumped to flexibility too soon. I used a `Cow<str>` to represent numbers so that consumers of my API could pass either `"12"` or `20.to_string()`. Did I ever have a use case for that? Nope
+
+Since a `Cow` can potentially own its data, it also needs to cleanup or "drop" it. This is a small amount of overhead, but it adds up when called in a hot loop
+
+Even worse, JSON has more than just numbers. The formatter parses chunks of text into meaningful units called tokens, such as `OpenCurlyBrace` and `Null`. Since each token could be a `Number`, the compiler needs to check if the `Cow` needs to cleanup its data
+
+Changing to the `Number` to hold a reference to a `str` removes around 20% of unnecessary instructions (around 12 million for a 1.7MB file). A followup deep dive into LLVM IR proving it's not memory layout or branch predictions is on the way!
 
 ## How does a formatter work?
 
@@ -52,9 +94,9 @@ Before I explain what I did, you need to understand how a formatter works
 1. convert a string input into an in memory representation (deserialization)
 2. output a string according to formatting rules (serialization)
 
-For example, JJPWRGEM converts strings to chunks of text called tokens
+For example, JJPWRGEM converts strings to meaningful chunks called tokens
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```json
 {"hi hello"    : 10 }
 ```
@@ -65,12 +107,12 @@ For example, JJPWRGEM converts strings to chunks of text called tokens
 
 To uglify, or remove unnecessary characters, we can remove any insignificant whitespace like spaces outside of strings or newlines. It's as simple as appending each token's string representation to the output
 
-<!-- prettier-ignore -->
+{/* prettier-ignore */}
 ```json
 {"hi hello":10}
 ```
 
-For more complex cases like pretty printing, we can take these tokens and built an abstract syntax tree, or AST, which encodes relationships like nesting and key value pairs. This allows us to navigate the tree or easily know where a matching brace is. Prettier and JJPWRGEM use an abstract syntax tree to quickly calculate how wide an object would be on a single line, and expand it if it's too large
+For more complex cases like pretty printing, we can build an abstract syntax tree, or AST, with the tokens. An AST encodes relationships like nesting and key value pairs. Prettier and JJPWRGEM use an abstract syntax tree to quickly calculate how wide an object would be on a single line, and expand if it's too large
 
 ```rust
 Object([
@@ -78,9 +120,16 @@ Object([
 ])
 ```
 
+{/* prettier-ignore */}
+```json
+{
+	"hi hello": 10
+}
+```
+
 ## Number normalization
 
-JJPWRGEM currently leaves numbers untouched, while prettier does several exponent transformations[^omittedTransforms]
+JJPWRGEM currently leaves numbers untouched, while Prettier does several exponent transformations[^omittedTransforms]
 
 [^omittedTransforms]: there are more number transformations, but that's for another day!
 
