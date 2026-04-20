@@ -164,8 +164,6 @@ pub enum Token<'a> {
 
 This works, but lowers performance, which is measured by throughput to avoid size based discrepancies. If we have a 1MB file and a 2MB file, the smaller will be formatted faster, but `MB/s` is comparable for both! Deser refers to deserializing into an abstract syntax tree
 
-TODO explanation of what each file has
-
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
 | deser/dense floats              | 115.6           | 101.1       | -12.5% |
@@ -176,11 +174,7 @@ Why is this slower?
 
 Obviously there is more number parsing work being done, but there has to be more at play. The many objects and integers dataset had the worst regressions!
 
-The main suspect is doubling our unneccesary cleanup. We will verify this later
-
-TODO more validations and comparisons with others
-
-TODO deep dive into niche optimizations and more. how does rust niche optimize the cow and the token enum?
+The main suspect is doubling our unneccesary `Cow` cleanup, but there are certainly other factors at play. Let's start with getting rid of the `Cow`s
 
 ### Approach 3: use `&str` instead of `Cow<str>`
 
@@ -195,7 +189,7 @@ pub enum Token<'a> {
 
 The compiler gets to remove all those cleanup instructions and branches, which is a huge win!
 
-dense floats is below baseline, which checks out since it has no exponents, so it's paying the cost to check for exponents every time.
+dense floats is below baseline, which checks out since it has no exponents, so it's paying the cost to check for exponents every time. Let's try splitting the tokens in 2 to avoid paying that cost every time
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -205,7 +199,9 @@ dense floats is below baseline, which checks out since it has no exponents, so i
 
 ### Approach 4: Separate `Mantissa` and `Exponent` variants
 
-Instead of 1 variant holding both parts of the Number, we'll split them up so the CPU can read 2 tokens at once
+Instead of 1 variant holding the full number, we'll split it in 2 so the CPU can read 2 tokens at once, saving an instruction
+
+In scientific notation, the mantissa is the digits before the `e` and the exponent is everything afterwards. For example, `10e5` has a mantissa of `10` and exponent of `5`
 
 ```rust
 pub enum Token<'a> {
@@ -213,6 +209,12 @@ pub enum Token<'a> {
     Exponent(&'a str),
 }
 ```
+
+CPUs read memory in chunks—like reading a word at a time instead of a full sentence
+
+<FigCaption src="/cow/thinking-cpu.webp">
+	A focused CPU thinking and reading one JSON Token at a time
+</FigCaption>
 
 Most CPUs read 64 bytes at a time, so 2 `&str` or `Cow<str>` per token limited reads to one `Token` at a time
 
@@ -228,38 +230,40 @@ Variants holding 1 `&str` or `Cow<str>` are both 24 bytes, so the 2 fit in 1 rea
 	thank you so much, enjoy higher throughput"
 </FigCaption>
 
-TODO numbers for cache misses, were there regressions here? is tokens throughput write or read?
+dense floats deserialization is now better than baseline, but many objects and integers has regressed due to higher number parsing overhead. Let's see if we can fix that!
 
-dense floats deserialization is now better than baseline! uglify tokens is even better, since there's no longer a branch to check if there's an exponent in a Number!
-
-| benchmark                              | prev (MB/s) | this (MB/s) | delta  |
-| -------------------------------------- | ----------- | ----------- | ------ |
-| deser/dense floats                     | 111.0       | 122.6       | +10.5% |
-| deser/strings and deep nesting         | 341.4       | 356.8       | +4.5%  |
-| uglify_tokens/dense floats             | 234.2       | 268.9       | +14.8% |
-| uglify_tokens/strings and deep nesting | 392.2       | 407.4       | +3.9%  |
+| benchmark                       | prev (MB/s) | this (MB/s) | delta  |
+| ------------------------------- | ----------- | ----------- | ------ |
+| deser/dense floats              | 111.0       | 122.6       | +10.5% |
+| deser/many objects and integers | 442.9       | 401.7       | -9.3%  |
+| deser/strings and deep nesting  | 341.4       | 356.8       | +4.5%  |
 
 ### Approach 5: Split the state machine
 
-The same principle applies to our Number state machine. This makes sure we only accept valid numbers. For example, numbers can only start with a minus sign or a non zero integer in JSON
+Parsing both the mantissa and exponent has ballooned number state machine size to 88 bytes, meaning the CPU needs two reads
 
-Since we started outputting 2 separate `&str` and whether there's a negative exponent, our `NumberState` has ballooned to 88 bytes. It was reasonable to have 1 state machine with one output, but the CPU needs to read 2 times for each state change. Splitting them puts us back at the baseline of 1 read
+A state machine is like a sequential checklist. To find where a number starts and ends, we start with a digit or minus sign, then another digit or a `.` for a float. At first, it made sense to have one state machine since we only cared about one chunk. Now we care about Mantissa and Exponent
+
+Not only will splitting allow the CPU to fetch the full state in one read, the the compiler has an easier time optimizing fewer states
 
 ```rust
-enum MantissaState { MinusOrInteger, IntegerOrDecimalOrEnd, Fraction, FractionOrEnd, End }
-enum ExponentState  { MinusOrPlusOrDigit, AfterSign, Digits, Zero, End }
+enum MantissaState { ... }
+enum ExponentState  {
+    MinusOrPlusOrDigit,
+    AfterSign,
+    Digits,
+    Zero,
+    End
+}
 ```
 
-Additionally, fewer states means fewer options, so the CPU can better predict what will happen and the compiler has an easier time optimizing
+Now the regression in the many objects and integers dataset is fixed and even better. Unfortunately, dense floats has regressed to slightly below baseline, but that's acceptable. I'm okay with leaving it here for now
 
-TODO what regressions happened?
-
-| benchmark                               | prev (MB/s) | this (MB/s) | delta  |
-| --------------------------------------- | ----------- | ----------- | ------ |
-| deser/many objects and integers         | 401.7       | 456.9       | +13.7% |
-| deser/strings and deep nesting          | 356.8       | 385.1       | +7.9%  |
-| uglify_tokens/many objects and integers | 557.2       | 630.4       | +13.1% |
-| uglify_tokens/strings and deep nesting  | 407.4       | 418.2       | +2.7%  |
+| benchmark                       | prev (MB/s) | this (MB/s) | delta  |
+| ------------------------------- | ----------- | ----------- | ------ |
+| deser/dense floats              | 122.6       | 111.3       | -9.2%  |
+| deser/many objects and integers | 401.7       | 456.9       | +13.7% |
+| deser/strings and deep nesting  | 356.8       | 385.1       | +7.9%  |
 
 ## Final Benchmarks
 
@@ -287,7 +291,7 @@ From AST to human readable string. dense floats suffered the most for a branch o
 
 ### Uglify from Token Stream
 
-Going from string to tokens to string. Big improvements across the board. Avoids building a syntax tree, so serialization avoids branching with formatting like AST uglification
+Going from string to tokens to string. Big improvements across the board. Avoids building a syntax tree, so serialization avoids branching with formatting like with AST to string paths
 
 |                           | baseline (MB/s) | new (MB/s) | delta  |
 | ------------------------- | --------------- | ---------- | ------ |
@@ -297,4 +301,11 @@ Going from string to tokens to string. Big improvements across the board. Avoids
 
 ---
 
-Thanks for coming to my Ted talk. Please consider subscribing to my RSS feed or you will overengineer for a usecase that will never materialize
+Please consider subscribing to my [RSS feed](/blog/rss.xml) or your programs will give your CPU depression
+
+<FigCaption src="/cow/cpu-therapy.webp">
+A capacitor giving a CPU therapy. They say "So I hear you've been feeling cache miss-erable recently..."
+
+The CPU is laying down on a coach and the capacitor is wearing glasses and holding a clipboard
+
+</FigCaption>
