@@ -7,11 +7,41 @@ tags: ['rust', 'performance']
 
 import FigCaption from '@components/FigCaption.astro';
 
-Over the past year, I've been building a JSON formatter in Rust called [JJPWRGEM](https://github.com/20jasper/JJPWRGEM). Most formatters have either features or run quickly, so I was hopeful when [Oxfmt hit beta](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html), announcing Prettier compatible JSON support and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
+A formatter makes code easier to read by converting an input file into a consistent style. This is helpful to make code easier to read, reduce merge conflicts, and stop your coworker Gerald from using 17 spaces for indentation
 
-I immediately added Oxfmt to my CLI benchmarks. Oxfmt is 10-20% slower than Prettier for JSON since it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
+An input like this is valid, but hard to read
+{/* prettier-ignore */}
+
+```json
+{ "hi hello": 10, "key": null }
+```
+
+The formatter takes the hard to read input and applies consistent styling
+{/* prettier-ignore */}
+
+```json
+{
+	"hi hello": 10,
+	"key": null
+}
+```
+
+Over the past year, I've been building a JSON formatter in Rust called [JJPWRGEM](https://github.com/20jasper/JJPWRGEM)
+
+Most formatters fall into one of two categories
+
+1. fast but lacking features
+2. slow but featureful
+
+Formatters are run constantly—often run on save or commit, so large projects save a lot of time through faster tooling!
+
+Prettier is not the fastest but is an industry standard formatter in the JavaScript ecosystem. Oxfmt aims to be fast and featureful, [announcing Prettier compatible JSON support](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html) and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
+
+I immediately added Oxfmt to my CLI benchmarks, and was surprised to see Oxfmt is 10-20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
 
 [^respectOxfmt]: I love everything Oxfmt has done so far, so this is not meant to put down Oxfmt. It's the only Prettier compatible tooling I've found that doesn't crash when formatting larger JSON files. I've seen some amazing architectural decisions they've made. Open source is a lot of work
+
+Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while JJPWRGEM takes around 30 milliseconds. Of course, JJPWRGEM does not have all the features Prettier does yet, so this is an unfair comparison
 
 <FigCaption src="/cow/pretty-canada.webp">
 
@@ -41,7 +71,9 @@ Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
 </FigCaption>
 
-This sparked something in me. Could I format JSON just like Prettier without sacrificing speed? I started by [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I sped up my formatter by 30% while normalizing numbers just like Prettier, and here's how I did it. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
+But what if I natively implement Prettier's features in JJPWRGEM? Could I do it without sacrificing speed?
+
+I decided to start with [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I sped up my formatter by 30% while normalizing numbers just like Prettier. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
 
 [^cliBenchmarks]: At the moment, this is not a totally fair comparison since Prettier and JJPWRGEM format differently. TODO link to amazing benchmarks and call out all the caveats like mine does not support
 
