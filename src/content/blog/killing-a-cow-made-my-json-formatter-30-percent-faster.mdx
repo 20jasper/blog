@@ -129,12 +129,11 @@ Object([
 
 ## Number normalization
 
-Prettier does several exponent transformations, and we'll handle the following 4
+Prettier does several numeric transformations, and we'll handle the following 3
 
 1. Lowercases exponent symbol (from `1E5` to `1e5`)
-2. Strips `+` sign (from `1e+5` to `1e5`)
-3. Strips leading zeroes in exponents (from `1e0005` to `1e5`)
-4. Removes 0 exponents (from `1e0` to `1`)
+2. Strips `+` (from `1e+5` to `1e5`)
+3. Removes 0 exponents (from `1e0` to `1`)
 
 So how do we go about implementing this without hurting performance? Let's walk through each approach I tried and how it affected performance
 
@@ -152,9 +151,7 @@ Unfortunately, each number needs traversed twice, once to find the range and aga
 
 We only care about 2 portions of the string for each number, the part to the left of the `e`, or the mantissa, and the part to the right--the exponent
 
-Say we have `1e+05`, we can store `1` and `5` and reconstruct `1e5`. If we have an exponent, the `e` must be lowercase and any leading `0` or `+`s can be skipped
-
-TODO what about -??????
+Say we have `1e+05`, we can store `1` and `5` and reconstruct `1e5`. If we have an exponent, the `e` must be lowercase and any `+`s can be skipped
 
 ```rust
 pub enum Token<'a> {
@@ -208,7 +205,7 @@ dense floats is below baseline, which checks out since it has no exponents, so i
 
 ### Approach 4: Separate `Mantissa` and `Exponent` variants
 
-Instead of 1 variant holding both parts of the Number, we'll split them up
+Instead of 1 variant holding both parts of the Number, we'll split them up so the CPU can read 2 tokens at once
 
 ```rust
 pub enum Token<'a> {
@@ -217,9 +214,19 @@ pub enum Token<'a> {
 }
 ```
 
-Most CPUs can read 64 bytes at a time, so holding 2 `&str` or `Cow<str>` limited reads to one Token at a time sine both were over 32 bytes, being 40 and 48 bytes respectively
+Most CPUs read 64 bytes at a time, so 2 `&str` or `Cow<str>` per token limited reads to one `Token` at a time
 
-Variants holding `&str` and `Cow<str>` are both 24 bytes, so we can skip out on some extra read instructions! (TODO how many?)
+<FigCaption src="/cow/sad-cpu.webp">
+	A sad CPU saying "I can only read one token at a time this is so sad. please
+	make token 32 bytes or lower so I can read 2 at once"
+</FigCaption>
+
+Variants holding 1 `&str` or `Cow<str>` are both 24 bytes, so the 2 fit in 1 read
+
+<FigCaption src="/cow/happy-cpu.webp">
+	A happy CPU saying "I can read two tokens at a time since token is 24 bytes
+	thank you so much, enjoy higher throughput"
+</FigCaption>
 
 TODO numbers for cache misses, were there regressions here? is tokens throughput write or read?
 
