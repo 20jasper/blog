@@ -81,9 +81,9 @@ Around 20% of instructions were unnecessary due to using a `Cow<str>` instead of
 
 I jumped to flexibility too soon. I used a `Cow<str>` to represent numbers so that consumers of my API could pass either `"12"` or `20.to_string()`. Did I ever have a use case for that? Nope
 
-Since a `Cow` can potentially own its data, it also needs to cleanup or "drop" it. This is a small amount of overhead, but it adds up when called in a hot loop
+Since a `Cow` can potentially own its data, it also needs to clean up or "drop" it. This is a small amount of overhead, but it adds up when called in a hot loop
 
-Even worse, JSON has more than just numbers. The formatter parses chunks of text into meaningful units called tokens, such as `OpenCurlyBrace` and `Null`. Since each token could be a `Number`, the compiler needs to check if the `Cow` needs to cleanup its data
+Even worse, JSON has more than just numbers. The formatter parses chunks of text into meaningful units called tokens, such as `OpenCurlyBrace` and `Null`. Since each token could be a `Number`, the compiler needs to check if the `Cow` needs to clean up its data
 
 Changing to the `Number` to hold a reference to a `str` removes around 20% of unnecessary instructions (around 12 million for a 1.7MB file). A followup deep dive into LLVM IR proving it's not memory layout or branch predictions is on the way!
 
@@ -143,7 +143,7 @@ At the moment, JJPWRGEM leaves numbers untouched and represents then as a single
 
 ### Approach 1: Build a new normalized string
 
-The simplest approach is to check if we need to build a new string and replace it if not. This is a great usecase for `Cow`s after all!
+The simplest approach is to check if we need to build a new string and replace it if not. This is a great use case for `Cow`s after all!
 
 Unfortunately, each number needs traversed twice, once to find the range and again to validate it. Even if there are no numbers in our input, heap allocations are slow and this ties us to the string cleanup machinery taking 20% of our instructions!
 
@@ -174,7 +174,7 @@ Why is this slower?
 
 Obviously there is more number parsing work being done, but there has to be more at play. The many objects and integers dataset had the worst regressions!
 
-The main suspect is doubling our unneccesary `Cow` cleanup, but there are certainly other factors at play. Let's start with getting rid of the `Cow`s
+The main suspect is doubling our unnecessary `Cow` cleanup, but there are certainly other factors at play. Let's start with getting rid of the `Cow`s
 
 ### Approach 3: use `&str` instead of `Cow<str>`
 
@@ -189,7 +189,7 @@ pub enum Token<'a> {
 
 The compiler gets to remove all those cleanup instructions and branches, which is a huge win!
 
-dense floats is below baseline, which checks out since it has no exponents, so it's paying the cost to check for exponents every time. Let's try splitting the tokens in 2 to avoid paying that cost every time
+Dense floats is below baseline, which checks out since it has no exponents, so it's paying the cost to check for exponents every time. Let's try splitting the tokens in 2 to avoid paying that cost every time
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -242,9 +242,9 @@ dense floats deserialization is now better than baseline, but many objects and i
 
 Parsing both the mantissa and exponent has ballooned number state machine size to 88 bytes, meaning the CPU needs two reads
 
-A state machine is like a sequential checklist. To find where a number starts and ends, we start with a digit or minus sign, then another digit or a `.` for a float. At first, it made sense to have one state machine since we only cared about one chunk. Now we care about Mantissa and Exponent
+A state machine is like a sequential checklist. To find where a number starts and ends, we start with a digit or minus sign, then another digit or a `.` for a float. At first, it made sense to have one state machine since we only cared about one chunk. Now we care about mantissa and exponent
 
-Not only will splitting allow the CPU to fetch the full state in one read, the the compiler has an easier time optimizing fewer states
+Not only will splitting allow the CPU to fetch the full state in one read, the compiler has an easier time optimizing fewer states
 
 ```rust
 enum MantissaState { ... }
