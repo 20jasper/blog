@@ -107,50 +107,47 @@ Now imagine an uppercase input. A new allocation is made to avoid changing the r
 	`Cow::Owned` pointing to a new allocation
 </FigCaption>
 
-## premature optimization is bad
+## Premature optimization is bad
 
-Around 20% of instructions were unnecessary due to using a `Cow<str>` instead of a `&str`
+I used a `Cow` to represent numbers without a use case, hurting performance without any gain
 
-I jumped to flexibility too soon. I used a `Cow<str>` to represent numbers so that consumers of my API could pass either `"12"` or `20.to_string()`. Did I ever have a use case for that? Nope
-
-Since a `Cow` can potentially own its data, it also needs to clean up or "drop" it. This is a small amount of overhead, but it adds up when called in a hot loop
-
-Even worse, JSON has more than just numbers. The formatter parses chunks of text into meaningful units called tokens, such as `OpenCurlyBrace` and `Null`. Since each token could be a `Number`, the compiler needs to check if the `Cow` needs to clean up its data
-
-Changing to the `Number` to hold a reference to a `str` removes around 20% of unnecessary instructions (around 12 million for a 1.7MB file). A followup deep dive into LLVM IR proving it's not memory layout or branch predictions is on the way!
+Since a `Cow` is potentially responsible to clean up its data, a small performance penalty is paid each time it goes out of scope, ultimately rendering 20% of the program's instructions useless!
 
 ## How does a formatter work?
 
-Before I explain what I did, you need to understand how a formatter works
+First, a formatter converts a string into an in memory representation, also known as deserialization
 
-1. convert a string input into an in memory representation (deserialization)
-2. output a string according to formatting rules (serialization)
-
-For example, JJPWRGEM converts strings to meaningful chunks called tokens
+JJPWRGEM deserializes strings into meaningful chunks called tokens
 
 {/* prettier-ignore */}
 ```json
 {"hi hello"    : 10 }
 ```
 
+Note that insignificant spaces are not encoded in tokens
+
 ```rust
 [OpenCurlyBrace, String("hi hello"), Colon, Number("10"), ClosedCurlyBrace]
 ```
 
-To uglify, or remove unnecessary characters, we can remove any insignificant whitespace like spaces outside of strings or newlines. It's as simple as appending each token's string representation to the output
+Second, we take the in memory representation and turn it back into a string or serialization
+
+The simplest way to serialize is just printing tokens without any whitespace, also known as uglifying or minifying
 
 {/* prettier-ignore */}
 ```json
 {"hi hello":10}
 ```
 
-For more complex cases like pretty printing, we can build an abstract syntax tree, or AST, with the tokens. An AST encodes relationships like nesting and key value pairs. Prettier and JJPWRGEM use an abstract syntax tree to quickly calculate how wide an object would be on a single line, and expand if it's too large
+For more complex cases, we can convert tokens into an abstract syntax tree, or AST. An AST encodes relationships like nesting and key value pairs. Prettier and JJPWRGEM use an abstract syntax tree for formatting in a human readable way, or pretty printing
 
 ```rust
 Object([
 	Entry(String("hi hello"), Number("10"))
 ])
 ```
+
+The AST helps track depth to easily calculate indentation levels
 
 {/* prettier-ignore */}
 ```json
@@ -161,25 +158,29 @@ Object([
 
 ## Number normalization
 
-Prettier does several numeric transformations, and we'll handle the following 3
+Prettier does several numeric transformations, but I'll start with these 3 related to scientific notation for simplicity
 
 1. Lowercases exponent symbol (from `1E5` to `1e5`)
 2. Strips `+` (from `1e+5` to `1e5`)
 3. Removes 0 exponents (from `1e0` to `1`)
 
-So how do we go about implementing this without hurting performance? Let's walk through each approach I tried and how it affected performance
-
-### Baseline
+## Baseline
 
 At the moment, JJPWRGEM leaves numbers untouched and represents then as a single `Cow<str>`
 
-### Approach 1: Build a new normalized string
+### Iteration 0: Build a new normalized string
 
-The simplest approach is to check if we need to build a new string and replace it if not. This is a great use case for `Cow`s after all!
+The simplest approach is to use `Cow`s to our benefit
 
-Unfortunately, each number needs traversed twice, once to find the range and again to validate it. Even if there are no numbers in our input, heap allocations are slow and this ties us to the string cleanup machinery taking 20% of our instructions!
+1. check if the number is properly formatted
+2. if so, leave it be
+3. if not, build a properly formatted string
 
-### Approach 2: 2 `Cow`s
+This is a great use case for `Cow`s after all—most numbers will be unchanged, so we can build new strings for only a few numbers and reference the rest
+
+Unfortunately with this approach, each number needs traversed twice, once to find the range and again to validate it. Even if there are no numbers in our input, this ties us to the string cleanup machinery taking 20% of our instructions!
+
+### Iteration 1: 2 `Cow`s
 
 We only care about 2 portions of the string for each number, the part to the left of the `e`, or the mantissa, and the part to the right--the exponent
 
@@ -208,7 +209,7 @@ Obviously there is more number parsing work being done, but there has to be more
 
 The main suspect is doubling our unnecessary `Cow` cleanup, but there are certainly other factors at play. Let's start with getting rid of the `Cow`s
 
-### Approach 3: use `&str` instead of `Cow<str>`
+### Iteration 2: use `&str` instead of `Cow<str>`
 
 ```rust
 pub enum Token<'a> {
@@ -229,7 +230,7 @@ Dense floats is below baseline, which checks out since it has no exponents, so i
 | deser/many objects and integers | 385.6           | 442.9       | +14.9% |
 | deser/strings and deep nesting  | 258.7           | 341.4       | +32.0% |
 
-### Approach 4: Separate `Mantissa` and `Exponent` variants
+### Iteration 3: Separate `Mantissa` and `Exponent` variants
 
 Instead of 1 variant holding the full number, we'll split it in 2 so the CPU can read 2 tokens at once, saving an instruction
 
@@ -270,7 +271,7 @@ dense floats deserialization is now better than baseline, but many objects and i
 | deser/many objects and integers | 442.9       | 401.7       | -9.3%  |
 | deser/strings and deep nesting  | 341.4       | 356.8       | +4.5%  |
 
-### Approach 5: Split the state machine
+### Iteration 4: Split the state machine
 
 Parsing both the mantissa and exponent has ballooned number state machine size to 88 bytes, meaning the CPU needs two reads
 
