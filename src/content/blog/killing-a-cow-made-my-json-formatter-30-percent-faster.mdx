@@ -1,5 +1,5 @@
 ---
-title: 'Killing a `Cow` made my JSON formatter 30% faster and Prettier started it all'
+title: 'Killing a `Cow` made my JSON formatter 30% faster'
 pubDate: '2026-04-20'
 description: 'Early optimization is bad'
 tags: ['rust', 'performance']
@@ -79,9 +79,9 @@ I decided to start with [normalizing numbers like Prettier](#number-normalizatio
 
 ## What's a `Cow` anyways?
 
-`Cow` stands for Clone On Write—referencing data until mutated, when it's duplicated. This is useful when most values will be untouched, but you might want to mutate some later
+`Cow` stands for Clone On Write. It references data until mutation is needed, then duplicates it. This pays off when most values are left unchanged—only the data that needs modifications is cloned
 
-For a `to_lowercase` function—if the string is already lowercase, you can just return a reference to the same string! In Rust terms, the data is "borrowed"
+A `to_lowercase` function is a great use case—if the input is already lowercase, you can return a reference to the same string! In Rust terms, the data is "borrowed"
 
 ```rust
 fn to_lowercase(string: &str) -> Cow<'_, str> {
@@ -166,17 +166,11 @@ Prettier does several numeric transformations, but I'll start with these 3 relat
 
 ## Baseline
 
-At the moment, JJPWRGEM leaves numbers untouched and represents then as a single `Cow<str>`
+At the moment, JJPWRGEM leaves numbers untouched and represents them as a single `Cow<str>`
 
 ### Iteration 0: Build a new normalized string
 
-The simplest approach is to use `Cow`s to our benefit
-
-1. check if the number is properly formatted
-2. if so, leave it be
-3. if not, build a properly formatted string
-
-This is a great use case for `Cow`s after all—most numbers will be unchanged, so we can build new strings for only a few numbers and reference the rest
+The simplest approach is to build new strings for improperly formatted numbers
 
 Unfortunately with this approach, each number needs traversed twice, once to find the range and again to validate it. Even if there are no numbers in our input, this ties us to the string cleanup machinery taking 20% of our instructions!
 
@@ -195,7 +189,9 @@ pub enum Token<'a> {
 }
 ```
 
-This works, but lowers performance, which is measured by throughput to avoid size based discrepancies. If we have a 1MB file and a 2MB file, the smaller will be formatted faster, but `MB/s` is comparable for both! Deser refers to deserializing into an abstract syntax tree
+This works, but lowers performance, which is measured by throughput to avoid size based discrepancies. If we have a 1MB file and a 2MB file, the smaller will be formatted faster, but `MB/s` is comparable for both!
+
+Deser refers to deserializing into an abstract syntax tree. This change caused a performance regression across the board
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -290,7 +286,7 @@ enum ExponentState  {
 }
 ```
 
-Now the regression in the many objects and integers dataset is fixed and even better. Unfortunately, dense floats has regressed to slightly below baseline, but that's acceptable. I'm okay with leaving it here for now
+Now the regression in the many objects and integers dataset is fixed and even better. Unfortunately, dense floats has regressed to slightly below baseline, but that's an acceptable tradeoff
 
 | benchmark                       | prev (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | ----------- | ----------- | ------ |
