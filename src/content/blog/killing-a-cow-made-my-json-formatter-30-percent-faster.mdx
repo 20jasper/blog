@@ -280,9 +280,9 @@ pub enum Token<'a> {
 }
 ```
 
-The compiler gets to remove all those cleanup instructions and branches, which is a huge win!
+The compiler gets to remove all those cleanup instructions and branches, which is a huge win for most datasets
 
-Dense floats is below baseline, which checks out since it has no exponents, so it's paying the cost to check for exponents every time. Let's try splitting the tokens in 2 to avoid paying that cost every time
+However, dense floats is below baseline since it has no exponents—it's paying the cost to check for exponents that never materialize. Let's try splitting the tokens in 2 to avoid paying that cost
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -321,7 +321,7 @@ Variants holding 1 `&str` or `Cow<str>` are both 24 bytes, so the 2 fit in 1 rea
 	thank you so much, enjoy higher throughput"
 </FigCaption>
 
-dense floats deserialization is now better than baseline, but many objects and integers has regressed due to higher number parsing overhead. Let's see if we can fix that!
+Dense floats deserialization is now better than baseline, but many objects and integers has regressed due to higher number parsing overhead. Let's see if we can fix that!
 
 | benchmark                       | prev (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | ----------- | ----------- | ------ |
@@ -348,7 +348,7 @@ enum ExponentState  {
 }
 ```
 
-Now the regression in the many objects and integers dataset is fixed and even faster than the baseline! Unfortunately, dense floats has regressed to slightly below baseline, but that's an acceptable tradeoff
+Now the regression in the many objects and integers dataset is fixed and even faster than the baseline! Unfortunately, dense floats has regressed to slightly below baseline, but that's an acceptable tradeoff since typical JSON has more mixed data
 
 | benchmark                       | prev (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | ----------- | ----------- | ------ |
