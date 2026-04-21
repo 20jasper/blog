@@ -72,9 +72,9 @@ Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
 </FigCaption>
 
-But what if I natively implement Prettier's features in JJPWRGEM? I am confident I could do it without sacrificing speed
+But what if I natively implement Prettier's features in JJPWRGEM? I was confident I could do it without sacrificing speed—I'd already noticed I was taking a performance hit by using `Cow`s to store numbers
 
-I decided to start with [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I sped up my formatter by 30% while normalizing numbers just like Prettier. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
+I decided to start by [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I ended up speeding up my formatter by 30% in the process. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
 
 [^cliBenchmarks]: At the moment, this is not a totally fair comparison since Prettier and JJPWRGEM format differently. TODO link to amazing benchmarks and call out all the caveats like mine does not support
 
