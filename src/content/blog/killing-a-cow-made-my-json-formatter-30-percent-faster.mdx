@@ -3,6 +3,7 @@ title: 'Killing a `Cow` made my JSON formatter 30% faster'
 pubDate: '2026-04-20'
 description: 'Early optimization is bad'
 tags: ['rust', 'performance']
+math: true
 ---
 
 import FigCaption from '@components/FigCaption.astro';
@@ -35,7 +36,7 @@ Most formatters fall into one of two categories
 
 Formatters are run constantly—often run on save or commit, so large projects save a lot of time through faster tooling!
 
-Prettier is not the fastest but is an industry standard formatter in the JavaScript ecosystem. Oxfmt aims to be fast and featureful, [announcing Prettier compatible JSON support](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html) and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
+Prettier is not the fastest but is an industry standard formatter in the JavaScript ecosystem. Oxfmt aims to be fast _and_ featureful, [announcing Prettier compatible JSON support](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html) and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
 
 I immediately added Oxfmt to my CLI benchmarks, and was surprised to see Oxfmt is 10-20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
 
@@ -71,7 +72,7 @@ Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
 </FigCaption>
 
-But what if I natively implement Prettier's features in JJPWRGEM? Could I do it without sacrificing speed?
+But what if I natively implement Prettier's features in JJPWRGEM? I am confident I could do it without sacrificing speed
 
 I decided to start with [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I sped up my formatter by 30% while normalizing numbers just like Prettier. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
 
@@ -168,6 +169,75 @@ Prettier does several numeric transformations, but I'll start with these 3 relat
 
 At the moment, JJPWRGEM leaves numbers untouched and represents them as a single `Cow<str>`
 
+I am benchmarking against several files with varying data shapes
+
+ <details>
+  <summary>dense floats</summary>
+
+```json
+{ "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "properties": { "name": "Canada" },
+    "geometry": {"type":"Polygon","coordinates":[
+      [[-65.613616999999977,43.420273000000009],
+       [-65.619720000000029,43.418052999999986],
+       [-65.625,43.421379000000059], ...]
+    ]}
+  }]
+}
+```
+
+  </details>
+
+  <details>
+  <summary>many objects and integers</summary>
+
+```json
+{
+	"events": {
+		"138586341": {
+			"description": null,
+			"id": 138586341,
+			"name": "30th Anniversary Tour",
+			"subTopicIds": [337184269, 337184283],
+			"topicIds": [324846099, 107888604]
+		}
+	},
+	"areaNames": {
+		"205705993": "Arrière-scène central",
+		"205705994": "1er balcon central"
+	}
+}
+```
+
+  </details>
+
+  <details>
+  <summary>strings and deep nesting</summary>
+
+```json
+{
+  "statuses": [{
+    "metadata": { "result_type": "recent", "iso_language_code": "ja" },
+    "created_at": "Sun Aug 31 00:29:15 +0000 2014",
+    "id": 505874924095815700,
+    "text": "@aym0566x \n\n名前:前田あゆみ\n第...",
+    ...
+  }]
+}
+```
+
+  </details>
+
+Deser refers to deserializing into an abstract syntax tree. The performance is represented by throughput to avoid size based discrepancies. If we have a 1MB file and a 2MB file, the smaller will be formatted faster, but `MB/s` is comparable for both!
+
+| benchmark                       | baseline (MB/s) |
+| ------------------------------- | --------------- |
+| deser/dense floats              | 115.6           |
+| deser/many objects and integers | 385.5           |
+| deser/strings and deep nesting  | 257.8           |
+
 ### Iteration 0: Build a new normalized string
 
 The simplest approach is to build new strings for improperly formatted numbers
@@ -176,7 +246,7 @@ Unfortunately with this approach, each number needs traversed twice, once to fin
 
 ### Iteration 1: 2 `Cow`s
 
-We only care about 2 portions of the string for each number, the part to the left of the `e`, or the mantissa, and the part to the right--the exponent
+We only care about 2 portions of the string for each number, the part to the left of the `e`, or the mantissa, and the part to the right--the exponent. You may recognize this as scientific notation—`1e5` represents $1e5$
 
 Say we have `1e+05`, we can store `1` and `5` and reconstruct `1e5`. If we have an exponent, the `e` must be lowercase and any `+`s can be skipped
 
@@ -189,9 +259,7 @@ pub enum Token<'a> {
 }
 ```
 
-This works, but lowers performance, which is measured by throughput to avoid size based discrepancies. If we have a 1MB file and a 2MB file, the smaller will be formatted faster, but `MB/s` is comparable for both!
-
-Deser refers to deserializing into an abstract syntax tree. This change caused a performance regression across the board
+This works, but lowers performance across the board, even for datasets without many numbers. This is because I doubled our unnecessary `Cow` cleanup. Any `Token` could be a `Number`—the compiler has to prepare for potential `Cow` cleanup even if it may never come!
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -199,11 +267,7 @@ Deser refers to deserializing into an abstract syntax tree. This change caused a
 | deser/many objects and integers | 385.5           | 289.3       | -25.0% |
 | deser/strings and deep nesting  | 257.8           | 214.8       | -16.7% |
 
-Why is this slower?
-
-Obviously there is more number parsing work being done, but there has to be more at play. The many objects and integers dataset had the worst regressions!
-
-The main suspect is doubling our unnecessary `Cow` cleanup, but there are certainly other factors at play. Let's start with getting rid of the `Cow`s
+Let's start with getting rid of the `Cow`s!
 
 ### Iteration 2: use `&str` instead of `Cow<str>`
 
@@ -229,8 +293,6 @@ Dense floats is below baseline, which checks out since it has no exponents, so i
 ### Iteration 3: Separate `Mantissa` and `Exponent` variants
 
 Instead of 1 variant holding the full number, we'll split it in 2 so the CPU can read 2 tokens at once, saving an instruction
-
-In scientific notation, the mantissa is the digits before the `e` and the exponent is everything afterwards. For example, `10e5` has a mantissa of `10` and exponent of `5`
 
 ```rust
 pub enum Token<'a> {
@@ -273,7 +335,7 @@ Parsing both the mantissa and exponent has ballooned number state machine size t
 
 A state machine is like a sequential checklist. To find where a number starts and ends, we start with a digit or minus sign, then another digit or a `.` for a float. At first, it made sense to have one state machine since we only cared about one chunk. Now we care about mantissa and exponent
 
-Not only will splitting allow the CPU to fetch the full state in one read, the compiler has an easier time optimizing fewer states
+Not only will splitting allow the CPU to fetch the full state in one read, the compiler has an easier time optimizing fewer states. It can make better decisions with less possibilities to reason about
 
 ```rust
 enum MantissaState { ... }
@@ -286,7 +348,7 @@ enum ExponentState  {
 }
 ```
 
-Now the regression in the many objects and integers dataset is fixed and even better. Unfortunately, dense floats has regressed to slightly below baseline, but that's an acceptable tradeoff
+Now the regression in the many objects and integers dataset is fixed and even faster than the baseline! Unfortunately, dense floats has regressed to slightly below baseline, but that's an acceptable tradeoff
 
 | benchmark                       | prev (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | ----------- | ----------- | ------ |
@@ -300,7 +362,7 @@ Switching from `Cow` to `str` and splitting `Number` token and state machines bo
 
 ### Deserialization into AST
 
-From string to AST. dense floats pays for the extra unused token per number, but many objects and integers and strings with deep nesting have massive improvements due to `Cow` to `str`
+From string to AST. dense floats pays for the extra unused token per number, but many objects and integers and strings with deep nesting have massive improvements due to converting `Cow` to `str`
 
 |                           | baseline (MB/s) | new (MB/s) | delta  |
 | ------------------------- | --------------- | ---------- | ------ |
@@ -310,7 +372,7 @@ From string to AST. dense floats pays for the extra unused token per number, but
 
 ### Prettify from AST
 
-From AST to human readable string. dense floats suffered the most for a branch on each `Number`. Other datasets are flat
+From AST to human readable string. dense floats suffered the most for a branch on each `Number` to check if an exponent is available to print. Other datasets are flat
 
 |                           | baseline (MB/s) | new (MB/s) | delta |
 | ------------------------- | --------------- | ---------- | ----- |
