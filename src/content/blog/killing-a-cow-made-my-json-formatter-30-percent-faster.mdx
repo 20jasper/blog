@@ -46,7 +46,7 @@ Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while
 
 <FigCaption src="/cow/pretty-canada.webp">
 
-dense floats benchmark - Execution time
+Dense floats benchmark - Execution time
 
 Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
@@ -165,7 +165,7 @@ Prettier does several numeric transformations, but I'll start with these 3 relat
 2. Strips `+` (from `1e+5` to `1e5`)
 3. Removes 0 exponents (from `1e0` to `1`)
 
-## Baseline
+### Baseline
 
 At the moment, JJPWRGEM leaves numbers untouched and represents them as a single `Cow<str>`
 
