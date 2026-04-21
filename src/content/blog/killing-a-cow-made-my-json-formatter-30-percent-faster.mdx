@@ -11,10 +11,13 @@ import FigCaption from '@components/FigCaption.astro';
 A formatter makes code easier to read by converting an input file into a consistent style. This is helpful to make code easier to read, reduce merge conflicts, and stop your coworker Gerald from using 17 spaces for indentation
 
 An input like this is valid, but hard to read
-{/* prettier-ignore */}
 
+{/* prettier-ignore */}
 ```json
-{ "hi hello": 10, "key": null }
+{"hi hello"    : 
+10
+, "key"
+: null }
 ```
 
 The formatter takes the hard to read input and applies consistent styling
