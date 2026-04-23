@@ -6,46 +6,37 @@ tags: ['rust', 'performance']
 math: true
 ---
 
+{/* prettier-ignore */}
+{/* 
+Thesis: formatters can be both featureful and fast
+
+- Oxmft proves features can be featureful and fast by achieving feature parity with prettier for js much faster but
+- Oxfmt does not natively format JSON therefore it's slower, therefore
+- there is a gap in the fast and featureful JSON market, but the full feature set is large therefore
+- JJPWRGEM can start with an impactful and well scoped feature, number normalizatoin with a naive approach building new strings
+- but heap allocations are slow
+- therefore we will try with 2 cows but
+- this slows things down because of unnecesary drop machinery
+- therefore we can refactor to use str but
+- the tokens are still larger therefore
+- we can split to improve perf but
+- the state machine is still large therefore
+- we should split that too therefore
+- leading to a 30% perf improvement with feature parity
+
+\*/}
+
 import FigCaption from '@components/FigCaption.astro';
 
-A formatter makes code easier to read by converting an input file into a consistent style. This makes code easier to read, reduces merge conflicts, and stops your coworker Gerald from using 17 spaces for indentation
+A formatter styles code consistently, generally improving human readability. If you are unfamiliar with formatters, tokenizers, or abstract syntax trees, see my article on [how formatters work](TODO)
 
-This input is valid but hard to read
+The JavaScript ecosystem has a gap—most formatters either are featureful _or_ fast. Prettier is the standard in the JavaScript ecosystem, but it's not the fastest. Oxfmt has made major strides—supporting parity with Prettier's JavaScript formatting with much improved performance. [One report found a migration to Oxfmt formatted their repo 6.5x faster—from 13.9 seconds to 2.1](https://www.udaynayak.com/blog/migrating-from-eslint-prettier-to-oxlint-oxfmt-in-an-nx-monorepo)
 
-{/* prettier-ignore */}
-```json
-{"hi hello"    : 
-10
-, "key"
-: null }
-```
-
-The formatter then applies consistent styling
-
-{/* prettier-ignore */}
-```json
-{
-	"hi hello": 10,
-	"key": null
-}
-```
-
-Over the past year, I've been building a JSON formatter in Rust called [JJPWRGEM](https://github.com/20jasper/JJPWRGEM)
-
-I've found most formatters fall into one of two categories
-
-1. fast but lacking features
-2. slow but featureful
-
-Formatters are run constantly—often run on save or commit—so large projects save a lot of time with faster tooling!
-
-Prettier is the industry standard formatter in the JavaScript ecosytem, but it's not the fastest. Oxfmt aims to be fast _and_ featureful, [announcing Prettier compatible JSON support](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html) and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
-
-I immediately added Oxfmt to my [CLI benchmarks](TODO), and was surprised to see Oxfmt is 10–20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
+However these gains do not apply to JSON. Oxfmt is 10–20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
 
 [^respectOxfmt]: I love everything Oxfmt has done so far, so this is not meant to put down Oxfmt. It's the only Prettier compatible tooling I've found that doesn't crash when formatting larger JSON files. I've seen some amazing architectural decisions they've made. Open source is a lot of work
 
-Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while JJPWRGEM takes around 30 milliseconds. Of course, JJPWRGEM does not have all the features Prettier does yet, so this is an unfair comparison
+Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while my formatter, [JJPWRGEM](TODO) takes around 30 milliseconds. These comparisons are unfair right now since JJPWRGEM is in the "fast but not so many features" camp right now
 
 <FigCaption src="/cow/pretty-canada.webp">
 
@@ -75,92 +66,12 @@ Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
 </FigCaption>
 
-But what if I natively implement Prettier's features in JJPWRGEM? I was confident I could do it without sacrificing speed—I'd already noticed I was taking a performance hit by using `Cow`s to store numbers
+But what if JJPWRGEM did have feature parity with Prettier? The baseline formatter is a great base, and I am confident there are performance gains to be found while implementing features
+{/* old starts here */}
 
-I decided to start by [normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I ended up speeding up my formatter by 30% in the process. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
+I decided to start with a well scoped and impactful change—[normalizing numbers like Prettier](#number-normalization), for example `1E+05` becomes `1e5`. I ended up speeding up my formatter by 30% in the process. If you're interested in the final statistics, jump to the [final benchmarks](#final-benchmarks)
 
 [^cliBenchmarks]: At the moment, this is not a totally fair comparison since Prettier and JJPWRGEM format differently. TODO link to amazing benchmarks and call out all the caveats like mine does not support
-
-## What's a `Cow` anyways?
-
-`Cow` stands for Clone On Write. It references data until mutation is needed, then duplicates it. This pays off when most values are left unchanged—only the data that needs modifications is cloned
-
-A `to_lowercase` function is a great use case—if the input is already lowercase, you can return a reference to the same string! In Rust terms, the data is "borrowed"
-
-```rust
-fn to_lowercase(string: &str) -> Cow<'_, str> {
-    if string.is_lowercase() {
-        // reference input string
-        Cow::Borrowed(string)
-    } else {
-        // make a new string
-        Cow::Owned(string.to_lowercase())
-    }
-}
-```
-
-<FigCaption src="/cow/lowercase-cow.webp">
-	Diagram showing a call to `to_lowercase` with an already-lowercase `&str`
-	returns a `Cow::Borrowed` pointing to the same memory, avoiding allocation
-</FigCaption>
-
-Now imagine an uppercase input. A new allocation is made to avoid changing the referenced string. The `Cow` "owns" the new data and can modify within the allocated capacity without reallocating
-
-<FigCaption src="/cow/uppercase-cow.webp">
-	Diagram showing a call to `to_lowercase` with an uppercase `&str` returns a
-	`Cow::Owned` pointing to a new allocation
-</FigCaption>
-
-Sounds great right? That's why I used a `Cow` to represent numbers
-
-## Premature optimization is bad
-
-While `Cow` gave me flexibility, I never took advantage, hurting performance without any gain
-
-Since a `Cow` is potentially responsible to clean up its data, a small performance penalty is paid each time it goes out of scope, ultimately rendering 20% of the program's instructions useless!
-
-## How does a formatter work?
-
-First, a formatter converts a string into an in memory representation, also known as deserialization
-
-JJPWRGEM deserializes strings into meaningful chunks called tokens
-
-{/* prettier-ignore */}
-```json
-{"hi hello"    : 10 }
-```
-
-Note that insignificant spaces are not encoded in tokens
-
-```rust
-[OpenCurlyBrace, String("hi hello"), Colon, Number("10"), ClosedCurlyBrace]
-```
-
-Second, we take the in memory representation and turn it back into a string or serialization
-
-The simplest way to serialize is just printing tokens without any whitespace, also known as uglifying or minifying
-
-{/* prettier-ignore */}
-```json
-{"hi hello":10}
-```
-
-For more complex cases, we can convert tokens into an abstract syntax tree, or AST. An AST encodes relationships like nesting and key value pairs. Prettier and JJPWRGEM use an abstract syntax tree for formatting in a human readable way, or pretty printing
-
-```rust
-Object([
-	Entry(String("hi hello"), Number("10"))
-])
-```
-
-The AST helps track depth to easily calculate indentation levels
-
-{/* prettier-ignore */}
-```json
-{
-	"hi hello": 10
-}
-```
 
 ## Number normalization
 
@@ -405,3 +316,46 @@ A capacitor giving a CPU therapy. They say "So I hear you've been feeling cache 
 The CPU is laying down on a coach and the capacitor is wearing glasses and holding a clipboard
 
 </FigCaption>
+
+{/* prettier-ignore */}
+{/*
+
+## What's a `Cow` anyways?
+
+`Cow` stands for Clone On Write. It references data until mutation is needed, then duplicates it. This pays off when most values are left unchanged—only the data that needs modifications is cloned
+
+A `to_lowercase` function is a great use case—if the input is already lowercase, you can return a reference to the same string! In Rust terms, the data is "borrowed"
+
+```rust
+fn to_lowercase(string: &str) -> Cow<'_, str> {
+    if string.is_lowercase() {
+        // reference input string
+        Cow::Borrowed(string)
+    } else {
+        // make a new string
+        Cow::Owned(string.to_lowercase())
+    }
+}
+```
+
+<FigCaption src="/cow/lowercase-cow.webp">
+	Diagram showing a call to `to_lowercase` with an already-lowercase `&str`
+	returns a `Cow::Borrowed` pointing to the same memory, avoiding allocation
+</FigCaption>
+
+Now imagine an uppercase input. A new allocation is made to avoid changing the referenced string. The `Cow` "owns" the new data and can modify within the allocated capacity without reallocating
+
+<FigCaption src="/cow/uppercase-cow.webp">
+	Diagram showing a call to `to_lowercase` with an uppercase `&str` returns a
+	`Cow::Owned` pointing to a new allocation
+</FigCaption>
+
+Sounds great right? That's why I used a `Cow` to represent numbers
+
+## Premature optimization is bad
+
+While `Cow` gave me flexibility, I never took advantage, hurting performance without any gain
+
+Since a `Cow` is potentially responsible to clean up its data, a small performance penalty is paid each time it goes out of scope, ultimately rendering 20% of the program's instructions useless!
+
+\*/}
