@@ -1,0 +1,152 @@
+---
+title: 'How do formatters work?'
+pubDate: '2026-04-24'
+description: 'What is a formatter and how does it worK?'
+tags: ['rust']
+math: true
+---
+
+import FigCaption from '@components/FigCaption.astro';
+
+{/* prettier-ignore */}
+{/* outline
+
+Formatters consistently style content therefore
+Input is broken into tokens (semantics, ignoring whitespace) but
+Tokens don't encode relationships like nesting therefore
+AST — makes rules like indentation easy to apply but
+AST has overhead, so token stream alone is enough for minifying therefore
+JJPWRGEM uses both paths depending on the operation but
+\*/}
+
+## What is a formatter?
+
+If you've programmed for a bit, you've probably run into a formatter. Maybe you've used `prettier`, `black`, `rustfmt`, or `gofmt`. Maybe it's just built into your editor
+
+No matter what tools you use, they all serve the same purpose—styling code consistently. This reduces merge conflicts and avoids fights your coworker Gerald, who wants to indent with 17 spaces for some reason. Here's how a formatter actually works under the hood!
+
+Gerald wrote valid JSON, but uhhhh please no. I can't deal with this today
+
+{/* prettier-ignore */}
+```json
+{ "rust"   :
+"is a must"  
+     ,"key"
+:
+null}
+```
+
+A formatter will right these wrongs by applying a set of rules to consistently style the output
+
+{/* prettier-ignore */}
+```json
+{ 
+  "rust": "is a must",
+  "key": null
+}
+```
+
+## How do formatters know what's important?
+
+Both JSON blobs are functionally equivalent—how did the formatter know what can be cut and what can't?
+
+A character's meaning is defined by its surroundings. `{}` is an empty object, but `"{}"` is a string with an opening and closing curly brace. Spaces are meaningful inside a string, but are stylistic outside of them. `[  ]` and `[]` are both empty arrays, but `"rust is a must"` and `rustisamust` are 2 different strings
+
+Most formatters parse the string into a sequence of meaningful chunks of text called tokens
+
+No matter how the JSON is styled, the tokens will be the same! Note there is no token for spaces or newlines, just functionality
+
+{/* prettier-ignore */}
+```json
+{ 
+  "rust": "is a must",
+  "key": null
+}
+```
+
+```rust
+[OpenCurlyBrace, String("rust"), Colon, String("is a must"), Comma, String("key"), Colon, Null, ClosedCurlyBrace]
+```
+
+### Why not just loop over the string?
+
+Long story short, modularity. It's hard to manage validity of each token while also handling output
+
+It's certainly possible to loop directly over the JSON, tracking what the current character represents, but this gets complex fast
+
+[Strings alone have a laundry list of rules to abide by](https://datatracker.ietf.org/doc/html/rfc8259#section-7). Don't worry about understanding all of them—just think about tracking string state while handling other concerns like formatting
+
+JSON strings
+
+1. start with a quotation mark, have 0 to many characters, then end with a quotation mark
+2. can contain escaped quotes (`\"`) and other characters requiring escapes, like newlines
+3. can contain unicode escapes, which look like `uXXXX` where `X` is a hex digit
+4. cannot have control characters like newlines inside of them
+5. must contain valid utf8
+
+Now imagine handling all these rules while making sure the tokens appear in the right order
+
+## Abstract Syntax Trees (ASTs)
+
+Tokens tell us what each chunk of relevant text means, but they do not encode relationships between them. It's useful to know how nested a key is or what key maps to what value when formatting
+
+Abstract syntax trees describe the structure without worrying about syntax. Key value relationships and nesting are represented in the tree instead of lower level syntactical tokens like `Colon` or `Comma`
+
+```rust
+[OpenCurlyBrace, String("rust"), Colon, String("is a must"), Comma, String("key"), Colon, Null, ClosedCurlyBrace]
+```
+
+```rust
+Object([
+  (String("rust"), String("is a must")),
+  (String("key"), Null)
+])
+```
+
+### Sometimes tokens are enough
+
+ASTs are very convenient, but they are not free to build! My formatter [JJPWRGEM](https://github.com/20jasper/JJPWRGEM) supports uglification, also known as minification. Uglification trades compact storage for readability. If your main consumer is a computer, storing extra spaces for human readability is wasteful
+
+{/* prettier-ignore */}
+```json
+{"rust":"is a must","key":null}
+```
+
+We don't need to know about nesting or any structural relationships to properly format—tokens can be emitted immediately as they are parsed. As of the time of writing, skipping the AST in this path decreases formatting time by about 44%[^skipAstBench]!
+
+[^skipAstBench]: canada.json is a GeoJSON file with arrays of floats. Building an AST and serializing takes $21.28\text{ms} + 0.77\text{ms} = 22.05\text{ms}$ and serializing tokens directly takes $12.38\text{ms}$. That is $12.38 / 22.05 \approx 0.561$, meaning the token path is about $44\%$ faster. [See full benchmarks here](https://github.com/20jasper/JJPWRGEM/blob/7ae6fd4f24aac289b8bdbb6b5c7f45b6b37d90c8/benches/json.md)
+
+However, skipping the AST isn't the fastest if the AST is already cached—building the tree is the expensive part. The same benchmark takes 12ms when parsing from the source string to tokens, but only 0.77ms to serialize from a cached AST[^astVsTokensCached].
+
+[^astVsTokensCached]: canada.json is a GeoJSON file with arrays of floats. Formatting from a cached AST takes 0.77ms, compared to 12ms when parsing from string to tokens first. [See full benchmarks here](https://github.com/20jasper/JJPWRGEM/blob/7ae6fd4f24aac289b8bdbb6b5c7f45b6b37d90c8/benches/json.md)
+
+The best part? The same function handles both cases. JJPWRGEM has a [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) trait abstracting tree traversal into token events. An `OpenCurlyBrace` token will emit an `on_object_open` event. An AST object emits the appropriate lower level events for open curly braces, keys, values, and so on. The visitor decides what to do with each event, and in this case it immediately serializes the output!
+
+```rust
+pub trait Visitor<'a> {
+    fn on_object_open(&mut self); // implementation emits '{'
+    fn on_object_key(&mut self, key: &'a str); // implementation emits "\"{key}\""
+    fn on_object_key_val_delim(&mut self);
+    fn on_object_close(&mut self);
+    fn on_null(&mut self);
+    fn on_string(&mut self, value: &'a str);
+    fn on_item_delim(&mut self);
+    // omitted for brevity
+}
+```
+
+Whether you're formatting tokens or an AST, the formatter sees the same events
+
+The visitor abstractions enables so much more than just formatting. Since parsing validates the JSON, my JSON validation visitor is just a noop. Other extensions are just as clean—the output is completely defined by the visitor. I could map old keys to new ones, calculate key frequency, or validate against a JSON schema—all without any new traversal logic
+
+---
+
+A formatter is all about finding what's meaningful and normalizing what's not. JJPWRGEM uses both tokens for parsing speed and ASTs for structure—resulting in huge flexibility and performance gains
+
+Now you have all the tools you need to fight back against Gerald and their newfangled fibonacci indentation
+
+Please consider subscribing to my [RSS feed](/blog/rss.xml) or I will personally ask Gerald to reformat your codebase by hand
+
+<FigCaption src="/formatters/evil-hand-rub.webp">
+	Gerald giving a very menacing hand rub as they scheme
+</FigCaption>
