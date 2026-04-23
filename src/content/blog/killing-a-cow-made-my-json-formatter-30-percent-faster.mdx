@@ -8,9 +8,9 @@ math: true
 
 import FigCaption from '@components/FigCaption.astro';
 
-A formatter makes code easier to read by converting an input file into a consistent style. This is helpful to make code easier to read, reduce merge conflicts, and stop your coworker Gerald from using 17 spaces for indentation
+A formatter makes code easier to read by converting an input file into a consistent style. This makes code easier to read, reduces merge conflicts, and stops your coworker Gerald from using 17 spaces for indentation
 
-An input like this is valid, but hard to read
+This input is valid but hard to read
 
 {/* prettier-ignore */}
 ```json
@@ -20,9 +20,9 @@ An input like this is valid, but hard to read
 : null }
 ```
 
-The formatter takes the hard to read input and applies consistent styling
-{/* prettier-ignore */}
+The formatter then applies consistent styling
 
+{/* prettier-ignore */}
 ```json
 {
 	"hi hello": 10,
@@ -32,16 +32,16 @@ The formatter takes the hard to read input and applies consistent styling
 
 Over the past year, I've been building a JSON formatter in Rust called [JJPWRGEM](https://github.com/20jasper/JJPWRGEM)
 
-Most formatters fall into one of two categories
+I've found most formatters fall into one of two categories
 
 1. fast but lacking features
 2. slow but featureful
 
-Formatters are run constantly—often run on save or commit, so large projects save a lot of time through faster tooling!
+Formatters are run constantly—often run on save or commit—so large projects save a lot of time with faster tooling!
 
-Prettier is not the fastest but is an industry standard formatter in the JavaScript ecosystem. Oxfmt aims to be fast _and_ featureful, [announcing Prettier compatible JSON support](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html) and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
+Prettier is the industry standard formatter in the JavaScript ecosytem, but it's not the fastest. Oxfmt aims to be fast _and_ featureful, [announcing Prettier compatible JSON support](https://oxc.rs/blog/2026-02-24-oxfmt-beta.html) and some [impressive benchmarks](https://github.com/oxc-project/bench-formatter)
 
-I immediately added Oxfmt to my CLI benchmarks, and was surprised to see Oxfmt is 10-20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
+I immediately added Oxfmt to my [CLI benchmarks](TODO), and was surprised to see Oxfmt is 10–20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
 
 [^respectOxfmt]: I love everything Oxfmt has done so far, so this is not meant to put down Oxfmt. It's the only Prettier compatible tooling I've found that doesn't crash when formatting larger JSON files. I've seen some amazing architectural decisions they've made. Open source is a lot of work
 
@@ -111,9 +111,11 @@ Now imagine an uppercase input. A new allocation is made to avoid changing the r
 	`Cow::Owned` pointing to a new allocation
 </FigCaption>
 
+Sounds great right? That's why I used a `Cow` to represent numbers
+
 ## Premature optimization is bad
 
-I used a `Cow` to represent numbers without a use case, hurting performance without any gain
+While `Cow` gave me flexibility, I never took advantage, hurting performance without any gain
 
 Since a `Cow` is potentially responsible to clean up its data, a small performance penalty is paid each time it goes out of scope, ultimately rendering 20% of the program's instructions useless!
 
