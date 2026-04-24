@@ -28,15 +28,15 @@ Thesis: formatters can be both featureful and fast
 
 import FigCaption from '@components/FigCaption.astro';
 
-A formatter styles code consistently, generally improving human readability. If you are unfamiliar with formatters, tokenizers, or abstract syntax trees, see my article on [how formatters work](TODO)
+A formatter styles code consistently, usually improving human readability. If you are unfamiliar with formatters, tokenizers, or abstract syntax trees, see my article on [how formatters work](/blog/how-do-formatters-work)
 
-The JavaScript ecosystem has a gap—most formatters either are featureful _or_ fast. Prettier is the standard in the JavaScript ecosystem, but it's not the fastest. Oxfmt has made major strides—supporting parity with Prettier's JavaScript formatting with much improved performance. [One report found a migration to Oxfmt formatted their repo 6.5x faster—from 13.9 seconds to 2.1](https://www.udaynayak.com/blog/migrating-from-eslint-prettier-to-oxlint-oxfmt-in-an-nx-monorepo)
+The JavaScript ecosystem has a gap—most formatters are either featureful _or_ fast. Prettier is the standard in the JavaScript ecosystem, but it's not the fastest. Oxfmt has made major strides—supporting parity with Prettier's JavaScript formatting with much improved performance. [One report found a migration to Oxfmt formatted their repo 6.5x faster—from 13.9 seconds to 2.1](https://www.udaynayak.com/blog/migrating-from-eslint-prettier-to-oxlint-oxfmt-in-an-nx-monorepo)
 
 However these gains do not apply to JSON. Oxfmt is 10–20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
 
 [^respectOxfmt]: I love everything Oxfmt has done so far, so this is not meant to put down Oxfmt. It's the only Prettier compatible tooling I've found that doesn't crash when formatting larger JSON files. I've seen some amazing architectural decisions they've made. Open source is a lot of work
 
-Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while my formatter, [JJPWRGEM](TODO) takes around 30 milliseconds
+Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while my formatter, [JJPWRGEM](https://github.com/20jasper/JJPWRGEM) takes around 30 milliseconds
 
 <FigCaption src="/cow/pretty-canada.webp">
 
@@ -44,7 +44,7 @@ Dense floats benchmark - Execution time
 
 Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
-[See the full benchmarks for more details](TODO)
+[See the full benchmarks for more details](https://github.com/20jasper/JJPWRGEM/blob/7ae6fd4f24aac289b8bdbb6b5c7f45b6b37d90c8/benches/json.md)
 
 <details>
 	<summary>See tabular benchmarks</summary>
@@ -68,13 +68,13 @@ Parsing and stringifying a 2.2MB JSON file with lots of lightly nested arrays
 
 </FigCaption>
 
-To be fair, JJPWRGEM does not have Prettier feature parity right now—but what if it did? It's a great base, and I am confident there are performance gains to be found while implementing features
+To be fair, JJPWRGEM doesn't have Prettier feature parity—but what if it did? It's a great base, and I am confident there are performance gains to be found while implementing features
 
-I decided to start with a well scoped and impactful change—normalizing numbers like Prettier—and I ended up speeding up my formatter by 42% in the process. If you're interested in how that was calculated, jump to the [final benchmarks](#final-benchmarks)
+I started with a well scoped and impactful change—normalizing numbers like Prettier—and I ended up speeding up my formatter by 42% in the process. If you're interested in how that was calculated, jump to the [final benchmarks](#final-benchmarks)
 
 ## Number normalization
 
-Let's start with 3 normalizations related to scientific notation for simplicity. They are all in the same area and build nicely on top of each other
+Let's start with 3 normalizations related to scientific notation for simplicity. They all build nicely on each other
 
 1. Lowercases exponent symbol (from `1E5` to `1e5`)
 2. Strips `+` (from `1e+5` to `1e5`)
@@ -84,7 +84,7 @@ Let's start with 3 normalizations related to scientific notation for simplicity.
 
 At the moment, JJPWRGEM leaves numbers untouched and represents them as a single `Cow<str>`. I'll explain more about `Cow` as relevant
 
-I am benchmarking against several files with varying data shapes
+I am benchmarking against several files with varying data shapes. Here are a few samples
 
  <details>
   <summary>dense floats</summary>
@@ -145,7 +145,7 @@ I am benchmarking against several files with varying data shapes
 
   </details>
 
-Deser refers to deserializing into an abstract syntax tree. The performance is represented by throughput to avoid size based discrepancies. If we have a 1MB file and a 2MB file, the smaller will be formatted faster, but `MB/s` is comparable for both!
+Deser refers to deserializing into an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree). The performance is represented by throughput to avoid size based discrepancies. A 1MB file will be formatter faster than a 3MB file, but `MB/s` is comparable for both!
 
 | benchmark                       | baseline (MB/s) |
 | ------------------------------- | --------------- |
@@ -157,15 +157,15 @@ Deser refers to deserializing into an abstract syntax tree. The performance is r
 
 The simplest approach is to build new strings for improperly formatted numbers
 
-Unfortunately with this approach, each number needs traversed twice, once to find the range and again to validate it. Even if there are no numbers in our input, it requires [heap allocations, which are slow](https://stackoverflow.com/a/2264981) and unecessary
+Unfortunately, each number needs traversed twice, once to find the range and again to validate it. Even if there are no numbers in our input, it requires [slow heap allocations](https://stackoverflow.com/a/2264981)
 
 We need a more complex approach that takes references to chunks of the input string
 
 ### Iteration 1: 2 `Cow`s
 
-We only care about 2 portions of the string for each number, the part to the left of the `e`, or the mantissa, and the part to the right--the exponent. You may recognize this as scientific notation—`1e5` represents $1e5$
+Only 2 parts of each number matter. The mantissa to left of the `e` and the exponent to the right. You may recognize this as scientific notation—`1e5` represents $1e5$
 
-Say we have `1e+5`, we can store `1` and `5` and reconstruct `1e5`. If we have an exponent, the `e` must be lowercase and any `+`s can be skipped
+Say we have `1E+5`, we can store `1` and `5` and reconstruct `1e5`. If we have an exponent, the `e` or `E` is lowercased. Any `+`s can be skipped since `1e5` and `1e+5` are equivalent
 
 ```rust
 pub enum Token<'a> {
@@ -176,7 +176,7 @@ pub enum Token<'a> {
 }
 ```
 
-This works but lowers performance across the board—even for datasets without many numbers. This is because `Cow<str>` comes with a cost that raw `str` does not
+This approach works, but lowers performance across the board. `Cow<str>` comes with overhead raw `str` avoids, negatively affecting datasets without many numbers
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -186,7 +186,7 @@ This works but lowers performance across the board—even for datasets without m
 
 #### What is a `Cow` anyways?
 
-`Cow` stands for Clone On Write. It references data until mutation is needed, then duplicates it. This pays off when most values are left unchanged—only the data that needs modifications is cloned
+`Cow` stands for Clone On Write. It references data until mutation is needed, then duplicates it. This pays off when most values are unchanged—only data needing modification is cloned
 
 A `to_lowercase` function is a great use case—if the input is already lowercase, you can return a reference to the same string! In Rust terms, the data is "borrowed"
 
@@ -207,16 +207,16 @@ fn to_lowercase(string: &str) -> Cow<'_, str> {
 	returns a `Cow::Borrowed` pointing to the same memory, avoiding allocation
 </FigCaption>
 
-Now imagine an uppercase input. A new string is created to avoid changing the referenced string. The `Cow` "owns" the new data and can modify within the allocated capacity without reallocating, but it must clean up that data when it goes out of scope
+Now imagine an uppercase input. A new string is created to avoid changing the referenced string. The `Cow` "owns" the new data and can update the allocated capacity without reallocating, but it must clean up that data when it goes out of scope
 
 <FigCaption src="/cow/uppercase-cow.webp">
 	Diagram showing a call to `to_lowercase` with an uppercase `&str` returns a
 	`Cow::Owned` pointing to a new allocation
 </FigCaption>
 
-Since a `Cow` is potentially responsible to clean up its data, a small performance penalty is paid each time it goes out of scope, ultimately rendering 20% of the program's instructions useless! The flexibility `Cow` gave us was never used
+Since a `Cow` is potentially responsible to clean up its data, it pays a small performance penalty when it goes out of scope. This ultimately renders 20% of the program's instructions useless! `Cow`'s flexibility was never used
 
-Even worse, each `Token` could be a `Number`, so tokens like `OpenCurlyBrace` without any data need checked at runtime
+Even worse, each `Token` could be a `Number`, so cleanup checks run on tokens like `OpenCurlyBrace` that carry no data
 
 Let's get rid of the `Cow`s!
 
@@ -233,7 +233,7 @@ pub enum Token<'a> {
 
 The compiler gets to remove all those cleanup instructions and branches, which is a huge win for every datasets
 
-However, dense floats is below baseline since it has no exponents—it's paying the cost to check for exponents that never materialize. Let's try splitting the tokens in 2 to avoid paying that cost
+However, the "dense floats" dataset is below baseline since it has no exponents—paying the cost to check for exponents that never materialize. Let's try splitting the tokens in 2 to avoid paying that cost
 
 | benchmark                       | baseline (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | --------------- | ----------- | ------ |
@@ -258,7 +258,7 @@ CPUs read memory in chunks—like reading a word at a time instead of a full sen
 	A focused CPU thinking and reading one JSON Token at a time
 </FigCaption>
 
-Most CPUs read 64 bytes at a time, so 2 `&str` or `Cow<str>` per token limited reads to one `Token` at a time
+A CPU fetches 64 bytes of RAM at a time into its cache for processing, meaning 2 `&str`s or `Cow<str>`s per token limits reads to one `Token` at a time
 
 <FigCaption src="/cow/sad-cpu.webp">
 	A sad CPU saying "I can only read one token at a time this is so sad. please
@@ -272,7 +272,7 @@ Variants holding 1 `&str` or `Cow<str>` are both 24 bytes, so the 2 fit in 1 rea
 	thank you so much, enjoy higher throughput"
 </FigCaption>
 
-Dense floats deserialization is now better than baseline, but many objects and integers has regressed from the previous iteration due to higher number parsing overhead. Let's see if we can fix that!
+"Dense floats" deserialization is now better than baseline, but "many objects and integers" has regressed from the previous iteration due to higher number parsing overhead
 
 | benchmark                       | prev (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | ----------- | ----------- | ------ |
@@ -282,11 +282,18 @@ Dense floats deserialization is now better than baseline, but many objects and i
 
 ### Iteration 4: Split the state machine
 
-Parsing both the mantissa and exponent has ballooned the number state machine to 88 bytes, meaning the CPU needs two reads per state change
+Parsing both the mantissa and exponent has ballooned the number state machine to 88 bytes. Just like with larger tokens, The CPU needs two reads per state change
 
-A state machine is like a sequential checklist. To find where a number starts and ends, we start with a digit or minus sign, then another digit or a `.` for a float. At first, it made sense to have a full number state machine, but now we care about 2 separate chunks of that number—the mantissa and exponent
+A state machine is like a sequential checklist. To find where a number starts and ends, we can follow this (abbreviated) checklist
 
-Not only will splitting allow the CPU to fetch the full state in one read, the compiler has an easier time optimizing fewer states. It can make better decisions with less possibilities to reason about
+1. start with a digit or minus sign
+2. then another digit or a `.` for a float
+3. ...
+4. finish
+
+At first, it made sense to have a full number state machine, but now we care about 2 separate chunks of that number
+
+Not only will splitting allow the CPU to fetch the full state in one read, the compiler better optimize with less possibilities to reason about
 
 ```rust
 enum MantissaState { ... }
@@ -299,7 +306,9 @@ enum ExponentState  {
 }
 ```
 
-Now the many objects and integers dataset is even faster than baseline! Unfortunately, dense floats has regressed to slightly below baseline, but that's an acceptable tradeoff since typical JSON has more mixed data
+Now the "many objects and integers" dataset is even faster than baseline!
+
+Unfortunately, "dense floats" has regressed to slightly below baseline, but that's an acceptable tradeoff since typical JSON has more mixed data
 
 | benchmark                       | prev (MB/s) | this (MB/s) | delta  |
 | ------------------------------- | ----------- | ----------- | ------ |
@@ -337,7 +346,9 @@ $$
 
 ### Deserialization into AST
 
-From string to AST. dense floats pays for the extra unused token per number, but many objects and integers and strings with deep nesting have massive improvements due to converting `Cow` to `str`
+Benchmarks converting a string into an AST
+
+"dense floats" pays for the extra unused token per number, but "many objects and integers" and "strings and deep nesting" have massive improvements due to converting `Cow` to `str`
 
 |                           | baseline (MB/s) | new (MB/s) | delta  |
 | ------------------------- | --------------- | ---------- | ------ |
@@ -347,7 +358,9 @@ From string to AST. dense floats pays for the extra unused token per number, but
 
 ### Prettify from AST
 
-From AST to human readable string. dense floats suffered the most for a branch on each `Number` to check if an exponent is available to print. Other datasets are flat
+Benchmarks serializing AST into a human readable string
+
+"dense floats" suffered the most for a branch on each `Number` to check if an exponent is available to print. Other datasets are flat
 
 |                           | baseline (MB/s) | new (MB/s) | delta |
 | ------------------------- | --------------- | ---------- | ----- |
@@ -357,7 +370,9 @@ From AST to human readable string. dense floats suffered the most for a branch o
 
 ### Uglify from Token Stream
 
-Going from string to tokens to string. Big improvements across the board. Avoids building a syntax tree, so serialization avoids branching with formatting like with AST to string paths
+Converts a string into tokens and serializes into a compact string
+
+Big improvements across the board. Avoids building a syntax tree, so serialization avoids branching with formatting like with AST to string paths
 
 |                           | baseline (MB/s) | new (MB/s) | delta  |
 | ------------------------- | --------------- | ---------- | ------ |
@@ -367,7 +382,7 @@ Going from string to tokens to string. Big improvements across the board. Avoids
 
 ---
 
-The benchmarks prove that formatters can be both fast and featureful—I was able to do more work and improve performance in most categories. Now I just need to keep it going
+The benchmarks prove formatters can be fast and featureful—I did more work and improved performance in most categories. I'll see y'all again when I implement the next Prettier feature!
 
 Please consider subscribing to my [RSS feed](/blog/rss.xml) or your programs will give your CPU depression
 
