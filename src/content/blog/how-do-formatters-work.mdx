@@ -50,9 +50,9 @@ A formatter will right these wrongs by applying a set of rules to consistently s
 
 ## How do formatters know what's important?
 
-Both JSON blobs are functionally equivalent—how did the formatter know what can be cut and what can't?
+Both JSON blobs are functionally equivalent—how did the formatter know what can and can't be cut?
 
-A character's meaning is defined by its surroundings
+A character's surroundings define its meaning
 
 - `{}` is an empty object, but `"{}"` is a string with an opening and closing curly brace
 - Spaces are meaningful inside a string but stylistic outside of them
@@ -77,7 +77,7 @@ No matter how the JSON is styled, the tokens will be the same! Note there is no 
 
 ### Why not just loop over the string?
 
-Long story short, modularity. It's hard to manage validity of each token while also handling output
+Long story short, modularity. It's hard to manage token validity and output at the same time
 
 It's certainly possible to loop directly over the JSON, tracking what the current character represents, but this gets complex fast
 
@@ -87,7 +87,7 @@ JSON strings
 
 1. start with a quotation mark, have 0 to many characters, then end with a quotation mark
 2. can contain escaped quotes (`\"`) and other characters requiring escapes, like newlines (`\n`)
-3. can contain unicode escapes, which look like `uXXXX` where `X` is a hex digit
+3. can contain Unicode escapes, which look like `uXXXX` where `X` is a hex digit
 4. cannot have control characters like newlines inside of them
 5. must contain valid utf8
 
@@ -144,15 +144,15 @@ pub trait Visitor<'a> {
 
 Whether you're formatting tokens or an AST, the formatter sees the same events
 
-The visitor abstractions enables so much more than just formatting. Since parsing validates the JSON, my JSON validation visitor is just a noop. Other extensions are just as clean—the output is completely defined by the visitor. I could map old keys to new ones, calculate key frequency, or validate against a JSON schema—all without any new traversal logic
+But wait—there's more! The visitor enables so much more than just formatting. Since parsing validates the JSON, my validation visitor is just a noop. Other extensions are just as clean—the visitor completely defines the output. I could map old keys to new ones, calculate key frequency, or validate against a JSON schema—all without new traversal logic
 
 ---
 
 A formatter is all about finding what's meaningful and normalizing what's not. JJPWRGEM uses both tokens for parsing speed and ASTs for structure—resulting in huge flexibility and performance gains
 
-Now you have all the tools you need to fight back against Gerald and their newfangled fibonacci indentation
+Now you have all the tools you need to fight back against Gerald and their newfangled Fibonacci indentation
 
-Please consider subscribing to my [RSS feed](/blog/rss.xml) or I will personally ask Gerald to reformat your codebase by hand
+Please consider subscribing to my [RSS feed](/blog/rss.xml), or I will personally ask Gerald to reformat your codebase by hand
 
 <FigCaption src="/formatters/evil-hand-rub.webp">
 	Gerald giving a very menacing hand rub as they scheme
