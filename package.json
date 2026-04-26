@@ -36,10 +36,15 @@
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-tailwindcss": "^0.7.2"
 	},
+	"engines": {
+		"node": ">=24",
+		"pnpm": ">=10"
+	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
 			"@tailwindcss/oxide",
 			"esbuild",
+			"lefthook",
 			"sharp"
 		]
 	}
