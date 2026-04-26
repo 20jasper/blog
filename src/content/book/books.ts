@@ -208,9 +208,22 @@ export const booksStarted: Book[] = [
 		rating: 5,
 	},
 	{
-		title: "Computer Science: A Programmer's Perspective",
+		title: "Computer Science: A Programmer's Perspective (First Half)",
 		author: 'J. Glenn Brookshear and Dennis Brylow',
-		readDate: { start: new Date('2026-2-4'), end: null },
+		readDate: { start: new Date('2026-2-4'), end: new Date('2026-3-10') },
+		rating: 5,
+	},
+	{
+		title:
+			'Clean Code: A Handbook of Agile Software Craftsmanship, Second Edition',
+		author: 'Robert Martin',
+		readDate: { start: new Date('2026-3-15'), end: new Date('2026-3-25') },
+		rating: 2,
+	},
+	{
+		title: 'Functional Programming in Scala, Second Edition',
+		author: 'Michael Pilquist, Rúnar Bjarnason, and Paul Chiusano',
+		readDate: { start: new Date('2026-4-18'), end: null },
 		rating: null,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
