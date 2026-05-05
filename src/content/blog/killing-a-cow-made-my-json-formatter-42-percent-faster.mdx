@@ -1,6 +1,6 @@
 ---
 title: 'Killing a `Cow` made my JSON formatter 42% faster'
-pubDate: '2026-04-25'
+pubDate: '2026-05-05'
 description: 'Early optimization is bad'
 tags: ['rust', 'performance']
 math: true
@@ -13,10 +13,10 @@ Thesis: formatters can be both featureful and fast
 - Oxmft proves features can be featureful and fast by achieving feature parity with prettier for js much faster but
 - Oxfmt does not natively format JSON therefore it's slower, therefore
 - there is a gap in the fast and featureful JSON market, but the full feature set is large therefore
-- JJPWRGEM can start with an impactful and well scoped feature, number normalizatoin with a naive approach building new strings
+- JJPWRGEM can start with an impactful and well scoped feature, number normalization with a naive approach building new strings
 - but heap allocations are slow
 - therefore we will try with 2 cows but
-- this slows things down because of unnecesary drop machinery
+- this slows things down because of unnecessary drop machinery
 - therefore we can refactor to use str but
 - the tokens are still larger therefore
 - we can split to improve perf but
@@ -32,7 +32,7 @@ A formatter styles code consistently, usually improving human readability. If yo
 
 The JavaScript ecosystem has a gap—most formatters are either featureful _or_ fast. Prettier is the standard in the JavaScript ecosystem, but it's not the fastest. Oxfmt has made major strides—supporting parity with Prettier's JavaScript formatting with much improved performance. [One report found a migration to Oxfmt formatted their repo 6.5x faster—from 13.9 seconds to 2.1](https://www.udaynayak.com/blog/migrating-from-eslint-prettier-to-oxlint-oxfmt-in-an-nx-monorepo)
 
-However these gains do not apply to JSON. Oxfmt is 10–20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]
+However these gains do not apply to JSON. Oxfmt is 10–20% slower than Prettier for JSON. Oxfmt has a native JavaScript formatter, but it reasonably delegates to Prettier for file types without native implementations[^respectOxfmt]. [Oxfmt plans for a native JSON implementation this year!](https://github.com/oxc-project/oxc/issues/19704)
 
 [^respectOxfmt]: I love everything Oxfmt has done so far, so this is not meant to put down Oxfmt. It's the only Prettier compatible tooling I've found that doesn't crash when formatting larger JSON files. I've seen some amazing architectural decisions they've made. Open source is a lot of work
 
