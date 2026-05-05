@@ -8,6 +8,7 @@ export const blogTags = [
 	'typescript',
 	'javascript',
 	'rust',
+	'performance',
 	'git',
 	'go',
 	'traffic design',
