@@ -4,6 +4,12 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 
 import SocialLinks from '@components/SocialLinks.astro';
 import PetImages from '@components/PetImages.astro';
+
+const HATER_MESSAGES = [
+	'Very bad writing',
+	'Let AI generate a bunch of crap and turn it into a 5 pages blog post that could have fit in a reddit comment',
+	"Only people who don't know English use em dashes",
+];
 ---
 
 <BaseLayout
@@ -22,6 +28,22 @@ import PetImages from '@components/PetImages.astro';
 		<section class="py-4">
 			<h2 class="mb-4 text-2xl font-semibold">Follow me on my Socials</h2>
 			<SocialLinks />
+		</section>
+		<section class="py-4">
+			<h2 class="mb-4 text-2xl font-semibold">Reviews</h2>
+			<ul
+				class="text-foreground prose prose-blockquote:text-foreground prose-blockquote:border-foreground"
+			>
+				{
+					HATER_MESSAGES.map((message) => (
+						<li>
+							<blockquote>
+								<p>{message}</p>
+							</blockquote>
+						</li>
+					))
+				}
+			</ul>
 		</section>
 		<section class="py-4">
 			<h2 class="mb-4 text-2xl font-semibold">Pet Zone</h2>
