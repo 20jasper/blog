@@ -19,7 +19,7 @@
 		"@netlify/edge-functions": "^3.0.3",
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.2.1",
-		"astro": "^6.2.2",
+		"astro": "^6.3.1",
 		"effect": "^3.21.0",
 		"rehype-external-links": "^3.0.0",
 		"rehype-katex": "^7.0.1",
