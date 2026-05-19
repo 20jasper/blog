@@ -223,7 +223,13 @@ export const booksStarted: Book[] = [
 	{
 		title: 'Functional Programming in Scala, Second Edition',
 		author: 'Michael Pilquist, Rúnar Bjarnason, and Paul Chiusano',
-		readDate: { start: new Date('2026-4-18'), end: null },
+		readDate: { start: new Date('2026-4-18'), end: new Date('2026-5-19') },
+		rating: 5,
+	},
+	{
+		title: "The Staff Engineer's Path",
+		author: 'Tanya Reilly',
+		readDate: { start: new Date('2026-5-14'), end: null },
 		rating: null,
 	},
 ].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
