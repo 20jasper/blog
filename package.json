@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.7",
-		"@astrojs/mdx": "^5.0.0",
+		"@astrojs/mdx": "^6.0.3",
 		"@astrojs/sitemap": "^3.7.1",
 		"@netlify/edge-functions": "^3.0.3",
 		"@tailwindcss/typography": "^0.5.19",
