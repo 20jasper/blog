@@ -87,11 +87,7 @@ This same concept applies on the type level—for example, we may care that a ty
 
 ```ts
 type SlushyFlavor =
-	| 'Lemonade'
-	| 'Orange Fanta'
-	| 'Mountain Dew'
-	| 'Motor Oil'
-	| 'Peach';
+	'Lemonade' | 'Orange Fanta' | 'Mountain Dew' | 'Motor Oil' | 'Peach';
 ```
 
 `extends` requires that the left type must be assignable to the right. `"beans"` is not assignable to `SlushyFlavor`, so the consumer of our API gets feedback through a type error
@@ -111,11 +107,7 @@ There is no if statement on the type level—conditionals are done via ternary e
 
 ```ts
 type SlushyFlavor =
-	| 'Lemonade'
-	| 'Orange Fanta'
-	| 'Mountain Dew'
-	| 'Motor Oil'
-	| 'Peach';
+	'Lemonade' | 'Orange Fanta' | 'Mountain Dew' | 'Motor Oil' | 'Peach';
 
 type IsDelicious<T extends SlushyFlavor> = T extends 'Peach' ? false : true;
 ```
