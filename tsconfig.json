@@ -3,13 +3,12 @@
 	"compilerOptions": {
 		"strictNullChecks": true,
 		"exactOptionalPropertyTypes": false,
-		"baseUrl": ".",
 		"paths": {
-			"@components/*": ["src/components/*"],
-			"@layouts/*": ["src/layouts/*"],
-			"@images/*": ["src/images/*"],
-			"@content/*": ["src/content/*"],
-			"@src/*": ["src/*"]
+			"@components/*": ["./src/components/*"],
+			"@layouts/*": ["./src/layouts/*"],
+			"@images/*": ["./src/images/*"],
+			"@content/*": ["./src/content/*"],
+			"@src/*": ["./src/*"]
 		}
 	},
 	"include": [".astro/types.d.ts", "**/*"],
