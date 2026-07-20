@@ -20,7 +20,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.3.0",
 		"astro": "^6.4.4",
-		"effect": "^3.21.0",
+		"effect": "^3.22.0",
 		"rehype-external-links": "^3.0.0",
 		"rehype-katex": "^7.0.1",
 		"remark-math": "^6.0.0",
