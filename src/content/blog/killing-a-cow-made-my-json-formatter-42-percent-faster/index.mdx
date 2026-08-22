@@ -27,6 +27,13 @@ Thesis: formatters can be both featureful and fast
 \*/}
 
 import FigCaption from '@components/fig-caption.astro';
+import prettyCanada from './pretty-canada.webp';
+import lowercaseCow from './lowercase-cow.webp';
+import uppercaseCow from './uppercase-cow.webp';
+import thinkingCpu from './thinking-cpu.webp';
+import sadCpu from './sad-cpu.webp';
+import happyCpu from './happy-cpu.webp';
+import cpuTherapy from './cpu-therapy.webp';
 
 A formatter styles code consistently, usually improving human readability. If you are unfamiliar with formatters, tokenizers, or abstract syntax trees, see my article on [how formatters work](/blog/how-do-formatters-work)
 
@@ -38,7 +45,7 @@ However these gains do not apply to JSON. Oxfmt is 10–20% slower than Prettier
 
 Prettier and Oxfmt both take more than a second to format a 2MB JSON file, while my formatter, [JJPWRGEM](https://github.com/20jasper/JJPWRGEM) takes around 30 milliseconds
 
-<FigCaption src="/cow/pretty-canada.webp">
+<FigCaption src={prettyCanada.src}>
 
 Dense floats benchmark - Execution time
 
@@ -202,14 +209,14 @@ fn to_lowercase(string: &str) -> Cow<'_, str> {
 }
 ```
 
-<FigCaption src="/cow/lowercase-cow.webp">
+<FigCaption src={lowercaseCow.src}>
 	Diagram showing a call to `to_lowercase` with an already-lowercase `&str`
 	returns a `Cow::Borrowed` pointing to the same memory, avoiding allocation
 </FigCaption>
 
 Now imagine an uppercase input. A new string is created to avoid changing the referenced string. The `Cow` "owns" the new data and can update the allocated capacity without reallocating, but it must clean up that data when it goes out of scope
 
-<FigCaption src="/cow/uppercase-cow.webp">
+<FigCaption src={uppercaseCow.src}>
 	Diagram showing a call to `to_lowercase` with an uppercase `&str` returns a
 	`Cow::Owned` pointing to a new allocation
 </FigCaption>
@@ -254,20 +261,20 @@ pub enum Token<'a> {
 
 CPUs read memory in chunks—like reading a word at a time instead of a full sentence
 
-<FigCaption src="/cow/thinking-cpu.webp">
+<FigCaption src={thinkingCpu.src}>
 	A focused CPU thinking and reading one JSON Token at a time
 </FigCaption>
 
 A CPU fetches 64 bytes of RAM at a time into its cache for processing, meaning 2 `&str`s or `Cow<str>`s per token limits reads to one `Token` at a time
 
-<FigCaption src="/cow/sad-cpu.webp">
+<FigCaption src={sadCpu.src}>
 	A sad CPU saying "I can only read one token at a time this is so sad. please
 	make token 32 bytes or lower so I can read 2 at once"
 </FigCaption>
 
 Variants holding 1 `&str` or `Cow<str>` are both 24 bytes, so the 2 fit in 1 read
 
-<FigCaption src="/cow/happy-cpu.webp">
+<FigCaption src={happyCpu.src}>
 	A happy CPU saying "I can read two tokens at a time since token is 24 bytes
 	thank you so much, enjoy higher throughput"
 </FigCaption>
@@ -386,7 +393,7 @@ The benchmarks prove formatters can be fast and featureful—I did more work and
 
 Please consider subscribing to my [RSS feed](/blog/rss.xml) or your programs will give your CPU depression
 
-<FigCaption src="/cow/cpu-therapy.webp">
+<FigCaption src={cpuTherapy.src}>
 A capacitor giving a CPU therapy. They say "So I hear you've been feeling cache miss-erable recently..."
 
 The CPU is laying down on a coach and the capacitor is wearing glasses and holding a clipboard

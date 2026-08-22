@@ -24,7 +24,7 @@ a {
 
 In my nav, I applied a Tailwind class to remove the underline, since I used borders to distinguish active links
 
-![A navbar with white underlines under active links and orange under active links](@images/nav-link.webp)
+![A navbar with white underlines under active links and orange under active links](./nav-link.webp)
 
 After upgrading to Tailwind v4, the Tailwind class was overwritten by the rule in `global.css`
 
