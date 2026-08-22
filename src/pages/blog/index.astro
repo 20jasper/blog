@@ -1,17 +1,17 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION, ATOM_PATH, RSS_PATH } from '@src/consts';
-import BaseLayout from '@layouts/BaseLayout.astro';
+import BaseLayout from '@layouts/base-layout.astro';
 import { getPostsDescending } from '@src/utils/posts';
-import BlogList from '@components/BlogList.astro';
+import BlogList from '@components/blog-list.astro';
 
 const posts = await getPostsDescending();
-const featuredSlugs = [
+const featuredSlugs = new Set([
 	'llms-dont-own-em-dashes-i-do',
 	'it-takes-26-yottabytes-of-ram-to-typecheck-a-union-of-safe-integers',
 	'iifes-a-javascript-idiom-of-yore',
-];
-const featuredPosts = posts.filter((post) => featuredSlugs.includes(post.id));
-const otherPosts = posts.filter((post) => !featuredSlugs.includes(post.id));
+]);
+const featuredPosts = posts.filter((post) => featuredSlugs.has(post.id));
+const otherPosts = posts.filter((post) => !featuredSlugs.has(post.id));
 ---
 
 <BaseLayout

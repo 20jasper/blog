@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '@layouts/BlogPost.astro';
+import BlogPost from '@layouts/blog-post.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -13,7 +13,7 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
-const emDashCount = post.body?.match(/—/g)?.length ?? 0;
+const emDashCount = post.body?.match(/—/gu)?.length ?? 0;
 ---
 
 <BlogPost

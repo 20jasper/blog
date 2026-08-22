@@ -232,7 +232,7 @@ export const booksStarted: Book[] = [
 		readDate: { start: new Date('2026-5-14'), end: null },
 		rating: null,
 	},
-].sort(Order.combine(byDateDesc('end'), byDateDesc('start')));
+].toSorted(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
 type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
 const toRead: UnreadBook[] = [

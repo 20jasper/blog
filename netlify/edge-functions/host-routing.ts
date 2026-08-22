@@ -4,7 +4,7 @@ const JSONWTF_BASE = new URL('https://jsonwtf.org');
 const JACOBASPER = new URL('https://jacobasper.com');
 
 const matchesPath = (expected: string, actual: string): boolean =>
-	expected === actual || expected + '/' === actual;
+	expected === actual || `${expected}/` === actual;
 
 const FILE_EXTENSIONS = [
 	'.css',

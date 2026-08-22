@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import BlogArticle from '@components/BlogArticle.astro';
-import BaseLayout from './BaseLayout.astro';
+import BlogArticle from '@components/blog-article.astro';
+import BaseLayout from './base-layout.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & { emDashCount: number };
 

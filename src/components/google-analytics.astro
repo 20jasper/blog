@@ -12,9 +12,9 @@ const { id } = Astro.props;
 	src=`https://www.googletagmanager.com/gtag/js?id=${id}`
 ></script>
 <script is:inline define:vars={{ id }}>
-	window.dataLayer = window.dataLayer || [];
-	function gtag() {
-		dataLayer.push(arguments);
+	globalThis.dataLayer ||= [];
+	function gtag(...args) {
+		dataLayer.push(args);
 	}
 	gtag('js', new Date());
 

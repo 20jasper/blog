@@ -1,14 +1,14 @@
 ---
 import { SITE_TITLE, RSS_PATH, ATOM_PATH } from '../consts';
 import '../styles/global.css';
-import GoogleAnalytics from './GoogleAnalytics.astro';
+import GoogleAnalytics from './google-analytics.astro';
 import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
 
-interface Props {
+type Props = {
 	title: string;
 	description: string;
 	math?: boolean;
-}
+};
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 

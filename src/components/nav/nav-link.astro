@@ -6,8 +6,8 @@ type Props = HTMLAttributes<'a'> & { border: 'top' | 'bottom' };
 const { href, class: className, border, ...props } = Astro.props;
 
 const { pathname } = Astro.url;
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + subpath?.[0];
+const subpath = pathname.match(/[^/]+/gu);
+const isActive = href === pathname || href === `/${subpath?.[0]}`;
 ---
 
 <a

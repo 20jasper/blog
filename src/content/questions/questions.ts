@@ -181,7 +181,7 @@ export const questions: Question[] = [
 		answer: 'invalid',
 	},
 	{
-		json: '\ufeff"prefixed by byte order marker (BOM)"',
+		json: '\uFEFF"prefixed by byte order marker (BOM)"',
 		explanation:
 			'A leading byte order mark (BOM) is allowed in non-network-transmitted JSON and can be ignored in network-transmitted JSON. A BOM signals what UTF encoding is used as well as endianness (byte ordering)',
 		citation: 'https://datatracker.ietf.org/doc/html/rfc8259#section-8.1',
@@ -291,6 +291,6 @@ export const JSONWTF_BASE_URL = 'https://jsonwtf.org';
 export const feedItem: Item = {
 	title: TITLE,
 	description: DESCRIPTION,
-	link: `${JSONWTF_BASE_URL}`,
+	link: JSONWTF_BASE_URL,
 	date: new Date('2026-1-3'),
 };
