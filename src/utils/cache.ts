@@ -8,7 +8,10 @@ export const cache = <T, U>(fn: (x: U) => T): ((x: U) => T) => {
 	let lastArgs: undefined | U;
 
 	return (y: U) => {
-		if (res === undefined || lastArgs !== y) res = fn(y);
+		if (res === undefined || lastArgs !== y) {
+			res = fn(y);
+			lastArgs = y;
+		}
 		return res;
 	};
 };
