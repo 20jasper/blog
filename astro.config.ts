@@ -6,6 +6,7 @@ import syntaxTheme from './orange-theme';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeExternalLinks from 'rehype-external-links';
+import { unified } from '@astrojs/markdown-remark';
 
 export default defineConfig({
 	site: 'https://jacobasper.com',
@@ -18,18 +19,20 @@ export default defineConfig({
 			theme: syntaxTheme,
 			wrap: true,
 		},
-		remarkPlugins: [remarkMath],
-		rehypePlugins: [
-			rehypeKatex,
-			[
-				rehypeExternalLinks,
-				{
-					rel: ['noopener', 'noreferrer'],
-					target: '_blank',
-					properties: { class: 'link-external' },
-				},
+		processor: unified({
+			remarkPlugins: [remarkMath],
+			rehypePlugins: [
+				rehypeKatex,
+				[
+					rehypeExternalLinks,
+					{
+						rel: ['noopener', 'noreferrer'],
+						target: '_blank',
+						properties: { class: 'link-external' },
+					},
+				],
 			],
-		],
+		}),
 	},
 	env: {
 		schema: {
