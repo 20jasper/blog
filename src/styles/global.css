@@ -1,7 +1,26 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-@custom-variant prose-inline-code (&.prose :where(:not(pre)>code):not(:where([class~="not-prose"] *)));
+@custom-variant prose-inline-code (&.prose :where(:not(pre)>code, kbd):not(:where([class~="not-prose"] *)));
+
+@utility prose-brand {
+	--tw-prose-invert-body: var(--color-foreground);
+	--tw-prose-invert-headings: var(--color-foreground);
+	--tw-prose-invert-lead: var(--color-foreground-secondary);
+	--tw-prose-invert-links: var(--color-foreground);
+	--tw-prose-invert-bold: var(--color-foreground);
+	--tw-prose-invert-counters: var(--color-foreground-secondary);
+	--tw-prose-invert-bullets: var(--color-foreground-secondary);
+	--tw-prose-invert-hr: var(--color-foreground-secondary);
+	--tw-prose-invert-quotes: var(--color-foreground-secondary);
+	--tw-prose-invert-quote-borders: var(--color-foreground-secondary);
+	--tw-prose-invert-captions: var(--color-foreground-secondary);
+	--tw-prose-invert-kbd: var(--color-foreground);
+	--tw-prose-invert-kbd-shadows: transparent;
+	--tw-prose-invert-code: var(--color-foreground);
+	--tw-prose-invert-th-borders: var(--color-foreground-secondary);
+	--tw-prose-invert-td-borders: var(--color-foreground-secondary);
+}
 
 @theme {
 	--color-*: initial;
@@ -14,13 +33,6 @@
 }
 
 @layer base {
-	.prose {
-		--tw-prose-invert-body: var(--color-foreground);
-		--tw-prose-invert-headings: var(--color-foreground);
-		--tw-prose-invert-links: var(--color-foreground);
-		--tw-prose-invert-bold: var(--color-foreground);
-	}
-
 	a {
 		text-decoration: underline;
 		transition:
