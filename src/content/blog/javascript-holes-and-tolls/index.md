@@ -17,7 +17,7 @@ const array = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
 
 If you said "Obviously, the first is written in such a way that v8 cannot perform certain optimizations due to `array` being holey" then you are a big nerd[^touchGrass] or you read ahead in the article. That's weird, how did you have that specific of an answer ready in such a short time???
 
-[^touchGrass]: This is for you. Please go outside. The sun misses you ![Grass with dew on it](@images/touchGrass.webp)
+[^touchGrass]: This is for you. Please go outside. The sun misses you ![Grass with dew on it](./touch-grass.webp)
 
 If you said it's purely stylistic, then you are safely only a medium sized nerd and probably touch grass at least once a month
 
@@ -210,7 +210,7 @@ If you ever feel like typing `[,,,,,,]`, I don't know, take a walk or something.
 
 You know what. I will tell my dog and they will be very sad and cry
 
-![a sad puppy wearing a sweatshirt thinking please don't use holey arrays](@images/sadPuppy.webp)
+![a sad puppy wearing a sweatshirt thinking please don't use holey arrays](./sad-puppy.webp)
 
 Alright, now that we have that out of the way, let's get it moving, I have a slushy to drink
 

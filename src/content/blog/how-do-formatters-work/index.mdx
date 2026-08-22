@@ -7,6 +7,7 @@ math: true
 ---
 
 import FigCaption from '@components/fig-caption.astro';
+import evilHandRub from './evil-hand-rub.webp';
 
 {/* prettier-ignore */}
 {/* outline
@@ -154,6 +155,6 @@ Now you have all the tools you need to fight back against Gerald and their newfa
 
 Please consider subscribing to my [RSS feed](/blog/rss.xml), or I will personally ask Gerald to reformat your codebase by hand
 
-<FigCaption src="/formatters/evil-hand-rub.webp">
+<FigCaption src={evilHandRub.src}>
 	Gerald giving a very menacing hand rub as they scheme
 </FigCaption>

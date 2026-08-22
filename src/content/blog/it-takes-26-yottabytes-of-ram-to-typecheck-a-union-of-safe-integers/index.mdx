@@ -72,13 +72,13 @@ const X: SafeInteger = Infinity;
 
 Time is defined as wall clock time
 
-![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode](/file-creation-time-vs-file-size.svg)
+![File Creation Time vs File Size as measured by the time command. Rust program run in debug mode](./file-creation-time-vs-file-size.svg)
 
 File creation time scales linearly with the file size. A 10 GB file takes around 100 seconds to generate. I could have gone further, but I couldn't be bothered to clear up more space on my SSD
 
 #### File Size
 
-![File size vs union size](/file-size-vs-union-size.svg)
+![File size vs union size](./file-size-vs-union-size.svg)
 
 File size scales logarithmically with union size. The amount of digits increases with every power of 10
 
@@ -94,12 +94,12 @@ Plugging in the safe integer range size ($$1.80\cdot10^{16}$$) yields $$3.15\tim
 
 Time is defined as wall clock time
 
-![TSC typechecking time vs file size](/tsc-typechecking-time-vs-file-size.svg)
+![TSC typechecking time vs file size](./tsc-typechecking-time-vs-file-size.svg)
 69 MB takes around 4.5 hours and 2 MB takes around 4 seconds to typecheck with TSC
 
 I ran the TSC benchmarks until my computer gave out. I ran a benchmark for a union with around 17 million items (140 MB) and my computer restarted after around 24 hours both times. This may have been a good stopping point anyways—I'm not so dedicated that I'll not use my computer for a week+ 😅
 
-![TSGO typechecking time vs file size](/tsgo-typechecking-time-vs-file-size.svg)
+![TSGO typechecking time vs file size](./tsgo-typechecking-time-vs-file-size.svg)
 TSGO is far faster for this very niche use case. The same 69 MB file takes around 17 seconds—almost 1000x faster! CPU was no longer the limiting factor here. I ran out of RAM once I needed more than 64 GB[^swap]
 
 [^swap]: I know I could have used swap to get more RAM, but I'd expect this to be very slow and heavily skew the numbers. After a 3 minute typecheck, who knows how slow it would get
@@ -108,7 +108,7 @@ TSGO is far faster for this very niche use case. The same 69 MB file takes aroun
 
 RAM is physical RAM used by the process
 
-![Peak RAM usage by File Size](/peak-ram-usage-by-file-size.svg)
+![Peak RAM usage by File Size](./peak-ram-usage-by-file-size.svg)
 
 RAM usage scales linearly with file size. TSC has a baseline of around 170 MB, and TSGO around 65–70 MB
 
@@ -120,7 +120,7 @@ TSGO would take around $$2.18\times10^{19}$$ MB, or 22 yottabytes due to its tre
 
 #### CPU
 
-![Average CPU core usage by file size](/average-cpu-core-usage-by-file-size.svg)
+![Average CPU core usage by file size](./average-cpu-core-usage-by-file-size.svg)
 
 TSC trends towards an average of using 100% of one logical processor, while TSGO lands around 150%
 
