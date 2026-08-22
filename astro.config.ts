@@ -11,6 +11,7 @@ import { unified } from '@astrojs/markdown-remark';
 export default defineConfig({
 	site: 'https://jacobasper.com',
 	redirects: {
+		'/': '/blog',
 		'/projects/1/': 'https://jacobasper.com/blog',
 		'passwords.txt': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 	},
@@ -45,6 +46,12 @@ export default defineConfig({
 	experimental: {
 		contentIntellisense: true,
 	},
-	integrations: [mdx(), sitemap()],
+	integrations: [
+		mdx(),
+		sitemap({
+			// e2e test fixtures only, never real content
+			filter: (page) => !page.includes('/test-fixtures/'),
+		}),
+	],
 	vite: { plugins: [tailwind()] },
 });

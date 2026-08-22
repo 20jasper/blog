@@ -1,0 +1,52 @@
+---
+import { YEAR_SOURCE } from './data';
+---
+
+<figure
+	class="not-prose bg-background-secondary/40 my-8 overflow-x-auto rounded-lg p-4"
+>
+	<figcaption class="text-foreground-secondary mb-2 font-mono text-xs">
+		detection source share by year -- table of each year's detection count and
+		the percentage credited to ReversingLabs, Amazon Inspector, OSSF Package
+		Analysis, GHSA-malware, and Google Open Source Security. ReversingLabs is
+		100% of 2018-2019; Amazon Inspector grows from 0% in 2018-2019 to 54.7% by
+		2026 as OSSF Package Analysis, GHSA-malware, and Google OSS Security all
+		gain share from 2021 onward.
+	</figcaption>
+	<table class="w-full border-collapse font-mono text-xs">
+		<thead>
+			<tr class="border-foreground-secondary/30 border-b">
+				<th class="p-1.5 text-left">year</th>
+				<th class="p-1.5 text-right">n</th>
+				<th class="p-1.5 text-right">ReversingLabs</th>
+				<th class="p-1.5 text-right">Amazon Inspector</th>
+				<th class="p-1.5 text-right">OSSF Pkg Analysis</th>
+				<th class="p-1.5 text-right">GHSA-malware</th>
+				<th class="p-1.5 text-right">Google OSS Sec</th>
+			</tr>
+		</thead>
+		<tbody class="text-foreground-secondary">
+			{
+				YEAR_SOURCE.map((row) => (
+					<tr class="border-foreground-secondary/10 border-b">
+						<td class="p-1.5 text-left">{row.year}</td>
+						<td class="p-1.5 text-right">{row.n.toLocaleString()}</td>
+						<td class="p-1.5 text-right">
+							{row['reversing-labs'].toFixed(1)}%
+						</td>
+						<td class="p-1.5 text-right">
+							{row['amazon-inspector'].toFixed(1)}%
+						</td>
+						<td class="p-1.5 text-right">
+							{row['ossf-package-analysis'].toFixed(1)}%
+						</td>
+						<td class="p-1.5 text-right">{row['ghsa-malware'].toFixed(1)}%</td>
+						<td class="p-1.5 text-right">
+							{row['google-open-source-security'].toFixed(1)}%
+						</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</figure>

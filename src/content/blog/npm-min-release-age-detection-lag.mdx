@@ -1,0 +1,89 @@
+---
+title: 'A 1 day `minimumReleaseAge` blocks 53% of npm supply chain attacks'
+pubDate: '2026-08-22'
+description: "How valuable are `minimumReleaseAge`s and what's the best threshold?"
+tags: ['security', 'javascript']
+---
+
+import ThresholdCurveChartTanstack from '@components/npm-study/threshold-curve-chart-tanstack.astro';
+import MonthlyDetectionsChartTanstack from '@components/npm-study/monthly-detections-chart-tanstack.astro';
+import { PUBLISH_TO_YANK_CHART } from '@components/npm-study/data';
+
+{/* prettier-ignore */}
+{/*
+Outline
+
+1. Developers rely on a huge amount of software, therefore
+2. One malicious package version can affect a huge amount of users (transitive deps), therefore
+   2a. the increase in advisories is concerning, but
+3. Advisories are posted after the issue is found (lag chart), therefore
+4. Waiting is a simple way to protect you since it gives scanners, researchers and maintainers time to act, but
+5. there is tension between sitting on an old version and protection, therfore
+
+\*/}
+
+To make the title punchy, some liberties were taken. To be more precise, the last 5 years of OSV records show a `minimumReleaseAge` of 1 day would block 53% of single version, _reported_ npm supply chain attacks, or around 10,000 attacks. A short delay keeps supply chain attacks at bay!
+
+{/* 1. Developers rely on a huge amount of software, therefore */}
+
+## The dependencypocolypse
+
+It's become increasingly easy to unconsciously install obscene amounts of software. Dependencies used to require selfhosting a package and its dependencies. Nowadays, an npm account will do
+
+The barrier to depending on a package is gone—many packages rely on chains of many more packages. For example, [globby](https://main.npmx.dev/package/globby) is a small scoped package with 23 dependencies
+
+![large stack of rectangular stones representing npm packages holding up the globby package](/globby-dependency-stack.svg)
+
+{/* 2. One malicious package version can affect a huge amount of users (transitive deps), but */}
+There are many issues with large amounts of dependencies—most pertinently, supply chain risk. One compromised package in the chain can leak your AWS token or drain your airplane miles. Globby has 92,820,552 downloads per week as of writing, so even a small vulnerability window would affect many users.
+
+[stylelint](https://npmx.dev/package/stylelint) depends on globby and has 110 total dependencies. [A default Next.js app](https://npmx.dev/package/create-next-app)[^nextTemplate] has 8 direct dependencies and 359 total dependencies!
+
+[^nextTemplate]: Installed via `npx --yes create-next-app@latest my-app --typescript --eslint --tailwind --app --src-dir --import-alias "@/*" --use-npm --no-turbopack` and measured with `npm ls --all --parseable | tail -n +2 | wc -l`
+
+{/* 2a. the increase in advisories is concerning, but */}
+To add fuel to the fire, security advisories have steadily increased. This doesn't necessarily mean supply chain attacks are increasing, but it's definitely correlated. Importantly, advisories come after an attack—after many have already installed the package!
+
+<MonthlyDetectionsChartTanstack />
+
+Structured reports like OSV's have made tracking easier. Prior to the last 5 years, disclosure would be a blog post or GitHub issue. Additionally, there is better automated security scanning than 5–10 years ago, and the prevalence of LLMs has renewed interest in security
+
+To make matters even worse, attacks have become much more sophisticated. Since September 2025, there have been 4 worms affecting at least 2600 packages[^worm]. A worm steals maintainer's credentials to publish more malicious packages to attack further maintainers
+
+[^worm]:
+    <p>
+    	Here are the 4 major worm supply chain attacks in the npm ecosystem{' '}
+    	<span aria-hidden="true">🐛🐛🐛🐛</span>
+    </p>
+
+    1. [Shai-Hulud](https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised). 500+ packages
+    2. [Shai-Hulud v2](https://unit42.paloaltonetworks.com/npm-supply-chain-attack/). 700+ packages
+    3. [Mini Shai-Hulud](https://www.wiz.io/blog/mini-shai-hulud-strikes-again-tanstack-more-npm-packages-compromised). 170 packages
+    4. [ChainDrop](https://www.elastic.co/security-labs/shai-hulud-chaindrop-npm-supply-chain). 1,300+ packages
+
+{/* 3. Advisories are posted after the issue is found (lag chart), therefore */}
+
+For many, going dependencyless isn't realistic. A Next.js developer shan't have to read 305 MB of code before writing a page. Security researchers, automated scanners, and maintainers all catch supply chain attacks, but this takes time, and advisories lag hours to days
+
+{/* 4. Waiting is a simple way to protect you since it gives scanners, researchers and maintainers time to act, but */}
+
+## Just wait
+
+A simple solution to avoid many supply chain attacks is to just wait for security scanning. PNPM calls this `minimumReleaseAge`, but every major JavaScript package manager has a similar setting to delay package installation until it's old enough
+
+Many attacks are resolved very quickly. Of detected, single version npm supply chain attacks, 16.3% are removed from npm within 1 hour of publishing
+
+<ThresholdCurveChartTanstack chart={PUBLISH_TO_YANK_CHART} />
+
+This is a lower bound—not every supply chain attack is discovered or reported
+
+{/* 5. there is tension between sitting on an old version and protection, therefore */}
+Waiting months will reduce vulnerability, but you'll miss out on new features and ironically need to bump further for security patching!
+
+3 days seems to be the sweet spot for most projects that want new packages. 68.7% of detected npm packages are removed by that time. Waiting another 27 days brings diminishing returns, with 74.8% of packages removed
+
+## Closing thoughts
+
+I wrote this article since I could not find any large scale analysis of minimum release ages. There are a few great articles, such as [We should all be using dependency cooldowns](https://blog.yossarian.net/2025/11/21/We-should-all-be-using-dependency-cooldowns), though each of them lists at most 10 case studies
+
+I often see arguments like "won't the vulnerabilities just go unnoticed for the default delay?", and now I have the proof that many times, a security scanner will catch the issue quickly

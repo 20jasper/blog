@@ -1,0 +1,121 @@
+# Quarantined LLM-written draft — npm-min-release-age-detection-lag
+
+Everything below was cut from `src/content/blog/npm-min-release-age-detection-lag.mdx`
+(previously marked `## LLM written zone BELOW`), so the live post stays
+human-authored past the intro except for the two charts pulled back into the
+`{/* add chart */}` slot. Inert reference material, not rendered anywhere —
+pull sections back into the real post by hand as they get rewritten.
+
+---
+
+## LLM written zone BELOW
+
+Across **45,371** version-level malicious npm releases with resolvable timestamps, and four independently verified real-world incidents, the same pattern holds: the structured databases security tooling relies on record detection **hours to days later** than it actually happened — regardless of whether a human or a machine found it first.
+
+- **45,371** usable version-level rows (of 219,936 raw OSV records)
+- **41.0%** blocked at a 72-hour minimum release age
+- **99.1%** high-confidence, version-specific detection match
+- **4** incidents verified against independent public writeups
+
+## How much of a minimum release age npm's own removal speed already buys you
+
+Publish → npm's own `time.unpublished` tombstone — real registry data, not a proxy. Denominator: the same curated version-level dataset used throughout (explicit non-range versions, tea.xyz excluded), including the **19.8% still live today with no unpublish event** (2,893 of 14,629), which count against every threshold but never cross one.
+
+Beats detection at every threshold — **52.8%** removed within 24h, **68.7%** within 72h, vs. 35.8% / 41.0% for external detection. Caps at **74.8%** since ~20% never get pulled, not because removal slows down.
+
+**Why removal beats "detection":** npm's takedown runs on its own signals, no advisory required — a separate, slower pipeline handles vendor scan → writeup → OSV ingest. Order is usually: npm acts → writeup follows → OSV ingests later.
+
+**A sharper selection effect:** 67.8% of the curated rows (30,742 of 45,371) are excluded from this denominator — the malicious version is gone from the package's version list, but the package itself was never fully unpublished. Median versions-ever-published is **1** for packages on this curve, **9** for the excluded group, **39** for still-live. The curve is built almost entirely from single-shot throwaway packages, so it likely overstates npm's own removal-speed advantage.
+
+## How much a minimum release age would have blocked, at minimum
+
+For every threshold, share of malicious releases publicly identified _before_ that much time passed since publish — i.e. would have been blocked by that release-age policy. Detection timestamps: OSV's `malicious-packages-origins` field, version-matched where the source data allows.
+
+<ThresholdCurveChartTanstack chart={BLOCKING_CHART} />
+
+Steep early (18.7% at 1h), flattens after 72h — 3 days to 14 days only buys another **7.7 points**. **npm's own default is 0** — opt-in, so out of the box it catches nothing. Reference points (no package manager ships these): 24 hours blocks **35.8%**, 7 days blocks **45.0%**, 14 days blocks **48.7%**. At **30 days**, this dataset's ceiling, it's **61.3%**.
+
+> **Footnote — every number above is only as fast as OSV's own recorded timestamp, which runs slow.** Four incidents checked by hand against independent postmortems all show real detection happening well before OSV's earliest recorded timestamp: TanStack (May 2026), found by a human in 25 minutes, vs. OSV at 4.6h; chalk & debug (Sept 2025, ~2B weekly downloads), caught by automated threat-intel in under 4 minutes, vs. OSV at 4.7–5.2h; Solana web3.js (Dec 2024), self-disclosed in 3h, vs. OSV at 7.6h — and as a version range with no versions named, would've been silently excluded from this chart's denominator entirely. Structural to OSV's ingestion pipeline, not a crediting gap. Every figure on this page is a lower bound on real-world detection speed and an upper bound on how long it took to reach OSV.
+>
+> Sources: [TanStack postmortem](https://tanstack.com/blog/npm-supply-chain-compromise-postmortem), [StepSecurity](https://www.stepsecurity.io/blog/mini-shai-hulud-is-back), [Aikido Security](https://www.aikido.dev/blog/npm-debug-and-chalk-packages-compromised), [Socket.dev](https://socket.dev/blog/supply-chain-attack-solana-web3-js-library)
+
+## Two spikes that aren't what they look like
+
+The raw OSV corpus (219,936 npm "malicious package" records) has two huge monthly spikes — neither a wave of real attacks, both artifacts of how the data got in. Subtract them and the organic detection flow is a fraction of the total: **45,089 records (20.5%)**.
+
+<MonthlyVolumeChartTanstack />
+
+**Nov 2025 (140,728 records, 64% of the dataset):** a token-farming campaign against the tea.xyz reward protocol — ~150K auto-generated packages cross-referencing each other to fake a "useful contribution" score and farm TEA tokens. No payload, no victim; Amazon Inspector correctly flagged it as abuse. Sample of 30 checked: **29 still live** — nobody's harmed, nobody's in a hurry to remove them.
+
+**Update:** tea.xyz's token launched June 4, 2026, dropped 75% in the first hour, now trades ~86% below its Sept 2025 sale price. Independent research pins the abuse at 70% of new npm packages Feb–mid-2026, including a related campaign named "IndonesianFoods." ([nesbitt.io, 2026-06-11](https://nesbitt.io/2026/06/11/what-happened-to-tea.html))
+
+**Aug 14, 2025 (34,119 records, one day):** not a detection wave — every record carries the identical generic template, zero source metadata. A bulk historical backfill into OSV, not 34,119 real events. Both spikes are excluded from every other chart.
+
+## An 1,700x drop in median detection time — but read the edges carefully
+
+Grouping every usable row by year of publish, median time-to-detection collapsed from **~48,585 hours (5.5 years)** in 2018 to **~28.8 hours** in 2026. Real, but the two ends of this line are distorted in opposite directions — solid points are trustworthy, hollow points aren't.
+
+<YearTrendChart />
+
+**2018-2019 are 100% ReversingLabs**, whose active npm research only ramped up around 2023 — almost certainly retroactive scans, not real 2018-era detections. **2026 is right-censored** the other way: a package published this August can't yet show a 500-hour gap if today is also August 2026. Only **2023-2025** (solid dots) sit outside both distortions.
+
+## Who's actually catching these, year by year
+
+2018-2022 being ReversingLabs-only isn't "ReversingLabs was the only one working" — it's "ReversingLabs is the only one that rescans old packages." Real signal is 2023 onward: OSSF Package Analysis enters, Amazon Inspector goes from a rounding error to **54.7% of 2026's detections**, GHSA/Google OSS Security both grow a foothold.
+
+<SourceYearTable />
+
+Why now: npm absorbed attack volume displaced from PyPI and NuGet after those registries shipped mandatory 2FA and trusted publishing (npm malware volume reportedly more than doubled in 2025) — which funded new tooling: Amazon Inspector added OSS malware scanning, Socket.dev launched as a dedicated npm security vendor, ReversingLabs expanded coverage and opened a free community scanner. AI-assisted analysis is one ingredient in this shift, not a single AI-caused inflection point.
+
+_Sources: ReversingLabs 2025 npm malware volume & PyPI/NuGet 2FA displacement — reversinglabs.com/blog · Amazon Inspector OSS malware scanning & the 150K tea.xyz-campaign detection — aws.amazon.com/blogs/security · Phoenix Security 2025 open-source malware volume tracking — phoenix.security_
+
+## Reports over time: when detections actually landed
+
+A different clock than every chart above — keyed on **when each version was detected**, not published. npm's registry has existed since **January 2010**; OSV's structured malicious-package tracking (this dataset's entire source) only shows real activity from **mid-2022**. Famous pre-2022 incidents (`event-stream`, `eslint-scope`, both 2018) mostly aren't in this database — they predate structured tracking, existing only as blog posts and GitHub issues.
+
+<ReportsChart />
+
+Real growth, but lumpy — tall spikes (2024-06, 2025-12, 2026-08) are single-vendor batch sweeps, not organic increases; 2024-06 alone is 97.2% ReversingLabs. Counts are our sampled subset (~99.9% of the eligible pool), not a full census — treat the shape as directional, not exact.
+
+## What kind of malicious code is this, actually
+
+Keyword classification across all 219,936 records — a record can match more than one category, so each bar is "how many records mention this," independently, not a slice of a whole. Log scale, since tea.xyz's reward-farming wave dwarfs every real threat category combined.
+
+<CategoricalBarChart chart={CATEGORIES_CHART} />
+
+**71,456 records (32.5%) match none of these keywords** — mostly the generic "package X was found to contain malicious code" template, most of what a bulk scanner emits. **Typosquatting is almost certainly undercounted**: only 2,117 records (1.0%) self-describe as typosquat/impersonation, but we've seen dozens of obviously-typosquat names (`cash-app-money-generator-*`, `discord.js-*` variants) never tagged as such.
+
+## How many accounts is this, really
+
+For each of the 20,664 packages with an npm registry cache, we take the publishing account (`_npmUser`) on its earliest surviving version — walking forward through later versions if an earlier one was pruned — and count distinct accounts. **Coverage is thin:** 39.2% (8,111) are fully-unpublished tombstones with zero version data left, and 44.7% (9,226) resolve only to `npm` / `npm-support`, npm's own placeholder account after it scrubs a compromised package's content — not a real publisher. That leaves **16.1% (3,327 packages)** with a usable account name.
+
+<CategoricalBarChart chart={MAINTAINERS_CHART} />
+
+**1,216 accounts** across those 3,327 packages — **2.7 packages per account** on average, but **74.5% of accounts (906) appear exactly once**. The 8 accounts above 51 packages are the entire visible tail: `onereach.user` (155), `st-team` (97), `tiaanduplessis` (94), `productdevbook` (84), `panyuqi` (64), `wardpeet` (58), `aoltean16` (57), `jagreehal` (55). **Read this carefully** — every one of these is a legitimate maintainer or org account (ServiceTitan, Oku UI, AntV, Mastra, UiPath, and others) whose npm token was compromised, then used to push a malicious version across every package that account owns at once — a victim, not an offender.
+
+> **One account isn't a compromise victim — it's a repeat offender.** `shoaib.umt` published 27 malicious packages under its own account across **3.5 years (Feb 2023 → Aug 2026)**, each one a different brand-impersonation or dependency-confusion attempt unrelated to the others — `afterpay-sdk-example-server`, `paypal-postman-lib`, `twilio-voice-js-reference-components`, `simplisafe-gatsby`, `tidal-embed-player`, `matlab-azure-devops-extension`. Every package was detected within days of its own publish, on a schedule the account itself controlled. Two smaller cases fit the same shape: `sproger` published 37 tech-buzzword-mashup packages (`enzyme-optimization-bluetooth`, `barcodescanner-reconnect`) across ~10 months in 2023–2024, and `vsamaru` published 9 short, disposable-looking packages (`1co`, `88q`, `6cc`) across 9 months in 2020–2021. All three stand out precisely because they don't fit the single-burst worm shape every other repeat account in this dataset does.
+
+## The packages nobody names a version for almost never get removed
+
+Every chart so far uses records with an explicit flagged version. A separate, much larger population — `range_only` records, where OSV flags a package's entire history with no version named — was excluded from all of them for exactly that reason. Using first-publish as a stand-in reference point instead, the removal rate isn't just lower, it's categorically different.
+
+<CategoricalBarChart chart={RANGE_ONLY_CHART} />
+
+**39.3%** of explicit-version packages (8,111 of 20,664) get fully unpublished at some point. Of range-only packages, only **2.4%** (1,322 of 55,918, full sample) ever are — roughly **17x** less often. And when a range-only package does get removed, it's slow, not fast: median **54.7 days**, only 35.6% within 30 days, with a sharp jump to 93.9% by 90 days — consistent with occasional bulk cleanup sweeps rather than case-by-case action. Range-only status itself is a marker of low-confidence, batch-flagged, largely un-acted-on records, not a subset that merely takes longer to clean up on a per-case basis.
+
+_Caveat: first-publish overstates lag for any account-takeover case where the package was legitimate for a while before the flagged version._
+
+## Methodology & limitations
+
+- **Source:** OSV bulk npm export (`osv.dev`, 219,936 MAL-\* records, Apache-2.0) joined against live `registry.npmjs.org` publish timestamps for a random sample of malicious packages, rate-limited to 1 req/s and fully cached.
+- **Detection timestamp:** per origin, the earlier of `import_time` and `modified_time`; earliest across all origins, matched to the specific version where it scopes to one (99.1% of usable rows) — record-wide fallback, flagged low-confidence, only when no origin carries version-level detail.
+- **Not causal, not exploitation:** "blocked" means "publicly identified before threshold T," not that every consumer avoided installing it or that detection equals exploitation.
+- **OSV lag is structural** — confirmed via both a case with no named human finder (TanStack) and one caught in under 4 minutes by pure automation (chalk/debug); both still show hours of recorded lag, so the gap is in the ingestion pipeline, not in crediting humans.
+- **Coverage caveat:** the aggregate 41.0% figure comes from a randomly sampled subset with explicit (non-range) version listings — range-only records, like the real Solana incident above, are structurally excluded. No download-count or popularity threshold is applied anywhere in this dataset.
+
+### Sources for verified incidents
+
+- TanStack postmortem — [tanstack.com/blog/npm-supply-chain-compromise-postmortem](https://tanstack.com/blog/npm-supply-chain-compromise-postmortem)
+- StepSecurity — [stepsecurity.io/blog/mini-shai-hulud-is-back](https://www.stepsecurity.io/blog/mini-shai-hulud-is-back)
+- Aikido Security — [aikido.dev/blog/npm-debug-and-chalk-packages-compromised](https://www.aikido.dev/blog/npm-debug-and-chalk-packages-compromised)
+- Socket.dev — [socket.dev/blog/supply-chain-attack-solana-web3-js-library](https://socket.dev/blog/supply-chain-attack-solana-web3-js-library)

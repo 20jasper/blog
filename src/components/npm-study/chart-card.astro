@@ -1,0 +1,37 @@
+---
+type Props = {
+	id: string;
+	title: string;
+	// Visible figcaption -- plain-language takeaway, not hidden a11y text.
+	alt: string;
+	height?: number;
+	// Chart data, serialized to JSON; read via dataset.chartConfig, never
+	// document.currentScript (always null in a module script).
+	kind?: string;
+	config?: unknown;
+};
+const { id, title, alt, height = 340, kind, config } = Astro.props;
+const captionId = `${id}-caption`;
+---
+
+<figure class="not-prose bg-background-secondary/40 my-8 rounded-lg p-4">
+	<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+		<p class="text-foreground-secondary font-mono text-xs">{title}</p>
+		<slot name="toggle" />
+	</div>
+	<div
+		id={id}
+		style={`height: ${height}px;`}
+		aria-describedby={captionId}
+		data-chart-kind={kind}
+		data-chart-config={JSON.stringify(config)}
+	>
+	</div>
+	<figcaption
+		id={captionId}
+		class="text-foreground-secondary mt-3 text-sm leading-relaxed"
+	>
+		{alt}
+	</figcaption>
+	<slot name="table" />
+</figure>

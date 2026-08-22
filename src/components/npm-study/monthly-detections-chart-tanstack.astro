@@ -1,0 +1,239 @@
+---
+// Built on @tanstack/charts (see threshold-curve-chart-tanstack.astro and
+// docs/tanstack-charts-feedback.md). One line: organic activity plus the Aug
+// 2025 bulk-backfill spike summed together, on a log y-axis (linear was
+// squashing months in the tens next to months in the thousands). tea.xyz
+// (140,728 records) is still excluded entirely -- an order of magnitude past
+// the backfill spike, it would flatten this chart the same way it flattened
+// the original single chart; it's covered in the DataTable and prose.
+import DataTable from './data-table.astro';
+import TanstackChartFrame from './tanstack-chart-frame.astro';
+import { linearRegressionRowsY } from '@tanstack/charts/regression';
+import { MONTHLY_VOLUME } from './data';
+
+// Nov 2021 (1), Dec 2021 (4), and Jan 2022 (1) are three isolated pre-launch
+// months, then a gap until real monthly activity starts in May 2022 -- their
+// values sit far enough below everything after that a log axis fit to the
+// real data would clip them at the floor anyway. Dropped instead of
+// misrepresented; the DataTable below only ever showed populated months, so
+// this doesn't remove anything visible there either.
+const DATA = MONTHLY_VOLUME.filter((d) => d.m >= '2022-02');
+
+// Computed at build time, not in the client bundle -- linearRegressionRowsY
+// is pure math (no DOM), and a straight line only needs its two endpoints,
+// so `samples: 2` gets exactly that instead of a 64-point curve to trim down.
+// Fit against organic activity alone (not the combined line plotted below),
+// so the one-off backfill spike doesn't distort the underlying growth trend.
+const trendRows = linearRegressionRowsY(
+	DATA.map((d, i) => ({ i, other: d.other })),
+	{ x: 'i', y: 'other', ci: 0, samples: 2 },
+);
+const trend = trendRows.map((row) => ({
+	m: DATA[Math.round(row.x)]!.m,
+	trend: row.y,
+}));
+
+// Shaped for the client script to consume directly -- every field here is
+// static at build time, so none of this needs to be recomputed (or even
+// re-derived by mapping over raw rows) once it reaches the browser.
+const points = DATA.map((d) => ({
+	m: d.m,
+	other: d.other,
+	backfill: d.backfill,
+	combined: d.other + d.backfill,
+}));
+const months = DATA.map((d) => d.m);
+// Every 4th month label -- all of them would overlap at this width.
+const tickMonths = months.filter((_, i) => i % 4 === 0);
+// Rounded up to the next power of 10 -- a log axis reads best with
+// power-of-10 gridlines.
+const niceMax =
+	10 ** Math.ceil(Math.log10(Math.max(...points.map((d) => d.combined))));
+// [1, 10, ..., niceMax] -- explicit power-of-10 ticks for the log axis.
+const yTicks = Array.from(
+	{ length: Math.log10(niceMax) + 1 },
+	(_, i) => 10 ** i,
+);
+const totalDetections = points.reduce((sum, d) => sum + d.combined, 0);
+
+// One source for the chart's pixel height -- otherwise the CSS box (in
+// TanstackChartFrame) and the mountChart() option (in the script) would be
+// two literals that have to be kept in sync by hand.
+const CHART_HEIGHT = 300;
+
+const config = {
+	points,
+	trend,
+	months,
+	tickMonths,
+	niceMax,
+	yTicks,
+	height: CHART_HEIGHT,
+};
+---
+
+<TanstackChartFrame
+	id="chart-monthly-detections-tanstack"
+	config={config}
+	height={CHART_HEIGHT}
+	caption="Excludes the tea.xyz reward-farming campaign (140,728 records in November 2025 alone) -- an order of magnitude larger than every other month combined."
+>
+	<Fragment slot="header">
+		<p class="text-foreground-secondary font-mono text-base">
+			Monthly malicious-package detections, log scale
+		</p>
+		<p class="text-foreground-secondary mt-0.5 font-mono text-sm">
+			n = {totalDetections.toLocaleString()} detections
+		</p>
+	</Fragment>
+	<ul
+		class="text-foreground-secondary mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-sm"
+	>
+		<li class="flex items-center gap-1.5">
+			<svg
+				width="20"
+				height="8"
+				aria-hidden="true"
+			>
+				<line
+					x1="0"
+					y1="4"
+					x2="20"
+					y2="4"
+					stroke="var(--color-chart-primary)"
+					stroke-width="3"
+				></line>
+			</svg>
+			<span>detections</span>
+		</li>
+		<li class="flex items-center gap-1.5">
+			<svg
+				width="20"
+				height="8"
+				aria-hidden="true"
+			>
+				<line
+					x1="0"
+					y1="4"
+					x2="20"
+					y2="4"
+					stroke="var(--color-chart-tertiary)"
+					stroke-width="3"
+					stroke-dasharray="2 5"
+				></line>
+			</svg>
+			<span>linear trend</span>
+		</li>
+	</ul>
+</TanstackChartFrame>
+
+<DataTable
+	columns={[
+		{ label: 'month' },
+		{ label: 'other' },
+		{ label: 'backfill' },
+		{ label: 'tea.xyz' },
+	]}
+	rows={DATA.map((d) => [
+		d.m,
+		d.other.toLocaleString(),
+		d.backfill.toLocaleString(),
+		d.tea.toLocaleString(),
+	])}
+/>
+
+<script>
+	import { defineChart, lineY, mountChart } from '@tanstack/charts';
+	import { decorative } from '@tanstack/charts/mark/decorative';
+	import { scalePoint } from '@tanstack/charts/scales/point';
+	import { tooltip } from '@tanstack/charts/tooltip';
+	import { scaleLog } from 'd3-scale';
+	import {
+		measureText,
+		createRuleXFocusHandler,
+		formatCount,
+	} from './tanstack-chart-utils';
+
+	type Config = {
+		points: { m: string; other: number; backfill: number; combined: number }[];
+		trend: { m: string; trend: number }[];
+		months: string[];
+		tickMonths: string[];
+		niceMax: number;
+		yTicks: number[];
+		height: number;
+	};
+
+	document
+		.querySelectorAll<HTMLElement>('#chart-monthly-detections-tanstack')
+		.forEach((container) => {
+			const config: Config = JSON.parse(container.dataset.chartConfig ?? '{}');
+			const xScale = scalePoint<string>().domain(config.months);
+			const yScale = scaleLog().domain([1, config.niceMax]);
+
+			mountChart(container, {
+				height: config.height,
+				initialWidth: 640,
+				// Names the whole chart, not just its x-axis -- the tanstack a11y
+				// guide's own example names the *subject*, not an axis label. No
+				// ariaDescription needed -- the visible <figcaption> above already
+				// gives the figure as a whole an accessible description natively.
+				ariaLabel: 'Monthly supply chain attack detections, log scale',
+				measureText,
+				// No ref lines on this chart -- the dot alone still needs the
+				// handler's focus-dot half, just with nothing to key a glow off.
+				onFocusChange: createRuleXFocusHandler(container, new Map()),
+				definition: defineChart({
+					marks: [
+						lineY(config.points, {
+							x: 'm',
+							y: 'combined',
+							stroke: 'var(--ts-chart-1)',
+							strokeWidth: 2,
+						}),
+						// decorative: visual context, not its own focus target --
+						// without it, keyboard/pointer nav would need two steps per
+						// month (see the doubling issue this same fix solves in
+						// threshold-curve-chart-tanstack.astro).
+						decorative(
+							lineY(config.trend, {
+								x: 'm',
+								y: 'trend',
+								stroke: 'var(--color-chart-tertiary)',
+								strokeWidth: 2,
+								strokeDasharray: '2 5',
+							}),
+						),
+					],
+					x: {
+						scale: xScale,
+						axis: { label: 'month', ticks: { values: config.tickMonths } },
+					},
+					y: {
+						scale: yScale,
+						grid: true,
+						axis: {
+							label: 'detections',
+							ticks: { values: config.yTicks, format: formatCount },
+						},
+					},
+					tooltip: {
+						use: tooltip,
+						format: (point) => {
+							const d = point.datum as {
+								m: string;
+								other: number;
+								backfill: number;
+								combined: number;
+							};
+							const suffix =
+								d.backfill > 0
+									? ` (${d.other.toLocaleString()} organic + ${d.backfill.toLocaleString()} backfill)`
+									: '';
+							return `${d.m}: ${d.combined.toLocaleString()}${suffix}`;
+						},
+					},
+				}),
+			});
+		});
+</script>

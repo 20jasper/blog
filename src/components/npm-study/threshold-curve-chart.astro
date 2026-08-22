@@ -1,0 +1,210 @@
+---
+// Generic threshold-curve chart shape, shared by Yank and Blocking.
+import ChartCard from './chart-card.astro';
+import ScaleToggle from './scale-toggle.astro';
+import DataTable from './data-table.astro';
+
+type ThresholdPoint = { h: number; label: string; pct: number; n: number };
+
+type ThresholdChart = {
+	id: string;
+	title: string;
+	alt: string;
+	data: ThresholdPoint[];
+	total: number;
+	yMax: number;
+	tooltipVerb: string;
+	unitNoun: string;
+	xColumnLabel: string;
+	yColumnLabel: string;
+	valueColumnLabel: string;
+	refLine?: { hours: number; label: string };
+};
+type Props = { chart: ThresholdChart };
+const {
+	id,
+	title,
+	alt,
+	data,
+	total,
+	yMax,
+	tooltipVerb,
+	unitNoun,
+	xColumnLabel,
+	yColumnLabel,
+	valueColumnLabel,
+	refLine,
+} = Astro.props.chart;
+
+const config = {
+	data,
+	total,
+	yMax,
+	tooltipVerb,
+	unitNoun,
+	xColumnLabel,
+	yColumnLabel,
+	refLine,
+};
+---
+
+<ChartCard
+	id={id}
+	title={title}
+	alt={alt}
+	kind="threshold-curve"
+	config={config}
+>
+	<Fragment slot="toggle">
+		<ScaleToggle chartId={id} />
+	</Fragment>
+	<Fragment slot="table">
+		<DataTable
+			columns={[
+				{ label: xColumnLabel },
+				{ label: valueColumnLabel },
+				{ label: 'n' },
+			]}
+			rows={data.map((d) => [d.label, `${d.pct}%`, d.n.toLocaleString()])}
+		/>
+	</Fragment>
+</ChartCard>
+
+<script>
+	import Highcharts from './highcharts';
+	import { colors } from './theme';
+	import {
+		baseOptions,
+		axisLabelStyle,
+		axisLineStyle,
+		thresholdTickPositioner,
+		thresholdLabelFormatter,
+		DASH_LINE_WIDTH,
+		plotLineLabel,
+		axisTitleStyle,
+		yAxisTitleStyle,
+	} from './highcharts-theme';
+
+	type ThresholdPoint = { h: number; label: string; pct: number; n: number };
+	type Config = {
+		data: ThresholdPoint[];
+		total: number;
+		yMax: number;
+		tooltipVerb: string;
+		unitNoun: string;
+		xColumnLabel: string;
+		yColumnLabel: string;
+		refLine?: { hours: number; label: string };
+	};
+
+	function buildXAxis(
+		data: ThresholdPoint[],
+		scaleType: 'logarithmic' | 'linear',
+		refLine: Config['refLine'],
+		secondaryColor: string,
+		xColumnLabel: string,
+	) {
+		return {
+			type: scaleType,
+			title: axisTitleStyle(xColumnLabel),
+			...axisLineStyle(),
+			tickPositioner: thresholdTickPositioner(scaleType),
+			labels: {
+				...axisLabelStyle(),
+				formatter: thresholdLabelFormatter(data),
+			},
+			plotLines: refLine
+				? [
+						{
+							value: refLine.hours,
+							color: secondaryColor,
+							width: DASH_LINE_WIDTH,
+							dashStyle: 'Dash' as const,
+							label: plotLineLabel(refLine.label, secondaryColor),
+						},
+					]
+				: [],
+		};
+	}
+
+	function buildTooltip(tooltipVerb: string, total: number) {
+		return {
+			...baseOptions().tooltip,
+			formatter() {
+				const p = this as unknown as { label: string; n: number; y: number };
+				return `${tooltipVerb} &lt; ${p.label}<br><b>${p.y}%</b> (${p.n.toLocaleString()} of ${total.toLocaleString()})`;
+			},
+		};
+	}
+
+	function build(
+		container: HTMLElement,
+		config: Config,
+		scaleType: 'logarithmic' | 'linear',
+	) {
+		const {
+			data,
+			total,
+			yMax,
+			tooltipVerb,
+			unitNoun,
+			xColumnLabel,
+			yColumnLabel,
+			refLine,
+		} = config;
+		const c = colors();
+		Highcharts.chart(container, {
+			...baseOptions(),
+			// Room for the horizontal y-axis title sitting above the plot.
+			chart: { ...baseOptions().chart, spacingTop: 36 },
+			accessibility: {
+				description: `Line chart of the share of ${total.toLocaleString()} ${unitNoun}, log scale from 1 hour to 30 days.`,
+				point: {
+					valueDescriptionFormat: `{point.label}: {point.y}% ${tooltipVerb}, {point.n} of ${total.toLocaleString()} ${unitNoun}.`,
+				},
+			},
+			xAxis: buildXAxis(data, scaleType, refLine, c.secondary, xColumnLabel),
+			yAxis: {
+				min: 0,
+				max: yMax,
+				title: yAxisTitleStyle(yColumnLabel),
+				gridLineColor: axisLineStyle().gridLineColor,
+				labels: { ...axisLabelStyle(), format: '{value}%' },
+			},
+			legend: { enabled: false },
+			tooltip: buildTooltip(tooltipVerb, total),
+			series: [
+				{
+					type: 'area',
+					name: tooltipVerb,
+					data: data.map((d) => ({ x: d.h, y: d.pct, label: d.label, n: d.n })),
+					color: c.primary,
+					fillOpacity: 0.13,
+					lineWidth: 2,
+				},
+			],
+		});
+	}
+
+	// Astro dedupes identical scripts, so find every container, not just one.
+	document
+		.querySelectorAll<HTMLElement>('[data-chart-kind="threshold-curve"]')
+		.forEach((container) => {
+			const config: Config = JSON.parse(container.dataset.chartConfig ?? '{}');
+			build(container, config, 'logarithmic');
+
+			const { id } = container;
+			const buttons = document.querySelectorAll<HTMLButtonElement>(
+				`[data-scale-btn][data-chart="${id}"]`,
+			);
+			buttons.forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const scale = btn.dataset.scaleBtn as 'logarithmic' | 'linear';
+					buttons.forEach((b) =>
+						b.setAttribute('aria-pressed', String(b === btn)),
+					);
+					build(container, config, scale);
+				});
+			});
+		});
+</script>

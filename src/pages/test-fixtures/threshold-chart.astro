@@ -1,0 +1,43 @@
+---
+// Test fixture only -- excluded from the sitemap in astro.config.ts.
+// Mounts one of every chart shape so e2e/accessibility tests cover them all.
+import ThresholdCurveChart from '@components/npm-study/threshold-curve-chart.astro';
+import ThresholdCurveChartTanstack from '@components/npm-study/threshold-curve-chart-tanstack.astro';
+import CategoricalBarChart from '@components/npm-study/categorical-bar-chart.astro';
+import MonthlyDetectionsChartTanstack from '@components/npm-study/monthly-detections-chart-tanstack.astro';
+import YearTrendChart from '@components/npm-study/year-trend-chart.astro';
+import ReportsChart from '@components/npm-study/reports-chart.astro';
+import SourceYearTable from '@components/npm-study/source-year-table.astro';
+import '@src/styles/global.css';
+import {
+	PUBLISH_TO_YANK_CHART,
+	BLOCKING_CHART,
+	CATEGORIES_CHART,
+	MAINTAINERS_CHART,
+	RANGE_ONLY_CHART,
+} from '@components/npm-study/data';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="robots"
+			content="noindex"
+		/>
+		<title>chart test fixture</title>
+	</head>
+	<body class="bg-background text-foreground">
+		<ThresholdCurveChart chart={PUBLISH_TO_YANK_CHART} />
+		<ThresholdCurveChart chart={BLOCKING_CHART} />
+		<ThresholdCurveChartTanstack chart={PUBLISH_TO_YANK_CHART} />
+		<ThresholdCurveChartTanstack chart={BLOCKING_CHART} />
+		<CategoricalBarChart chart={CATEGORIES_CHART} />
+		<CategoricalBarChart chart={MAINTAINERS_CHART} />
+		<CategoricalBarChart chart={RANGE_ONLY_CHART} />
+		<MonthlyDetectionsChartTanstack />
+		<ReportsChart />
+		<YearTrendChart />
+		<SourceYearTable />
+	</body>
+</html>

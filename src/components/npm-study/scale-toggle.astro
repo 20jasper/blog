@@ -1,0 +1,62 @@
+---
+type Props = { chartId: string };
+const { chartId } = Astro.props;
+---
+
+<div
+	class="border-foreground-secondary/40 bg-background-secondary/40 flex gap-0.5 rounded-full border p-0.5 text-xs"
+	role="group"
+	aria-label="Chart scale"
+>
+	<button
+		type="button"
+		data-scale-btn="logarithmic"
+		data-chart={chartId}
+		class="scale-btn rounded-full px-2.5 py-1 font-medium"
+		aria-pressed="true"
+		>Log</button
+	>
+	<button
+		type="button"
+		data-scale-btn="linear"
+		data-chart={chartId}
+		class="scale-btn rounded-full px-2.5 py-1 font-medium"
+		aria-pressed="false"
+		>Linear</button
+	>
+</div>
+
+<style>
+	/* Styled off aria-pressed, no separate classList.toggle needed. */
+	.scale-btn {
+		color: var(--color-foreground-secondary);
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
+	}
+	.scale-btn:hover {
+		color: var(--color-foreground);
+	}
+	.scale-btn[aria-pressed='true'] {
+		/* cream-on-purple clears WCAG AA (~4.6:1); background-on-purple didn't (3.65:1) */
+		background: var(--color-chart-primary);
+		color: var(--color-foreground);
+		font-weight: 700;
+		/* Depth cue independent of the color fill -- reads as "pressed in",
+		   not just "differently colored", so the active state survives even
+		   where the purple-vs-transparent contrast alone reads as subtle. */
+		box-shadow: inset 0 1px 2px rgb(0 0 0 / 25%);
+	}
+	.scale-btn[aria-pressed='false'] {
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		text-underline-offset: 2px;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease,
+			text-decoration-color 0.15s ease;
+	}
+	.scale-btn[aria-pressed='false']:hover {
+		text-decoration-color: currentColor;
+	}
+</style>
