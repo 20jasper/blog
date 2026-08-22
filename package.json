@@ -18,7 +18,7 @@
 		"@astrojs/mdx": "^7.0.7",
 		"@astrojs/sitemap": "^3.7.3",
 		"@netlify/edge-functions": "^3.0.3",
-		"@tailwindcss/typography": "^0.5.19",
+		"@tailwindcss/typography": "^0.5.20",
 		"@tailwindcss/vite": "^4.3.0",
 		"astro": "^7.2.4",
 		"effect": "^3.22.0",
