@@ -154,6 +154,7 @@ const question = questions[index]!;
 			questions,
 			type Option,
 		} from '@content/questions/questions';
+
 		let index = 0;
 		let correctAnswers = 0;
 
@@ -180,7 +181,9 @@ const question = questions[index]!;
 		const onClick = (event: Event) => {
 			console.log('option clicked');
 			const question = questions[index];
-			if (!question) throw new Error('No question found');
+			if (!question) {
+				throw new Error('No question found');
+			}
 
 			const target = event.target as Element | null;
 			const selected = target?.id;
@@ -225,30 +228,32 @@ const question = questions[index]!;
 
 		function createExplanationFragment(text: string) {
 			const frag = document.createDocumentFragment();
-			const re = /`([^`]+)`/g;
+			const re = /`([^`]+)`/gu;
 			let lastIndex = 0;
 			let match: RegExpExecArray | null;
 			while ((match = re.exec(text)) !== null) {
 				if (match.index > lastIndex) {
-					frag.appendChild(
+					frag.append(
 						document.createTextNode(text.slice(lastIndex, match.index)),
 					);
 				}
 				const code = document.createElement('code');
 				code.textContent = match[1] ?? '';
-				frag.appendChild(code);
+				frag.append(code);
 				lastIndex = match.index + match[0].length;
 			}
 			if (lastIndex < text.length) {
-				frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+				frag.append(document.createTextNode(text.slice(lastIndex)));
 			}
 			return frag;
 		}
 
-		function renderQuestion(index: number) {
-			const question = questions[index];
-			if (!question) throw new Error('No question found');
-			elements.question.textContent = `question ${index + 1} of ${questions.length}`;
+		function renderQuestion(questionIndex: number) {
+			const question = questions[questionIndex];
+			if (!question) {
+				throw new Error('No question found');
+			}
+			elements.question.textContent = `question ${questionIndex + 1} of ${questions.length}`;
 			elements.questionCode.textContent = question.json;
 			elements.explanation.replaceChildren(
 				createExplanationFragment(question.explanation),
@@ -261,14 +266,18 @@ const question = questions[index]!;
 
 		function getValidOrNotText(option: Option): string {
 			switch (option) {
-				case 'valid':
+				case 'valid': {
 					return 'This is valid';
-				case 'invalid':
+				}
+				case 'invalid': {
 					return 'This is invalid';
-				case 'maybe valid':
+				}
+				case 'maybe valid': {
 					return 'This may be valid';
-				default:
+				}
+				default: {
 					throw new Error('Unknown option');
+				}
 			}
 		}
 	</script>

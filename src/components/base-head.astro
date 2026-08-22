@@ -4,11 +4,11 @@ import '../styles/global.css';
 import GoogleAnalytics from './google-analytics.astro';
 import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
 
-interface Props {
+type Props = {
 	title: string;
 	description: string;
 	math?: boolean;
-}
+};
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 

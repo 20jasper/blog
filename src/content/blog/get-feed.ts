@@ -8,7 +8,7 @@ import {
 import { Feed } from 'feed';
 import { cache } from '@src/utils/cache';
 import { getPostsDescending } from '@src/utils/posts';
-import * as jsonwtf from '@content/questions/questions';
+import { feedItem } from '@content/questions/questions';
 import { Order } from 'effect';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
@@ -33,14 +33,14 @@ export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
 	});
 
 	const items = [
-		...posts.map(({ data, id }) => ({
+		...posts.map(({ data, id: postId }) => ({
 			title: data.title,
 			description: data.description,
-			link: `${baseUrl}/blog/${id}/`,
+			link: `${baseUrl}/blog/${postId}/`,
 			date: new Date(data.pubDate),
 		})),
-		jsonwtf.feedItem,
-	].sort(Order.mapInput(Order.reverse(Order.Date), ({ date }) => date));
+		feedItem,
+	].toSorted(Order.mapInput(Order.reverse(Order.Date), ({ date }) => date));
 
 	items.forEach((x) => {
 		feed.addItem(x);
