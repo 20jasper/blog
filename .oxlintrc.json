@@ -10,7 +10,6 @@
 		"restriction": "off"
 	},
 	"rules": {
-		"curly": "warn",
 		"prefer-template": "warn",
 		"prefer-destructuring": "warn",
 		"prefer-rest-params": "warn",
@@ -21,7 +20,6 @@
 		"import/no-namespace": "warn",
 		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
 		"unicorn/filename-case": "warn",
-		"unicorn/switch-case-braces": "warn",
 		"unicorn/prefer-global-this": "warn",
 		"typescript/consistent-type-definitions": ["warn", "type"],
 		"typescript/prefer-readonly-parameter-types": "off",
