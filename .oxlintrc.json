@@ -1,0 +1,36 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "import", "promise", "node"],
+	"categories": {
+		"correctness": "warn",
+		"suspicious": "warn",
+		"perf": "warn",
+		"pedantic": "warn",
+		"style": "off",
+		"restriction": "off"
+	},
+	"rules": {
+		"curly": "warn",
+		"prefer-template": "warn",
+		"prefer-destructuring": "warn",
+		"prefer-rest-params": "warn",
+		"arrow-body-style": "warn",
+		"logical-assignment-operators": "warn",
+		"newline-after-import": "warn",
+		"max-lines": "off",
+		"import/no-namespace": "warn",
+		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+		"unicorn/filename-case": "warn",
+		"unicorn/switch-case-braces": "warn",
+		"unicorn/prefer-global-this": "warn",
+		"typescript/consistent-type-definitions": ["warn", "type"],
+		"typescript/prefer-readonly-parameter-types": "off",
+		"typescript/triple-slash-reference": "off",
+		"typescript/consistent-return": "off",
+		"no-useless-return": "off",
+		"oxc/no-map-spread": "off"
+	},
+	"env": {
+		"builtin": true
+	}
+}
