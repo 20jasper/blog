@@ -7,13 +7,21 @@ the library's job vs. reasonably app-level.
 
 ## Likely library gaps
 
-1. **No visible focus indicator in the base `@tanstack/charts` SVG renderer.**
-   `@tanstack/charts-core-d3`'s renderer template includes a
-   `<circle data-ts-chart-focus>` marker; the base package's does not.
-   Keyboard/pointer focus updates the tooltip and internal state, but nothing
-   on the chart itself shows which point is focused — fails the accessibility
-   guide's own "confirm visible focus" checklist item. Worked around by
-   hand-drawing a focus dot from `onFocusChange`.
+1. ~~No visible focus indicator in the base `@tanstack/charts` SVG
+   renderer.~~ **Wrong — corrected 2026-08-23.** Re-checked against the
+   installed `@tanstack/charts@0.14.0` source (`dist/scene.js`): any mark
+   _without_ a custom `mark.focus` config (plain `lineY`/`areaY`, exactly
+   what this repo's charts use) automatically gets pushed into
+   `defaultFocusEntries` and renders its own `<circle class="ts-chart__focus-
+layer--default">` per point, toggled via the `visibility` attribute as
+   focus moves — confirmed live in the rendered DOM, not just the types.
+   This repo's own hand-drawn focus dot (`focusDot()` in `chart-utils.ts`,
+   the `.chart-focus-dot` class, and its e2e test) is very likely
+   duplicating something the library already draws for free — it just
+   happens to render on top and hide the library's dot underneath, since
+   `appendChild` on the SVG root puts it last in paint order. Worth
+   confirming with a screenshot diff and considering deleting the custom dot
+   entirely, but that's a separate decision from this doc correction.
 
 2. **`ruleX`/`ruleY` have no `states` field.** Every other mark type
    (area/line/dot/bar) accepts a `states` array for hover/focus paint changes;
@@ -59,7 +67,12 @@ the library's job vs. reasonably app-level.
    — a minor default-tuning nit.
 10. No built-in legend concept for annotation/reference lines — reasonable to
     leave to the app, but worth knowing it doesn't exist before assuming it
-    does.
+    does. **Nuance added 2026-08-23**: the package does export a legend
+    (`colorLegend`/`colorGradientLegend`/`interactiveColorLegend`), but it's
+    driven by a data channel's color _scale_ (labeled swatches for a
+    category axis), not arbitrary caller-declared items — no way to hand it
+    an ad-hoc `{color, dash, label}[]` for manually-declared reference lines.
+    The original claim stands for that specific case.
 
 ## Found while answering "do we still need ariaLabel"
 
@@ -71,4 +84,9 @@ the library's job vs. reasonably app-level.
     outer div is easy to write and have it silently never reach the actual
     accessible object. Might be worth the docs calling this out explicitly,
     or the host accepting a description via the mount API in a way that's
-    harder to place wrong.
+    harder to place wrong. **Status 2026-08-23**: moot in this repo — the
+    current `threshold-curve-chart.astro` already passes the description via
+    `mountChart()`'s own `ariaDescription` option instead of wiring
+    `aria-describedby` onto the wrapper div, which is exactly the sidestep
+    suggested above. `chart-frame.astro` doesn't set `aria-describedby` on
+    its container at all anymore.
