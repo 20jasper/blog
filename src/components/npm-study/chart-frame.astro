@@ -47,6 +47,9 @@ const { id, config, height = 300, class: extraClass, caption } = Astro.props;
 		--ts-chart-tooltip-background: var(--color-background-secondary);
 		--ts-chart-tooltip-color: var(--color-foreground);
 		--ts-chart-tooltip-border: 1px solid var(--color-foreground-secondary);
+		/* The library's own default focus-dot fill hook -- same undocumented
+		   `Canvas` system-color fallback as the tooltip above. */
+		--ts-chart-focus-fill: var(--color-foreground);
 	}
 	/* Chart text renders as an SVG `font-size` attribute, the lowest-priority
 	   CSS origin -- this class selector overrides it outright. Only size

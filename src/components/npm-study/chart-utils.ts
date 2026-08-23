@@ -55,52 +55,25 @@ export function formatCount(v: number) {
 		: String(v);
 }
 
-// The accessibility guide's "visible focus" checklist item assumes a visible
-// focus indicator exists at all -- the DOM svg-renderer in the base
-// @tanstack/charts package (unlike its charts-core-d3 counterpart) doesn't
-// ship one. Draw one from `onFocusChange`: point.x/point.y are already in
-// on-screen SVG coordinates.
-export function focusDot(container: HTMLElement) {
-	let dot = container.querySelector<SVGCircleElement>('.chart-focus-dot');
-	if (!dot) {
-		dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-		dot.setAttribute('class', 'chart-focus-dot');
-		dot.setAttribute('r', '5');
-		dot.setAttribute('fill', 'var(--color-foreground)');
-		dot.setAttribute('stroke', 'var(--color-background)');
-		dot.setAttribute('stroke-width', '2');
-		dot.setAttribute('pointer-events', 'none');
-		dot.setAttribute('visibility', 'hidden');
-		container.querySelector('svg')?.appendChild(dot);
-	}
-	return dot;
-}
-
 // ruleX has no `states` field to opt into paint-on-focus like area/line/dot
 // do, so there's nothing to key a "this ref line's own mark is focused"
 // class off of. onFocusChange fires for pointer hover *and* keyboard nav
-// alike (it's the same underlying focus concept the tooltip reads), so both
-// the ref-line glow and the focus dot key off it. `refLineLookup` must be
-// keyed by the same value that will show up as `point.xValue` for the
-// coincident real data point (a plotted x, not necessarily a "real" value --
-// see each chart's own lookup-construction comment).
+// alike (it's the same underlying focus concept the tooltip reads), so the
+// ref-line glow keys off it. (The visible focus dot itself doesn't need any
+// app code -- the base library already draws one automatically for any mark
+// without a custom `mark.focus` config, toggled via its own internal state;
+// see docs/tanstack-charts-feedback.md item 1.) `refLineLookup` must be keyed
+// by the same value that will show up as `point.xValue` for the coincident
+// real data point (a plotted x, not necessarily a "real" value -- see each
+// chart's own lookup-construction comment).
 export function createRuleXFocusHandler<K>(
 	container: HTMLElement,
 	refLineLookup: Map<K, { index: number }>,
 ) {
-	return (point: { xValue?: unknown; x?: number; y?: number } | null) => {
+	return (point: { xValue?: unknown } | null) => {
 		const groups = container.querySelectorAll('.ts-chart__rule-x');
 		groups.forEach((g) => g.classList.remove('is-focused'));
 		const index = refLineLookup.get(point?.xValue as K)?.index;
 		if (index !== undefined) groups[index]?.classList.add('is-focused');
-
-		const dot = focusDot(container);
-		if (point && typeof point.x === 'number' && typeof point.y === 'number') {
-			dot.setAttribute('cx', String(point.x));
-			dot.setAttribute('cy', String(point.y));
-			dot.setAttribute('visibility', 'visible');
-		} else {
-			dot.setAttribute('visibility', 'hidden');
-		}
 	};
 }

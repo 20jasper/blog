@@ -139,17 +139,21 @@ test.describe('threshold chart accessibility', () => {
 		);
 	});
 
-	test('a hand-drawn focus dot appears and moves as focus changes', async ({
+	test('the library-drawn focus dot appears and moves as focus changes', async ({
 		page,
 	}) => {
 		await page.goto('/test-fixtures/threshold-chart');
 
+		// @tanstack/charts draws this automatically for any mark without a
+		// custom mark.focus config -- one circle per point, visibility toggled
+		// as focus moves. Not our markup; see docs/tanstack-charts-feedback.md
+		// item 1.
 		const svg = page.locator(`#${CONTAINER_ID} svg`);
-		const dot = svg.locator('.chart-focus-dot');
+		const dot = svg.locator('.ts-chart__focus-layer--default circle:visible');
 		await svg.focus();
 		await page.keyboard.press('ArrowRight');
 
-		await expect(dot).toHaveCSS('visibility', 'visible');
+		await expect(dot).toBeVisible();
 		const firstPosition = await dot.evaluate((el) => el.getAttribute('cx'));
 
 		await page.keyboard.press('ArrowRight');
@@ -171,7 +175,9 @@ test.describe('threshold chart scale toggle', () => {
 		await focusPoint24h(page);
 
 		const tooltip = page.locator(`#${CONTAINER_ID} .ts-chart-tooltip`);
-		const dot = page.locator(`#${CONTAINER_ID} .chart-focus-dot`);
+		const dot = page.locator(
+			`#${CONTAINER_ID} .ts-chart__focus-layer--default circle:visible`,
+		);
 		await expect(tooltip).toBeVisible();
 		await expect(dot).toBeVisible();
 
@@ -181,8 +187,8 @@ test.describe('threshold chart scale toggle', () => {
 		await expect(
 			page.locator(`#${CONTAINER_ID} .ts-chart__rule-x.is-focused`),
 		).toHaveCount(0);
-		// The dot lives inside the SVG that update() just replaced -- it
-		// shouldn't exist at all until focus lands on a point again.
+		// The dot lives inside the SVG that update() just replaced -- nothing
+		// should be visible again until focus lands on a point.
 		await expect(dot).toHaveCount(0);
 	});
 });
