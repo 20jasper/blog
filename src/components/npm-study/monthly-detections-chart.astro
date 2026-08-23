@@ -109,6 +109,7 @@ const config = {
 		measureText,
 		createRuleXFocusHandler,
 		formatCount,
+		BASE_FONT_PX,
 	} from './chart-utils';
 
 	type Config = {
@@ -162,7 +163,11 @@ const config = {
 					],
 					x: {
 						scale: xScale,
-						axis: { label: 'month', ticks: { values: config.tickMonths } },
+						axis: {
+							label: 'month',
+							ticks: { values: config.tickMonths },
+							tickLabels: { fontSize: BASE_FONT_PX },
+						},
 					},
 					y: {
 						scale: yScale,
@@ -170,6 +175,7 @@ const config = {
 						axis: {
 							label: 'detections',
 							ticks: { values: config.yTicks, format: formatCount },
+							tickLabels: { fontSize: BASE_FONT_PX },
 						},
 					},
 					tooltip: {

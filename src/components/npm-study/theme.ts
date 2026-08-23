@@ -9,11 +9,3 @@ export const REF_LINE_STYLES: { color: string; dash?: string }[] = [
 	{ color: 'var(--color-chart-tertiary)', dash: '2 5' },
 	{ color: 'var(--color-chart-secondary)' },
 ];
-
-// Tailwind's own type-scale tokens (--text-sm, --text-base, ...), not a
-// hardcoded px value.
-export function fontSize(token: string) {
-	return getComputedStyle(document.documentElement)
-		.getPropertyValue(`--text-${token}`)
-		.trim();
-}

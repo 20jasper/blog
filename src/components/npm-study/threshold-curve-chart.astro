@@ -100,7 +100,11 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 	import { tooltip } from '@tanstack/charts/tooltip';
 	import { scaleLog } from 'd3-scale';
 	import { REF_LINE_STYLES } from './theme';
-	import { measureText, createRuleXFocusHandler } from './chart-utils';
+	import {
+		measureText,
+		createRuleXFocusHandler,
+		BASE_FONT_PX,
+	} from './chart-utils';
 
 	type ThresholdPoint = { h: number; label: string; pct: number; n: number };
 	type Config = {
@@ -220,6 +224,14 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 						values: tickHours,
 						format: (h: number) => labelByHour.get(h) ?? `${h}h`,
 					},
+					// Passed directly instead of leaving it to the CSS override in
+					// chart-frame.astro -- ticks are the one text role the library
+					// actually exposes a size option for, so painting and its own
+					// internal margin math derive from the same number by
+					// construction, not by us keeping two systems in sync. Axis
+					// *titles* have no such option (docs/tanstack-charts-feedback.md
+					// item 4), so those still rely on the CSS override.
+					tickLabels: { fontSize: BASE_FONT_PX },
 				},
 			},
 			y: {
@@ -228,6 +240,7 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 				axis: {
 					label: yColumnLabel,
 					ticks: { format: (v: number) => `${v}%` },
+					tickLabels: { fontSize: BASE_FONT_PX },
 				},
 			},
 			tooltip: {
