@@ -28,7 +28,6 @@
 		"astro": "^7.2.4",
 		"d3-scale": "^4.0.2",
 		"effect": "^3.22.0",
-		"highcharts": "^13.0.1",
 		"rehype-external-links": "^3.0.0",
 		"rehype-katex": "^7.0.1",
 		"remark-math": "^6.0.0",

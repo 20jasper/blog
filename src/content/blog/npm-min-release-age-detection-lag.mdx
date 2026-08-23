@@ -5,8 +5,8 @@ description: "How valuable are `minimumReleaseAge`s and what's the best threshol
 tags: ['security', 'javascript']
 ---
 
-import ThresholdCurveChartTanstack from '@components/npm-study/threshold-curve-chart-tanstack.astro';
-import MonthlyDetectionsChartTanstack from '@components/npm-study/monthly-detections-chart-tanstack.astro';
+import ThresholdCurveChart from '@components/npm-study/threshold-curve-chart.astro';
+import MonthlyDetectionsChart from '@components/npm-study/monthly-detections-chart.astro';
 import { PUBLISH_TO_YANK_CHART } from '@components/npm-study/data';
 
 {/* prettier-ignore */}
@@ -44,7 +44,7 @@ There are many issues with large amounts of dependencies—most pertinently, sup
 {/* 2a. the increase in advisories is concerning, but */}
 To add fuel to the fire, security advisories have steadily increased. This doesn't necessarily mean supply chain attacks are increasing, but it's definitely correlated. Importantly, advisories come after an attack—after many have already installed the package!
 
-<MonthlyDetectionsChartTanstack />
+<MonthlyDetectionsChart />
 
 Structured reports like OSV's have made tracking easier. Prior to the last 5 years, disclosure would be a blog post or GitHub issue. Additionally, there is better automated security scanning than 5–10 years ago, and the prevalence of LLMs has renewed interest in security
 
@@ -73,7 +73,7 @@ A simple solution to avoid many supply chain attacks is to just wait for securit
 
 Many attacks are resolved very quickly. Of detected, single version npm supply chain attacks, 16.3% are removed from npm within 1 hour of publishing
 
-<ThresholdCurveChartTanstack chart={PUBLISH_TO_YANK_CHART} />
+<ThresholdCurveChart chart={PUBLISH_TO_YANK_CHART} />
 
 This is a lower bound—not every supply chain attack is discovered or reported
 

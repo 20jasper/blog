@@ -1,24 +1,23 @@
 ---
-// Generic threshold-curve chart shape, shared by Yank and Blocking.
-import ChartCard from './chart-card.astro';
 import ScaleToggle from './scale-toggle.astro';
 import DataTable from './data-table.astro';
+import RefLineLegend from './ref-line-legend.astro';
+import ChartFrame from './chart-frame.astro';
 
 type ThresholdPoint = { h: number; label: string; pct: number; n: number };
 
 type ThresholdChart = {
 	id: string;
 	title: string;
-	alt: string;
+	alt?: string;
 	data: ThresholdPoint[];
 	total: number;
-	yMax: number;
 	tooltipVerb: string;
 	unitNoun: string;
 	xColumnLabel: string;
 	yColumnLabel: string;
 	valueColumnLabel: string;
-	refLine?: { hours: number; label: string };
+	refLines?: { hours: number; label: string }[];
 };
 type Props = { chart: ThresholdChart };
 const {
@@ -27,183 +26,274 @@ const {
 	alt,
 	data,
 	total,
-	yMax,
 	tooltipVerb,
 	unitNoun,
 	xColumnLabel,
 	yColumnLabel,
 	valueColumnLabel,
-	refLine,
+	refLines,
 } = Astro.props.chart;
 
+// One source for the chart's pixel height -- otherwise the CSS box (below)
+// and the mountChart() option (in the script) would be two literals that
+// have to be kept in sync by hand.
+const CHART_HEIGHT = 340;
+
 const config = {
+	title,
+	alt,
 	data,
 	total,
-	yMax,
 	tooltipVerb,
 	unitNoun,
 	xColumnLabel,
 	yColumnLabel,
-	refLine,
+	refLines,
+	height: CHART_HEIGHT,
 };
 ---
 
-<ChartCard
+<ChartFrame
 	id={id}
-	title={title}
-	alt={alt}
-	kind="threshold-curve"
 	config={config}
+	height={CHART_HEIGHT}
+	class="threshold-chart"
+	caption={alt}
 >
-	<Fragment slot="toggle">
-		<ScaleToggle chartId={id} />
+	<Fragment slot="header">
+		<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+			<div>
+				<p class="text-foreground-secondary font-mono text-base">{title}</p>
+				<p class="text-foreground-secondary mt-0.5 font-mono text-sm">
+					n = {total.toLocaleString()}
+					{unitNoun}
+				</p>
+			</div>
+			<ScaleToggle chartId={id} />
+		</div>
 	</Fragment>
-	<Fragment slot="table">
-		<DataTable
-			columns={[
-				{ label: xColumnLabel },
-				{ label: valueColumnLabel },
-				{ label: 'n' },
-			]}
-			rows={data.map((d) => [d.label, `${d.pct}%`, d.n.toLocaleString()])}
-		/>
-	</Fragment>
-</ChartCard>
+	<RefLineLegend refLines={refLines ?? []} />
+</ChartFrame>
+<DataTable
+	columns={[
+		{ label: xColumnLabel },
+		{ label: valueColumnLabel },
+		{ label: 'n' },
+	]}
+	rows={data.map((d) => [d.label, `${d.pct}%`, d.n.toLocaleString()])}
+/>
 
 <script>
-	import Highcharts from './highcharts';
-	import { colors } from './theme';
 	import {
-		baseOptions,
-		axisLabelStyle,
-		axisLineStyle,
-		thresholdTickPositioner,
-		thresholdLabelFormatter,
-		DASH_LINE_WIDTH,
-		plotLineLabel,
-		axisTitleStyle,
-		yAxisTitleStyle,
-	} from './highcharts-theme';
+		defineChart,
+		areaY,
+		lineY,
+		ruleX,
+		mountChart,
+	} from '@tanstack/charts';
+	import { decorative } from '@tanstack/charts/mark/decorative';
+	import { scaleLinear } from '@tanstack/charts/scales/linear';
+	import { tooltip } from '@tanstack/charts/tooltip';
+	import { scaleLog } from 'd3-scale';
+	import { REF_LINE_STYLES } from './theme';
+	import { measureText, createRuleXFocusHandler } from './chart-utils';
 
 	type ThresholdPoint = { h: number; label: string; pct: number; n: number };
 	type Config = {
+		title: string;
+		alt?: string;
 		data: ThresholdPoint[];
 		total: number;
-		yMax: number;
 		tooltipVerb: string;
 		unitNoun: string;
 		xColumnLabel: string;
 		yColumnLabel: string;
-		refLine?: { hours: number; label: string };
+		refLines?: { hours: number; label: string }[];
+		height: number;
 	};
 
-	function buildXAxis(
-		data: ThresholdPoint[],
+	const LOG_HOURS = [2, 6, 24, 72, 168, 336, 720];
+	const LINEAR_HOURS = [24, 72, 168, 336, 528, 720];
+	// The domain's real left edge (matches the x scale below) -- independent
+	// of LOG_HOURS, which is just which tick labels are shown.
+	const LOG_DOMAIN_MIN = 1;
+	// Fixed 0-100 range -- consistent axis across charts, room above the curve
+	// for the ref-line label.
+	const Y_MAX = 100;
+	// Pass configured scale *instances*, not a zero-arg factory -- a factory
+	// still gets its domain re-inferred from the mark data, silently
+	// discarding the .domain() call. Both scales are invariant across
+	// scale-toggle clicks and mark rebuilds, so each is built exactly once.
+	const LOG_X_SCALE = scaleLog().domain([1, 720]);
+	const LINEAR_X_SCALE = scaleLinear().domain([0, 720]);
+	const Y_SCALE = scaleLinear().domain([0, Y_MAX]);
+
+	// A ref line's own ruleX point never wins nearest-point resolution against
+	// the real line data at the same x, so the tooltip and "light up" class
+	// instead key off the fact that a line point's *plotted* x coincides with
+	// a ref line's plotted x. Keyed by plotted position, not the ref line's
+	// raw hour: the 0h line has no real 0h data point, so it's pinned to the
+	// log axis's domain minimum (1h), which does coincide with the real 1h
+	// point.
+	function refLinePlotHours(
+		hours: number,
 		scaleType: 'logarithmic' | 'linear',
-		refLine: Config['refLine'],
-		secondaryColor: string,
-		xColumnLabel: string,
 	) {
-		return {
-			type: scaleType,
-			title: axisTitleStyle(xColumnLabel),
-			...axisLineStyle(),
-			tickPositioner: thresholdTickPositioner(scaleType),
-			labels: {
-				...axisLabelStyle(),
-				formatter: thresholdLabelFormatter(data),
-			},
-			plotLines: refLine
-				? [
-						{
-							value: refLine.hours,
-							color: secondaryColor,
-							width: DASH_LINE_WIDTH,
-							dashStyle: 'Dash' as const,
-							label: plotLineLabel(refLine.label, secondaryColor),
-						},
-					]
-				: [],
-		};
+		return scaleType === 'logarithmic'
+			? Math.max(hours, LOG_DOMAIN_MIN)
+			: hours;
 	}
 
-	function buildTooltip(tooltipVerb: string, total: number) {
-		return {
-			...baseOptions().tooltip,
-			formatter() {
-				const p = this as unknown as { label: string; n: number; y: number };
-				return `${tooltipVerb} &lt; ${p.label}<br><b>${p.y}%</b> (${p.n.toLocaleString()} of ${total.toLocaleString()})`;
-			},
-		};
+	function refLineLookupForScale(
+		refLines: { hours: number; label: string }[],
+		scaleType: 'logarithmic' | 'linear',
+	) {
+		return new Map(
+			refLines.map((rl, i) => [
+				refLinePlotHours(rl.hours, scaleType),
+				{ refLine: rl, index: i },
+			]),
+		);
 	}
 
-	function build(
-		container: HTMLElement,
+	function buildDefinition(
 		config: Config,
 		scaleType: 'logarithmic' | 'linear',
+		refLineLookup: Map<
+			number,
+			{ refLine: { hours: number; label: string }; index: number }
+		>,
 	) {
-		const {
-			data,
-			total,
-			yMax,
-			tooltipVerb,
-			unitNoun,
-			xColumnLabel,
-			yColumnLabel,
-			refLine,
-		} = config;
-		const c = colors();
-		Highcharts.chart(container, {
-			...baseOptions(),
-			// Room for the horizontal y-axis title sitting above the plot.
-			chart: { ...baseOptions().chart, spacingTop: 36 },
-			accessibility: {
-				description: `Line chart of the share of ${total.toLocaleString()} ${unitNoun}, log scale from 1 hour to 30 days.`,
-				point: {
-					valueDescriptionFormat: `{point.label}: {point.y}% ${tooltipVerb}, {point.n} of ${total.toLocaleString()} ${unitNoun}.`,
-				},
-			},
-			xAxis: buildXAxis(data, scaleType, refLine, c.secondary, xColumnLabel),
-			yAxis: {
-				min: 0,
-				max: yMax,
-				title: yAxisTitleStyle(yColumnLabel),
-				gridLineColor: axisLineStyle().gridLineColor,
-				labels: { ...axisLabelStyle(), format: '{value}%' },
-			},
-			legend: { enabled: false },
-			tooltip: buildTooltip(tooltipVerb, total),
-			series: [
-				{
-					type: 'area',
-					name: tooltipVerb,
-					data: data.map((d) => ({ x: d.h, y: d.pct, label: d.label, n: d.n })),
-					color: c.primary,
+		const { total, tooltipVerb, xColumnLabel, yColumnLabel, data } = config;
+		const labelByHour = new Map(data.map((d) => [d.h, d.label]));
+		const tickHours = scaleType === 'logarithmic' ? LOG_HOURS : LINEAR_HOURS;
+
+		// Built as one array (not mutated via push) so TypeScript infers the
+		// element type as the union of every mark pushed in. refLineLookup is
+		// already keyed by plotted x (see refLineLookupForScale), so no
+		// separate clamp is needed here.
+		const refLineMarks = Array.from(refLineLookup, ([plotHours, { index }]) => {
+			const style = REF_LINE_STYLES[index % REF_LINE_STYLES.length]!;
+			return (
+				// oxlint-disable-next-line no-unsafe-type-assertion -- ruleX's overload picks the wrong type param without an explicit datum key
+				ruleX([{ x: plotHours }] as { x: number }[], {
+					x: 'x',
+					stroke: style.color,
+					strokeWidth: 4,
+					strokeOpacity: 0.8,
+					strokeDasharray: style.dash,
+				}) as ReturnType<typeof ruleX>
+			);
+		});
+		const marks = [
+			// decorative: the fill is visual context behind the line, not its own
+			// focus target -- without it, area and line each register a focus
+			// anchor at every x, so keyboard/pointer nav needs two steps per point.
+			decorative(
+				areaY(data, {
+					x: 'h',
+					y: 'pct',
 					fillOpacity: 0.13,
-					lineWidth: 2,
+					fill: 'var(--ts-chart-1)',
+				}),
+			),
+			lineY(data, {
+				x: 'h',
+				y: 'pct',
+				stroke: 'var(--ts-chart-1)',
+				strokeWidth: 2,
+			}),
+			...refLineMarks,
+		];
+
+		return defineChart({
+			marks,
+			x: {
+				scale: scaleType === 'logarithmic' ? LOG_X_SCALE : LINEAR_X_SCALE,
+				axis: {
+					label: xColumnLabel,
+					ticks: {
+						values: tickHours,
+						format: (h: number) => labelByHour.get(h) ?? `${h}h`,
+					},
 				},
-			],
+			},
+			y: {
+				scale: Y_SCALE,
+				grid: true,
+				axis: {
+					label: yColumnLabel,
+					ticks: { format: (v: number) => `${v}%` },
+				},
+			},
+			tooltip: {
+				use: tooltip,
+				// format renders as plain textContent, not innerHTML -- no entities or tags.
+				format: (point) => {
+					const d = point.datum as ThresholdPoint;
+					const refLine = refLineLookup.get(point.xValue as number)?.refLine;
+					if (refLine) {
+						// refLine.label already reads as "X default" -- the hour is
+						// already stated once, no need twice.
+						return `${refLine.label} (${refLine.hours}h) — ${tooltipVerb} ${d.pct}% (${d.n.toLocaleString()} of ${total.toLocaleString()})`;
+					}
+					return `${tooltipVerb} < ${d.label}: ${d.pct}% (${d.n.toLocaleString()} of ${total.toLocaleString()})`;
+				},
+			},
 		});
 	}
 
-	// Astro dedupes identical scripts, so find every container, not just one.
+	// `.threshold-chart` is scoped to this component's own containers; other
+	// chart components share `.chart-surface` as a styling class, so a
+	// document-wide query on that would try to mount this parser onto them.
 	document
-		.querySelectorAll<HTMLElement>('[data-chart-kind="threshold-curve"]')
+		.querySelectorAll<HTMLElement>('.threshold-chart')
 		.forEach((container) => {
 			const config: Config = JSON.parse(container.dataset.chartConfig ?? '{}');
-			build(container, config, 'logarithmic');
-
-			const { id } = container;
-			const buttons = document.querySelectorAll<HTMLButtonElement>(
-				`[data-scale-btn][data-chart="${id}"]`,
+			// Keyed by plotted x, which depends on scaleType (0h plots at x=1 on
+			// the log axis but x=0 on the linear axis) -- rebuilt per scale, not
+			// shared across both.
+			const initialLookup = refLineLookupForScale(
+				config.refLines ?? [],
+				'logarithmic',
 			);
+			const baseMountOptions = {
+				height: config.height,
+				initialWidth: 640,
+				// Names the whole chart, not just its x-axis.
+				ariaLabel: config.title,
+				ariaDescription: config.alt || undefined,
+				measureText,
+			};
+			const host = mountChart(container, {
+				...baseMountOptions,
+				onFocusChange: createRuleXFocusHandler(container, initialLookup),
+				definition: buildDefinition(config, 'logarithmic', initialLookup),
+			});
+
+			// Scoped to this chart's own wrapper -- the toggle buttons are a
+			// sibling of the chart div, not a descendant.
+			const buttons =
+				container.parentElement!.querySelectorAll<HTMLButtonElement>(
+					`[data-scale-btn][data-chart="${container.id}"]`,
+				);
 			buttons.forEach((btn) => {
 				btn.addEventListener('click', () => {
 					const scale = btn.dataset.scaleBtn as 'logarithmic' | 'linear';
 					buttons.forEach((b) =>
 						b.setAttribute('aria-pressed', String(b === btn)),
 					);
-					build(container, config, scale);
+					// update() rebuilds the whole SVG, so whatever point was focused
+					// no longer exists -- clear it first, or the tooltip (host state)
+					// and glow/dot (our state, tied to the destroyed DOM) fall out of
+					// sync.
+					host.interaction.setControlledFocus(null);
+					const lookup = refLineLookupForScale(config.refLines ?? [], scale);
+					host.update({
+						...baseMountOptions,
+						onFocusChange: createRuleXFocusHandler(container, lookup),
+						definition: buildDefinition(config, scale, lookup),
+					});
 				});
 			});
 		});

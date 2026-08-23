@@ -33,42 +33,7 @@ export const YANK_DATA = [
 ];
 export const YANK_N = 14629;
 
-export const BLOCKING_DATA = [
-	{ label: '1h', h: 1, pct: 18.7, n: 8498 },
-	{ label: '2h', h: 2, pct: 21.0, n: 9539 },
-	{ label: '3h', h: 3, pct: 22.0, n: 10003 },
-	{ label: '6h', h: 6, pct: 29.5, n: 13383 },
-	{ label: '9h', h: 9, pct: 31.8, n: 14447 },
-	{ label: '12h', h: 12, pct: 33.0, n: 14969 },
-	{ label: '18h', h: 18, pct: 34.7, n: 15740 },
-	{ label: '24h', h: 24, pct: 35.8, n: 16247 },
-	{ label: '36h', h: 36, pct: 37.9, n: 17217 },
-	{ label: '48h', h: 48, pct: 39.0, n: 17684 },
-	{ label: '60h', h: 60, pct: 39.8, n: 18049 },
-	{ label: '3d', h: 72, pct: 41.0, n: 18621 },
-	{ label: '4d', h: 96, pct: 42.3, n: 19195 },
-	{ label: '5d', h: 120, pct: 43.1, n: 19552 },
-	{ label: '6d', h: 144, pct: 44.2, n: 20073 },
-	{ label: '7d', h: 168, pct: 45.0, n: 20424 },
-	{ label: '8d', h: 192, pct: 45.6, n: 20685 },
-	{ label: '9d', h: 216, pct: 46.1, n: 20933 },
-	{ label: '10d', h: 240, pct: 46.7, n: 21169 },
-	{ label: '11d', h: 264, pct: 47.1, n: 21352 },
-	{ label: '12d', h: 288, pct: 47.6, n: 21580 },
-	{ label: '13d', h: 312, pct: 48.1, n: 21831 },
-	{ label: '14d', h: 336, pct: 48.7, n: 22082 },
-	{ label: '16d', h: 384, pct: 50.7, n: 23015 },
-	{ label: '18d', h: 432, pct: 52.2, n: 23703 },
-	{ label: '20d', h: 480, pct: 54.1, n: 24542 },
-	{ label: '22d', h: 528, pct: 56.2, n: 25485 },
-	{ label: '24d', h: 576, pct: 57.4, n: 26034 },
-	{ label: '26d', h: 624, pct: 58.5, n: 26536 },
-	{ label: '28d', h: 672, pct: 59.9, n: 27176 },
-	{ label: '30d', h: 720, pct: 61.3, n: 27794 },
-];
-export const BLOCKING_N = 45371;
-
-export const MONTHLY_VOLUME = [
+const MONTHLY_VOLUME = [
 	{ m: '2021-11', tea: 0, backfill: 0, other: 1 },
 	{ m: '2021-12', tea: 0, backfill: 0, other: 4 },
 	{ m: '2022-01', tea: 0, backfill: 0, other: 1 },
@@ -126,189 +91,23 @@ export const MONTHLY_VOLUME = [
 	{ m: '2026-08', tea: 0, backfill: 0, other: 2781 },
 ];
 
-// One-off anomaly events buried in MONTHLY_VOLUME, called out as ref lines on
-// the total chart -- singling them out is what lets the split organic-only
-// chart drop them entirely and use a scale sized to its own natural range.
-export const MONTHLY_SPIKES = [
-	{ m: '2025-08', label: 'bulk backfill artifact' },
-	{ m: '2025-11', label: 'tea.xyz spam campaign' },
-];
+// Nov 2021 - Jan 2022 are three isolated pre-launch months sitting far below
+// everything after -- a log axis fit to the real data would clip them at the
+// floor anyway, so they're dropped here rather than plotted misleadingly.
+const MONTHLY_DETECTIONS_DATA = MONTHLY_VOLUME.filter((d) => d.m >= '2022-02');
+const monthlyPoints = MONTHLY_DETECTIONS_DATA.map((d) => ({
+	m: d.m,
+	other: d.other,
+	backfill: d.backfill,
+	combined: d.other + d.backfill,
+}));
+const monthlyMax = Math.max(...monthlyPoints.map((d) => d.combined));
+// Rounded up to the next power of 10 -- a log axis reads best with
+// power-of-10 gridlines.
+const monthlyNiceMax = 10 ** Math.ceil(Math.log10(monthlyMax));
 
-export const YEAR_MEDIAN = [
-	{ year: '2018', n: 83, median_h: 48585.3 },
-	{ year: '2019', n: 195, median_h: 47269.5 },
-	{ year: '2021', n: 99, median_h: 40719.9 },
-	{ year: '2022', n: 252, median_h: 18214.3 },
-	{ year: '2023', n: 4895, median_h: 10199.4 },
-	{ year: '2024', n: 5827, median_h: 992.7 },
-	{ year: '2025', n: 15762, median_h: 576.8 },
-	{ year: '2026', n: 18185, median_h: 28.8 },
-];
-
-export const YEAR_SOURCE = [
-	{
-		year: '2018',
-		n: 83,
-		'reversing-labs': 100.0,
-		'amazon-inspector': 0.0,
-		'ossf-package-analysis': 0.0,
-		'ghsa-malware': 0.0,
-		'google-open-source-security': 0.0,
-	},
-	{
-		year: '2019',
-		n: 195,
-		'reversing-labs': 100.0,
-		'amazon-inspector': 0.0,
-		'ossf-package-analysis': 0.0,
-		'ghsa-malware': 0.0,
-		'google-open-source-security': 0.0,
-	},
-	{
-		year: '2021',
-		n: 99,
-		'reversing-labs': 31.3,
-		'amazon-inspector': 68.7,
-		'ossf-package-analysis': 0.0,
-		'ghsa-malware': 0.0,
-		'google-open-source-security': 0.0,
-	},
-	{
-		year: '2022',
-		n: 252,
-		'reversing-labs': 86.1,
-		'amazon-inspector': 0.0,
-		'ossf-package-analysis': 0.0,
-		'ghsa-malware': 13.9,
-		'google-open-source-security': 0.0,
-	},
-	{
-		year: '2023',
-		n: 4895,
-		'reversing-labs': 77.2,
-		'amazon-inspector': 0.5,
-		'ossf-package-analysis': 21.9,
-		'ghsa-malware': 0.4,
-		'google-open-source-security': 0.0,
-	},
-	{
-		year: '2024',
-		n: 5827,
-		'reversing-labs': 61.4,
-		'amazon-inspector': 0.4,
-		'ossf-package-analysis': 37.0,
-		'ghsa-malware': 1.1,
-		'google-open-source-security': 0.1,
-	},
-	{
-		year: '2025',
-		n: 15762,
-		'reversing-labs': 63.4,
-		'amazon-inspector': 5.1,
-		'ossf-package-analysis': 16.8,
-		'ghsa-malware': 8.6,
-		'google-open-source-security': 6.1,
-	},
-	{
-		year: '2026',
-		n: 18185,
-		'reversing-labs': 11.8,
-		'amazon-inspector': 54.7,
-		'ossf-package-analysis': 7.8,
-		'ghsa-malware': 19.8,
-		'google-open-source-security': 6.0,
-	},
-];
-
-export const REPORTS_OVER_TIME = [
-	{ m: '2022-06', n: 2 },
-	{ m: '2022-07', n: 7 },
-	{ m: '2022-08', n: 6 },
-	{ m: '2023-04', n: 87 },
-	{ m: '2023-05', n: 174 },
-	{ m: '2023-06', n: 86 },
-	{ m: '2023-07', n: 89 },
-	{ m: '2023-08', n: 141 },
-	{ m: '2023-09', n: 161 },
-	{ m: '2023-10', n: 70 },
-	{ m: '2023-11', n: 167 },
-	{ m: '2023-12', n: 98 },
-	{ m: '2024-01', n: 141 },
-	{ m: '2024-02', n: 78 },
-	{ m: '2024-03', n: 102 },
-	{ m: '2024-04', n: 30 },
-	{ m: '2024-05', n: 48 },
-	{ m: '2024-06', n: 4457 },
-	{ m: '2024-07', n: 374 },
-	{ m: '2024-08', n: 35 },
-	{ m: '2024-09', n: 264 },
-	{ m: '2024-10', n: 1173 },
-	{ m: '2024-11', n: 420 },
-	{ m: '2024-12', n: 1439 },
-	{ m: '2025-01', n: 388 },
-	{ m: '2025-02', n: 966 },
-	{ m: '2025-03', n: 1841 },
-	{ m: '2025-04', n: 2080 },
-	{ m: '2025-05', n: 1181 },
-	{ m: '2025-06', n: 1007 },
-	{ m: '2025-07', n: 1492 },
-	{ m: '2025-08', n: 947 },
-	{ m: '2025-09', n: 1348 },
-	{ m: '2025-10', n: 1008 },
-	{ m: '2025-11', n: 1321 },
-	{ m: '2025-12', n: 2875 },
-	{ m: '2026-01', n: 368 },
-	{ m: '2026-02', n: 111 },
-	{ m: '2026-03', n: 1807 },
-	{ m: '2026-04', n: 736 },
-	{ m: '2026-05', n: 2629 },
-	{ m: '2026-06', n: 2614 },
-	{ m: '2026-07', n: 4232 },
-	{ m: '2026-08', n: 6771 },
-];
-
-export const THREAT_CATEGORIES = [
-	{ label: 'tea.xyz farming', n: 140728 },
-	{ label: 'unclassified', n: 71456 },
-	{ label: 'credential exfil', n: 4814 },
-	{ label: 'RAT / C2', n: 2794 },
-	{ label: 'typosquat', n: 2117 },
-	{ label: 'wallet drainer', n: 933 },
-	{ label: 'dep. confusion', n: 923 },
-	{ label: 'wiper', n: 812 },
-	{ label: 'discord/gaming theft', n: 596 },
-	{ label: 'crypto mining', n: 14 },
-];
-
-export const MAINTAINER_HIST = [
-	{ label: '1-5', n: 1121 },
-	{ label: '6-10', n: 50 },
-	{ label: '11-15', n: 12 },
-	{ label: '16-20', n: 8 },
-	{ label: '21-25', n: 8 },
-	{ label: '26-30', n: 2 },
-	{ label: '31-35', n: 1 },
-	{ label: '36-40', n: 2 },
-	{ label: '41-45', n: 4 },
-	{ label: '46+', n: 8 },
-];
-
-export const RANGE_ONLY_COMPARE = [
-	{
-		label: ['explicit version', "(this study's dataset)"],
-		pct: 39.3,
-		n: 8111,
-		total: 20664,
-	},
-	{
-		label: ['range-only', '(no version named)'],
-		pct: 2.4,
-		n: 1322,
-		total: 55918,
-	},
-];
-
-// ---- Chart metadata: one `chart` object per shape component. ----
+// ---- Chart metadata: one object per chart component, pre-shaped so the
+// component only has to serialize it, not reshape it. ----
 
 export const PUBLISH_TO_YANK_CHART = {
 	id: 'chart-yank',
@@ -316,19 +115,16 @@ export const PUBLISH_TO_YANK_CHART = {
 	alt: `Based on ${YANK_N.toLocaleString()} OSV supply chain advisories from the last 5 years naming a single affected npm version, combined with npm registry data for each version's publish and unpublish time.`,
 	data: YANK_DATA,
 	total: YANK_N,
-	yMax: 100,
 	tooltipVerb: 'removed by',
 	unitNoun: 'packages',
 	xColumnLabel: 'time since publish',
 	yColumnLabel: 'packages removed',
 	valueColumnLabel: '% removed',
-	// Kept for the Highcharts chart, which only plots pnpm's default.
-	refLine: { hours: 24, label: 'pnpm 11 default' },
 	// npm/Yarn/Bun all default minimum-release-age gating to 0 -- log(0) is
-	// undefined, so this one gets pinned to the axis's left edge instead of its
-	// real position (see threshold-curve-chart-tanstack.astro).
-	// pnpm 11 and Deno 2.9 both default to 24h, so they share one label.
-	// Legend labels skip the hour value -- the tooltip states it on hover/focus.
+	// undefined, so this ref line gets pinned to the axis's left edge instead
+	// of its real position (see threshold-curve-chart.astro). pnpm 11 and
+	// Deno 2.9 both default to 24h, so they share one label. Legend labels
+	// skip the hour value -- the tooltip states it on hover/focus.
 	refLines: [
 		{ hours: 0, label: 'npm/Yarn/Bun default' },
 		{ hours: 24, label: 'pnpm 11/Deno 2.9/aube 1.29.0 default' },
@@ -336,99 +132,29 @@ export const PUBLISH_TO_YANK_CHART = {
 	],
 };
 
-export const BLOCKING_CHART = {
-	id: 'chart-blocking',
-	title: 'theoretical blocking rate vs. minimum release age',
-	alt: `Line chart of the share of ${BLOCKING_N.toLocaleString()} malicious npm releases publicly identified before a given minimum release age, log scale from 1 hour to 30 days, where the curve rises steeply early (18.7% at 1 hour, 35.8% at 24 hours) and flattens after 3 days, reaching only 61.3% by 30 days -- most of what a release-age policy catches, it catches fast, but the ceiling is well under total coverage.`,
-	data: BLOCKING_DATA,
-	total: BLOCKING_N,
-	yMax: 65,
-	tooltipVerb: 'blocked at',
-	unitNoun: 'releases',
-	xColumnLabel: 'minimum release age',
-	yColumnLabel: 'percentage of releases blocked',
-	valueColumnLabel: '% blocked',
-};
-
-const OSV_TOTAL = 219936;
-const sortedCategories = THREAT_CATEGORIES.toSorted((a, b) => b.n - a.n).map(
-	(d) => ({
-		label: d.label,
-		n: d.n,
-		pct: (100 * d.n) / OSV_TOTAL,
-	}),
-);
-
-export const CATEGORIES_CHART = {
-	id: 'chart-categories',
-	title: 'threat category mentions across full OSV corpus',
-	alt: "Horizontal bar chart of keyword-matched threat categories across all 219,936 OSV records, log scale, where tea.xyz reward farming dominates at 140,728 mentions, followed by 71,456 unclassified records, then much smaller real threat categories: credential exfiltration (4,814), RAT/C2 (2,794), typosquatting (2,117), wallet drainers (933), dependency confusion (923), wipers (812), Discord/gaming token theft (596), and crypto mining (14). Categories aren't mutually exclusive -- a record can match more than one.",
-	height: 420,
-	inverted: true,
-	categories: sortedCategories.map((d) => d.label),
-	values: sortedCategories.map((d) => d.pct),
-	tooltips: sortedCategories.map(
-		(d) => `${d.pct.toFixed(2)}% (${d.n.toLocaleString()} records)`,
+export const MONTHLY_DETECTIONS_CHART = {
+	id: 'chart-monthly-detections',
+	title: 'Monthly malicious-package detections, log scale',
+	// Excludes the tea.xyz reward-farming campaign (140,728 records in
+	// November 2025 alone) -- an order of magnitude larger than every other
+	// month combined, and covered separately in the DataTable and prose.
+	caption:
+		'Excludes the tea.xyz reward-farming campaign (140,728 records in November 2025 alone) -- an order of magnitude larger than every other month combined.',
+	points: monthlyPoints,
+	months: monthlyPoints.map((d) => d.m),
+	// Every 4th month label -- all of them would overlap at this width.
+	tickMonths: monthlyPoints.filter((_, i) => i % 4 === 0).map((d) => d.m),
+	niceMax: monthlyNiceMax,
+	// [1, 10, ..., niceMax] -- explicit power-of-10 ticks for the log axis.
+	yTicks: Array.from(
+		{ length: Math.log10(monthlyNiceMax) + 1 },
+		(_, i) => 10 ** i,
 	),
-	valueAxisType: 'logarithmic' as const,
-	valueAxisMin: 0.001,
-	valueAxisMax: 100,
-	valueFormat: '{value}%',
-	colorRoles: ['primary'] as const,
-	tableColumns: [
-		{ label: 'category' },
-		{ label: 'records' },
-		{ label: '% of corpus' },
-	],
-	tableRows: sortedCategories.map((d) => [
-		d.label,
-		d.n.toLocaleString(),
-		`${d.pct.toFixed(2)}%`,
-	]),
-};
-
-export const MAINTAINERS_CHART = {
-	id: 'chart-maintainers',
-	title: 'accounts by number of packages attributed',
-	alt: 'Bar chart of publishing accounts grouped by how many malicious packages are attributed to them, log scale, where 1,121 accounts have 1-5 packages, dropping steeply to 50 accounts with 6-10, and a long thin tail out to 8 accounts with 46 or more packages each -- most accounts appear once, a handful appear many times.',
-	inverted: false,
-	categories: MAINTAINER_HIST.map((d) => d.label),
-	values: MAINTAINER_HIST.map((d) => d.n),
-	tooltips: MAINTAINER_HIST.map((d) => `${d.n.toLocaleString()} accounts`),
-	valueAxisType: 'logarithmic' as const,
-	valueAxisMin: 1,
-	valueAxisMax: 2000,
-	categoryAxisTitle: 'packages attributed to the account',
-	valueAxisTitle: 'number of accounts',
-	colorRoles: ['primary'] as const,
-	tableColumns: [{ label: 'packages attributed' }, { label: 'accounts' }],
-	tableRows: MAINTAINER_HIST.map((d) => [d.label, d.n.toLocaleString()]),
-};
-
-export const RANGE_ONLY_CHART = {
-	id: 'chart-rangeonly',
-	title: 'share of flagged packages ever fully removed from npm',
-	alt: "Horizontal bar chart comparing removal rate between two populations: 39.3% of explicit-version packages (8,111 of 20,664) are eventually fully removed from npm, versus only 2.4% of range-only packages, where OSV flags a package's entire history with no version named (1,322 of 55,918) -- roughly 17 times less often.",
-	height: 220,
-	inverted: true,
-	categories: RANGE_ONLY_COMPARE.map((d) => d.label.join(' ')),
-	values: RANGE_ONLY_COMPARE.map((d) => d.pct),
-	tooltips: RANGE_ONLY_COMPARE.map(
-		(d) => `${d.pct}% (${d.n.toLocaleString()} of ${d.total.toLocaleString()})`,
-	),
-	valueAxisType: 'linear' as const,
-	valueAxisMin: 0,
-	valueAxisMax: 45,
-	valueFormat: '{value}%',
-	colorRoles: ['primary', 'secondary'] as const,
-	tableColumns: [
-		{ label: 'population' },
-		{ label: '% ever removed' },
-		{ label: 'removed / total' },
-	],
-	tableRows: RANGE_ONLY_COMPARE.map((d) => [
-		d.label.join(' '),
-		`${d.pct}%`,
-		`${d.n.toLocaleString()} / ${d.total.toLocaleString()}`,
+	total: monthlyPoints.reduce((sum, d) => sum + d.combined, 0),
+	tableRows: MONTHLY_DETECTIONS_DATA.map((d) => [
+		d.m,
+		d.other.toLocaleString(),
+		d.backfill.toLocaleString(),
+		d.tea.toLocaleString(),
 	]),
 };

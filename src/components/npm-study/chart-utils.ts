@@ -1,6 +1,6 @@
-// Shared across every @tanstack/charts component on the page -- the DOM
-// measurement and focus-handling mechanics are identical regardless of what
-// the chart plots, only the mark/scale config differs per component.
+// Shared across every chart component -- the DOM measurement and
+// focus-handling mechanics are identical regardless of what the chart plots,
+// only the mark/scale config differs per component.
 import type { ChartTextMeasurer } from '@tanstack/charts';
 import { fontSize } from './theme';
 

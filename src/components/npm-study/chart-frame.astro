@@ -1,0 +1,68 @@
+---
+// Owns the <figure> every chart component wraps itself in -- the container
+// div + CSS turned out to be the exact same ~15 lines in each of them, only
+// `height` and an extra class (for a chart's own document-scoped mount
+// query) varying. `caption` is a plain string, not markup -- every caption
+// so far has been one sentence of caveat text.
+type Props = {
+	id: string;
+	config: unknown;
+	height?: number;
+	class?: string;
+	caption?: string;
+};
+const { id, config, height = 300, class: extraClass, caption } = Astro.props;
+---
+
+<figure class="not-prose my-8">
+	<slot name="header" />
+	<div
+		id={id}
+		class:list={['chart-surface', extraClass]}
+		style={`height:${height}px`}
+		data-chart-config={JSON.stringify(config)}
+	>
+	</div>
+	<slot />
+	{
+		caption && (
+			<figcaption class="text-foreground-secondary mt-2 font-mono text-sm">
+				{caption}
+			</figcaption>
+		)
+	}
+</figure>
+
+<style>
+	.chart-surface {
+		/* Reuse the exact same design tokens theme.ts reads via getComputedStyle --
+		   here they're just plain CSS custom properties, no JS bridge needed. */
+		color: var(--color-foreground);
+		background: transparent;
+		--ts-chart-1: var(--color-chart-primary);
+		/* --ts-chart-tooltip-* names are @tanstack/charts' own theming hooks --
+		   its undocumented defaults read `Canvas`/`CanvasText` system colors,
+		   which render near-white on most setups, so point them at our tokens
+		   instead. */
+		--ts-chart-tooltip-background: var(--color-background-secondary);
+		--ts-chart-tooltip-color: var(--color-foreground);
+		--ts-chart-tooltip-border: 1px solid var(--color-foreground-secondary);
+	}
+	/* Chart text renders as an SVG `font-size` attribute, the lowest-priority
+	   CSS origin -- this class selector overrides it outright. Only size
+	   changes; font-family is left alone (already "inherit"). */
+	.chart-surface :global(text) {
+		font-size: var(--text-base);
+	}
+	/* ruleX has no `states` field, so it never paints itself differently on
+	   hover/focus the way area/line/dot marks can. `:hover` alone would only
+	   cover the mouse; `.is-focused` is toggled from the real `onFocusChange`
+	   host callback, which fires for hover *and* keyboard nav. Harmless no-op
+	   on a chart with no ruleX marks. `.ts-chart__rule-x` is @tanstack/charts'
+	   own class name for a ruleX mark, not ours. */
+	.chart-surface :global(.ts-chart__rule-x line:hover),
+	.chart-surface :global(.ts-chart__rule-x.is-focused line) {
+		stroke-opacity: 1;
+		stroke-width: 6;
+	}
+</style>
