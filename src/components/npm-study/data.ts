@@ -101,8 +101,8 @@ const MONTHLY_DETECTIONS_DATA = MONTHLY_VOLUME.filter((d) => d.m >= '2022-02');
 
 export const PUBLISH_TO_YANK_CHART = {
 	id: 'chart-yank',
-	title: 'Cumulative malicious package version removal by package age',
-	alt: `Based on ${YANK_N.toLocaleString()} OSV supply chain advisories from the last 5 years naming a single affected npm version, combined with npm registry data for each version's publish and unpublish time.`,
+	title: 'Cumulative malicious npm version removal by age',
+	alt: `Based on ${YANK_N.toLocaleString()} OSV supply chain advisories from the last 5 years affecting a single npm version, combined with npm registry data for each version's publish and unpublish time`,
 	data: YANK_DATA,
 	total: YANK_N,
 	tooltipVerb: 'removed by',
@@ -124,7 +124,7 @@ export const PUBLISH_TO_YANK_CHART = {
 
 export const MONTHLY_DETECTIONS_CHART = {
 	id: 'chart-monthly-detections',
-	title: 'Monthly malicious-package detections, log scale',
+	title: 'Monthly malicious-package detections',
 	// Excludes the tea.xyz reward-farming campaign (140,728 records in
 	// November 2025 alone) -- an order of magnitude larger than every other
 	// month combined, and covered separately in the DataTable and prose.

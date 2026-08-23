@@ -22,7 +22,7 @@ Outline
 
 \*/}
 
-To make the title punchy, some liberties were taken. To be more precise, the last 5 years of OSV records show a `minimumReleaseAge` of 1 day would block 53% of single version, _reported_ npm supply chain attacks, or around 10,000 attacks. A short delay keeps supply chain attacks at bay!
+To make the title punchy, some liberties were taken. Here's the honest version: across the last 5 years of OSV-reported npm supply chain attacks with a resolvable single version, a 1-day `minimumReleaseAge` would have blocked 53% of them—about 7,700 attacks. That's real npm registry removal data, not a guess, but it comes with real caveats (see Methods and limitations at the end). Short version: a short delay keeps a lot of supply chain attacks at bay!
 
 {/* 1. Developers rely on a huge amount of software, therefore */}
 
@@ -48,7 +48,7 @@ To add fuel to the fire, security advisories have steadily increased. This doesn
 
 Structured reports like OSV's have made tracking easier. Prior to the last 5 years, disclosure would be a blog post or GitHub issue. Additionally, there is better automated security scanning than 5–10 years ago, and the prevalence of LLMs has renewed interest in security
 
-To make matters even worse, attacks have become much more sophisticated. Since September 2025, there have been 4 worms affecting at least 2600 packages[^worm]. A worm steals maintainer's credentials to publish more malicious packages to attack further maintainers
+To make matters even worse, attacks have become much more sophisticated. Since September 2025, there have been 4 worms affecting at least 1,917 packages[^worm]. Each worm steals a compromised maintainer's npm token to publish more malicious packages, but npm tokens are rarely the only thing targeted—these harvest credentials broadly (AWS, GCP, Azure, GitHub, Slack, SSH keys, password managers, and more), so the actual blast radius reaches well past the npm ecosystem
 
 [^worm]:
     <p>
@@ -57,9 +57,9 @@ To make matters even worse, attacks have become much more sophisticated. Since S
     </p>
 
     1. [Shai-Hulud](https://www.stepsecurity.io/blog/ctrl-tinycolor-and-40-npm-packages-compromised). 500+ packages
-    2. [Shai-Hulud v2](https://unit42.paloaltonetworks.com/npm-supply-chain-attack/). 700+ packages
-    3. [Mini Shai-Hulud](https://www.wiz.io/blog/mini-shai-hulud-strikes-again-tanstack-more-npm-packages-compromised). 170 packages
-    4. [ChainDrop](https://www.elastic.co/security-labs/shai-hulud-chaindrop-npm-supply-chain). 1,300+ packages
+    2. [Shai-Hulud v2](https://www.wiz.io/blog/shai-hulud-2-0-ongoing-supply-chain-attack). ~700 packages (climbed toward 800 as tracking continued)
+    3. [Mini Shai-Hulud](https://safedep.io/mini-shai-hulud-strikes-again-314-npm-packages-compromised/). 317 packages—a reused toolkit, not one incident; this is one of at least 3 separate maintainer compromises (SAP, TanStack, this one) it's been used in
+    4. [ChainDrop](https://www.elastic.co/security-labs/shai-hulud-chaindrop-npm-supply-chain). 400+ packages
 
 {/* 3. Advisories are posted after the issue is found (lag chart), therefore */}
 
@@ -75,12 +75,20 @@ Many attacks are resolved very quickly. Of detected, single version npm supply c
 
 <ThresholdCurveChart chart={PUBLISH_TO_YANK_CHART} />
 
-This is a lower bound—not every supply chain attack is discovered or reported
+This is a lower bound, and likely an optimistic one—see Methods and limitations below for why
 
 {/* 5. there is tension between sitting on an old version and protection, therefore */}
 Waiting months will reduce vulnerability, but you'll miss out on new features and ironically need to bump further for security patching!
 
-3 days seems to be the sweet spot for most projects that want new packages. 68.7% of detected npm packages are removed by that time. Waiting another 27 days brings diminishing returns, with 74.8% of packages removed
+3 days seems to be the sweet spot for most projects that want new packages. 68.7% of detected npm packages are removed by that time. Waiting another 27 days brings diminishing returns, with 74.8% of packages removed—and that's close to the ceiling, not just a long tail (more on why in Methods and limitations)
+
+## Methods and limitations
+
+- **Source:** OSV's structured malicious-package records for npm, last 5 years, joined against live npm registry timestamps.
+- **Denominator:** 14,629 packages with a single, resolvable flagged version. A separate, larger population—packages OSV flags by range with no specific version named—is excluded entirely, not folded into either side of any percentage here.
+- **"Blocked" means removed from npm** (`time.unpublished`) before the threshold, not "publicly identified" by a scanner. That's the actual exploitable window a `minimumReleaseAge` closes, but it also means the numbers likely skew fast: most flagged packages here are single-shot throwaway publishes, which npm can pull quicker than an established package with real users.
+- **There's a real ceiling, not just a long tail:** about a fifth of these packages are never removed at all, so no threshold—however long—reaches 100%.
+- **This is a lower bound overall:** not every supply chain attack is discovered, and not every discovered one is reported to OSV.
 
 ## Closing thoughts
 
