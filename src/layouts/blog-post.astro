@@ -14,7 +14,15 @@ const { math, title, description, pubDate, updatedDate, emDashCount } =
 	description={description}
 	math={math}
 >
-	<main class="m-auto w-full">
+	{
+		/* min-w-0: <body> is a flex column (base-layout.astro) and this <main> is
+		its flex child -- a flex item's default min-width is its content's
+		min-content size, not 0, which lets a deep descendant (e.g. a wide table
+		inside an overflow-x-auto wrapper) force this whole column wider than the
+		viewport even though the overflow wrapper is doing its job. Without this,
+		narrow viewports horizontally scroll the entire page. */
+	}
+	<main class="m-auto w-full min-w-0">
 		<BlogArticle
 			title={title}
 			date={pubDate}

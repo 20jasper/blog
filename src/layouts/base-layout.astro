@@ -11,10 +11,22 @@ type Props = {
 };
 
 const { math, title, description } = Astro.props;
+
+// overflow-x-hidden on both <html> and <body> below: a deep descendant with
+// its own overflow-x-auto region (e.g. a wide DataTable, which is
+// legitimately exempt from WCAG 1.4.10 reflow) can still make the page
+// itself horizontally scrollable at narrow viewports, even though that
+// region correctly contains its own content. Confirmed empirically that
+// this needs setting on *both* elements -- body alone left the page
+// scrollable in this flex-column layout. Doesn't affect the DataTable's own
+// internal scrolling, which is a separate overflow context.
 ---
 
 <!doctype html>
-<html lang="en">
+<html
+	lang="en"
+	class="overflow-x-hidden"
+>
 	<BaseHead
 		title={title}
 		description={description ?? ''}
@@ -22,7 +34,7 @@ const { math, title, description } = Astro.props;
 	/>
 
 	<body
-		class="bg-background text-foreground flex min-h-screen flex-col px-4 font-sans text-xl"
+		class="bg-background text-foreground flex min-h-screen flex-col overflow-x-hidden px-4 font-sans text-xl"
 	>
 		<Header border="bottom" />
 		<slot />
