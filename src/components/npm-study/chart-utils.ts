@@ -1,27 +1,18 @@
 // Shared across every chart component -- the DOM measurement and
 // focus-handling mechanics are identical regardless of what the chart plots,
 // only the mark/scale config differs per component.
-import type { ChartTextMeasurer } from '@tanstack/charts';
 
-// The DOM host auto-computes margins by measuring text at each role's own
-// internal default font size (tick labels and axis titles differ, and only
-// tick labels expose a `fontSize` option) -- CSS alone can raise the
-// *painted* size after the fact, but then the reserved margin no longer
-// matches, so labels clip/overlap. Passing this same px number to both
-// `measureText` below and each chart's own `tickLabels.fontSize` keeps
-// painting and layout derived from one number, rather than a CSS override
-// and a separate measurer that have to be kept in sync by hand.
+// Passed directly into each chart's `tickLabels.fontSize`/`axis.label.fontSize`
+// so painting and the library's internal margin math read the same number.
 //
-// `--text-base` is Tailwind's own token (chart-frame.astro's CSS override
-// reads the same one for axis titles, which have no fontSize option at
-// all). Resolved by hand instead of a DOM round-trip: `getPropertyValue`
-// returns the token's raw authored string ("1rem", "16px", ...), not a
-// computed px value the way real CSS properties do -- rem is the only unit
-// Tailwind's type scale ever authors it in, so parse the number out and
-// scale it by the root element's own computed font-size (which already
-// reflects the browser/user's real zoom and font-size preferences). If
-// `--text-base` is ever redefined in a unit other than rem, this needs a
-// second branch to match.
+// `--text-base` is Tailwind's own token. Resolved by hand instead of a DOM
+// round-trip: `getPropertyValue` returns the token's raw authored string
+// ("1rem", "16px", ...), not a computed px value the way real CSS
+// properties do -- rem is the only unit Tailwind's type scale ever authors
+// it in, so parse the number out and scale it by the root element's own
+// computed font-size (which already reflects the browser/user's real zoom
+// and font-size preferences). If `--text-base` is ever redefined in a unit
+// other than rem, this needs a second branch to match.
 function resolveBaseFontPx() {
 	// parseFloat, not Number() -- both getComputedStyle().fontSize ("16px")
 	// and the --text-base token ("1rem") carry a trailing unit, which Number()
@@ -38,32 +29,6 @@ function resolveBaseFontPx() {
 	return token.endsWith('rem') && !Number.isNaN(rem) ? rem * rootPx : rootPx;
 }
 export const BASE_FONT_PX = resolveBaseFontPx();
-
-function createFixedSizeMeasurer(px: number): ChartTextMeasurer {
-	const ctx = document.createElement('canvas').getContext('2d')!;
-	return (text, options) => {
-		ctx.font = `${options.fontStyle} ${options.fontWeight ?? 400} ${px}px ${options.fontFamily}`;
-		ctx.textAlign = options.anchor === 'middle' ? 'center' : options.anchor;
-		ctx.textBaseline =
-			options.baseline === 'auto' ? 'alphabetic' : options.baseline;
-		ctx.direction = options.direction === 'inherit' ? 'ltr' : options.direction;
-		const {
-			actualBoundingBoxLeft: left,
-			actualBoundingBoxRight: right,
-			actualBoundingBoxAscent: ascent,
-			actualBoundingBoxDescent: descent,
-		} = ctx.measureText(text);
-		return {
-			x: -left,
-			y: -ascent,
-			width: left + right,
-			height: ascent + descent,
-		};
-	};
-}
-// One throwaway canvas 2D context for every chart on the page, not one per
-// chart instance.
-export const measureText = createFixedSizeMeasurer(BASE_FONT_PX);
 
 // Shared y-axis tick formatter for count-based charts (records, detections).
 export function formatCount(v: number) {

@@ -1,0 +1,46 @@
+diff --git a/dist/scene.js b/dist/scene.js
+index 6de355cf36d7e2718005f45b82926111f91b15db..5cec86e6a612837c1832827707505381b65b604e 100644
+--- a/dist/scene.js
++++ b/dist/scene.js
+@@ -817,7 +817,7 @@ function createAxes(chart, scales, definition, theme, width, axes, measureText)
+       text: xAxisLabel,
+       anchor: "middle",
+       baseline: hasOffset ? "auto" : "hanging",
+-      fontSize: width < 360 ? 10 : 11,
++      fontSize: axisLabelFontSize(xAxis) ?? (width < 360 ? 10 : 11),
+       fontWeight: 600,
+       style: { fill: theme.foreground, fillOpacity: 0.76 }
+     };
+@@ -835,7 +835,7 @@ function createAxes(chart, scales, definition, theme, width, axes, measureText)
+       anchor: "middle",
+       baseline: "middle",
+       rotate: -90,
+-      fontSize: 11,
++      fontSize: axisLabelFontSize(yAxis) ?? 11,
+       fontWeight: 600,
+       style: { fill: theme.foreground, fillOpacity: 0.76 }
+     };
+@@ -903,6 +903,9 @@ function axisLabelText(axis) {
+ function axisLabelOffset(axis) {
+   return typeof axis?.label === "object" ? axis.label.offset ?? "auto" : "auto";
+ }
++function axisLabelFontSize(axis) {
++  return typeof axis?.label === "object" ? axis.label.fontSize : void 0;
++}
+ function withKeptTicks(scale, axis, labels) {
+   const thin = typeof labels.thin === "object" ? labels.thin : void 0;
+   const keep = thin?.keep ?? [];
+diff --git a/dist/types.d.ts b/dist/types.d.ts
+index d3f68250eb80332eac130b83c76815dec1bbf17f..6da429f00dc3b55938d9de772ecfdb6c5ecffb56 100644
+--- a/dist/types.d.ts
++++ b/dist/types.d.ts
+@@ -206,6 +206,9 @@ export interface ChartAxisTickLabelOptions<TValue extends ChartValue = any> {
+ export interface ChartAxisLabelOptions {
+     text: string;
+     offset?: number | 'auto';
++    /** Matches tick labels' own `tickLabels.fontSize` option -- unset falls
++     * back to the built-in default (10/11px depending on chart width). */
++    fontSize?: number;
+     motion?: ChartMotionDefinition;
+ }
+ export interface ChartAxisPresentationOptions<TValue extends ChartValue = any> {

@@ -3,3 +3,5 @@ allowBuilds:
   esbuild: true
   lefthook: true
   sharp: true
+patchedDependencies:
+  '@tanstack/charts': patches/@tanstack__charts.patch

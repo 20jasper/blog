@@ -100,11 +100,7 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 	import { tooltip } from '@tanstack/charts/tooltip';
 	import { scaleLog } from 'd3-scale';
 	import { REF_LINE_STYLES } from './theme';
-	import {
-		measureText,
-		createRuleXFocusHandler,
-		BASE_FONT_PX,
-	} from './chart-utils';
+	import { createRuleXFocusHandler, BASE_FONT_PX } from './chart-utils';
 
 	type ThresholdPoint = { h: number; label: string; pct: number; n: number };
 	type Config = {
@@ -219,18 +215,11 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 			x: {
 				scale: scaleType === 'logarithmic' ? LOG_X_SCALE : LINEAR_X_SCALE,
 				axis: {
-					label: xColumnLabel,
+					label: { text: xColumnLabel, fontSize: BASE_FONT_PX },
 					ticks: {
 						values: tickHours,
 						format: (h: number) => labelByHour.get(h) ?? `${h}h`,
 					},
-					// Passed directly instead of leaving it to the CSS override in
-					// chart-frame.astro -- ticks are the one text role the library
-					// actually exposes a size option for, so painting and its own
-					// internal margin math derive from the same number by
-					// construction, not by us keeping two systems in sync. Axis
-					// *titles* have no such option (docs/tanstack-charts-feedback.md
-					// item 4), so those still rely on the CSS override.
 					tickLabels: { fontSize: BASE_FONT_PX },
 				},
 			},
@@ -238,7 +227,7 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 				scale: Y_SCALE,
 				grid: true,
 				axis: {
-					label: yColumnLabel,
+					label: { text: yColumnLabel, fontSize: BASE_FONT_PX },
 					ticks: { format: (v: number) => `${v}%` },
 					tickLabels: { fontSize: BASE_FONT_PX },
 				},
@@ -280,7 +269,6 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 				// Names the whole chart, not just its x-axis.
 				ariaLabel: config.title,
 				ariaDescription: config.alt || undefined,
-				measureText,
 			};
 			const host = mountChart(container, {
 				...baseMountOptions,

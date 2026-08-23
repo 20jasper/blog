@@ -106,7 +106,6 @@ const config = {
 	import { tooltip } from '@tanstack/charts/tooltip';
 	import { scaleLog } from 'd3-scale';
 	import {
-		measureText,
 		createRuleXFocusHandler,
 		formatCount,
 		BASE_FONT_PX,
@@ -137,7 +136,6 @@ const config = {
 				// needed -- the visible <figcaption> above already describes the
 				// figure as a whole.
 				ariaLabel: config.title,
-				measureText,
 				// No ref lines on this chart -- the dot alone still needs the
 				// handler's focus-dot half, just with nothing to key a glow off.
 				onFocusChange: createRuleXFocusHandler(container, new Map()),
@@ -164,7 +162,7 @@ const config = {
 					x: {
 						scale: xScale,
 						axis: {
-							label: 'month',
+							label: { text: 'month', fontSize: BASE_FONT_PX },
 							ticks: { values: config.tickMonths },
 							tickLabels: { fontSize: BASE_FONT_PX },
 						},
@@ -173,7 +171,7 @@ const config = {
 						scale: yScale,
 						grid: true,
 						axis: {
-							label: 'detections',
+							label: { text: 'detections', fontSize: BASE_FONT_PX },
 							ticks: { values: config.yTicks, format: formatCount },
 							tickLabels: { fontSize: BASE_FONT_PX },
 						},

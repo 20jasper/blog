@@ -51,18 +51,6 @@ const { id, config, height = 300, class: extraClass, caption } = Astro.props;
 		   `Canvas` system-color fallback as the tooltip above. */
 		--ts-chart-focus-fill: var(--color-foreground);
 	}
-	/* Axis *titles* have no fontSize option (docs/tanstack-charts-feedback.md
-	   item 4), so this CSS override is still the only way to size them --
-	   tick labels get their size passed directly via each chart's own
-	   `tickLabels.fontSize` (see chart-utils.ts's BASE_FONT_PX) and don't
-	   need this rule, but it's harmless for them too since both derive from
-	   the same value. Chart text otherwise renders as an SVG `font-size`
-	   attribute, the lowest-priority CSS origin, hence `:global(text)`
-	   overriding it outright rather than relying on cascade order. Only size
-	   changes; font-family is left alone (already "inherit"). */
-	.chart-surface :global(text) {
-		font-size: var(--text-base);
-	}
 	/* ruleX has no `states` field, so it never paints itself differently on
 	   hover/focus the way area/line/dot marks can. `:hover` alone would only
 	   cover the mouse; `.is-focused` is toggled from the real `onFocusChange`

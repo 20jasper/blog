@@ -29,17 +29,17 @@ pass were wrong or since resolved and have been dropped (see Corrections).
 
 4. **Axis _titles_ have no `fontSize` option** (`ChartAxisLabelOptions` is
    `{text, offset, motion}` only), while tick labels do
-   (`tickLabels.fontSize`). No way to match an axis title to a page's type
-   scale without a workaround.
+   (`tickLabels.fontSize`). Patched locally — `patches/@tanstack__charts.patch`
+   adds `fontSize` to `ChartAxisLabelOptions`, matching `tickLabels.fontSize`.
 
 5. **CSS-driven font-size and the internal auto-margin measurement can
-   silently disagree.** Overriding painted `font-size` via CSS (necessary
-   since it's the lowest-priority SVG presentation attribute) doesn't inform
+   silently disagree.** Overriding painted `font-size` via CSS doesn't inform
    the layout engine's own text measurement, so labels clip/overlap unless you
-   _also_ supply a custom `measureText` that measures at the same size — two
-   separate systems that need manual synchronization. Confirmed there's no
-   simpler `fontSize`/theme option on the mount API — `measureText` really is
-   the only override point.
+   also supply a custom `measureText` at the same size. With the item-4 patch,
+   this is avoidable: pass `fontSize` through `tickLabels`/`axis.label`
+   directly and drop the CSS override — the library's own default DOM
+   measurer already reads `options.fontSize` per label. Still a real gap
+   without the patch.
 
 ## Probably fine as app-level (noting, not necessarily a bug)
 
