@@ -3,11 +3,10 @@ type Props = { chartId: string };
 const { chartId } = Astro.props;
 ---
 
-<div
-	class="border-foreground-secondary/40 bg-background-secondary/40 flex gap-0.5 rounded-full border p-0.5 text-xs"
-	role="group"
-	aria-label="Chart scale"
+<fieldset
+	class="border-foreground-secondary/40 bg-background-secondary/40 flex gap-0.5 rounded-full border text-xs"
 >
+	<legend class="text-foreground-secondary px-1.5">Chart scale</legend>
 	<button
 		type="button"
 		data-scale-btn="logarithmic"
@@ -24,9 +23,21 @@ const { chartId } = Astro.props;
 		aria-pressed="false"
 		>Linear</button
 	>
-</div>
+</fieldset>
 
 <style>
+	/* Native <fieldset>/<legend> replace the old div[role=group]/aria-label --
+	   same grouping semantics, no hand-authored ARIA, and the legend is a
+	   real visible label instead of an aria-label. Reset fieldset's default
+	   border/margin so it lays out identically to the div it replaced;
+	   padding is set here (not as a p-0.5 utility) because Astro's
+	   scoped-style attribute selector would otherwise outrank that utility
+	   class and win the cascade anyway. */
+	fieldset {
+		border: 0;
+		margin: 0;
+		padding: 0.125rem;
+	}
 	/* Styled off aria-pressed, no separate classList.toggle needed. */
 	.scale-btn {
 		color: var(--color-foreground-secondary);
