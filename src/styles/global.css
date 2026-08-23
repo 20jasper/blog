@@ -29,11 +29,10 @@
 	--color-accent: rgb(255, 152, 0);
 	--color-background-secondary: rgb(48, 42, 79);
 	--color-foreground-secondary: rgb(147, 147, 147);
-	--color-purple: #7c3aed;
 	--font-sans: 'Arial', 'sans-serif';
 
 	/* Chart palette: validated via dataviz skill's validate_palette.js. */
-	--color-chart-primary: var(--color-purple);
+	--color-chart-primary: #7c3aed;
 	/* color-mix() doesn't resolve via getComputedStyle -- literal value. */
 	--color-chart-secondary: #cc7a00;
 	/* sky-400; ~9.7:1 against --color-background -- a hue distinct from the

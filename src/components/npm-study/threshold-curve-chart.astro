@@ -3,6 +3,8 @@ import ScaleToggle from './scale-toggle.astro';
 import DataTable from './data-table.astro';
 import RefLineLegend from './ref-line-legend.astro';
 import ChartFrame from './chart-frame.astro';
+import ChartHeading from './chart-heading.astro';
+import { REF_LINE_STYLES } from './theme';
 
 type ThresholdPoint = { h: number; label: string; pct: number; n: number };
 
@@ -51,6 +53,11 @@ const config = {
 	refLines,
 	height: CHART_HEIGHT,
 };
+
+const legendItems = (refLines ?? []).map((rl, i) => ({
+	label: rl.label,
+	...REF_LINE_STYLES[i % REF_LINE_STYLES.length]!,
+}));
 ---
 
 <ChartFrame
@@ -62,17 +69,14 @@ const config = {
 >
 	<Fragment slot="header">
 		<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
-			<div>
-				<p class="text-foreground-secondary font-mono text-base">{title}</p>
-				<p class="text-foreground-secondary mt-0.5 font-mono text-sm">
-					n = {total.toLocaleString()}
-					{unitNoun}
-				</p>
-			</div>
+			<ChartHeading
+				title={title}
+				subtitle={`n = ${total.toLocaleString()} ${unitNoun}`}
+			/>
 			<ScaleToggle chartId={id} />
 		</div>
 	</Fragment>
-	<RefLineLegend refLines={refLines ?? []} />
+	<RefLineLegend items={legendItems} />
 </ChartFrame>
 <DataTable
 	columns={[

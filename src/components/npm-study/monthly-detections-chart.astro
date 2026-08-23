@@ -1,21 +1,31 @@
 ---
 import DataTable from './data-table.astro';
 import ChartFrame from './chart-frame.astro';
+import RefLineLegend from './ref-line-legend.astro';
+import ChartHeading from './chart-heading.astro';
 import { linearRegressionRowsY } from '@tanstack/charts/regression';
 import { MONTHLY_DETECTIONS_CHART } from './data';
 
-const {
-	id,
-	title,
-	caption,
-	points,
-	months,
-	tickMonths,
-	niceMax,
-	yTicks,
-	total,
-	tableRows,
-} = MONTHLY_DETECTIONS_CHART;
+const legendItems = [
+	{ label: 'detections', color: 'var(--color-chart-primary)' },
+	{
+		label: 'linear trend',
+		color: 'var(--color-chart-tertiary)',
+		dash: '2 5',
+	},
+];
+
+const { id, title, caption, rows } = MONTHLY_DETECTIONS_CHART;
+
+// `combined` is this chart's own rendering choice (a summed line), not a
+// fact about the data -- rows only carries organic/backfill/tea.xyz apart.
+const points = rows.map((d) => ({
+	m: d.m,
+	other: d.other,
+	backfill: d.backfill,
+	combined: d.other + d.backfill,
+}));
+const total = points.reduce((sum, d) => sum + d.combined, 0);
 
 // Computed at build time, not in the client bundle -- linearRegressionRowsY
 // is pure math (no DOM), and a straight line only needs its two endpoints,
@@ -30,6 +40,25 @@ const trend = trendRows.map((row) => ({
 	m: points[Math.round(row.x)]!.m,
 	trend: row.y,
 }));
+
+const months = points.map((d) => d.m);
+// Every 4th month label -- all of them would overlap at this width.
+const tickMonths = months.filter((_, i) => i % 4 === 0);
+const monthlyMax = Math.max(...points.map((d) => d.combined));
+// Rounded up to the next power of 10 -- a log axis reads best with
+// power-of-10 gridlines.
+const niceMax = 10 ** Math.ceil(Math.log10(monthlyMax));
+// [1, 10, ..., niceMax] -- explicit power-of-10 ticks for the log axis.
+const yTicks = Array.from(
+	{ length: Math.log10(niceMax) + 1 },
+	(_, i) => 10 ** i,
+);
+const tableRows = rows.map((d) => [
+	d.m,
+	d.other.toLocaleString(),
+	d.backfill.toLocaleString(),
+	d.tea.toLocaleString(),
+]);
 
 const CHART_HEIGHT = 300;
 
@@ -52,50 +81,12 @@ const config = {
 	caption={caption}
 >
 	<Fragment slot="header">
-		<p class="text-foreground-secondary font-mono text-base">{title}</p>
-		<p class="text-foreground-secondary mt-0.5 font-mono text-sm">
-			n = {total.toLocaleString()} detections
-		</p>
+		<ChartHeading
+			title={title}
+			subtitle={`n = ${total.toLocaleString()} detections`}
+		/>
 	</Fragment>
-	<ul
-		class="text-foreground-secondary mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-sm"
-	>
-		<li class="flex items-center gap-1.5">
-			<svg
-				width="20"
-				height="8"
-				aria-hidden="true"
-			>
-				<line
-					x1="0"
-					y1="4"
-					x2="20"
-					y2="4"
-					stroke="var(--color-chart-primary)"
-					stroke-width="3"
-				></line>
-			</svg>
-			<span>detections</span>
-		</li>
-		<li class="flex items-center gap-1.5">
-			<svg
-				width="20"
-				height="8"
-				aria-hidden="true"
-			>
-				<line
-					x1="0"
-					y1="4"
-					x2="20"
-					y2="4"
-					stroke="var(--color-chart-tertiary)"
-					stroke-width="3"
-					stroke-dasharray="2 5"
-				></line>
-			</svg>
-			<span>linear trend</span>
-		</li>
-	</ul>
+	<RefLineLegend items={legendItems} />
 </ChartFrame>
 
 <DataTable

@@ -95,16 +95,6 @@ const MONTHLY_VOLUME = [
 // everything after -- a log axis fit to the real data would clip them at the
 // floor anyway, so they're dropped here rather than plotted misleadingly.
 const MONTHLY_DETECTIONS_DATA = MONTHLY_VOLUME.filter((d) => d.m >= '2022-02');
-const monthlyPoints = MONTHLY_DETECTIONS_DATA.map((d) => ({
-	m: d.m,
-	other: d.other,
-	backfill: d.backfill,
-	combined: d.other + d.backfill,
-}));
-const monthlyMax = Math.max(...monthlyPoints.map((d) => d.combined));
-// Rounded up to the next power of 10 -- a log axis reads best with
-// power-of-10 gridlines.
-const monthlyNiceMax = 10 ** Math.ceil(Math.log10(monthlyMax));
 
 // ---- Chart metadata: one object per chart component, pre-shaped so the
 // component only has to serialize it, not reshape it. ----
@@ -140,21 +130,5 @@ export const MONTHLY_DETECTIONS_CHART = {
 	// month combined, and covered separately in the DataTable and prose.
 	caption:
 		'Excludes the tea.xyz reward-farming campaign (140,728 records in November 2025 alone) -- an order of magnitude larger than every other month combined.',
-	points: monthlyPoints,
-	months: monthlyPoints.map((d) => d.m),
-	// Every 4th month label -- all of them would overlap at this width.
-	tickMonths: monthlyPoints.filter((_, i) => i % 4 === 0).map((d) => d.m),
-	niceMax: monthlyNiceMax,
-	// [1, 10, ..., niceMax] -- explicit power-of-10 ticks for the log axis.
-	yTicks: Array.from(
-		{ length: Math.log10(monthlyNiceMax) + 1 },
-		(_, i) => 10 ** i,
-	),
-	total: monthlyPoints.reduce((sum, d) => sum + d.combined, 0),
-	tableRows: MONTHLY_DETECTIONS_DATA.map((d) => [
-		d.m,
-		d.other.toLocaleString(),
-		d.backfill.toLocaleString(),
-		d.tea.toLocaleString(),
-	]),
+	rows: MONTHLY_DETECTIONS_DATA,
 };
