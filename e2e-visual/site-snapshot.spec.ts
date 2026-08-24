@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { readdirSync, statSync } from 'node:fs';
+import { globSync } from 'node:fs';
 import { join } from 'node:path';
 import { AxeBuilder } from '@axe-core/playwright';
 
@@ -15,17 +15,10 @@ const CURATED_ROUTES = [
 const DIST_DIR = join(import.meta.dirname, '..', 'dist');
 const EXCLUDED_PREFIXES = ['/test-fixtures', '/passwords.txt', '/projects'];
 
-function discoverRoutes(dir: string, base = ''): string[] {
-	const routes: string[] = [];
-	for (const entry of readdirSync(dir)) {
-		const full = join(dir, entry);
-		if (statSync(full).isDirectory()) {
-			routes.push(...discoverRoutes(full, `${base}/${entry}`));
-		} else if (entry === 'index.html') {
-			routes.push(base === '' ? '/' : base);
-		}
-	}
-	return routes;
+function discoverRoutes(dir: string): string[] {
+	return globSync('**/index.html', { cwd: dir }).map(
+		(match) => `/${match.replace(/index\.html$/u, '').replace(/\/$/u, '')}`,
+	);
 }
 
 const allRoutes = discoverRoutes(DIST_DIR).filter(
