@@ -23,10 +23,10 @@ const question = questions[index]!;
 			class="w-full pb-4 text-xl"
 			aria-live="polite"
 		>
-			<h2 class="text-2xl font-semibold">JSON WTF</h2>
+			<h1 class="text-2xl font-semibold">JSON WTF</h1>
 			<div id="starting-explanation">
 				<p>{DESCRIPTION}</p>
-				<h3>What you're getting yourself into</h3>
+				<h2>What you're getting yourself into</h2>
 				<p>You will have three options for each JSON snippet</p>
 				<ul>
 					<li>
@@ -54,7 +54,7 @@ const question = questions[index]!;
 				class="hidden"
 				id="question-container"
 			>
-				<h3 id="question">question {index + 1} of {questions.length}</h3>
+				<h2 id="question">question {index + 1} of {questions.length}</h2>
 				<Code
 					id="question-code"
 					code={question.json}

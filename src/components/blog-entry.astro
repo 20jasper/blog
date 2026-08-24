@@ -17,7 +17,7 @@ const { slug, title, date, tags } = Astro.props;
 	href={`/blog/${slug}`}
 	class="block"
 >
-	<h4 class="leading-none">{title}</h4>
+	<h3 class="leading-none">{title}</h3>
 </a>
 <div class="text-foreground-secondary m-0 pt-2">
 	{tags.length > 0 && <TagsList tags={tags} />}

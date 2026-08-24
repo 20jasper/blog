@@ -6,9 +6,11 @@ type Props = {
 };
 
 const { border } = Astro.props;
+const label =
+	border === 'bottom' ? 'site navigation' : 'site navigation (footer)';
 ---
 
-<nav aria-label="site navigation">
+<nav aria-label={label}>
 	<ul class="mx-auto flex justify-center">
 		<li class="px-2 py-4">
 			<NavLink

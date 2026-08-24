@@ -357,7 +357,7 @@ Benchmarks converting a string into an AST
 
 "dense floats" pays for the extra unused token per number, but "many objects and integers" and "strings and deep nesting" have massive improvements due to converting `Cow` to `str`
 
-|                           | baseline (MB/s) | new (MB/s) | delta  |
+| benchmark                 | baseline (MB/s) | new (MB/s) | delta  |
 | ------------------------- | --------------- | ---------- | ------ |
 | dense floats              | 115.6           | 111.3      | -3.7%  |
 | many objects and integers | 385.5           | 456.9      | +18.5% |
@@ -369,7 +369,7 @@ Benchmarks serializing AST into a human readable string
 
 "dense floats" suffered the most for a branch on each `Number` to check if an exponent is available to print. Other datasets are flat
 
-|                           | baseline (MB/s) | new (MB/s) | delta |
+| benchmark                 | baseline (MB/s) | new (MB/s) | delta |
 | ------------------------- | --------------- | ---------- | ----- |
 | dense floats              | 1424.7          | 1332.0     | -6.5% |
 | many objects and integers | 1853.2          | 1845.3     | -0.4% |
@@ -381,7 +381,7 @@ Converts a string into tokens and serializes into a compact string
 
 Big improvements across the board. Avoids building a syntax tree, so serialization avoids branching with formatting like with AST to string paths
 
-|                           | baseline (MB/s) | new (MB/s) | delta  |
+| benchmark                 | baseline (MB/s) | new (MB/s) | delta  |
 | ------------------------- | --------------- | ---------- | ------ |
 | dense floats              | 198.9           | 251.2      | +26.3% |
 | many objects and integers | 449.8           | 630.4      | +40.2% |

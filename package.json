@@ -11,7 +11,9 @@
 		"format": "prettier ./ --write",
 		"format:check": "prettier ./ --check",
 		"lint:links": "remark 'src/content/blog/**/*.md' --quiet --frail && remark 'src/content/blog/**/*.mdx' --quiet --frail --use remark-mdx",
-		"lint": "astro check && oxlint --type-aware --deny-warnings . && pnpm run lint:links"
+		"lint": "astro check && oxlint --type-aware --deny-warnings . && pnpm run lint:links",
+		"test:visual:docker": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
+		"test:visual:docker:update": "HOST_UID=$(id -u) HOST_GID=$(id -g) PLAYWRIGHT_ARGS=--update-snapshots docker compose run --rm visual-tests"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.10",
@@ -31,6 +33,8 @@
 		"typescript": "^6.0.2"
 	},
 	"devDependencies": {
+		"@axe-core/playwright": "^4.13.0",
+		"@playwright/test": "^1.62.1",
 		"feed": "^6.0.0",
 		"knip": "^6.32.0",
 		"lefthook": "^2.1.3",
