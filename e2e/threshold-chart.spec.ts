@@ -9,10 +9,10 @@ const REF_LINE_INDEX = PUBLISH_TO_YANK_CHART.refLines!.findIndex(
 	(r) => r.hours === 24,
 );
 const REF_LINE = PUBLISH_TO_YANK_CHART.refLines![REF_LINE_INDEX]!;
-const POINT_24H = YANK_DATA.find((d) => d.h === 24)!;
-const POINT_24H_INDEX = YANK_DATA.findIndex((d) => d.h === 24);
+const POINT_24H = YANK_DATA.find((d) => d.hours === 24)!;
+const POINT_24H_INDEX = YANK_DATA.findIndex((d) => d.hours === 24);
 
-const expectedTooltip = `${REF_LINE.label} (24h) — ${PUBLISH_TO_YANK_CHART.tooltipVerb} ${POINT_24H.pct}% (${POINT_24H.n.toLocaleString()} of ${PUBLISH_TO_YANK_CHART.total.toLocaleString()})`;
+const expectedTooltip = `${REF_LINE.label} (24h) — ${PUBLISH_TO_YANK_CHART.tooltipVerb} ${POINT_24H.percentRemoved}% (${POINT_24H.count.toLocaleString()} of ${PUBLISH_TO_YANK_CHART.total.toLocaleString()})`;
 
 // Focus starts on the first line point (h=1); ArrowRight steps through the
 // rest in data order.
@@ -114,7 +114,7 @@ test.describe('threshold chart 0h ref line', () => {
 			(r) => r.hours === 0,
 		);
 		const point1h = YANK_DATA[0]!;
-		const expected = `${zeroHourLine.label} (0h) — ${PUBLISH_TO_YANK_CHART.tooltipVerb} ${point1h.pct}% (${point1h.n.toLocaleString()} of ${PUBLISH_TO_YANK_CHART.total.toLocaleString()})`;
+		const expected = `${zeroHourLine.label} (0h) — ${PUBLISH_TO_YANK_CHART.tooltipVerb} ${point1h.percentRemoved}% (${point1h.count.toLocaleString()} of ${PUBLISH_TO_YANK_CHART.total.toLocaleString()})`;
 
 		const svg = page.locator(`#${CONTAINER_ID} svg`);
 		await svg.focus();

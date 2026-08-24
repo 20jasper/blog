@@ -5,22 +5,9 @@ import RefLineLegend from './ref-line-legend.astro';
 import ChartFrame from './chart-frame.astro';
 import ChartHeading from './chart-heading.astro';
 import { REF_LINE_STYLES } from './theme';
+import { formatThresholdHours } from './data';
+import type { ThresholdChart } from './data';
 
-type ThresholdPoint = { h: number; label: string; pct: number; n: number };
-
-type ThresholdChart = {
-	id: string;
-	title: string;
-	alt?: string;
-	data: ThresholdPoint[];
-	total: number;
-	tooltipVerb: string;
-	unitNoun: string;
-	xColumnLabel: string;
-	yColumnLabel: string;
-	valueColumnLabel: string;
-	refLines?: { hours: number; label: string }[];
-};
 type Props = { chart: ThresholdChart };
 const {
 	id,
@@ -84,7 +71,11 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 		{ label: valueColumnLabel },
 		{ label: 'n' },
 	]}
-	rows={data.map((d) => [d.label, `${d.pct}%`, d.n.toLocaleString()])}
+	rows={data.map((d) => [
+		formatThresholdHours(d.hours),
+		`${d.percentRemoved}%`,
+		d.count.toLocaleString(),
+	])}
 />
 
 <script>
@@ -101,20 +92,10 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 	import { scaleLog } from 'd3-scale';
 	import { REF_LINE_STYLES } from './theme';
 	import { createRuleXFocusHandler, BASE_FONT_PX } from './chart-utils';
+	import { formatThresholdHours } from './data';
+	import type { ThresholdChart, ThresholdPoint } from './data';
 
-	type ThresholdPoint = { h: number; label: string; pct: number; n: number };
-	type Config = {
-		title: string;
-		alt?: string;
-		data: ThresholdPoint[];
-		total: number;
-		tooltipVerb: string;
-		unitNoun: string;
-		xColumnLabel: string;
-		yColumnLabel: string;
-		refLines?: { hours: number; label: string }[];
-		height: number;
-	};
+	type Config = ThresholdChart & { height: number };
 
 	const LOG_HOURS = [2, 6, 24, 72, 168, 336, 720];
 	const LINEAR_HOURS = [24, 72, 168, 336, 528, 720];
@@ -169,7 +150,6 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 		>,
 	) {
 		const { total, tooltipVerb, xColumnLabel, yColumnLabel, data } = config;
-		const labelByHour = new Map(data.map((d) => [d.h, d.label]));
 		const tickHours = scaleType === 'logarithmic' ? LOG_HOURS : LINEAR_HOURS;
 
 		// Built as one array (not mutated via push) so TypeScript infers the
@@ -195,15 +175,15 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 			// anchor at every x, so keyboard/pointer nav needs two steps per point.
 			decorative(
 				areaY(data, {
-					x: 'h',
-					y: 'pct',
+					x: 'hours',
+					y: 'percentRemoved',
 					fillOpacity: 0.13,
 					fill: 'var(--ts-chart-1)',
 				}),
 			),
 			lineY(data, {
-				x: 'h',
-				y: 'pct',
+				x: 'hours',
+				y: 'percentRemoved',
 				stroke: 'var(--ts-chart-1)',
 				strokeWidth: 2,
 			}),
@@ -218,7 +198,7 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 					label: { text: xColumnLabel, fontSize: BASE_FONT_PX },
 					ticks: {
 						values: tickHours,
-						format: (h: number) => labelByHour.get(h) ?? `${h}h`,
+						format: formatThresholdHours,
 					},
 					tickLabels: { fontSize: BASE_FONT_PX },
 				},
@@ -241,9 +221,9 @@ const legendItems = (refLines ?? []).map((rl, i) => ({
 					if (refLine) {
 						// refLine.label already reads as "X default" -- the hour is
 						// already stated once, no need twice.
-						return `${refLine.label} (${refLine.hours}h) — ${tooltipVerb} ${d.pct}% (${d.n.toLocaleString()} of ${total.toLocaleString()})`;
+						return `${refLine.label} (${refLine.hours}h) — ${tooltipVerb} ${d.percentRemoved}% (${d.count.toLocaleString()} of ${total.toLocaleString()})`;
 					}
-					return `${tooltipVerb} < ${d.label}: ${d.pct}% (${d.n.toLocaleString()} of ${total.toLocaleString()})`;
+					return `${tooltipVerb} < ${formatThresholdHours(d.hours)}: ${d.percentRemoved}% (${d.count.toLocaleString()} of ${total.toLocaleString()})`;
 				},
 			},
 		});

@@ -111,8 +111,15 @@ const config = {
 		BASE_FONT_PX,
 	} from './chart-utils';
 
+	type MonthlyPoint = {
+		m: string;
+		other: number;
+		backfill: number;
+		combined: number;
+	};
+
 	type Config = {
-		points: { m: string; other: number; backfill: number; combined: number }[];
+		points: MonthlyPoint[];
 		trend: { m: string; trend: number }[];
 		months: string[];
 		tickMonths: string[];
@@ -179,12 +186,7 @@ const config = {
 					tooltip: {
 						use: tooltip,
 						format: (point) => {
-							const d = point.datum as {
-								m: string;
-								other: number;
-								backfill: number;
-								combined: number;
-							};
+							const d = point.datum as MonthlyPoint;
 							const suffix =
 								d.backfill > 0
 									? ` (${d.other.toLocaleString()} organic + ${d.backfill.toLocaleString()} backfill)`
