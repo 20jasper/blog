@@ -1,7 +1,31 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { globSync } from 'node:fs';
 import { join } from 'node:path';
 import { AxeBuilder } from '@axe-core/playwright';
+
+async function forceLoadLazyImages(page: Page): Promise<void> {
+	await page.evaluate(async () => {
+		const promises: Promise<unknown>[] = [];
+		for (const image of Array.from(
+			document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]'),
+		)) {
+			image.setAttribute('loading', 'eager');
+			image.setAttribute('decoding', 'sync');
+			image.loading = 'eager';
+			image.decoding = 'sync';
+			const { src } = image;
+			image.src = '';
+			image.src = src;
+			const { promise, resolve, reject } = Promise.withResolvers();
+			image.addEventListener('load', resolve, { once: true });
+			image.addEventListener('error', reject, { once: true });
+			promises.push(promise);
+		}
+		await Promise.all(promises);
+	});
+
+	await page.waitForLoadState('networkidle');
+}
 
 const CURATED_ROUTES = [
 	'/blog',
@@ -29,7 +53,8 @@ test.describe('visual regression (curated pages)', () => {
 	for (const route of CURATED_ROUTES) {
 		test(`${route} matches its baseline`, async ({ page }) => {
 			await page.goto(route);
-			await page.waitForLoadState('networkidle');
+			// wait for page to load and images to decode
+			await forceLoadLazyImages(page);
 			await expect(page).toHaveScreenshot(
 				`${route === '/' ? 'home' : route.replaceAll('/', '_')}.png`,
 				{ fullPage: true, animations: 'disabled' },
