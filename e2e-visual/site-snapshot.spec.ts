@@ -1,8 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-// oxlint-disable-next-line no-named-as-default
-import AxeBuilder from '@axe-core/playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 
 const CURATED_ROUTES = [
 	'/blog',

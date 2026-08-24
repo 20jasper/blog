@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
 	testDir: './e2e-visual',
@@ -14,4 +14,10 @@ export default defineConfig({
 	expect: {
 		timeout: 15_000,
 	},
+	projects: [
+		{ name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
+		{ name: 'chromium-mobile', use: { ...devices['Pixel 7'] } },
+		{ name: 'webkit-desktop', use: { ...devices['Desktop Safari'] } },
+		{ name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },
+	],
 });
