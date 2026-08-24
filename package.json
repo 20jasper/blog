@@ -5,12 +5,13 @@
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
-		"build": "astro check && astro build",
+		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
 		"format": "prettier ./ --write",
 		"format:check": "prettier ./ --check",
-		"lint": "astro check && oxlint --type-aware --deny-warnings ."
+		"lint:links": "remark 'src/content/blog/**/*.md' --quiet --frail && remark 'src/content/blog/**/*.mdx' --quiet --frail --use remark-mdx",
+		"lint": "astro check && oxlint --type-aware --deny-warnings . && pnpm run lint:links"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.10",
@@ -37,7 +38,12 @@
 		"oxlint-tsgolint": "^7.0.2001",
 		"prettier": "^3.9.5",
 		"prettier-plugin-astro": "^0.14.1",
-		"prettier-plugin-tailwindcss": "^0.8.0"
+		"prettier-plugin-tailwindcss": "^0.8.0",
+		"remark-cli": "^12.0.1",
+		"remark-frontmatter": "^5.0.0",
+		"remark-gfm": "^4.0.1",
+		"remark-mdx": "^3.1.1",
+		"remark-validate-links": "^13.1.0"
 	},
 	"engines": {
 		"node": ">=24",
