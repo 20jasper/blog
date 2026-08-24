@@ -8,10 +8,10 @@ type Props = Book;
 const { title, readDate, author, rating } = Astro.props;
 ---
 
-<h4 class="leading-none">
+<h3 class="leading-none">
 	<cite>{title}</cite>
 	{` by ${author}`}
-</h4>
+</h3>
 {
 	readDate.start !== null && (
 		<div class="text-foreground-secondary flex flex-col justify-between pt-1 sm:flex-row">

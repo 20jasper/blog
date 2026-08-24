@@ -1,0 +1,21 @@
+services:
+  visual-tests:
+    build: .
+    init: true
+    ipc: host
+    environment:
+      CI: 'true'
+      HOST_UID: '${HOST_UID:-1000}'
+      HOST_GID: '${HOST_GID:-1000}'
+      PLAYWRIGHT_ARGS: '${PLAYWRIGHT_ARGS:-}'
+    volumes:
+      - ./e2e-visual:/app/e2e-visual
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
+    entrypoint: ['/bin/bash', '-c']
+    command:
+      - >
+        pnpm exec playwright test --config=playwright.docker.config.ts $$PLAYWRIGHT_ARGS;
+        code=$$?;
+        chown -R "$$HOST_UID:$$HOST_GID" e2e-visual playwright-report test-results;
+        exit $$code
