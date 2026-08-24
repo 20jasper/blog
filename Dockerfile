@@ -8,6 +8,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_26.x | bash - \
 	&& corepack enable && corepack prepare pnpm@11.23.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY patches ./patches
 RUN pnpm install --frozen-lockfile
 
 COPY . .

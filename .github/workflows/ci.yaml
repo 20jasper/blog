@@ -36,6 +36,36 @@ jobs:
           GOOGLE_ANALYTICS_ID: 12345
         run: pnpm run build
 
+  chart-e2e:
+    name: chart e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: 'package.json'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm i
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run chart e2e tests
+        run: pnpm run test:e2e
+        env:
+          CI: true
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
   visual-regression:
     name: visual regression (docker)
     runs-on: ubuntu-latest
