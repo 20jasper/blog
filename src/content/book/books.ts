@@ -229,7 +229,19 @@ export const booksStarted: Book[] = [
 	{
 		title: "The Staff Engineer's Path",
 		author: 'Tanya Reilly',
-		readDate: { start: new Date('2026-5-14'), end: null },
+		readDate: { start: new Date('2026-5-14'), end: new Date('2026-7-11') },
+		rating: 5,
+	},
+	{
+		title: 'Building Evolutionary Architectures: Support Constant Change',
+		author: 'Neal Ford, Patrick Kua, and Rebecca Parsons',
+		readDate: { start: new Date('2026-8-20'), end: null },
+		rating: null,
+	},
+	{
+		title: 'Advanced Rust',
+		author: 'Nouman Azam',
+		readDate: { start: new Date('2026-8-26'), end: null },
 		rating: null,
 	},
 ].toSorted(Order.combine(byDateDesc('end'), byDateDesc('start')));
