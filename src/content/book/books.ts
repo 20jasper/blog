@@ -244,6 +244,12 @@ export const booksStarted: Book[] = [
 		readDate: { start: new Date('2026-8-26'), end: null },
 		rating: null,
 	},
+	{
+		title: 'Learning Domain-Driven Design',
+		author: 'Vlad Khononov',
+		readDate: { start: new Date('2026-8-28'), end: null },
+		rating: null,
+	},
 ].toSorted(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
 type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
