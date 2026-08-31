@@ -6,14 +6,13 @@ import {
 	NAME,
 } from '@src/consts';
 import { Feed } from 'feed';
-import { cache } from '@src/utils/cache';
 import { getPostsDescending } from '@services/posts';
 import { feedItem } from '@content/questions/questions';
 import { Order } from 'effect';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
 
-export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
+export const getFeed = async (baseUrl: string): Promise<Feed> => {
 	const posts = await getPostsDescending();
 
 	const feed = new Feed({
@@ -47,4 +46,4 @@ export const getFeed = cache(async (baseUrl: string): Promise<Feed> => {
 	});
 
 	return feed;
-});
+};
