@@ -15,20 +15,20 @@ test('heading has a stable id and an anchor link pointing to it', async ({
 	await expect(anchor).toHaveAttribute('href', `#${HEADING_ID}`);
 });
 
-test('anchor is hidden until the heading is hovered', async ({ page }) => {
+test('anchor is always visible and underlined like a normal link', async ({
+	page,
+}) => {
 	await page.goto(POST);
 
 	const anchor = page.locator(`#${HEADING_ID} a.heading-anchor`);
-	await expect(anchor).toHaveCSS('opacity', '0');
-
-	await page.locator(`#${HEADING_ID}`).hover();
+	await expect(anchor).toBeVisible();
 	await expect(anchor).toHaveCSS('opacity', '1');
+	await expect(anchor).toHaveCSS('text-decoration-line', 'underline');
 });
 
 test('clicking the anchor updates the URL hash', async ({ page }) => {
 	await page.goto(POST);
 
-	await page.locator(`#${HEADING_ID}`).hover();
 	await page.locator(`#${HEADING_ID} a.heading-anchor`).click();
 
 	await expect(page).toHaveURL(new RegExp(`#${HEADING_ID}$`, 'u'));
