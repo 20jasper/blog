@@ -4,6 +4,11 @@ import BaseLayout from '@layouts/base-layout.astro';
 import Book from '@components/book.astro';
 
 import { booksStarted, booksToRead } from '@content/book/books';
+
+const sections = [
+	{ title: "Books I've started", books: booksStarted },
+	{ title: 'Books I want to read', books: booksToRead },
+];
 ---
 
 <BaseLayout
@@ -25,39 +30,24 @@ import { booksStarted, booksToRead } from '@content/book/books';
 			understandability, vibes, and so on. A low score doesn't mean I think a
 			book isn't worth reading!
 		</p>
-		<section class="py-6">
-			<h2 class="mb-4 text-2xl font-semibold">Books I've started</h2>
-			<ul class="flex flex-col gap-8">
-				{
-					booksStarted.map(({ title, readDate, author, rating }) => (
-						<li>
-							<Book
-								title={title}
-								readDate={readDate}
-								author={author}
-								rating={rating}
-							/>
-						</li>
-					))
-				}
-			</ul>
-		</section>
-		<section class="py-6">
-			<h2 class="mb-4 text-2xl font-semibold">Books I want to read</h2>
-			<ul class="flex flex-col gap-8">
-				{
-					booksToRead.map(({ title, readDate, author, rating }) => (
-						<li>
-							<Book
-								title={title}
-								readDate={readDate}
-								author={author}
-								rating={rating}
-							/>
-						</li>
-					))
-				}
-			</ul>
-		</section>
+		{
+			sections.map(({ title, books }) => (
+				<section class="py-6">
+					<h2 class="mb-4 text-2xl font-semibold">{title}</h2>
+					<ul class="flex flex-col gap-8">
+						{books.map(({ title: bookTitle, readDate, author, rating }) => (
+							<li>
+								<Book
+									title={bookTitle}
+									readDate={readDate}
+									author={author}
+									rating={rating}
+								/>
+							</li>
+						))}
+					</ul>
+				</section>
+			))
+		}
 	</main>
 </BaseLayout>
