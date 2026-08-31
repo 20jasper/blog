@@ -1,0 +1,151 @@
+---
+import BaseLayout from '@layouts/base-layout.astro';
+import QuizUi from './quiz.ui.astro';
+import {
+	questions,
+	options,
+	TITLE,
+	DESCRIPTION,
+} from '@content/questions/questions';
+
+const index = 0;
+const question = questions[index]!;
+---
+
+<BaseLayout
+	title={TITLE}
+	description={DESCRIPTION}
+>
+	<QuizUi
+		description={DESCRIPTION}
+		question={question}
+		index={index}
+		totalQuestions={questions.length}
+		options={options}
+	/>
+	<script>
+		import {
+			JSONWTF_BASE_URL,
+			questions,
+			type Option,
+		} from '@content/questions/questions';
+
+		let index = 0;
+		let correctAnswers = 0;
+
+		const elements = {
+			options: document.querySelector('#options')!,
+			next: document.querySelector('#next')!,
+			question: document.querySelector('#question')!,
+			questionCode: document.querySelector('#question-code')!,
+			explanation: document.querySelector('#explanation')!,
+			citation: document.querySelector('#citation')!,
+			citationLink: document.querySelector(
+				'#citation-link',
+			) as HTMLAnchorElement,
+			startScreen: document.querySelector('#starting-explanation')!,
+			startButton: document.querySelector('#start-quiz')!,
+			explanationContainer: document.querySelector('#explanation-container')!,
+
+			validOrNot: document.querySelector('#valid-or-not')!,
+			finalScoreContainer: document.querySelector('#final-score-container')!,
+			finalScore: document.querySelector('#final-score')!,
+			questionContainer: document.querySelector('#question-container')!,
+		};
+
+		const onClick = (event: Event) => {
+			console.log('option clicked');
+			const question = questions[index];
+			if (!question) throw new Error('No question found');
+
+			const target = event.target as Element | null;
+			const selected = target?.id;
+			if (selected === question.answer) {
+				correctAnswers += 1;
+			}
+
+			const validOrNotText = `${
+				selected === question.answer ? 'Correct ✅' : 'Wrong ❌'
+			}: ${getValidOrNotText(question.answer)}`;
+			elements.validOrNot.textContent = validOrNotText;
+			elements.explanationContainer.classList.remove('invisible');
+			elements.options.classList.add('hidden');
+			elements.next.classList.remove('hidden');
+		};
+		elements.options.addEventListener('click', onClick);
+
+		elements.startButton.addEventListener('click', () => {
+			index = 0;
+			correctAnswers = 0;
+			elements.startScreen.classList.add('hidden');
+			elements.questionContainer.classList.remove('hidden');
+			renderQuestion(index);
+		});
+
+		elements.next.addEventListener('click', () => {
+			console.log('next clicked');
+			index += 1;
+			elements.next.classList.add('hidden');
+			elements.options.classList.remove('hidden');
+
+			const question = questions[index];
+			if (!question) {
+				elements.questionContainer.classList.add('hidden');
+				elements.finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on ${JSONWTF_BASE_URL} and all I got was this lousy text to share on social media`;
+				elements.finalScoreContainer.classList.remove('hidden');
+				return;
+			}
+
+			renderQuestion(index);
+		});
+
+		function createExplanationFragment(text: string) {
+			const frag = document.createDocumentFragment();
+			const re = /`([^`]+)`/gu;
+			let lastIndex = 0;
+			let match: RegExpExecArray | null;
+			while ((match = re.exec(text)) !== null) {
+				if (match.index > lastIndex) {
+					frag.append(
+						document.createTextNode(text.slice(lastIndex, match.index)),
+					);
+				}
+				const code = document.createElement('code');
+				code.textContent = match[1] ?? '';
+				frag.append(code);
+				lastIndex = match.index + match[0].length;
+			}
+			if (lastIndex < text.length) {
+				frag.append(document.createTextNode(text.slice(lastIndex)));
+			}
+			return frag;
+		}
+
+		function renderQuestion(questionIndex: number) {
+			const question = questions[questionIndex];
+			if (!question) throw new Error('No question found');
+			elements.question.textContent = `question ${questionIndex + 1} of ${questions.length}`;
+			elements.questionCode.textContent = question.json;
+			elements.explanation.replaceChildren(
+				createExplanationFragment(question.explanation),
+			);
+
+			elements.citationLink.href = question.citation;
+			elements.citationLink.textContent = question.citationLabel;
+			elements.explanationContainer.classList.add('invisible');
+		}
+
+		function getValidOrNotText(option: Option): string {
+			switch (option) {
+				case 'valid':
+					return 'This is valid';
+				case 'invalid':
+					return 'This is invalid';
+				case 'maybe valid':
+					return 'This may be valid';
+				default:
+					throw new Error('Unknown option');
+			}
+		}
+	</script>
+</BaseLayout>
