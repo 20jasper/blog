@@ -28,36 +28,77 @@ const question = questions[index]!;
 			JSONWTF_BASE_URL,
 			questions,
 			type Option,
+			type Question,
 		} from '@content/questions/questions';
 
 		let index = 0;
 		let correctAnswers = 0;
 
-		const elements = {
-			options: document.querySelector('#options')!,
-			next: document.querySelector('#next')!,
-			question: document.querySelector('#question')!,
-			questionCode: document.querySelector('#question-code')!,
-			explanation: document.querySelector('#explanation')!,
-			citation: document.querySelector('#citation')!,
-			citationLink: document.querySelector(
-				'#citation-link',
-			) as HTMLAnchorElement,
-			startScreen: document.querySelector('#starting-explanation')!,
-			startButton: document.querySelector('#start-quiz')!,
-			explanationContainer: document.querySelector('#explanation-container')!,
+		const mount = document.querySelector('#quiz-mount')!;
+		const questionTemplate =
+			document.querySelector<HTMLTemplateElement>('#question-template')!;
+		const finalScoreTemplate = document.querySelector<HTMLTemplateElement>(
+			'#final-score-template',
+		)!;
+		const startScreen = document.querySelector('#starting-explanation')!;
+		const startButton = document.querySelector('#start-quiz')!;
 
-			validOrNot: document.querySelector('#valid-or-not')!,
-			finalScoreContainer: document.querySelector('#final-score-container')!,
-			finalScore: document.querySelector('#final-score')!,
-			questionContainer: document.querySelector('#question-container')!,
-		};
+		startButton.addEventListener('click', () => {
+			index = 0;
+			correctAnswers = 0;
+			startScreen.classList.add('hidden');
+			renderQuestion(index);
+		});
 
-		const onClick = (event: Event) => {
-			console.log('option clicked');
-			const question = questions[index];
-			if (!question) throw new Error('No question found');
+		function renderQuestion(questionIndex: number) {
+			const question = questions[questionIndex];
+			if (!question) {
+				renderFinalScore();
+				return;
+			}
 
+			mount.replaceChildren(questionTemplate.content.cloneNode(true));
+
+			const elements = {
+				options: mount.querySelector('#options')!,
+				next: mount.querySelector('#next')!,
+				question: mount.querySelector('#question')!,
+				questionCode: mount.querySelector('#question-code')!,
+				explanation: mount.querySelector('#explanation')!,
+				citationLink: mount.querySelector(
+					'#citation-link',
+				) as HTMLAnchorElement,
+				explanationContainer: mount.querySelector('#explanation-container')!,
+				validOrNot: mount.querySelector('#valid-or-not')!,
+			};
+
+			elements.question.textContent = `question ${questionIndex + 1} of ${questions.length}`;
+			elements.questionCode.textContent = question.json;
+			elements.explanation.replaceChildren(
+				createExplanationFragment(question.explanation),
+			);
+			elements.citationLink.href = question.citation;
+			elements.citationLink.textContent = question.citationLabel;
+
+			elements.options.addEventListener('click', (event) =>
+				onOptionSelected(event, question, elements),
+			);
+			elements.next.addEventListener('click', () => {
+				index += 1;
+				renderQuestion(index);
+			});
+		}
+
+		function onOptionSelected(
+			event: Event,
+			question: Question,
+			elements: {
+				validOrNot: Element;
+				explanationContainer: Element;
+				options: Element;
+				next: Element;
+			},
+		) {
 			const target = event.target as Element | null;
 			const selected = target?.id;
 			if (selected === question.answer) {
@@ -71,33 +112,13 @@ const question = questions[index]!;
 			elements.explanationContainer.classList.remove('invisible');
 			elements.options.classList.add('hidden');
 			elements.next.classList.remove('hidden');
-		};
-		elements.options.addEventListener('click', onClick);
+		}
 
-		elements.startButton.addEventListener('click', () => {
-			index = 0;
-			correctAnswers = 0;
-			elements.startScreen.classList.add('hidden');
-			elements.questionContainer.classList.remove('hidden');
-			renderQuestion(index);
-		});
-
-		elements.next.addEventListener('click', () => {
-			console.log('next clicked');
-			index += 1;
-			elements.next.classList.add('hidden');
-			elements.options.classList.remove('hidden');
-
-			const question = questions[index];
-			if (!question) {
-				elements.questionContainer.classList.add('hidden');
-				elements.finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on ${JSONWTF_BASE_URL} and all I got was this lousy text to share on social media`;
-				elements.finalScoreContainer.classList.remove('hidden');
-				return;
-			}
-
-			renderQuestion(index);
-		});
+		function renderFinalScore() {
+			mount.replaceChildren(finalScoreTemplate.content.cloneNode(true));
+			const finalScore = mount.querySelector('#final-score')!;
+			finalScore.textContent = `I scored ${correctAnswers}/${questions.length} on ${JSONWTF_BASE_URL} and all I got was this lousy text to share on social media`;
+		}
 
 		function createExplanationFragment(text: string) {
 			const frag = document.createDocumentFragment();
@@ -119,20 +140,6 @@ const question = questions[index]!;
 				frag.append(document.createTextNode(text.slice(lastIndex)));
 			}
 			return frag;
-		}
-
-		function renderQuestion(questionIndex: number) {
-			const question = questions[questionIndex];
-			if (!question) throw new Error('No question found');
-			elements.question.textContent = `question ${questionIndex + 1} of ${questions.length}`;
-			elements.questionCode.textContent = question.json;
-			elements.explanation.replaceChildren(
-				createExplanationFragment(question.explanation),
-			);
-
-			elements.citationLink.href = question.citation;
-			elements.citationLink.textContent = question.citationLabel;
-			elements.explanationContainer.classList.add('invisible');
 		}
 
 		function getValidOrNotText(option: Option): string {
