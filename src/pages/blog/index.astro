@@ -1,7 +1,7 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION, ATOM_PATH, RSS_PATH } from '@src/consts';
 import BaseLayout from '@layouts/base-layout.astro';
-import { getPostsDescending } from '@src/utils/posts';
+import { getPostsDescending } from '@services/posts';
 import BlogList from '@components/blog-list.astro';
 
 const posts = await getPostsDescending();

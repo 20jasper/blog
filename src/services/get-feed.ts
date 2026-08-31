@@ -7,7 +7,7 @@ import {
 } from '@src/consts';
 import { Feed } from 'feed';
 import { cache } from '@src/utils/cache';
-import { getPostsDescending } from '@src/utils/posts';
+import { getPostsDescending } from '@services/posts';
 import { feedItem } from '@content/questions/questions';
 import { Order } from 'effect';
 
