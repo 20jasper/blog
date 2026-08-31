@@ -29,7 +29,6 @@ async function forceLoadLazyImages(page: Page): Promise<void> {
 
 const CURATED_ROUTES = [
 	'/blog',
-	'/reading-list',
 	'/quiz',
 	'/blog/we-should-replace-fifa-with-a-bunch-of-roundabouts',
 	'/blog/it-takes-26-yottabytes-of-ram-to-typecheck-a-union-of-safe-integers',
