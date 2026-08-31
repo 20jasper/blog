@@ -8,11 +8,12 @@ type Props = {
 	title: string;
 	description: string;
 	math?: boolean;
+	noindex?: boolean;
 };
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { math, title, description } = Astro.props;
+const { math, title, description, noindex } = Astro.props;
 ---
 
 <head>
@@ -61,6 +62,15 @@ const { math, title, description } = Astro.props;
 		name="description"
 		content={description}
 	/>
+
+	{
+		noindex && (
+			<meta
+				name="robots"
+				content="noindex, nofollow"
+			/>
+		)
+	}
 
 	<!-- Open Graph / Facebook -->
 	<meta

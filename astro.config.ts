@@ -60,6 +60,11 @@ export default defineConfig({
 	experimental: {
 		contentIntellisense: true,
 	},
-	integrations: [mdx(), sitemap()],
+	integrations: [
+		mdx(),
+		sitemap({
+			filter: (page) => !page.includes('/test-fixtures/'),
+		}),
+	],
 	vite: { plugins: [tailwind()] },
 });

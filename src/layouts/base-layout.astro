@@ -8,9 +8,10 @@ type Props = {
 	title: string;
 	description?: string;
 	math?: boolean;
+	noindex?: boolean;
 };
 
-const { math, title, description } = Astro.props;
+const { math, title, description, noindex } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,6 +20,7 @@ const { math, title, description } = Astro.props;
 		title={title}
 		description={description ?? ''}
 		math={math}
+		noindex={noindex}
 	/>
 
 	<body
