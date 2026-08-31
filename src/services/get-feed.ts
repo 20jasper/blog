@@ -7,10 +7,21 @@ import {
 } from '@src/consts';
 import { Feed } from 'feed';
 import { getPostsDescending } from '@services/posts';
-import { feedItem } from '@content/questions/questions';
+import {
+	TITLE as QUIZ_TITLE,
+	DESCRIPTION as QUIZ_DESCRIPTION,
+	JSONWTF_BASE_URL,
+} from '@content/questions/questions';
 import { Order } from 'effect';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
+
+const quizAnnouncement = {
+	title: QUIZ_TITLE,
+	description: QUIZ_DESCRIPTION,
+	link: JSONWTF_BASE_URL,
+	date: new Date('2026-1-3'),
+};
 
 export const getFeed = async (baseUrl: string): Promise<Feed> => {
 	const posts = await getPostsDescending();
@@ -38,7 +49,7 @@ export const getFeed = async (baseUrl: string): Promise<Feed> => {
 			link: `${baseUrl}/blog/${postId}/`,
 			date: new Date(data.pubDate),
 		})),
-		feedItem,
+		quizAnnouncement,
 	].toSorted(Order.mapInput(Order.reverse(Order.Date), ({ date }) => date));
 
 	items.forEach((x) => {
