@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@layouts/base-layout.astro';
+import Prose from '@components/prose.astro';
+
+type Props = {
+	frontmatter: {
+		title: string;
+		description: string;
+		math?: boolean;
+	};
+};
+
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout
+	title={frontmatter.title}
+	description={frontmatter.description}
+	math={frontmatter.math}
+	noindex
+>
+	<Prose>
+		<slot />
+	</Prose>
+</BaseLayout>

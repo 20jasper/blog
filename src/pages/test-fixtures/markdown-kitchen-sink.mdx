@@ -1,0 +1,152 @@
+---
+layout: '@layouts/test-fixture-layout.astro'
+title: 'Markdown Kitchen Sink'
+description: 'Not a real post. Exercises every markdown/rehype/remark feature the site supports.'
+math: true
+---
+
+import { Image } from 'astro:assets';
+import orangeHtml from '../../images/beatrice-and-cricket.webp';
+
+# You've found the super secret test page, don't tell anyone
+
+## Headings h2 through h6
+
+### Heading level 3
+
+#### Heading level 4
+
+##### Heading level 5
+
+###### Heading level 6
+
+#### `Array.prototype.length`
+
+Heading with inline code — slug should strip the backticks/dots but keep the `<code>` rendering.
+
+Every heading above should have a stable `id` (hover to reveal the `#` anchor link) — see
+[Heading anchors](#heading-anchors-section) below for a same-page hash link test.
+
+## Emphasis
+
+Plain text, _italic_, **bold**, **_bold italic_**, ~~strikethrough~~, and `inline code`.
+
+## Blockquotes
+
+> A single-level blockquote.
+>
+> > A nested blockquote inside it.
+
+## Lists
+
+Unordered:
+
+- First item
+- Second item
+  - Nested item
+  - Another nested item
+- Third item
+
+Ordered:
+
+1. First step
+2. Second step
+   1. Nested step
+   2. Another nested step
+3. Third step
+
+Task list (GFM):
+
+- [x] Completed task
+- [ ] Incomplete task
+
+## Code
+
+Inline: `const x = 1;`
+
+Fenced with a language (tests Shiki + the site's orange-theme):
+
+```ts
+type Question = {
+	json: string;
+	answer: 'valid' | 'invalid' | 'maybe valid';
+};
+
+function isValid(question: Question): boolean {
+	return question.answer === 'valid';
+}
+```
+
+Fenced with no language:
+
+```
+plain text in a fence, no syntax highlighting
+```
+
+## Table (GFM)
+
+| Command | Median Time |
+| ------- | ----------- |
+| jsonxf  | 14.0ms      |
+| jjp     | 31.0ms      |
+| bun     | 70.0ms      |
+
+## Links
+
+- [Internal link to the blog index](/blog)
+- [External link](https://example.com) — should open in a new tab with `rel="noopener noreferrer"` and the external-link icon
+- Bare autolink (GFM): https://example.com
+- Same-page hash link to <a href="#heading-anchors-section">the heading anchors section</a>
+
+## Heading anchors section
+
+This heading's own auto-generated `#` anchor link (hover it) points back to itself, and the "Links"
+section above links to this heading by its slug id.
+
+## Footnote
+
+Here's a sentence with a footnote reference[^1].
+
+[^1]: This is the footnote content, rendered at the bottom of the page.
+
+## Math (KaTeX)
+
+Inline math: $E = mc^2$
+
+Block math:
+
+$$
+\int_0^\infty e^{-x^2} \, dx = \frac{\sqrt{\pi}}{2}
+$$
+
+## Images
+
+Markdown image syntax (relative import, should go through Astro's image pipeline):
+
+![A black cat relaxing on someone wearing yellow pants](../../images/beatrice-and-cricket.webp)
+
+`astro:assets` `<Image />` used directly in MDX:
+
+<Image
+	src={orangeHtml}
+	alt="Same image, rendered via the Image component directly"
+	width={300}
+/>
+
+## Inline HTML passthrough
+
+Raw HTML the site's markdown pipeline is expected to pass through untouched: <kbd>Ctrl</kbd> + <kbd>C</kbd>, H<sub>2</sub>O, E = mc<sup>2</sup>, and a <q>quoted phrase</q>.
+
+<details>
+	<summary>Disclosure widget</summary>
+	Content revealed on click, same pattern used in the resume/gold-star blog
+	figures.
+</details>
+
+## Horizontal rule
+
+Content above the rule.
+
+---
+
+Content below the rule.
