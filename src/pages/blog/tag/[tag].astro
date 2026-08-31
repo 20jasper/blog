@@ -1,7 +1,7 @@
 ---
 import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
 import BaseLayout from '@layouts/base-layout.astro';
-import { getPostsDescending } from '@src/utils/posts';
+import { getPostsDescending } from '@services/posts';
 import BlogList from '@components/blog-list.astro';
 import type { GetStaticPaths } from 'astro';
 import { blogTags } from '@src/content.config';
