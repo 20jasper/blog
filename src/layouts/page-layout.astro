@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@layouts/base-layout.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
+
+type Props = {
+	title?: string;
+	description?: string;
+};
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+---
+
+<BaseLayout
+	title={title}
+	description={description}
+>
+	<main class="mx-auto my-4 max-w-prose text-xl">
+		<slot />
+	</main>
+</BaseLayout>

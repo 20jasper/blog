@@ -1,6 +1,5 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
-import BaseLayout from '@layouts/base-layout.astro';
+import PageLayout from '@layouts/page-layout.astro';
 
 import SocialLinks from '@components/social-links.astro';
 import PetImages from '@components/pet-images.astro';
@@ -12,43 +11,38 @@ const HATER_MESSAGES = [
 ];
 ---
 
-<BaseLayout
-	title={SITE_TITLE}
-	description={SITE_DESCRIPTION}
->
-	<main class="mx-auto my-4 max-w-prose text-xl">
-		<h1 class="my-5 text-3xl font-bold">Cool Stuff</h1>
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">Stuff I made</h2>
-			<a
-				href="https://legacy.jacobasper.com/"
-				target="_blank"
-				>Check out my first website</a
-			>
-		</section>
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">Follow me on my Socials</h2>
-			<SocialLinks />
-		</section>
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">Reviews</h2>
-			<ul
-				class="text-foreground prose prose-blockquote:text-foreground prose-blockquote:border-foreground"
-			>
-				{
-					HATER_MESSAGES.map((message) => (
-						<li>
-							<blockquote>
-								<p>{message}</p>
-							</blockquote>
-						</li>
-					))
-				}
-			</ul>
-		</section>
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">Pet Zone</h2>
-			<PetImages />
-		</section>
-	</main>
-</BaseLayout>
+<PageLayout>
+	<h1 class="my-5 text-3xl font-bold">Cool Stuff</h1>
+	<section class="py-4">
+		<h2 class="mb-4 text-2xl font-semibold">Stuff I made</h2>
+		<a
+			href="https://legacy.jacobasper.com/"
+			target="_blank"
+			>Check out my first website</a
+		>
+	</section>
+	<section class="py-4">
+		<h2 class="mb-4 text-2xl font-semibold">Follow me on my Socials</h2>
+		<SocialLinks />
+	</section>
+	<section class="py-4">
+		<h2 class="mb-4 text-2xl font-semibold">Reviews</h2>
+		<ul
+			class="text-foreground prose prose-blockquote:text-foreground prose-blockquote:border-foreground"
+		>
+			{
+				HATER_MESSAGES.map((message) => (
+					<li>
+						<blockquote>
+							<p>{message}</p>
+						</blockquote>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	<section class="py-4">
+		<h2 class="mb-4 text-2xl font-semibold">Pet Zone</h2>
+		<PetImages />
+	</section>
+</PageLayout>

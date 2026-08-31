@@ -1,6 +1,5 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
-import BaseLayout from '@layouts/base-layout.astro';
+import PageLayout from '@layouts/page-layout.astro';
 import Book from '@components/book.astro';
 
 import { booksStarted, booksToRead } from '@content/book/books';
@@ -11,43 +10,38 @@ const sections = [
 ];
 ---
 
-<BaseLayout
-	title={SITE_TITLE}
-	description={SITE_DESCRIPTION}
->
-	<main class="mx-auto my-4 max-w-prose text-xl">
-		<h1 class="my-5 text-3xl font-bold">Reading List</h1>
-		<p class="mb-4">
-			This used to be books only, but I've expanded to any decently sized
-			learning. If anything is unfinished for too long, it's either time to
-			throw in the towel or push through to the end! <a
-				href="/blog/how-i-read-technical-books-and-documentation/"
-				>How I read technical books and documentation</a
-			>
-		</p>
-		<p class="mb-4">
-			Various factors affect ratings including relevancy, writing style,
-			understandability, vibes, and so on. A low score doesn't mean I think a
-			book isn't worth reading!
-		</p>
-		{
-			sections.map(({ title, books }) => (
-				<section class="py-6">
-					<h2 class="mb-4 text-2xl font-semibold">{title}</h2>
-					<ul class="flex flex-col gap-8">
-						{books.map(({ title: bookTitle, readDate, author, rating }) => (
-							<li>
-								<Book
-									title={bookTitle}
-									readDate={readDate}
-									author={author}
-									rating={rating}
-								/>
-							</li>
-						))}
-					</ul>
-				</section>
-			))
-		}
-	</main>
-</BaseLayout>
+<PageLayout>
+	<h1 class="my-5 text-3xl font-bold">Reading List</h1>
+	<p class="mb-4">
+		This used to be books only, but I've expanded to any decently sized
+		learning. If anything is unfinished for too long, it's either time to throw
+		in the towel or push through to the end! <a
+			href="/blog/how-i-read-technical-books-and-documentation/"
+			>How I read technical books and documentation</a
+		>
+	</p>
+	<p class="mb-4">
+		Various factors affect ratings including relevancy, writing style,
+		understandability, vibes, and so on. A low score doesn't mean I think a book
+		isn't worth reading!
+	</p>
+	{
+		sections.map(({ title, books }) => (
+			<section class="py-6">
+				<h2 class="mb-4 text-2xl font-semibold">{title}</h2>
+				<ul class="flex flex-col gap-8">
+					{books.map(({ title: bookTitle, readDate, author, rating }) => (
+						<li>
+							<Book
+								title={bookTitle}
+								readDate={readDate}
+								author={author}
+								rating={rating}
+							/>
+						</li>
+					))}
+				</ul>
+			</section>
+		))
+	}
+</PageLayout>
