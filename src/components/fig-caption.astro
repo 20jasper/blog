@@ -1,13 +1,16 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
 type Props = {
-	src: string;
+	src: ImageMetadata;
 };
 
 const { src } = Astro.props;
 ---
 
 <figure>
-	<img
+	<Image
 		src={src}
 		alt=""
 	/>
