@@ -1,5 +1,3 @@
-import type { Item } from 'feed';
-
 export const options = ['valid', 'maybe valid', 'invalid'] as const;
 export type Option = (typeof options)[number];
 
@@ -287,10 +285,3 @@ export const questions: Question[] = [
 export const TITLE = 'JSON WTF - Jacob Asper';
 export const DESCRIPTION = 'A totally normal and not hard quiz about JSON';
 export const JSONWTF_BASE_URL = 'https://jsonwtf.org';
-
-export const feedItem: Item = {
-	title: TITLE,
-	description: DESCRIPTION,
-	link: JSONWTF_BASE_URL,
-	date: new Date('2026-1-3'),
-};
