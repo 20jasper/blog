@@ -7,6 +7,8 @@ export default defineConfig({
 		url: 'http://localhost:4323/blog',
 		reuseExistingServer: false,
 		timeout: 60_000,
+		// prevents daemonization when ran by AI agents
+		env: { ASTRO_PREVIEW_BACKGROUND: 'false' },
 	},
 	use: {
 		baseURL: 'http://localhost:4323',
