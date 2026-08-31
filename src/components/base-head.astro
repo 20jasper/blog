@@ -3,6 +3,7 @@ import { SITE_TITLE, RSS_PATH, ATOM_PATH } from '../consts';
 import '../styles/global.css';
 import GoogleAnalytics from './google-analytics.astro';
 import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
+import { titleToPlainText } from '@src/utils/render-title';
 
 type Props = {
 	title: string;
@@ -12,7 +13,8 @@ type Props = {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { math, title, description } = Astro.props;
+const { math, description } = Astro.props;
+const title = titleToPlainText(Astro.props.title);
 ---
 
 <head>

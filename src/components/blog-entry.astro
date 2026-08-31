@@ -2,6 +2,7 @@
 import FormattedDate from './date/formatted-date.astro';
 import TagsList from './tags-list.astro';
 import type { BlogTag } from '@src/content.config';
+import { titleToHtml } from '@src/utils/render-title';
 
 type Props = {
 	slug: string;
@@ -17,7 +18,10 @@ const { slug, title, date, tags } = Astro.props;
 	href={`/blog/${slug}`}
 	class="block"
 >
-	<h3 class="leading-none">{title}</h3>
+	<h3
+		class="leading-none"
+		set:html={titleToHtml(title)}
+	/>
 </a>
 <div class="text-foreground-secondary m-0 pt-2">
 	{tags.length > 0 && <TagsList tags={tags} />}
