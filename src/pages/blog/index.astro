@@ -1,6 +1,6 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION, ATOM_PATH, RSS_PATH } from '@src/consts';
-import BaseLayout from '@layouts/base-layout.astro';
+import { ATOM_PATH, RSS_PATH } from '@src/consts';
+import PageLayout from '@layouts/page-layout.astro';
 import { getPostsDescending } from '@services/posts';
 import BlogList from '@components/blog-list.astro';
 
@@ -14,37 +14,32 @@ const featuredPosts = posts.filter((post) => featuredSlugs.has(post.id));
 const otherPosts = posts.filter((post) => !featuredSlugs.has(post.id));
 ---
 
-<BaseLayout
-	title={SITE_TITLE}
-	description={SITE_DESCRIPTION}
->
-	<main class="mx-auto my-4 max-w-prose text-xl">
-		<section class="pb-4">
-			<h1 class="my-5 text-3xl font-bold">Jacob Asper's site!</h1>
-			<p class="pb-4">
-				I write about everything from Rust, to personal development, to traffic
-				design
-			</p>
-			<p class="pb-4">
-				My goal is to be weird. We need more blogs with personality out here.
-				Don't be scared to be different—be weird
-			</p>
-			<p>
-				<a href={ATOM_PATH}>Subscribe to my atom feed</a>
-			</p>
-			<p>
-				<a href={RSS_PATH}>Subscribe to my RSS feed</a>
-			</p>
-		</section>
+<PageLayout>
+	<section class="pb-4">
+		<h1 class="my-5 text-3xl font-bold">Jacob Asper's site!</h1>
+		<p class="pb-4">
+			I write about everything from Rust, to personal development, to traffic
+			design
+		</p>
+		<p class="pb-4">
+			My goal is to be weird. We need more blogs with personality out here.
+			Don't be scared to be different—be weird
+		</p>
+		<p>
+			<a href={ATOM_PATH}>Subscribe to my atom feed</a>
+		</p>
+		<p>
+			<a href={RSS_PATH}>Subscribe to my RSS feed</a>
+		</p>
+	</section>
 
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">Featured (really good blogs)</h2>
-			<BlogList posts={featuredPosts} />
-		</section>
+	<section class="py-4">
+		<h2 class="mb-4 text-2xl font-semibold">Featured (really good blogs)</h2>
+		<BlogList posts={featuredPosts} />
+	</section>
 
-		<section class="py-4">
-			<h2 class="mb-4 text-2xl font-semibold">More Blogs</h2>
-			<BlogList posts={otherPosts} />
-		</section>
-	</main>
-</BaseLayout>
+	<section class="py-4">
+		<h2 class="mb-4 text-2xl font-semibold">More Blogs</h2>
+		<BlogList posts={otherPosts} />
+	</section>
+</PageLayout>
