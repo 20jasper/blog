@@ -13,6 +13,7 @@ import {
 	JSONWTF_BASE_URL,
 } from '@content/questions/questions';
 import { Order } from 'effect';
+import { titleToPlainText } from '@src/utils/render-title';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
 
@@ -44,7 +45,7 @@ export const getFeed = async (baseUrl: string): Promise<Feed> => {
 
 	const items = [
 		...posts.map(({ data, id: postId }) => ({
-			title: data.title,
+			title: titleToPlainText(data.title),
 			description: data.description,
 			link: `${baseUrl}/blog/${postId}/`,
 			date: new Date(data.pubDate),

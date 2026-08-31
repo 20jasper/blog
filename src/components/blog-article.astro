@@ -1,6 +1,7 @@
 ---
 import FormattedDate from '@components/date/formatted-date.astro';
 import Prose from '@components/prose.astro';
+import { titleToHtml } from '@src/utils/render-title';
 
 type Props = {
 	title: string;
@@ -15,7 +16,7 @@ const { title, date, updatedDate, emDashCount } = Astro.props;
 
 <Prose>
 	<div class="mb-2 py-2 text-center">
-		<h1>{title}</h1>
+		<h1 set:html={titleToHtml(title)} />
 		<div class="not-prose text-foreground-secondary">
 			<p class="m-0 text-lg font-semibold">
 				Em dashes: {emDashCount}
