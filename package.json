@@ -51,7 +51,8 @@
 		"remark-frontmatter": "^5.0.0",
 		"remark-gfm": "^4.0.1",
 		"remark-mdx": "^3.1.1",
-		"remark-validate-links": "^13.1.0"
+		"remark-validate-links": "^13.1.0",
+		"vite": "8.2.2"
 	},
 	"engines": {
 		"node": ">=26",

@@ -3,7 +3,8 @@ import { SITE_TITLE, RSS_PATH, ATOM_PATH } from '../consts';
 import '../styles/global.css';
 import GoogleAnalytics from './google-analytics.astro';
 import { GOOGLE_ANALYTICS_ID } from 'astro:env/client';
-import { katexStyles } from '@src/utils/katex-styles';
+import katexHref from 'katex/dist/katex.min.css?url';
+import katexFontsHref from '@src/styles/katex-fonts.css?url';
 
 type Props = {
 	title: string;
@@ -105,7 +106,20 @@ const { math, title, description, noindex } = Astro.props;
 		content={description}
 	/>
 
-	{math && <style set:html={katexStyles} />}
+	{
+		math && (
+			<>
+				<link
+					rel="stylesheet"
+					href={katexHref}
+				/>
+				<link
+					rel="stylesheet"
+					href={katexFontsHref}
+				/>
+			</>
+		)
+	}
 
 	<!-- Google tag (gtag.js) -->
 	<GoogleAnalytics id={GOOGLE_ANALYTICS_ID} />

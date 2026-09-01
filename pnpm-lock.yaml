@@ -108,6 +108,9 @@ importers:
       remark-validate-links:
         specifier: ^13.1.0
         version: 13.1.0(supports-color@9.4.0)
+      vite:
+        specifier: 8.2.2
+        version: 8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
 
 packages:
 

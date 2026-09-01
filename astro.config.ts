@@ -10,6 +10,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { unified } from '@astrojs/markdown-remark';
+import { katexStripFonts } from './vite-plugin-katex-strip-fonts';
 
 export default defineConfig({
 	site: 'https://jacobasper.com',
@@ -66,5 +67,5 @@ export default defineConfig({
 			filter: (page) => !page.includes('/test-fixtures/'),
 		}),
 	],
-	vite: { plugins: [tailwind()] },
+	vite: { plugins: [tailwind(), katexStripFonts()] },
 });
