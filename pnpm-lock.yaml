@@ -35,6 +35,9 @@ importers:
       effect:
         specifier: ^3.22.1
         version: 3.22.1
+      katex:
+        specifier: 0.16.47
+        version: 0.16.47
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
