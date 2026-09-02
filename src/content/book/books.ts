@@ -281,6 +281,10 @@ const toRead: UnreadBook[] = [
 		title: 'The Art of Application Performance Testing, 2nd Edition',
 		author: 'Ian Molyneaux',
 	},
+	{
+		title: 'PostgreSQL Mistakes and How to Avoid Them',
+		author: 'Jimmy Angelakos',
+	},
 ];
 
 export const booksToRead: Book[] = toRead.map((x) => ({
