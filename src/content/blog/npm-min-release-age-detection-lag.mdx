@@ -22,7 +22,9 @@ Outline
 
 \*/}
 
-To make the title punchy, some liberties were taken. Here's the honest version: across the last 5 years of OSV-reported npm supply chain attacks with a resolvable single version, a 1-day `minimumReleaseAge` would have blocked 53% of them—about 7,700 attacks. That's real npm registry removal data, not a guess, but it comes with real caveats (see Methods and limitations at the end). Short version: a short delay keeps a lot of supply chain attacks at bay!
+I took some liberties to make the title punchy. To be more precise, the data represents the last 5 years of npm supply chain attacks reported by OSV. A 1 day `minimumReleaseAge` would block 53% of single version, reported attacks, or around 7,700 attacks. See [methods and limitations](#methods-and-limitations)
+
+A short delay keeps supply chain attacks at bay!
 
 {/* 1. Developers rely on a huge amount of software, therefore */}
 
@@ -48,7 +50,7 @@ To add fuel to the fire, security advisories have steadily increased. This doesn
 
 Structured reports like OSV's have made tracking easier. Prior to the last 5 years, disclosure would be a blog post or GitHub issue. Additionally, there is better automated security scanning than 5–10 years ago, and the prevalence of LLMs has renewed interest in security
 
-To make matters even worse, attacks have become much more sophisticated. Since September 2025, there have been 4 worms affecting at least 1,917 packages[^worm]. Each worm steals a compromised maintainer's npm token to publish more malicious packages, but npm tokens are rarely the only thing targeted—these harvest credentials broadly (AWS, GCP, Azure, GitHub, Slack, SSH keys, password managers, and more), so the actual blast radius reaches well past the npm ecosystem
+To make matters even worse, attacks have become much more sophisticated. Since September 2025, there have been 4 worms affecting at least 1,900 packages[^worm]. A worm steals maintainer's credentials to publish more malicious packages, which continues the attack. We've been talking about npm thus far, but attackers don't stop there. An attacker might steal GitHub/AWS/SSH keys as well!
 
 [^worm]:
     <p>
