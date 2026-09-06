@@ -264,6 +264,42 @@ test('unreported slip opinion disables Database identifier and drops the star', 
 	);
 });
 
+// Gap: caseType x sourceType=unreported was never exercised through the
+// UI (only through 'v' via the Lucko fixture) -- single-party unreported
+// citations were only unit-tested at the domain level, not wired end to
+// end.
+test('unreported case type in-re renders the single-party citation', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedLucko(page);
+	await page.getByLabel('Case type').selectOption('in-re');
+
+	await expect(page.getByRole('status')).toHaveText(
+		'In re State, No. 2021CA0007, 2021 WL 4269952, at *214 (Ohio Ct. App. Sept. 17, 2021).',
+	);
+});
+
+// Gap: caseType x short-form Name variant -- the domain already collapses
+// party1/party2 to the same assembled name for single-party case types,
+// but that path was never driven through the actual <select>.
+for (const nameVariant of ['party1', 'party2'] as const) {
+	test(`short form name variant ${nameVariant} collapses for in-re`, async ({
+		page,
+	}) => {
+		await page.goto('/tools/citation-builder');
+
+		await page.getByLabel('Case type').selectOption('in-re');
+		await page.getByRole('radio', { name: 'Short form' }).check();
+		await page.getByLabel('Name variant').selectOption(nameVariant);
+
+		await expect(page.getByRole('status')).toHaveText(
+			'In re Dayton, 179 N.E.3d at 214.',
+		);
+	});
+}
+
 test('switching back to reported re-enables its fields and disables unreported ones', async ({
 	page,
 }) => {
@@ -289,4 +325,25 @@ test('clear resets source type back to reported', async ({ page }) => {
 		page.getByRole('radio', { name: 'Reported case', exact: true }),
 	).toBeChecked();
 	await expect(page.getByLabel('Volume')).toBeEnabled();
+});
+
+// Gap: the general "clear empties every field" test only checked
+// Party1/Volume (reported fields). Never confirmed unreported-only
+// fields or the Availability radio actually reset too.
+test('clear empties unreported fields and resets Availability to database', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedLucko(page);
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+	await page.getByRole('button', { name: 'Clear' }).click();
+
+	await expect(
+		page.getByRole('radio', { name: 'In electronic database' }),
+	).toBeChecked();
+	await expect(page.getByLabel('Docket number')).toHaveValue('');
+	await expect(page.getByLabel('Database identifier')).toHaveValue('');
+	await expect(page.getByLabel('Day')).toHaveValue('');
+	await expect(page.getByLabel('Opinion year')).toHaveValue('');
 });
