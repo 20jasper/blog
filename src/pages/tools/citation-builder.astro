@@ -1,19 +1,5 @@
 ---
-import PageLayout from '@layouts/page-layout.astro';
-import { ids } from '@src/views/citation-builder/ids';
+import CitationBuilderView from '@src/views/citation-builder/citation-builder.view.astro';
 ---
 
-<PageLayout title="Bluebook Citation Generator">
-	<h1
-		id={ids.heading}
-		class="my-5 text-3xl font-bold"
-	>
-		Bluebook Citation Generator
-	</h1>
-	<p
-		id={ids.intro}
-		class="mb-4"
-	>
-		Bluebook-formatted citations, one at a time.
-	</p>
-</PageLayout>
+<CitationBuilderView />

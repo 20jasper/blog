@@ -1,0 +1,172 @@
+---
+import PageLayout from '@layouts/page-layout.astro';
+import CitationBuilderUi from './citation-builder.ui.astro';
+import { ids } from './ids';
+---
+
+<PageLayout title="Bluebook Citation Generator">
+	<h1
+		id={ids.heading}
+		class="my-5 text-3xl font-bold"
+	>
+		Bluebook Citation Generator
+	</h1>
+	<p
+		id={ids.intro}
+		class="mb-4"
+	>
+		Citations formatted to Bluebook 22nd edition.
+	</p>
+	<CitationBuilderUi />
+	<script>
+		import { assembleReportedCase } from '@components/citation-builder/domain/assemble';
+		import type { CaseNameInput } from '@components/citation-builder/domain/case-types';
+		import { render } from '@components/citation-builder/domain/render';
+		import {
+			deriveSelections,
+			initialCitationFields,
+		} from '@components/citation-builder/state/citation-fields';
+		import type { CaseTypeId } from '@components/citation-builder/domain/case-types';
+		import { initialDisplayState } from '@components/citation-builder/state/display-state';
+		import { selectFieldState } from '@components/citation-builder/state/field-state';
+		import { ids } from '@src/views/citation-builder/ids';
+
+		// Only reported/full-citation is wired up so far -- the rest of
+		// the source types and short forms come later. Prefilled with
+		// the golden case from docs/citation-builder/phase-1-spec.md §8.3
+		// so the page shows a working example instead of a blank form.
+		const EXAMPLE = {
+			caseType: 'v' as CaseTypeId,
+			party1: 'Dayton',
+			party2: 'Stewart',
+			court: 'Ohio Ct. App.',
+			volume: '179',
+			reporter: 'N.E.3d',
+			firstPage: '208',
+			pincite: '214',
+			year: '2021',
+		};
+
+		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
+		const output = document.querySelector(`#${ids.output}`)!;
+		const caseTypeSelect = document.querySelector<HTMLSelectElement>(
+			`#${ids.caseType}`,
+		)!;
+		const party1Input = document.querySelector<HTMLInputElement>(
+			`#${ids.party1}`,
+		)!;
+		const party2Input = document.querySelector<HTMLInputElement>(
+			`#${ids.party2}`,
+		)!;
+		const party2Row = document.querySelector<HTMLElement>(`#${ids.party2Row}`)!;
+		const courtInput = document.querySelector<HTMLInputElement>(
+			`#${ids.court}`,
+		)!;
+		const volumeInput = document.querySelector<HTMLInputElement>(
+			`#${ids.volume}`,
+		)!;
+		const reporterInput = document.querySelector<HTMLInputElement>(
+			`#${ids.reporter}`,
+		)!;
+		const firstPageInput = document.querySelector<HTMLInputElement>(
+			`#${ids.firstPage}`,
+		)!;
+		const pinciteInput = document.querySelector<HTMLInputElement>(
+			`#${ids.pincite}`,
+		)!;
+		const yearInput = document.querySelector<HTMLInputElement>(`#${ids.year}`)!;
+		const clearButton = document.querySelector<HTMLButtonElement>(
+			`#${ids.clearButton}`,
+		)!;
+
+		function currentCaseType(): CaseTypeId {
+			return caseTypeSelect.value as CaseTypeId;
+		}
+
+		function updatePartyTwoState(): void {
+			const fields = {
+				...initialCitationFields(),
+				sourceType: 'reported' as const,
+				caseType: currentCaseType(),
+			};
+			const fieldState = selectFieldState(
+				deriveSelections(fields, initialDisplayState()),
+			);
+			const notUsed = fieldState.party2 === 'not-used';
+			party2Input.disabled = notUsed;
+			party2Row.hidden = notUsed;
+		}
+
+		function caseNameInput(): CaseNameInput {
+			const caseType = currentCaseType();
+			return caseType === 'v'
+				? {
+						caseType: 'v',
+						party1: party1Input.value,
+						party2: party2Input.value,
+					}
+				: { caseType, party1: party1Input.value };
+		}
+
+		function updateOutput(): void {
+			const hasRequiredFields =
+				party1Input.value !== '' &&
+				volumeInput.value !== '' &&
+				reporterInput.value !== '' &&
+				firstPageInput.value !== '';
+
+			if (!hasRequiredFields) {
+				output.textContent = 'Fill in the fields above to generate a citation.';
+				return;
+			}
+
+			const segments = assembleReportedCase({
+				name: caseNameInput(),
+				volume: volumeInput.value,
+				reporter: reporterInput.value,
+				firstPage: firstPageInput.value,
+				pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
+				court: courtInput.value === '' ? undefined : courtInput.value,
+				year: Number(yearInput.value),
+			});
+
+			output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+		}
+
+		function fillExample(): void {
+			caseTypeSelect.value = EXAMPLE.caseType;
+			party1Input.value = EXAMPLE.party1;
+			party2Input.value = EXAMPLE.party2;
+			courtInput.value = EXAMPLE.court;
+			volumeInput.value = EXAMPLE.volume;
+			reporterInput.value = EXAMPLE.reporter;
+			firstPageInput.value = EXAMPLE.firstPage;
+			pinciteInput.value = EXAMPLE.pincite;
+			yearInput.value = EXAMPLE.year;
+		}
+
+		function clearFields(): void {
+			form.reset();
+			for (const input of form.querySelectorAll('input')) {
+				input.value = '';
+			}
+			caseTypeSelect.value = 'v';
+			updatePartyTwoState();
+			updateOutput();
+		}
+
+		form.addEventListener('input', () => {
+			updatePartyTwoState();
+			updateOutput();
+		});
+		caseTypeSelect.addEventListener('change', () => {
+			updatePartyTwoState();
+			updateOutput();
+		});
+		clearButton.addEventListener('click', clearFields);
+
+		fillExample();
+		updatePartyTwoState();
+		updateOutput();
+	</script>
+</PageLayout>

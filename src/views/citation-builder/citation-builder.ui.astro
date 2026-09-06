@@ -1,0 +1,103 @@
+---
+import { ids } from './ids';
+---
+
+<form id={ids.form}>
+	<fieldset class="mb-4 flex flex-col gap-3">
+		<legend class="font-semibold">Case identity</legend>
+		<div>
+			<label for={ids.caseType}>Case type</label>
+			<select
+				id={ids.caseType}
+				name="caseType"
+			>
+				<option value="v">v.</option>
+				<option value="in-re">In re</option>
+				<option value="ex-parte">Ex parte</option>
+			</select>
+		</div>
+		<div>
+			<label for={ids.party1}>Party 1</label>
+			<input
+				id={ids.party1}
+				name="party1"
+				type="text"
+			/>
+		</div>
+		<div id={ids.party2Row}>
+			<label for={ids.party2}>Party 2</label>
+			<input
+				id={ids.party2}
+				name="party2"
+				type="text"
+			/>
+		</div>
+		<div>
+			<label for={ids.court}>Court</label>
+			<input
+				id={ids.court}
+				name="court"
+				type="text"
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class="mb-4 flex flex-col gap-3">
+		<legend class="font-semibold">Reported case</legend>
+		<div>
+			<label for={ids.volume}>Volume</label>
+			<input
+				id={ids.volume}
+				name="volume"
+				type="text"
+			/>
+		</div>
+		<div>
+			<label for={ids.reporter}>Reporter</label>
+			<input
+				id={ids.reporter}
+				name="reporter"
+				type="text"
+			/>
+		</div>
+		<div>
+			<label for={ids.firstPage}>First page</label>
+			<input
+				id={ids.firstPage}
+				name="firstPage"
+				type="text"
+			/>
+		</div>
+		<div>
+			<label for={ids.pincite}>Pincite</label>
+			<input
+				id={ids.pincite}
+				name="pincite"
+				type="text"
+			/>
+		</div>
+		<div>
+			<label for={ids.year}>Year</label>
+			<input
+				id={ids.year}
+				name="year"
+				type="text"
+				inputmode="numeric"
+			/>
+		</div>
+	</fieldset>
+
+	<button
+		type="button"
+		id={ids.clearButton}
+		>Clear</button
+	>
+</form>
+
+<output
+	id={ids.output}
+	for={ids.form}
+	aria-live="polite"
+	class="mt-4 block"
+>
+</output>
