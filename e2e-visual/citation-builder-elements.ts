@@ -6,7 +6,6 @@ import { ids } from '@src/views/citation-builder/ids';
 export function getCitationBuilderElements(page: Page) {
 	return {
 		heading: page.locator(`#${ids.heading}`),
-		intro: page.locator(`#${ids.intro}`),
 
 		caseType: page.locator(`#${ids.caseType}`),
 		party1: page.locator(`#${ids.party1}`),

@@ -4,7 +4,6 @@
 // selector that never matches. Grows alongside the form.
 export const ids = {
 	heading: 'citation-builder-heading',
-	intro: 'citation-builder-intro',
 
 	form: 'citation-builder-form',
 	caseType: 'citation-builder-case-type',

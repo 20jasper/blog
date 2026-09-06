@@ -14,7 +14,7 @@ const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
 
 <form
 	id={ids.form}
-	class="border-foreground-secondary/20 bg-background-secondary/20 flex w-full max-w-full flex-col gap-6 rounded-lg border p-4 sm:p-6"
+	class="flex w-full max-w-full flex-col gap-6"
 >
 	<fieldset class={fieldsetClass}>
 		<legend class={legendClass}>Case identity</legend>
@@ -161,9 +161,7 @@ const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
 	</div>
 </form>
 
-<div
-	class="border-accent/40 bg-background-secondary/20 mt-6 rounded-lg border p-4"
->
+<div class="mt-6">
 	<p class="text-foreground-secondary mb-1 text-sm font-medium">Citation</p>
 	<output
 		id={ids.output}

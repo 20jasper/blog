@@ -4,19 +4,13 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 import { ids } from './ids';
 ---
 
-<PageLayout title="Bluebook Citation Generator">
+<PageLayout title="Bluebook 22 Citation Generator">
 	<h1
 		id={ids.heading}
 		class="my-5 text-3xl font-bold"
 	>
-		Bluebook Citation Generator
+		Bluebook 22 Citation Generator
 	</h1>
-	<p
-		id={ids.intro}
-		class="mb-4"
-	>
-		Citations formatted to Bluebook 22nd edition.
-	</p>
 	<CitationBuilderUi />
 	<script>
 		import { assembleReportedCase } from '@components/citation-builder/domain/assemble';
