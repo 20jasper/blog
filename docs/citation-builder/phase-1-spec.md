@@ -456,7 +456,6 @@ code, not as a hand-maintained prose list.
 | `§§ 1983, 1988`          | `§§ 1983, 1988`                                 |
 | `§§1983,1988`            | `§§ 1983,1988`                                  |
 
-r[normalize.stress]
 Additionally: a property test running the same normalization logic
 against the `reporters-db` dataset (github.com/freelawproject/reporters-db,
 ~1,000 real reporter strings) as a test-time-only corpus — never vendored
@@ -464,17 +463,16 @@ into the shipped tool, never used for runtime validation or autocomplete.
 Purely a stress test for the normalization functions against real-world
 strings the hand-written test list wouldn't think to include.
 
-> **Implementation note (2026-09-06):** fetched live from
-> `reporters-db`'s `main` branch on every run (no pinned commit, no
-> local caching) — deliberately simple. The property asserted is
-> idempotency (`normalizeX(normalizeX(s)) === normalizeX(s)`) plus
-> "never throws", for every string across all reporter families'
-> canonical keys, editions, and variations (well over 1,000 once
-> flattened). Opt-in via `pnpm test:stress`, skipped by default so
-> `pnpm test` stays network-free -- `*.test.ts` files are always
-> picked up by vitest's default include glob regardless of the rest
-> of the filename, so the guard is an env-var skip inside the test,
-> not a config-level exclude.
+> **Tried and removed (2026-09-06):** built as an opt-in `pnpm
+test:stress`, fetching `reporters-db` live and asserting idempotency
+>
+> - "never throws" across every reporter string. Manual spot-checking
+>   found zero strings in the entire ~3,592-entry corpus ever exercised
+>   the strip branch of either normalization function (no reporter
+>   starts with a real `No.`/`Case No.` prefix, none contain `§`) — so
+>   it only ever validated the passthrough path, not the logic it was
+>   meant to stress. Removed rather than kept for a false sense of
+>   coverage.
 
 ### 8.5 Rejection paths
 

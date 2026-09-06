@@ -16,7 +16,6 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
-		"test:stress": "RUN_STRESS_TEST=1 vitest run normalize.stress.test.ts",
 		"test:visual:docker": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
 		"test:visual:docker:update": "HOST_UID=$(id -u) HOST_GID=$(id -g) PLAYWRIGHT_ARGS=--update-snapshots docker compose run --rm visual-tests"
 	},
