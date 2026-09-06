@@ -86,3 +86,29 @@ describe('assembleReportedShortForm', () => {
 		expect(html).toBe('<i>Id.</i> at 435.');
 	});
 });
+
+// r[verify normalize.span-input]
+describe('assembleReportedShortForm: pincite is parsed, not passed through raw', () => {
+	it.each([
+		['435', undefined, '435'],
+		['208-214', undefined, '208-14'],
+		['208-214', '–' as const, '208–14'],
+	])(
+		'pincite %s with separator %s -> %s',
+		(pincite, spanSeparator, expected) => {
+			const input: ReportedShortFormInput = {
+				nameVariant: 'none',
+				volume: '273',
+				reporter: 'F.3d',
+				pincite,
+			};
+
+			const { plain } = render(
+				assembleReportedShortForm(input, { spanSeparator }),
+				{ emphasis: 'italic' },
+			);
+
+			expect(plain).toBe(`273 F.3d at ${expected}.`);
+		},
+	);
+});

@@ -13,9 +13,23 @@ const BENNETT = unreportedCase({
 
 // r[verify citation.unreported-long-form]
 describe('assembleUnreportedCase', () => {
-	it('matches the Lucko golden case (database, with pincite)', () => {
+	it('matches the Lucko golden case (database, with pincite), default hyphen separator', () => {
 		const { plain } = render(
-			assembleUnreportedCase(unreportedCase({ pincite: '1–2' })),
+			assembleUnreportedCase(unreportedCase({ pincite: '1-2' })),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			'State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct. App. Sept. 17, 2021).',
+		);
+	});
+
+	// r[verify normalize.span-separator]
+	it('renders the same Lucko span with an en dash when that preference is selected', () => {
+		const { plain } = render(
+			assembleUnreportedCase(unreportedCase({ pincite: '1-2' }), {
+				spanSeparator: '–',
+			}),
 			{ emphasis: 'italic' },
 		);
 
@@ -47,6 +61,30 @@ describe('assembleUnreportedCase', () => {
 			'United States v. Bennett, No. 05-CR-6050 CJS (W.D.N.Y. Oct. 21, 2005).',
 		);
 	});
+
+	// r[verify normalize.span-input]
+	it.each([
+		['1', 'database', '*1'],
+		['1-2', 'database', '*1-2'],
+		['1, 3', 'database', '*1, *3'],
+		['1-2', 'slip-opinion', '1-2'],
+	] as const)(
+		'pincite %s with availability %s -> %s',
+		(pincite, availabilityKind, expected) => {
+			const availability =
+				availabilityKind === 'database'
+					? ({ kind: 'database', databaseId: '2021 WL 4269952' } as const)
+					: ({ kind: 'slip-opinion' } as const);
+			const label = availabilityKind === 'database' ? ', at' : ', slip op. at';
+
+			const { plain } = render(
+				assembleUnreportedCase(unreportedCase({ pincite, availability })),
+				{ emphasis: 'italic' },
+			);
+
+			expect(plain).toContain(`${label} ${expected}`);
+		},
+	);
 
 	it('normalizes the docket number through the same rule as §4.1', () => {
 		const { plain } = render(

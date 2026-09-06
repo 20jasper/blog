@@ -852,8 +852,9 @@ code, not as a hand-maintained prose list.
   - `42 U.S.C.A. § 2001 (West Supp. 2002).` — annotated, supplement
     only.
 - `Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).`
-- `State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1–2 (Ohio Ct. App. Sept. 17, 2021).`
-  — note the en dash in the range (r[normalize.span-digits]).
+- `State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct. App. Sept. 17, 2021).`
+  — default hyphen separator; the same case must also render with an en
+  dash when that preference is selected (r[normalize.span-separator]).
 - _United States v. Bennett_, No. 05-CR-6050 CJS, 2005 WL 2709572
   (W.D.N.Y. Oct. 21, 2005) — database-available, Rule 10.8.1(a).
 - **Slip-opinion pair** (r[citation.unreported-pincite-form]) — the two

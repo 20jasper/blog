@@ -4,8 +4,14 @@ import {
 	normalizeDocketNumber,
 	normalizeSection,
 } from './normalize';
+import { parsePincite, type PinciteOptions } from './pincite';
 import { applyFraming } from './render';
 import type { DateParts, Segment } from './types';
+
+export type SpanSeparator = PinciteOptions['separator'];
+
+// r[impl normalize.span-separator]
+const DEFAULT_SEPARATOR: SpanSeparator = '-';
 
 // r[impl assemble.composable]
 function nameSegment(name: CaseNameInput): Segment {
@@ -23,8 +29,15 @@ function maybeSegment(
 }
 
 // r[impl assemble.composable]
-function appendPincite(pincite: string | undefined): Segment[] {
-	return maybeSegment(pincite, (value) => `, ${value}`);
+// r[impl normalize.span-input]
+function appendPincite(
+	pincite: string | undefined,
+	separator: SpanSeparator,
+): Segment[] {
+	return maybeSegment(
+		pincite,
+		(value) => `, ${parsePincite(value, { separator, starPages: false })}`,
+	);
 }
 
 // r[impl assemble.composable]
@@ -46,8 +59,13 @@ export type ReportedCaseInput = {
 	year: number;
 };
 
+export type AssembleOptions = { spanSeparator?: SpanSeparator };
+
 // r[impl citation.reported-long-form]
-export function assembleReportedCase(input: ReportedCaseInput): Segment[] {
+export function assembleReportedCase(
+	input: ReportedCaseInput,
+	{ spanSeparator = DEFAULT_SEPARATOR }: AssembleOptions = {},
+): Segment[] {
 	const parenthetical =
 		input.court === undefined
 			? `${input.year}`
@@ -59,7 +77,7 @@ export function assembleReportedCase(input: ReportedCaseInput): Segment[] {
 			text: `, ${input.volume} ${input.reporter} ${input.firstPage}`,
 			emphasized: false,
 		},
-		...appendPincite(input.pincite),
+		...appendPincite(input.pincite, spanSeparator),
 		{ text: ` (${parenthetical})`, emphasized: false },
 	];
 
@@ -94,11 +112,17 @@ function shortFormName(
 // r[impl citation.reported-short-form]
 export function assembleReportedShortForm(
 	input: ReportedShortFormInput,
+	{ spanSeparator = DEFAULT_SEPARATOR }: AssembleOptions = {},
 ): Segment[] {
+	const pincite = parsePincite(input.pincite, {
+		separator: spanSeparator,
+		starPages: false,
+	});
+
 	if (input.nameVariant === 'id') {
 		return framePeriod([
 			{ text: 'Id.', emphasized: true },
-			{ text: ` at ${input.pincite}`, emphasized: false },
+			{ text: ` at ${pincite}`, emphasized: false },
 		]);
 	}
 
@@ -114,8 +138,8 @@ export function assembleReportedShortForm(
 
 	const core =
 		nameSeg.length === 0
-			? `${input.volume} ${input.reporter} at ${input.pincite}`
-			: `, ${input.volume} ${input.reporter} at ${input.pincite}`;
+			? `${input.volume} ${input.reporter} at ${pincite}`
+			: `, ${input.volume} ${input.reporter} at ${pincite}`;
 
 	return framePeriod([...nameSeg, { text: core, emphasized: false }]);
 }
@@ -140,24 +164,37 @@ function appendDatabaseId(availability: Availability): Segment[] {
 }
 
 // r[impl citation.unreported-pincite-form]
+// r[impl normalize.span-input]
 function appendUnreportedPincite(
 	pincite: string | undefined,
 	availability: Availability,
+	separator: SpanSeparator,
 ): Segment[] {
-	return maybeSegment(pincite, (value) =>
-		availability.kind === 'database'
-			? `, at *${value}`
-			: `, slip op. at ${value}`,
-	);
+	return maybeSegment(pincite, (value) => {
+		const parsed = parsePincite(value, {
+			separator,
+			starPages: availability.kind === 'database',
+		});
+		return availability.kind === 'database'
+			? `, at ${parsed}`
+			: `, slip op. at ${parsed}`;
+	});
 }
 
 // r[impl citation.unreported-long-form]
-export function assembleUnreportedCase(input: UnreportedCaseInput): Segment[] {
+export function assembleUnreportedCase(
+	input: UnreportedCaseInput,
+	{ spanSeparator = DEFAULT_SEPARATOR }: AssembleOptions = {},
+): Segment[] {
 	const segments: Segment[] = [
 		nameSegment(input.name),
 		{ text: `, ${normalizeDocketNumber(input.docket)}`, emphasized: false },
 		...appendDatabaseId(input.availability),
-		...appendUnreportedPincite(input.pincite, input.availability),
+		...appendUnreportedPincite(
+			input.pincite,
+			input.availability,
+			spanSeparator,
+		),
 		{
 			text: ` (${input.court} ${assembleDate(input.date)})`,
 			emphasized: false,
