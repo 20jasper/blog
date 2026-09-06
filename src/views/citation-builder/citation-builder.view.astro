@@ -344,13 +344,15 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function updateReportedOutput(): void {
 			if (currentMode() === 'short') {
+				// Id. (ReportedShortFormInput's 'id' variant) carries neither
+				// volume/reporter nor a name -- only pincite -- so those
+				// fields drop out of the required-to-generate check here too.
 				const hasRequiredFields =
-					volumeInput.value !== '' &&
-					reporterInput.value !== '' &&
 					pinciteInput.value !== '' &&
 					(idCheckbox.checked ||
-						currentNameVariant() === 'none' ||
-						party1Input.value !== '');
+						(volumeInput.value !== '' &&
+							reporterInput.value !== '' &&
+							(currentNameVariant() === 'none' || party1Input.value !== '')));
 
 				if (!hasRequiredFields) {
 					fillInPlaceholder();

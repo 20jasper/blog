@@ -142,6 +142,26 @@ test('Id. disables Name variant and renders Id. form', async ({ page }) => {
 	await expect(page.getByRole('status')).toHaveText('Id. at 214.');
 });
 
+// ReportedShortFormInput's 'id' variant needs only pincite -- no volume,
+// reporter, or name -- so Id. should render even with those fields empty.
+test('Id. renders with only pincite filled, no volume/reporter/name needed', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByLabel('Volume').fill('');
+	await page.getByLabel('Reporter').fill('');
+	await page.getByLabel('Party 1', { exact: false }).fill('');
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await page
+		.getByRole('checkbox', {
+			name: /immediately follows one to the same source/u,
+		})
+		.check();
+
+	await expect(page.getByRole('status')).toHaveText('Id. at 214.');
+});
+
 test('switching back to full citation re-enables Court/First page/Decision year', async ({
 	page,
 }) => {
