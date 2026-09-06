@@ -1,10 +1,14 @@
+import type { Availability, StatuteInput } from '../domain/assemble';
 import type { CaseTypeId } from '../domain/case-types';
 import type { DisplayState } from './display-state';
 import type { Selections } from './field-state';
 
 export type SourceType = 'reported' | 'unreported' | 'statute';
-export type AvailabilityKind = 'database' | 'slip-opinion';
-export type CodeType = 'official' | 'annotated';
+// Derived from the domain types that actually consume them, so a new
+// Availability/StatuteInput variant surfaces here at compile time
+// instead of drifting from a hand-duplicated literal union.
+export type AvailabilityKind = Availability['kind'];
+export type CodeType = StatuteInput['codeType'];
 
 // One flat object -- fields unused by the active sourceType stay
 // populated (§3.5: switching type never clears a value). Matches

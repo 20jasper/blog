@@ -1,8 +1,19 @@
 ---
 import PageLayout from '@layouts/page-layout.astro';
+import { ids } from '@components/citation-builder/view/ids';
 ---
 
 <PageLayout title="Citation Builder">
-	<h1 class="my-5 text-3xl font-bold">Citation Builder</h1>
-	<p class="mb-4">Bluebook-formatted citations, one at a time.</p>
+	<h1
+		id={ids.heading}
+		class="my-5 text-3xl font-bold"
+	>
+		Citation Builder
+	</h1>
+	<p
+		id={ids.intro}
+		class="mb-4"
+	>
+		Bluebook-formatted citations, one at a time.
+	</p>
 </PageLayout>
