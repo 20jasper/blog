@@ -48,7 +48,46 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
 		const output = document.querySelector('output')!;
-		const clearButton = document.querySelector<HTMLButtonElement>('button')!;
+		const buttons = Array.from(document.querySelectorAll('button'));
+		const clearButton = buttons.find((b) => b.textContent?.trim() === 'Clear')!;
+		const copyButton = buttons.find((b) =>
+			b.textContent?.trim().startsWith('Copy'),
+		)!;
+
+		let copyResetTimeout: ReturnType<typeof setTimeout> | undefined;
+		let lastCitation: { html: string; plain: string } | undefined;
+
+		function resetCopyButtonLabelSoon(): void {
+			clearTimeout(copyResetTimeout);
+			copyResetTimeout = setTimeout(() => {
+				copyButton.textContent = 'Copy';
+			}, 2000);
+		}
+
+		// r[impl copy.stale-permitted]
+		async function copyCitation(): Promise<void> {
+			if (lastCitation === undefined) {
+				return;
+			}
+			const { html, plain } = lastCitation;
+			try {
+				await navigator.clipboard.write([
+					new ClipboardItem({
+						'text/html': new Blob([html], { type: 'text/html' }),
+						'text/plain': new Blob([plain], { type: 'text/plain' }),
+					}),
+				]);
+				copyButton.textContent = 'Copied!';
+			} catch {
+				const selection = globalThis.getSelection();
+				const range = document.createRange();
+				range.selectNodeContents(output);
+				selection?.removeAllRanges();
+				selection?.addRange(range);
+				copyButton.textContent = 'Selected -- press Ctrl/Cmd+C';
+			}
+			resetCopyButtonLabelSoon();
+		}
 
 		const caseTypeSelect = document.querySelector<HTMLSelectElement>(
 			`#${ids.caseType}`,
@@ -246,6 +285,15 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
+			lastCitation = undefined;
+			copyButton.disabled = true;
+		}
+
+		function setCitationOutput(segments: Parameters<typeof render>[0]): void {
+			const { html, plain } = render(segments, { emphasis: 'italic' });
+			output.innerHTML = html;
+			lastCitation = { html, plain };
+			copyButton.disabled = false;
 		}
 
 		function updateUnreportedOutput(): void {
@@ -269,7 +317,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				const segments = assembleUnreportedShortForm(
 					unreportedShortFormInput(),
 				);
-				output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+				setCitationOutput(segments);
 				return;
 			}
 
@@ -304,7 +352,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				},
 			});
 
-			output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+			setCitationOutput(segments);
 		}
 
 		function updateReportedOutput(): void {
@@ -323,7 +371,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				}
 
 				const segments = assembleReportedShortForm(reportedShortFormInput());
-				output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+				setCitationOutput(segments);
 				return;
 			}
 
@@ -348,7 +396,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				year: Number(yearInput.value),
 			});
 
-			output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+			setCitationOutput(segments);
 		}
 
 		function updateOutput(): void {
@@ -390,6 +438,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		form.addEventListener('input', refresh);
 		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
+		copyButton.addEventListener('click', () => {
+			void copyCitation();
+		});
 
 		fillExample();
 		refresh();

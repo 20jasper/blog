@@ -435,3 +435,56 @@ test('clear empties unreported fields and resets Availability to database', asyn
 	await expect(page.getByLabel('Day')).toHaveValue('');
 	await expect(page.getByLabel('Opinion year')).toHaveValue('');
 });
+
+test('Copy is enabled when a citation is shown, disabled once cleared', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	const copyButton = page.getByRole('button', { name: /^Copy/u });
+	await expect(copyButton).toBeEnabled();
+
+	await page.getByRole('button', { name: 'Clear' }).click();
+
+	await expect(copyButton).toBeDisabled();
+});
+
+// text/html + text/plain (§5.11) -- clipboard permission grants only work
+// reliably on Chromium in Playwright, so this is chromium-only rather
+// than a cross-browser guess.
+test('Copy writes both text/html and text/plain to the clipboard', async ({
+	page,
+	context,
+	browserName,
+}) => {
+	test.skip(
+		browserName !== 'chromium',
+		'clipboard permissions are chromium-only here',
+	);
+	await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+	await page.goto('/tools/citation-builder');
+
+	await page.getByRole('button', { name: /^Copy/u }).click();
+	// Wait for the async clipboard write to actually finish before
+	// reading it back, rather than racing it.
+	await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible();
+
+	const clipboard = await page.evaluate(async () => {
+		const [item] = await navigator.clipboard.read();
+		if (item === undefined) {
+			throw new Error('clipboard is empty');
+		}
+		return {
+			plain: await (await item.getType('text/plain')).text(),
+			html: await (await item.getType('text/html')).text(),
+		};
+	});
+
+	expect(clipboard.plain).toBe(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+	);
+	expect(clipboard.html).toBe(
+		'<i>Dayton v. Stewart</i>, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+	);
+	await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible();
+});
