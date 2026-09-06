@@ -204,6 +204,67 @@ export function assembleUnreportedCase(
 	return framePeriod(segments);
 }
 
+type UnreportedShortFormAvailability =
+	| { kind: 'database'; databaseId: string }
+	| { kind: 'slip-opinion'; docket: string };
+
+export type UnreportedShortFormInput =
+	| {
+			nameVariant: 'id';
+			availability: UnreportedShortFormAvailability;
+			pincite: string;
+	  }
+	| {
+			nameVariant: 'none';
+			availability: UnreportedShortFormAvailability;
+			pincite: string;
+	  }
+	| {
+			nameVariant: 'full' | 'party1' | 'party2';
+			name: CaseNameInput;
+			availability: UnreportedShortFormAvailability;
+			pincite: string;
+	  };
+
+// r[impl citation.unreported-short-form]
+// r[impl citation.unreported-pincite-form]
+export function assembleUnreportedShortForm(
+	input: UnreportedShortFormInput,
+	{ spanSeparator = DEFAULT_SEPARATOR }: AssembleOptions = {},
+): Segment[] {
+	const pincite = parsePincite(input.pincite, {
+		separator: spanSeparator,
+		starPages: input.availability.kind === 'database',
+	});
+
+	if (input.nameVariant === 'id') {
+		return framePeriod([
+			{ text: 'Id.', emphasized: true },
+			{ text: ` at ${pincite}`, emphasized: false },
+		]);
+	}
+
+	const nameSeg: Segment[] =
+		input.nameVariant === 'none'
+			? []
+			: [
+					{
+						text: shortFormName(input.nameVariant, input.name),
+						emphasized: true,
+					},
+				];
+
+	const availabilitySegment =
+		input.availability.kind === 'database'
+			? `${input.availability.databaseId}, at ${pincite}`
+			: `No. ${input.availability.docket}, slip op. at ${pincite}`;
+
+	const core =
+		nameSeg.length === 0 ? availabilitySegment : `, ${availabilitySegment}`;
+
+	return framePeriod([...nameSeg, { text: core, emphasized: false }]);
+}
+
 export type StatuteTitle = {
 	text: string;
 	position: 'before-code' | 'after-code';
