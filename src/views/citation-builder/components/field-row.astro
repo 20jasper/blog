@@ -3,8 +3,16 @@
 // optional format hint below the label, stacked in a flex column. Text
 // inputs and selects both wrap their control in this so spacing/label
 // styling stays in one place.
+//
+// The hint line always reserves one line of height (min-h-4, matching
+// text-xs's line-height), whether or not this field has a hint. On the
+// 2-column desktop grid, fields land in the same row as an unrelated
+// neighbor -- without a fixed reservation, a field with a hint (or a
+// longer one) pushes its own input down relative to the row-mate's,
+// desyncing the two columns even though the grid row itself is tall
+// enough for both.
 const labelClass = 'text-sm font-medium text-foreground-secondary';
-const hintClass = 'text-foreground-secondary text-xs';
+const hintClass = 'text-foreground-secondary min-h-4 text-xs';
 
 export type Props = {
 	for: string;
@@ -21,15 +29,11 @@ const { for: forId, label, hint } = Astro.props;
 		class={labelClass}
 		>{label}</label
 	>
-	{
-		hint !== undefined && (
-			<p
-				id={`${forId}-hint`}
-				class={hintClass}
-			>
-				{hint}
-			</p>
-		)
-	}
+	<p
+		id={`${forId}-hint`}
+		class={hintClass}
+	>
+		{hint}
+	</p>
 	<slot />
 </div>

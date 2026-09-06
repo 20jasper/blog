@@ -37,7 +37,7 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 		<legend class={legendClass}>Source</legend>
 		<div class={choiceRowClass}>
 			<span class={labelClass}>Source type</span>
-			<div class="flex gap-4">
+			<div class="flex flex-col gap-2">
 				<Choice
 					type="radio"
 					name="sourceType"
@@ -129,7 +129,7 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 		<div class={gridClass}>
 			<div class={choiceRowClass}>
 				<span class={labelClass}>Availability</span>
-				<div class="flex gap-4">
+				<div class="flex flex-col gap-2">
 					<Choice
 						type="radio"
 						name="availability"
@@ -186,7 +186,7 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 		<div class={gridClass}>
 			<div class={choiceRowClass}>
 				<span class={labelClass}>Mode</span>
-				<div class="flex gap-4">
+				<div class="flex flex-col gap-2">
 					<Choice
 						type="radio"
 						name="mode"
