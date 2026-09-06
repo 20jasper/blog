@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
-import { getCitationBuilderElements } from './citation-builder-elements';
 
 // The generic per-route scan in site-snapshot.spec.ts already checks
 // every page (including this one) on initial load, across every
@@ -12,8 +11,7 @@ test.describe('citation builder accessibility', () => {
 		page,
 	}) => {
 		await page.goto('/tools/citation-builder');
-		const els = getCitationBuilderElements(page);
-		await els.caseType.selectOption('in-re');
+		await page.getByLabel('Case type').selectOption('in-re');
 
 		const results = await new AxeBuilder({ page }).analyze();
 		expect(
@@ -24,8 +22,7 @@ test.describe('citation builder accessibility', () => {
 
 	test('no axe violations after clearing the form', async ({ page }) => {
 		await page.goto('/tools/citation-builder');
-		const els = getCitationBuilderElements(page);
-		await els.clearButton.click();
+		await page.getByRole('button', { name: 'Clear' }).click();
 
 		const results = await new AxeBuilder({ page }).analyze();
 		expect(

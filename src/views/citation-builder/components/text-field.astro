@@ -1,0 +1,28 @@
+---
+import FieldRow from './field-row.astro';
+
+const fieldClass =
+	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/40 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
+
+export type Props = {
+	id: string;
+	name: string;
+	label: string;
+	inputmode?: 'numeric';
+};
+
+const { id, name, label, inputmode } = Astro.props;
+---
+
+<FieldRow
+	for={id}
+	label={label}
+>
+	<input
+		id={id}
+		name={name}
+		type="text"
+		inputmode={inputmode}
+		class={fieldClass}
+	/>
+</FieldRow>

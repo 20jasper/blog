@@ -1,0 +1,22 @@
+---
+// Shared row shell for a labeled field -- label above the control,
+// stacked in a flex column. Text inputs and selects both wrap their
+// control in this so spacing/label styling stays in one place.
+const labelClass = 'text-sm font-medium text-foreground-secondary';
+
+export type Props = {
+	for: string;
+	label: string;
+};
+
+const { for: forId, label } = Astro.props;
+---
+
+<div class="flex w-full flex-col gap-1">
+	<label
+		for={forId}
+		class={labelClass}
+		>{label}</label
+	>
+	<slot />
+</div>

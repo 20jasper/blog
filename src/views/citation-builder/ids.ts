@@ -1,23 +1,20 @@
-// Single source of truth for element ids: the markup and the Playwright
-// specs both import this, so a renamed id fails at compile time in
-// whichever side forgot to update, instead of silently passing a
-// selector that never matches. Grows alongside the form.
+// Ids exist only where HTML requires one: an explicit <label for> target,
+// or <output for> pointing at the form. Everything else (rows to
+// show/hide, the mode radios, the Id. checkbox, the Clear button) is
+// found via name attributes, DOM structure, or role/label -- both in the
+// view script and in the Playwright specs -- rather than a dedicated id.
 export const ids = {
-	heading: 'citation-builder-heading',
-
 	form: 'citation-builder-form',
 	caseType: 'citation-builder-case-type',
 	party1: 'citation-builder-party1',
 	party2: 'citation-builder-party2',
-	party2Row: 'citation-builder-party2-row',
 	court: 'citation-builder-court',
 	volume: 'citation-builder-volume',
 	reporter: 'citation-builder-reporter',
 	firstPage: 'citation-builder-first-page',
 	pincite: 'citation-builder-pincite',
 	year: 'citation-builder-year',
-	clearButton: 'citation-builder-clear',
-	output: 'citation-builder-output',
+	nameVariant: 'citation-builder-name-variant',
 } as const;
 
 export type ElementIds = typeof ids;

@@ -1,19 +1,17 @@
 ---
 import PageLayout from '@layouts/page-layout.astro';
 import CitationBuilderUi from './citation-builder.ui.astro';
-import { ids } from './ids';
 ---
 
 <PageLayout title="Bluebook 22 Citation Generator">
-	<h1
-		id={ids.heading}
-		class="my-5 text-3xl font-bold"
-	>
-		Bluebook 22 Citation Generator
-	</h1>
+	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
 	<CitationBuilderUi />
 	<script>
-		import { assembleReportedCase } from '@components/citation-builder/domain/assemble';
+		import {
+			assembleReportedCase,
+			assembleReportedShortForm,
+			type ReportedShortFormInput,
+		} from '@components/citation-builder/domain/assemble';
 		import {
 			isCaseTypeId,
 			type CaseNameInput,
@@ -28,10 +26,10 @@ import { ids } from './ids';
 		import { selectFieldState } from '@components/citation-builder/state/field-state';
 		import { ids } from '@src/views/citation-builder/ids';
 
-		// Only reported/full-citation is wired up so far -- the rest of
-		// the source types and short forms come later. Prefilled with
-		// the golden case from docs/citation-builder/phase-1-spec.md §8.3
-		// so the page shows a working example instead of a blank form.
+		// Only reported is wired up so far -- unreported/statute forms
+		// come later. Prefilled with the golden case from
+		// docs/citation-builder/phase-1-spec.md §8.3 so the page shows a
+		// working example instead of a blank form.
 		const EXAMPLE = {
 			caseType: 'v',
 			party1: 'Dayton',
@@ -45,7 +43,9 @@ import { ids } from './ids';
 		} as const;
 
 		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
-		const output = document.querySelector(`#${ids.output}`)!;
+		const output = document.querySelector('output')!;
+		const clearButton = document.querySelector<HTMLButtonElement>('button')!;
+
 		const caseTypeSelect = document.querySelector<HTMLSelectElement>(
 			`#${ids.caseType}`,
 		)!;
@@ -55,7 +55,6 @@ import { ids } from './ids';
 		const party2Input = document.querySelector<HTMLInputElement>(
 			`#${ids.party2}`,
 		)!;
-		const party2Row = document.querySelector<HTMLElement>(`#${ids.party2Row}`)!;
 		const courtInput = document.querySelector<HTMLInputElement>(
 			`#${ids.court}`,
 		)!;
@@ -72,16 +71,44 @@ import { ids } from './ids';
 			`#${ids.pincite}`,
 		)!;
 		const yearInput = document.querySelector<HTMLInputElement>(`#${ids.year}`)!;
-		const clearButton = document.querySelector<HTMLButtonElement>(
-			`#${ids.clearButton}`,
+		const nameVariantSelect = document.querySelector<HTMLSelectElement>(
+			`#${ids.nameVariant}`,
 		)!;
+		const idCheckbox =
+			form.querySelector<HTMLInputElement>('input[name="id"]')!;
+
+		// Rows to show/hide are just the field's own parent -- no id
+		// needed to find them.
+		const party2Row = party2Input.parentElement!;
+		const courtRow = courtInput.parentElement!;
+		const firstPageRow = firstPageInput.parentElement!;
+		const yearRow = yearInput.parentElement!;
+		// SelectField wraps its <select> in an extra positioning div (for
+		// the chevron), so the actual field row is one level further up.
+		const nameVariantRow = nameVariantSelect.closest('div')!.parentElement!;
+		const idRow = idCheckbox.closest('div')!;
 
 		function currentCaseType(): CaseTypeId {
 			const { value } = caseTypeSelect;
 			return isCaseTypeId(value) ? value : 'v';
 		}
 
-		function updatePartyTwoState(): void {
+		function currentMode(): 'full' | 'short' {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="mode"]:checked',
+			);
+			return checked?.value === 'short' ? 'short' : 'full';
+		}
+
+		function currentNameVariant(): 'full' | 'party1' | 'party2' | 'none' {
+			const { value } = nameVariantSelect;
+			return value === 'party1' || value === 'party2' || value === 'none'
+				? value
+				: 'full';
+		}
+
+		// r[impl name-variant.short-form-only]
+		function updateFieldVisibility(): void {
 			const fields = {
 				...initialCitationFields(),
 				sourceType: 'reported' as const,
@@ -90,9 +117,24 @@ import { ids } from './ids';
 			const fieldState = selectFieldState(
 				deriveSelections(fields, initialDisplayState()),
 			);
-			const notUsed = fieldState.party2 === 'not-used';
-			party2Input.disabled = notUsed;
-			party2Row.hidden = notUsed;
+			const party2NotUsed = fieldState.party2 === 'not-used';
+			party2Input.disabled = party2NotUsed;
+			party2Row.hidden = party2NotUsed;
+
+			const isShort = currentMode() === 'short';
+			for (const [input, row] of [
+				[courtInput, courtRow],
+				[firstPageInput, firstPageRow],
+				[yearInput, yearRow],
+			] as const) {
+				input.disabled = isShort;
+				row.hidden = isShort;
+			}
+
+			nameVariantRow.hidden = !isShort || idCheckbox.checked;
+			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
+			idRow.hidden = !isShort;
+			idCheckbox.disabled = !isShort;
 		}
 
 		function caseNameInput(): CaseNameInput {
@@ -106,7 +148,50 @@ import { ids } from './ids';
 				: { caseType, party1: party1Input.value };
 		}
 
+		function shortFormInput(): ReportedShortFormInput {
+			if (idCheckbox.checked) {
+				return { nameVariant: 'id', pincite: pinciteInput.value };
+			}
+			const nameVariant = currentNameVariant();
+			return nameVariant === 'none'
+				? {
+						nameVariant: 'none',
+						volume: volumeInput.value,
+						reporter: reporterInput.value,
+						pincite: pinciteInput.value,
+					}
+				: {
+						nameVariant,
+						name: caseNameInput(),
+						volume: volumeInput.value,
+						reporter: reporterInput.value,
+						pincite: pinciteInput.value,
+					};
+		}
+
 		function updateOutput(): void {
+			const mode = currentMode();
+
+			if (mode === 'short') {
+				const hasRequiredFields =
+					volumeInput.value !== '' &&
+					reporterInput.value !== '' &&
+					pinciteInput.value !== '' &&
+					(idCheckbox.checked ||
+						currentNameVariant() === 'none' ||
+						party1Input.value !== '');
+
+				if (!hasRequiredFields) {
+					output.textContent =
+						'Fill in the fields above to generate a citation.';
+					return;
+				}
+
+				const segments = assembleReportedShortForm(shortFormInput());
+				output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+				return;
+			}
+
 			const hasRequiredFields =
 				party1Input.value !== '' &&
 				volumeInput.value !== '' &&
@@ -131,6 +216,11 @@ import { ids } from './ids';
 			output.innerHTML = render(segments, { emphasis: 'italic' }).html;
 		}
 
+		function refresh(): void {
+			updateFieldVisibility();
+			updateOutput();
+		}
+
 		function fillExample(): void {
 			caseTypeSelect.value = EXAMPLE.caseType;
 			party1Input.value = EXAMPLE.party1;
@@ -149,22 +239,15 @@ import { ids } from './ids';
 				input.value = '';
 			}
 			caseTypeSelect.value = 'v';
-			updatePartyTwoState();
-			updateOutput();
+			nameVariantSelect.value = 'full';
+			refresh();
 		}
 
-		form.addEventListener('input', () => {
-			updatePartyTwoState();
-			updateOutput();
-		});
-		caseTypeSelect.addEventListener('change', () => {
-			updatePartyTwoState();
-			updateOutput();
-		});
+		form.addEventListener('input', refresh);
+		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
 
 		fillExample();
-		updatePartyTwoState();
-		updateOutput();
+		refresh();
 	</script>
 </PageLayout>

@@ -1,15 +1,28 @@
 ---
 import Button from '@components/button.astro';
+import Choice from './components/choice.astro';
+import SelectField from './components/select-field.astro';
+import TextField from './components/text-field.astro';
 import { ids } from './ids';
 
-const fieldClass =
-	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/40 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
-const labelClass = 'text-sm font-medium text-foreground-secondary';
-const rowClass = 'flex w-full flex-col gap-1';
 const fieldsetClass = 'w-full max-w-full border-0 p-0';
 const legendClass =
 	'border-foreground-secondary/30 text-foreground mb-3 w-full border-b p-0 pb-2 text-lg font-semibold';
 const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
+const labelClass = 'text-sm font-medium text-foreground-secondary';
+
+const CASE_TYPE_OPTIONS = [
+	{ value: 'v', text: 'v.' },
+	{ value: 'in-re', text: 'In re' },
+	{ value: 'ex-parte', text: 'Ex parte' },
+];
+
+const NAME_VARIANT_OPTIONS = [
+	{ value: 'full', text: 'Full name' },
+	{ value: 'party1', text: 'Party 1' },
+	{ value: 'party2', text: 'Party 2' },
+	{ value: 'none', text: 'No name' },
+];
 ---
 
 <form
@@ -19,154 +32,113 @@ const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
 	<fieldset class={fieldsetClass}>
 		<legend class={legendClass}>Case identity</legend>
 		<div class={gridClass}>
-			<div class={rowClass}>
-				<label
-					for={ids.caseType}
-					class={labelClass}
-					>Case type</label
-				>
-				<select
-					id={ids.caseType}
-					name="caseType"
-					class={fieldClass}
-				>
-					<option value="v">v.</option>
-					<option value="in-re">In re</option>
-					<option value="ex-parte">Ex parte</option>
-				</select>
-			</div>
-			<div class={rowClass}>
-				<label
-					for={ids.party1}
-					class={labelClass}
-					>Party 1</label
-				>
-				<input
-					id={ids.party1}
-					name="party1"
-					type="text"
-					class={fieldClass}
-				/>
-			</div>
-			<div
-				id={ids.party2Row}
-				class={rowClass}
-			>
-				<label
-					for={ids.party2}
-					class={labelClass}
-					>Party 2</label
-				>
-				<input
-					id={ids.party2}
-					name="party2"
-					type="text"
-					class={fieldClass}
-				/>
-			</div>
-			<div class={rowClass}>
-				<label
-					for={ids.court}
-					class={labelClass}
-					>Court</label
-				>
-				<input
-					id={ids.court}
-					name="court"
-					type="text"
-					class={fieldClass}
-				/>
-			</div>
+			<SelectField
+				id={ids.caseType}
+				name="caseType"
+				label="Case type"
+				options={CASE_TYPE_OPTIONS}
+			/>
+			<TextField
+				id={ids.party1}
+				name="party1"
+				label="Party 1"
+			/>
+			<TextField
+				id={ids.party2}
+				name="party2"
+				label="Party 2"
+			/>
+			{
+				/* Freeform, unvalidated (§6) -- the label just states the
+			expected format; not a validation disclaimer. */
+			}
+			<TextField
+				id={ids.court}
+				name="court"
+				label="Court (abbreviated)"
+			/>
 		</div>
 	</fieldset>
 
 	<fieldset class={fieldsetClass}>
 		<legend class={legendClass}>Reported case</legend>
 		<div class={gridClass}>
-			<div class={rowClass}>
-				<label
-					for={ids.volume}
-					class={labelClass}
-					>Volume</label
-				>
-				<input
-					id={ids.volume}
-					name="volume"
-					type="text"
-					class={fieldClass}
-				/>
+			<TextField
+				id={ids.volume}
+				name="volume"
+				label="Volume"
+			/>
+			<TextField
+				id={ids.reporter}
+				name="reporter"
+				label="Reporter"
+			/>
+			<TextField
+				id={ids.firstPage}
+				name="firstPage"
+				label="First page"
+			/>
+			<TextField
+				id={ids.pincite}
+				name="pincite"
+				label="Pincite"
+			/>
+			<TextField
+				id={ids.year}
+				name="year"
+				label="Year"
+				inputmode="numeric"
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Citation form</legend>
+		<div class={gridClass}>
+			<div class="flex w-full flex-col gap-1">
+				<span class={labelClass}>Mode</span>
+				<div class="flex gap-4">
+					<Choice
+						type="radio"
+						name="mode"
+						value="full"
+						checked
+						>Full citation</Choice
+					>
+					<Choice
+						type="radio"
+						name="mode"
+						value="short"
+						>Short form</Choice
+					>
+				</div>
 			</div>
-			<div class={rowClass}>
-				<label
-					for={ids.reporter}
-					class={labelClass}
-					>Reporter</label
+			<SelectField
+				id={ids.nameVariant}
+				name="nameVariant"
+				label="Name variant"
+				options={NAME_VARIANT_OPTIONS}
+			/>
+			<div class="flex w-full flex-col gap-1">
+				<Choice
+					type="checkbox"
+					name="id"
 				>
-				<input
-					id={ids.reporter}
-					name="reporter"
-					type="text"
-					class={fieldClass}
-				/>
-			</div>
-			<div class={rowClass}>
-				<label
-					for={ids.firstPage}
-					class={labelClass}
-					>First page</label
-				>
-				<input
-					id={ids.firstPage}
-					name="firstPage"
-					type="text"
-					class={fieldClass}
-				/>
-			</div>
-			<div class={rowClass}>
-				<label
-					for={ids.pincite}
-					class={labelClass}
-					>Pincite</label
-				>
-				<input
-					id={ids.pincite}
-					name="pincite"
-					type="text"
-					class={fieldClass}
-				/>
-			</div>
-			<div class={rowClass}>
-				<label
-					for={ids.year}
-					class={labelClass}
-					>Year</label
-				>
-				<input
-					id={ids.year}
-					name="year"
-					type="text"
-					inputmode="numeric"
-					class={fieldClass}
-				/>
+					This citation immediately follows one to the same source (Id.)
+				</Choice>
 			</div>
 		</div>
 	</fieldset>
 
 	<div>
-		<Button
-			type="button"
-			id={ids.clearButton}
-			>Clear</Button
-		>
+		<Button type="button">Clear</Button>
 	</div>
 </form>
 
 <div class="mt-6">
 	<p class="text-foreground-secondary mb-1 text-sm font-medium">Citation</p>
 	<output
-		id={ids.output}
 		for={ids.form}
-		aria-live="polite"
 		class="block w-full max-w-full text-lg break-words"
 	></output>
 </div>
