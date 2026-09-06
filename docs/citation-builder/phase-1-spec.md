@@ -137,14 +137,10 @@ Strip if matched (prefix followed by whitespace, end, or a digit only —
 **not** by another letter, which was a confirmed bug: `"North-123"` must
 never become `"No. rth-123"`), then prepend `No. `.
 
-> **Spec revision (2026-09-05):** the original lookahead was `(?=\s|$)`,
-> which does not match a prefix directly followed by a digit with no
-> separating space (e.g. `"No.05-1234"`) — so it would fail to strip
-> that prefix and produce `"No. No.05-1234"` instead of the intended
-> `"No. 05-1234"`, contradicting the §8.4 test table. Widened to
-> `(?=\s|$|\d)` so a digit also counts as a valid boundary. The
-> letter-boundary bug (`"North-123"`, `"Norfolk County 44"`) is still
-> guarded against, since a following letter still fails the lookahead.
+> **Note:** the boundary check allows whitespace, end-of-string, _or_ a
+> digit (e.g. `"No.05-1234"` still strips correctly) — but not another
+> letter, which is what guards `"North-123"` and `"Norfolk County 44"`
+> from being corrupted.
 
 ### 4.2 Statute section auto-prefix
 
@@ -202,20 +198,6 @@ name, then volume/reporter/first page, an optional pincite, and a
 court/year parenthetical -- framed as one capitalized, period-terminated
 sentence.
 
-> **External verification (2026-09-06):** confirmed against
-> [Georgetown Law Library's Bluebook guide — Federal Courts](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339383):
->
-> > Six-element format: Case name + Volume + Reporter abbreviation (F.,
-> > F.2d, or F.3d) + First page + Court abbreviation + Year
-> >
-> > Example: _Universal City Studios, Inc. v. Corley, 273 F.3d 429 (2d
-> > Cir. 2001)_
->
-> Pincite placement confirmed by the same page's U.S. Supreme Court
-> example: _Roe v. Wade, 410 U.S. 113, 164 (1973)_ -- pincite follows
-> the first page directly with a comma, no separate label, matching
-> our template exactly.
-
 ### 5.5 Long-form structure (unreported case)
 
 ```
@@ -227,31 +209,12 @@ Database ID segment omitted entirely if Availability = slip opinion.
 Pincite (with its "at *" star-page marker) is omitted entirely when
 absent, same as the reported-case template.
 
-> **External verification (2026-09-06):** confirmed verbatim against
-> [Georgetown Law Library's Bluebook guide — Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386):
->
-> > United States v. Bennett, No. 05-CR-6050 CJS, 2005 WL 2709572
-> > (W.D.N.Y. Oct. 21, 2005)
->
-> and the slip-opinion variant, same page:
->
-> > United States v. Bennett, No. 05-CR-6050 CJS (W.D.N.Y. Oct. 21, 2005)
->
-> Both match our §8.3 golden-case test output exactly, character for
-> character.
-
 ### 5.6 Long-form structure (statute)
 
-> **Spec revision (2026-09-06):** unlike §5.4/§5.5 for cases, no §5.x
-> output-template subsection for statutes existed in the original
-> spec draft -- only the data model (§3.4) and one golden case
-> (§8.3: `Ohio Rev. Code Ann. § 3767.32(A) (West 2025).`). The two
-> non-supplement templates below are inferred directly from that
-> golden case plus the §3.4 field model and are low-risk. The
-> supplement-present template's join format (`[Year] & [Supplement
-designation] [Supplement year]`) is a best-effort reading of Rule
-> 12.3.1(e) with no golden case to confirm it against -- flag if
-> that's not the intended format.
+> **Unconfirmed:** the supplement-present template's join format
+> (`[Year] & [Supplement designation] [Supplement year]`) is a
+> best-effort reading of Rule 12.3.1(e) with no golden case to
+> confirm it against -- flag if that's not the intended format.
 
 ```
 [Code abbreviation] § [Section] ([Year]).
@@ -285,12 +248,6 @@ design (§6 — no citation-sequence memory).
 
 When Id. is selected, the name-variant control is hidden.
 
-> **External verification (2026-09-06):** confirmed against
-> [Georgetown Law Library's Bluebook guide — Short Forms for Cases](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389):
->
-> > Id. is used when the case appeared in the immediately preceding
-> > citation and the citation included only that case.
-
 ```
 [Name?], [Volume] [Reporter] at [Pincite].
 ```
@@ -302,12 +259,6 @@ reporter, and pincite joined by "at". Pincite is required for short
 form (§3.1). _Id._ replaces the entire name-and-reporter portion with
 just `Id.`, italicized: `Id. at [Pincite].`
 
-> **External verification (2026-09-06):** structure confirmed against
-> the same Georgetown page: given _Universal City Studios, Inc. v.
-> Corley, 273 F.3d 429 (2d Cir. 2001)_ at page 435 -- `Corley, 273
-F.3d at 435` (short name), `273 F.3d at 435` (no name), `Id. at
-435`.
->
 > **Divergence, noted deliberately:** Georgetown's short-name example
 > keeps party 2 ("Corley"), not party 1 -- real Bluebook practice
 > (Rule 10.9(a)(i)) keeps whichever party is more distinctive, here
@@ -438,6 +389,24 @@ code, not as a hand-maintained prose list.
 - _Marbury v. Madison_ — confirms parallel/historical-reporter citations
   fail as a documented non-goal, not as a crash.
 
+External verification against [Georgetown Law Library's Bluebook
+guide](https://guides.ll.georgetown.edu/bluebook/citing-cases):
+
+- **Reported case (§5.4):** [Federal Courts](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339383)
+  confirms the six-element format and example (_Universal City
+  Studios, Inc. v. Corley, 273 F.3d 429 (2d Cir. 2001)_), and pincite
+  placement via the U.S. Supreme Court example (_Roe v. Wade, 410 U.S.
+  113, 164 (1973)_) — pincite follows the first page directly with a
+  comma, matching our template.
+- **Unreported case (§5.5):** [Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
+  confirms the Bennett golden case verbatim, both the database and
+  slip-opinion variants, character for character.
+- **Id. gating and short form (§5.7):** [Short Forms for Cases](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389)
+  confirms the Id. rule verbatim, and the short-form structure (given
+  _Corley_ at page 435: `Corley, 273 F.3d at 435` short name, `273
+F.3d at 435` no name, `Id. at 435`) — see §5.7 for the deliberate
+  Party 1 divergence this surfaces.
+
 ### 8.4 Normalization tests
 
 | Input                    | Expected                                        |
@@ -462,17 +431,6 @@ against the `reporters-db` dataset (github.com/freelawproject/reporters-db,
 into the shipped tool, never used for runtime validation or autocomplete.
 Purely a stress test for the normalization functions against real-world
 strings the hand-written test list wouldn't think to include.
-
-> **Tried and removed (2026-09-06):** built as an opt-in `pnpm
-test:stress`, fetching `reporters-db` live and asserting idempotency
->
-> - "never throws" across every reporter string. Manual spot-checking
->   found zero strings in the entire ~3,592-entry corpus ever exercised
->   the strip branch of either normalization function (no reporter
->   starts with a real `No.`/`Case No.` prefix, none contain `§`) — so
->   it only ever validated the passthrough path, not the logic it was
->   meant to stress. Removed rather than kept for a false sense of
->   coverage.
 
 ### 8.5 Rejection paths
 
