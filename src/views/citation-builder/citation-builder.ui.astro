@@ -217,6 +217,42 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 					This citation immediately follows one to the same source (Id.)
 				</Choice>
 			</div>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Typeface</span>
+				<div class="flex flex-col gap-2">
+					<Choice
+						type="radio"
+						name="emphasis"
+						value="italic"
+						checked
+						>Italic</Choice
+					>
+					<Choice
+						type="radio"
+						name="emphasis"
+						value="underline"
+						>Underline</Choice
+					>
+				</div>
+			</div>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Span separator</span>
+				<div class="flex flex-col gap-2">
+					<Choice
+						type="radio"
+						name="spanSeparator"
+						value="hyphen"
+						checked
+						>Hyphen (208-14)</Choice
+					>
+					<Choice
+						type="radio"
+						name="spanSeparator"
+						value="en-dash"
+						>En dash (208–14)</Choice
+					>
+				</div>
+			</div>
 		</div>
 	</fieldset>
 

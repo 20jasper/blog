@@ -26,7 +26,11 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			deriveSelections,
 			initialCitationFields,
 		} from '@components/citation-builder/state/citation-fields';
-		import { initialDisplayState } from '@components/citation-builder/state/display-state';
+		import {
+			initialDisplayState,
+			type Emphasis,
+			type SpanSeparator,
+		} from '@components/citation-builder/state/display-state';
 		import { selectFieldState } from '@components/citation-builder/state/field-state';
 		import { ids } from '@src/views/citation-builder/ids';
 
@@ -166,6 +170,20 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				: 'full';
 		}
 
+		function currentEmphasis(): Emphasis {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="emphasis"]:checked',
+			);
+			return checked?.value === 'underline' ? 'underline' : 'italic';
+		}
+
+		function currentSpanSeparator(): SpanSeparator {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="spanSeparator"]:checked',
+			);
+			return checked?.value === 'en-dash' ? '–' : '-';
+		}
+
 		// Fields stay visible always (§3.5) -- only their disabled state
 		// changes, never their visibility, so switching source type/mode
 		// never shifts the layout. Every data field's disabled state comes
@@ -277,7 +295,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		function setCitationOutput(segments: Parameters<typeof render>[0]): void {
-			const { html, plain } = render(segments, { emphasis: 'italic' });
+			const { html, plain } = render(segments, {
+				emphasis: currentEmphasis(),
+			});
 			output.innerHTML = html;
 			lastCitation = { html, plain };
 			copyButton.disabled = false;
@@ -303,6 +323,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 				const segments = assembleUnreportedShortForm(
 					unreportedShortFormInput(),
+					{ spanSeparator: currentSpanSeparator() },
 				);
 				setCitationOutput(segments);
 				return;
@@ -323,21 +344,24 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				return;
 			}
 
-			const segments = assembleUnreportedCase({
-				name: caseNameInput(),
-				docket: docketNumberInput.value,
-				availability:
-					availability === 'database'
-						? { kind: 'database', databaseId: databaseIdentifierInput.value }
-						: { kind: 'slip-opinion' },
-				pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
-				court: courtInput.value,
-				date: {
-					month: monthSelect.value as Month,
-					day: Number(dayInput.value),
-					year: Number(dateYearInput.value),
+			const segments = assembleUnreportedCase(
+				{
+					name: caseNameInput(),
+					docket: docketNumberInput.value,
+					availability:
+						availability === 'database'
+							? { kind: 'database', databaseId: databaseIdentifierInput.value }
+							: { kind: 'slip-opinion' },
+					pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
+					court: courtInput.value,
+					date: {
+						month: monthSelect.value as Month,
+						day: Number(dayInput.value),
+						year: Number(dateYearInput.value),
+					},
 				},
-			});
+				{ spanSeparator: currentSpanSeparator() },
+			);
 
 			setCitationOutput(segments);
 		}
@@ -359,7 +383,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 					return;
 				}
 
-				const segments = assembleReportedShortForm(reportedShortFormInput());
+				const segments = assembleReportedShortForm(reportedShortFormInput(), {
+					spanSeparator: currentSpanSeparator(),
+				});
 				setCitationOutput(segments);
 				return;
 			}
@@ -375,15 +401,18 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				return;
 			}
 
-			const segments = assembleReportedCase({
-				name: caseNameInput(),
-				volume: volumeInput.value,
-				reporter: reporterInput.value,
-				firstPage: firstPageInput.value,
-				pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
-				court: courtInput.value === '' ? undefined : courtInput.value,
-				year: Number(yearInput.value),
-			});
+			const segments = assembleReportedCase(
+				{
+					name: caseNameInput(),
+					volume: volumeInput.value,
+					reporter: reporterInput.value,
+					firstPage: firstPageInput.value,
+					pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
+					court: courtInput.value === '' ? undefined : courtInput.value,
+					year: Number(yearInput.value),
+				},
+				{ spanSeparator: currentSpanSeparator() },
+			);
 
 			setCitationOutput(segments);
 		}

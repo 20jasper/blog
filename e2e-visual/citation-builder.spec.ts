@@ -508,3 +508,30 @@ test('Copy writes both text/html and text/plain to the clipboard', async ({
 	);
 	await expect(page.getByRole('button', { name: 'Copied!' })).toBeVisible();
 });
+
+test('Underline switches the case name from <i> to <u>', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	await expect(page.locator('output i')).toHaveText('Dayton v. Stewart');
+	await expect(page.locator('output u')).toHaveCount(0);
+
+	await page.getByRole('radio', { name: 'Underline' }).check();
+
+	await expect(page.locator('output u')).toHaveText('Dayton v. Stewart');
+	await expect(page.locator('output i')).toHaveCount(0);
+});
+
+test('En dash switches the pincite span separator', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByLabel('Pincite').fill('208-14');
+	await expect(page.getByRole('status')).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 208-14 (Ohio Ct. App. 2021).',
+	);
+
+	await page.getByRole('radio', { name: 'En dash' }).check();
+
+	await expect(page.getByRole('status')).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 208–14 (Ohio Ct. App. 2021).',
+	);
+});
