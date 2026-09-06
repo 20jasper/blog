@@ -278,11 +278,9 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 <div
 	role="region"
 	aria-label="Citation result"
-	class="border-foreground-secondary/30 bg-background sticky bottom-0 mt-6 rounded-md border px-4 py-3"
+	class="border-foreground-secondary/30 bg-background-secondary sticky bottom-0 mt-6 rounded-md border px-4 py-3"
 >
-	<p
-		class="text-foreground-secondary text-xs font-semibold tracking-wide uppercase"
-	>
+	<p class="text-foreground text-xs font-semibold tracking-wide uppercase">
 		Citation
 	</p>
 	<output
@@ -290,10 +288,15 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 		class="mt-1 block max-h-24 w-full max-w-full overflow-y-auto text-lg break-words"
 	></output>
 	<div class="mt-3 flex gap-3">
-		<Button type="button">Clear</Button>
+		<Button
+			type="button"
+			class="!bg-background hover:!bg-background/80"
+			>Clear</Button
+		>
 		<Button
 			type="submit"
 			form={ids.form}
+			class="!bg-background hover:!bg-background/80"
 			>Copy</Button
 		>
 	</div>
