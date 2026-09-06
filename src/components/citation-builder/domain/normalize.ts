@@ -17,10 +17,9 @@ const SECTION_SYMBOL = /^(§§?)\s*/u;
 export function normalizeSection(input: string): string {
 	const trimmed = input.trim();
 	const match = SECTION_SYMBOL.exec(trimmed);
-	if (match?.[1] !== undefined) {
-		return `${match[1]} ${trimmed.slice(match[0].length)}`;
-	}
-	return `§ ${trimmed}`;
+	return match
+		? `${match[1]} ${trimmed.slice(match[0].length)}`
+		: `§ ${trimmed}`;
 }
 
 // r[impl normalize.date]

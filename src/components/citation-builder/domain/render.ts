@@ -28,20 +28,15 @@ export function applyFraming(
 	}
 
 	const framed = segments.map((segment) => ({ ...segment }));
+	const [first] = framed;
+	const last = framed.at(-1);
 
-	if (capitalizeFirst) {
-		const [first] = framed;
-		if (first !== undefined && first.text.length > 0) {
-			first.text = first.text[0]?.toUpperCase() + first.text.slice(1);
-		}
+	if (capitalizeFirst && first !== undefined && first.text.length > 0) {
+		first.text = first.text[0]?.toUpperCase() + first.text.slice(1);
 	}
 
-	if (terminalPeriod) {
-		const lastIndex = framed.length - 1;
-		const last = framed[lastIndex];
-		if (last !== undefined && !last.text.endsWith('.')) {
-			last.text += '.';
-		}
+	if (terminalPeriod && last !== undefined && !last.text.endsWith('.')) {
+		last.text += '.';
 	}
 
 	return framed;
