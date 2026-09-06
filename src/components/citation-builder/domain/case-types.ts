@@ -47,12 +47,3 @@ export function assembleCaseName(input: CaseNameInput): string {
 	const party2 = input.caseType === 'v' ? input.party2 : '';
 	return CASE_TYPE_BY_ID[input.caseType].template(input.party1, party2);
 }
-
-// Short form is always Party 1 alone (or the assembled In re/Ex parte
-// name) -- a deliberate simplification, not Rule 10.9(a)(i) itself,
-// which keeps whichever party is more distinctive. See phase-1-spec.md
-// §3.1/§5.7 for the divergence this causes against a real citation.
-// r[impl case-name.short-form]
-export function shortCaseName(input: CaseNameInput): string {
-	return input.caseType === 'v' ? input.party1 : assembleCaseName(input);
-}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assembleCaseName, CASE_TYPES, shortCaseName } from './case-types';
+import { assembleCaseName, CASE_TYPES } from './case-types';
 
 const PARTY_1 = 'Dayton';
 const PARTY_2 = 'Stewart';
@@ -31,17 +31,4 @@ describe('assembleCaseName', () => {
 			`${label} ${PARTY_1}`,
 		);
 	});
-});
-
-// r[verify case-name.short-form]
-describe('shortCaseName', () => {
-	it('is Party 1 alone for case type v', () => {
-		expect(
-			shortCaseName({ caseType: 'v', party1: PARTY_1, party2: PARTY_2 }),
-		).toBe(PARTY_1);
-	});
-
-	// in-re/ex-parte aren't tested separately here: shortCaseName delegates
-	// to assembleCaseName verbatim for those types (see source), so
-	// assembleCaseName's own tests above already cover that code path.
 });

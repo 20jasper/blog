@@ -1,8 +1,4 @@
-import {
-	assembleCaseName,
-	shortCaseName,
-	type CaseNameInput,
-} from './case-types';
+import { assembleCaseName, type CaseNameInput } from './case-types';
 import {
 	assembleDate,
 	normalizeDocketNumber,
@@ -66,12 +62,26 @@ export type ReportedShortFormInput =
 	| { nameVariant: 'id'; pincite: string }
 	| { nameVariant: 'none'; volume: string; reporter: string; pincite: string }
 	| {
-			nameVariant: 'full' | 'short';
+			nameVariant: 'full' | 'party1' | 'party2';
 			name: CaseNameInput;
 			volume: string;
 			reporter: string;
 			pincite: string;
 	  };
+
+// r[impl case-name.short-form]
+// r[impl short-form.party-choice]
+function shortFormName(
+	nameVariant: 'full' | 'party1' | 'party2',
+	name: CaseNameInput,
+): string {
+	// In re/Ex parte have only one party -- Party 1/Party 2 collapse to the
+	// same assembled name regardless of which the user picked.
+	if (nameVariant === 'full' || name.caseType !== 'v') {
+		return assembleCaseName(name);
+	}
+	return nameVariant === 'party1' ? name.party1 : name.party2;
+}
 
 // r[impl citation.reported-short-form]
 export function assembleReportedShortForm(
@@ -89,10 +99,7 @@ export function assembleReportedShortForm(
 			? []
 			: [
 					{
-						text:
-							input.nameVariant === 'full'
-								? assembleCaseName(input.name)
-								: shortCaseName(input.name),
+						text: shortFormName(input.nameVariant, input.name),
 						emphasized: true,
 					},
 				];

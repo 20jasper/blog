@@ -3,25 +3,29 @@ import { assembleReportedShortForm } from './assemble';
 import { render } from './render';
 import type { ReportedShortFormInput } from './assemble';
 
+const CORLEY_NAME = {
+	caseType: 'v',
+	party1: 'Universal City Studios, Inc.',
+	party2: 'Corley',
+} as const;
+
 // r[verify citation.reported-short-form]
+// r[verify case-name.short-form]
+// r[verify short-form.party-choice]
 describe('assembleReportedShortForm', () => {
-	// Georgetown's real-world short form for this case is "Corley, 273 F.3d
-	// at 435" -- real Bluebook practice (Rule 10.9(a)(i)) keeps whichever
-	// party is more distinctive, dropping the corporate plaintiff. Our
-	// spec deliberately doesn't automate that judgment call (§3.1/§4.4:
-	// short form is always Party 1, a documented V1 simplification), so
-	// "short" below differs from Georgetown's real citation on purpose.
+	// Worked example from phase-1-spec.md §5.7 (Corley, 273 F.3d 429 (2d
+	// Cir. 2001), at page 435) -- Party 2 is the real Rule 10.9(a)(i) form
+	// a practitioner would pick, since the corporate plaintiff is the
+	// less distinctive party. The tool presents the choice rather than
+	// guessing it, so both party1 and party2 are equally valid outputs.
 	it.each([
 		['full', 'Universal City Studios, Inc. v. Corley, 273 F.3d at 435.'],
-		['short', 'Universal City Studios, Inc., 273 F.3d at 435.'],
+		['party1', 'Universal City Studios, Inc., 273 F.3d at 435.'],
+		['party2', 'Corley, 273 F.3d at 435.'],
 	] as const)('%s name variant', (nameVariant, expected) => {
 		const input: ReportedShortFormInput = {
 			nameVariant,
-			name: {
-				caseType: 'v',
-				party1: 'Universal City Studios, Inc.',
-				party2: 'Corley',
-			},
+			name: CORLEY_NAME,
 			volume: '273',
 			reporter: 'F.3d',
 			pincite: '435',
@@ -33,6 +37,25 @@ describe('assembleReportedShortForm', () => {
 
 		expect(plain).toBe(expected);
 	});
+
+	it.each(['party1', 'party2'] as const)(
+		'%s collapses to the assembled name for In re (single-party types)',
+		(nameVariant) => {
+			const input: ReportedShortFormInput = {
+				nameVariant,
+				name: { caseType: 'in-re', party1: 'Smith' },
+				volume: '273',
+				reporter: 'F.3d',
+				pincite: '435',
+			};
+
+			const { plain } = render(assembleReportedShortForm(input), {
+				emphasis: 'italic',
+			});
+
+			expect(plain).toBe('In re Smith, 273 F.3d at 435.');
+		},
+	);
 
 	it('no-name variant omits the name segment entirely, per §5.2', () => {
 		const input: ReportedShortFormInput = {
