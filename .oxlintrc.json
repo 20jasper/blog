@@ -29,17 +29,6 @@
 		"no-useless-return": "off",
 		"oxc/no-map-spread": "off"
 	},
-	"overrides": [
-		{
-			"files": ["src/components/citation-builder/**/*.ts"],
-			"rules": {
-				"typescript/consistent-type-assertions": [
-					"warn",
-					{ "assertionStyle": "never" }
-				]
-			}
-		}
-	],
 	"env": {
 		"builtin": true
 	}
