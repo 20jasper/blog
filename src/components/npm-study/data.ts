@@ -129,8 +129,8 @@ export type ThresholdChart = {
 
 export const PUBLISH_TO_YANK_CHART: ThresholdChart = {
 	id: 'chart-yank',
-	title: 'Cumulative malicious npm version removal by age',
-	alt: `Based on ${YANK_N.toLocaleString()} OSV supply chain advisories from the last 5 years affecting a single npm version, combined with npm registry data for each version's publish and unpublish time`,
+	title: 'Cumulative malicious package version removal by package age',
+	alt: `Based on ${YANK_N.toLocaleString()} OSV supply chain advisories from the last 5 years naming a single affected npm version, combined with npm registry data for each version's publish and unpublish time.`,
 	data: YANK_DATA,
 	total: YANK_N,
 	tooltipVerb: 'removed by',
