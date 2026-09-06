@@ -8,21 +8,24 @@ export type Props = {
 	id: string;
 	name: string;
 	label: string;
+	hint?: string;
 	inputmode?: 'numeric';
 };
 
-const { id, name, label, inputmode } = Astro.props;
+const { id, name, label, hint, inputmode } = Astro.props;
 ---
 
 <FieldRow
 	for={id}
 	label={label}
+	hint={hint}
 >
 	<input
 		id={id}
 		name={name}
 		type="text"
 		inputmode={inputmode}
+		aria-describedby={hint === undefined ? undefined : `${id}-hint`}
 		class={fieldClass}
 	/>
 </FieldRow>

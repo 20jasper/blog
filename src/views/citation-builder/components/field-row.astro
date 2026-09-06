@@ -1,15 +1,18 @@
 ---
 // Shared row shell for a labeled field -- label above the control,
-// stacked in a flex column. Text inputs and selects both wrap their
-// control in this so spacing/label styling stays in one place.
+// optional format hint below the label, stacked in a flex column. Text
+// inputs and selects both wrap their control in this so spacing/label
+// styling stays in one place.
 const labelClass = 'text-sm font-medium text-foreground-secondary';
+const hintClass = 'text-foreground-secondary text-xs';
 
 export type Props = {
 	for: string;
 	label: string;
+	hint?: string;
 };
 
-const { for: forId, label } = Astro.props;
+const { for: forId, label, hint } = Astro.props;
 ---
 
 <div class="flex w-full flex-col gap-1">
@@ -18,5 +21,15 @@ const { for: forId, label } = Astro.props;
 		class={labelClass}
 		>{label}</label
 	>
+	{
+		hint !== undefined && (
+			<p
+				id={`${forId}-hint`}
+				class={hintClass}
+			>
+				{hint}
+			</p>
+		)
+	}
 	<slot />
 </div>

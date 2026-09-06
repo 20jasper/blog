@@ -11,20 +11,23 @@ export type Props = {
 	id: string;
 	name: string;
 	label: string;
+	hint?: string;
 	options: { value: string; text: string }[];
 };
 
-const { id, name, label, options } = Astro.props;
+const { id, name, label, hint, options } = Astro.props;
 ---
 
 <FieldRow
 	for={id}
 	label={label}
+	hint={hint}
 >
 	<div class="relative">
 		<select
 			id={id}
 			name={name}
+			aria-describedby={hint === undefined ? undefined : `${id}-hint`}
 			class={selectClass}
 		>
 			{
