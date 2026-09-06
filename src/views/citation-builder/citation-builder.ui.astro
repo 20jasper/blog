@@ -1,119 +1,174 @@
 ---
+import Button from '@components/button.astro';
 import { ids } from './ids';
 
-const fieldClass = 'block w-full min-w-0 max-w-full box-border';
+const fieldClass =
+	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/40 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent';
+const labelClass = 'text-sm font-medium text-foreground-secondary';
+const rowClass = 'flex w-full flex-col gap-1';
+const fieldsetClass = 'w-full max-w-full border-0 p-0';
+const legendClass =
+	'border-foreground-secondary/30 text-foreground mb-3 w-full border-b p-0 pb-2 text-lg font-semibold';
+const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
 ---
 
 <form
 	id={ids.form}
-	class="w-full max-w-full"
+	class="border-foreground-secondary/20 bg-background-secondary/20 flex w-full max-w-full flex-col gap-6 rounded-lg border p-4 sm:p-6"
 >
-	<fieldset class="mb-4 flex w-full max-w-full flex-col gap-3">
-		<legend class="font-semibold">Case identity</legend>
-		<div class="w-full">
-			<label for={ids.caseType}>Case type</label>
-			<select
-				id={ids.caseType}
-				name="caseType"
-				class={fieldClass}
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Case identity</legend>
+		<div class={gridClass}>
+			<div class={rowClass}>
+				<label
+					for={ids.caseType}
+					class={labelClass}
+					>Case type</label
+				>
+				<select
+					id={ids.caseType}
+					name="caseType"
+					class={fieldClass}
+				>
+					<option value="v">v.</option>
+					<option value="in-re">In re</option>
+					<option value="ex-parte">Ex parte</option>
+				</select>
+			</div>
+			<div class={rowClass}>
+				<label
+					for={ids.party1}
+					class={labelClass}
+					>Party 1</label
+				>
+				<input
+					id={ids.party1}
+					name="party1"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
+			<div
+				id={ids.party2Row}
+				class={rowClass}
 			>
-				<option value="v">v.</option>
-				<option value="in-re">In re</option>
-				<option value="ex-parte">Ex parte</option>
-			</select>
+				<label
+					for={ids.party2}
+					class={labelClass}
+					>Party 2</label
+				>
+				<input
+					id={ids.party2}
+					name="party2"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
+			<div class={rowClass}>
+				<label
+					for={ids.court}
+					class={labelClass}
+					>Court</label
+				>
+				<input
+					id={ids.court}
+					name="court"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
 		</div>
-		<div class="w-full">
-			<label for={ids.party1}>Party 1</label>
-			<input
-				id={ids.party1}
-				name="party1"
-				type="text"
-				class={fieldClass}
-			/>
+	</fieldset>
+
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Reported case</legend>
+		<div class={gridClass}>
+			<div class={rowClass}>
+				<label
+					for={ids.volume}
+					class={labelClass}
+					>Volume</label
+				>
+				<input
+					id={ids.volume}
+					name="volume"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
+			<div class={rowClass}>
+				<label
+					for={ids.reporter}
+					class={labelClass}
+					>Reporter</label
+				>
+				<input
+					id={ids.reporter}
+					name="reporter"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
+			<div class={rowClass}>
+				<label
+					for={ids.firstPage}
+					class={labelClass}
+					>First page</label
+				>
+				<input
+					id={ids.firstPage}
+					name="firstPage"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
+			<div class={rowClass}>
+				<label
+					for={ids.pincite}
+					class={labelClass}
+					>Pincite</label
+				>
+				<input
+					id={ids.pincite}
+					name="pincite"
+					type="text"
+					class={fieldClass}
+				/>
+			</div>
+			<div class={rowClass}>
+				<label
+					for={ids.year}
+					class={labelClass}
+					>Year</label
+				>
+				<input
+					id={ids.year}
+					name="year"
+					type="text"
+					inputmode="numeric"
+					class={fieldClass}
+				/>
+			</div>
 		</div>
-		<div
-			id={ids.party2Row}
-			class="w-full"
+	</fieldset>
+
+	<div>
+		<Button
+			type="button"
+			id={ids.clearButton}
+			>Clear</Button
 		>
-			<label for={ids.party2}>Party 2</label>
-			<input
-				id={ids.party2}
-				name="party2"
-				type="text"
-				class={fieldClass}
-			/>
-		</div>
-		<div class="w-full">
-			<label for={ids.court}>Court</label>
-			<input
-				id={ids.court}
-				name="court"
-				type="text"
-				class={fieldClass}
-			/>
-		</div>
-	</fieldset>
-
-	<fieldset class="mb-4 flex w-full max-w-full flex-col gap-3">
-		<legend class="font-semibold">Reported case</legend>
-		<div class="w-full">
-			<label for={ids.volume}>Volume</label>
-			<input
-				id={ids.volume}
-				name="volume"
-				type="text"
-				class={fieldClass}
-			/>
-		</div>
-		<div class="w-full">
-			<label for={ids.reporter}>Reporter</label>
-			<input
-				id={ids.reporter}
-				name="reporter"
-				type="text"
-				class={fieldClass}
-			/>
-		</div>
-		<div class="w-full">
-			<label for={ids.firstPage}>First page</label>
-			<input
-				id={ids.firstPage}
-				name="firstPage"
-				type="text"
-				class={fieldClass}
-			/>
-		</div>
-		<div class="w-full">
-			<label for={ids.pincite}>Pincite</label>
-			<input
-				id={ids.pincite}
-				name="pincite"
-				type="text"
-				class={fieldClass}
-			/>
-		</div>
-		<div class="w-full">
-			<label for={ids.year}>Year</label>
-			<input
-				id={ids.year}
-				name="year"
-				type="text"
-				inputmode="numeric"
-				class={fieldClass}
-			/>
-		</div>
-	</fieldset>
-
-	<button
-		type="button"
-		id={ids.clearButton}
-		>Clear</button
-	>
+	</div>
 </form>
 
-<output
-	id={ids.output}
-	for={ids.form}
-	aria-live="polite"
-	class="mt-4 block w-full max-w-full break-words"
-></output>
+<div
+	class="border-accent/40 bg-background-secondary/20 mt-6 rounded-lg border p-4"
+>
+	<p class="text-foreground-secondary mb-1 text-sm font-medium">Citation</p>
+	<output
+		id={ids.output}
+		for={ids.form}
+		aria-live="polite"
+		class="block w-full max-w-full text-lg break-words"
+	></output>
+</div>
