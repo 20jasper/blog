@@ -168,53 +168,40 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		// Fields stay visible always (§3.5) -- only their disabled state
 		// changes, never their visibility, so switching source type/mode
-		// never shifts the layout.
+		// never shifts the layout. Every data field's disabled state comes
+		// from selectFieldState -- the same, already-unit-tested function
+		// that derives required/optional/not-used -- rather than a second,
+		// hand-rolled copy of the same rules living only here.
 		// r[impl name-variant.short-form-only]
 		function updateFieldState(): void {
-			const sourceType = currentSourceType();
 			const mode = currentMode();
-			const isUnreported = sourceType === 'unreported';
 			const isShort = mode === 'short';
-			const isDatabase = currentAvailability() === 'database';
 
 			const fields = {
 				...initialCitationFields(),
-				sourceType,
+				sourceType: currentSourceType(),
 				caseType: currentCaseType(),
+				availability: currentAvailability(),
 			};
 			const fieldState = selectFieldState(
 				deriveSelections(fields, { ...initialDisplayState(), mode }),
 			);
+
 			party2Input.disabled = fieldState.party2 === 'not-used';
+			courtInput.disabled = fieldState.court === 'not-used';
+			volumeInput.disabled = fieldState.volume === 'not-used';
+			reporterInput.disabled = fieldState.reporter === 'not-used';
+			firstPageInput.disabled = fieldState.firstPage === 'not-used';
+			yearInput.disabled = fieldState.year === 'not-used';
+			monthSelect.disabled = fieldState.month === 'not-used';
+			dayInput.disabled = fieldState.day === 'not-used';
+			dateYearInput.disabled = fieldState.dateYear === 'not-used';
+			docketNumberInput.disabled = fieldState.docketNumber === 'not-used';
+			databaseIdentifierInput.disabled =
+				fieldState.databaseIdentifier === 'not-used';
 
-			// Reported-only fields: never used for unreported, and First
-			// page/Decision year additionally drop out of reported short
-			// form (absent from ReportedShortFormInput).
-			volumeInput.disabled = isUnreported;
-			reporterInput.disabled = isUnreported;
-			firstPageInput.disabled = isUnreported || isShort;
-			yearInput.disabled = isUnreported || isShort;
-
-			// Court: optional in reported full, required in unreported
-			// full, absent from both short forms entirely.
-			courtInput.disabled = isShort;
-
-			// Unreported-only date fields: only used in unreported full
-			// (neither short form template carries a date).
-			monthSelect.disabled = !isUnreported || isShort;
-			dayInput.disabled = !isUnreported || isShort;
-			dateYearInput.disabled = !isUnreported || isShort;
-
-			// Docket: unreported full always needs it; unreported short
-			// needs it only for slip-opinion (database short form carries
-			// the database id instead, per §5.8).
-			docketNumberInput.disabled = !isUnreported || (isShort && isDatabase);
-			// Database identifier: needed whenever unreported+database, in
-			// either mode.
-			databaseIdentifierInput.disabled = !isUnreported || !isDatabase;
-
-			// Name variant / Id.: shared display controls, used whenever
-			// mode is short, for either source type.
+			// Name variant / Id.: display controls, not CitationFields data --
+			// selectFieldState doesn't (and shouldn't) know about them.
 			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
 			idCheckbox.disabled = !isShort;
 		}

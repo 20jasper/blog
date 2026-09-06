@@ -35,6 +35,7 @@ export type CitationFields = {
 	databaseIdentifier: string;
 	month: string;
 	day: string;
+	dateYear: string;
 
 	codeType: CodeType;
 	codeAbbreviation: string;
@@ -64,6 +65,7 @@ export function initialCitationFields(): CitationFields {
 		databaseIdentifier: '',
 		month: '',
 		day: '',
+		dateYear: '',
 
 		codeType: 'official',
 		codeAbbreviation: '',

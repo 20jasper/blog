@@ -40,6 +40,22 @@ function unreportedDocketState(
 	return availabilityKind === 'slip-opinion' ? 'required' : 'not-used';
 }
 
+// Neither short-form domain type (ReportedShortFormInput,
+// UnreportedShortFormInput) has a court field -- it drops out of both
+// short forms entirely. Required (not merely optional) for unreported
+// full, since UnreportedCaseInput.court is non-optional, unlike
+// ReportedCaseInput's.
+// r[impl court.optional]
+function courtState(
+	isUnreported: boolean,
+	mode: 'full' | 'short',
+): FieldRequirement {
+	if (mode === 'short') {
+		return 'not-used';
+	}
+	return isUnreported ? 'required' : 'optional';
+}
+
 // r[impl field-state.derivation]
 export function selectFieldState(
 	selections: Selections,
@@ -64,13 +80,18 @@ export function selectFieldState(
 		caseType: usedIf(isCaseType, 'required'),
 		party1: usedIf(isCaseType, 'required'),
 		party2: usedIf(isCaseType, usedIf(caseTypeChoice === 'v', 'required')),
-		// r[impl court.optional]
-		court: usedIf(isCaseType, 'optional'),
+		court: usedIf(isCaseType, courtState(isUnreported, mode)),
 		pincite: usedIf(isCaseType, mode === 'short' ? 'required' : 'optional'),
 
+		// ReportedShortFormInput drops volume/reporter entirely for
+		// nameVariant 'id' (Id. form), but that's a display-state choice,
+		// not modeled here -- field-state keeps volume/reporter required
+		// whenever reported, mirroring the full form's requirement. Only
+		// firstPage is truly full-only: no ReportedShortFormInput variant
+		// carries a first page at all.
 		volume: usedIf(isReported, 'required'),
 		reporter: usedIf(isReported, 'required'),
-		firstPage: usedIf(isReported, 'required'),
+		firstPage: usedIf(isReported, usedIf(mode === 'full', 'required')),
 
 		availability: usedIf(isUnreported, 'required'),
 		docketNumber: usedIf(
@@ -81,10 +102,16 @@ export function selectFieldState(
 			isUnreported,
 			usedIf(availabilityKind === 'database', 'required'),
 		),
-		month: usedIf(isUnreported, 'required'),
-		day: usedIf(isUnreported, 'required'),
+		// Neither date field applies to unreported short form -- it has no
+		// date at all (§5.8).
+		month: usedIf(isUnreported, usedIf(mode === 'full', 'required')),
+		day: usedIf(isUnreported, usedIf(mode === 'full', 'required')),
+		dateYear: usedIf(isUnreported, usedIf(mode === 'full', 'required')),
 
-		year: 'required',
+		// "year" is the reported Decision year specifically -- absent from
+		// reported short form (ReportedShortFormInput has no year) and
+		// from unreported entirely (which has its own dateYear).
+		year: usedIf(isReported, usedIf(mode === 'full', 'required')),
 
 		codeType: usedIf(isStatute, 'required'),
 		codeAbbreviation: usedIf(isStatute, 'required'),

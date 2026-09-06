@@ -52,9 +52,78 @@ describe('selectFieldState: shared case-type fields', () => {
 	});
 });
 
+// Neither short-form domain type (ReportedShortFormInput,
+// UnreportedShortFormInput) has a court field at all -- court drops out
+// of both short forms, and is required (not merely optional) for
+// unreported full, since UnreportedCaseInput.court is non-optional.
+describe('selectFieldState: court depends on source type and mode (§5.7, §5.8)', () => {
+	it.each([
+		['reported', 'full', 'optional'],
+		['reported', 'short', 'not-used'],
+		['unreported', 'full', 'required'],
+		['unreported', 'short', 'not-used'],
+	] as const)('%s + %s -> court %s', (sourceType, mode, expected) => {
+		const selections: Selections =
+			sourceType === 'reported'
+				? { sourceType, mode, caseType: 'v' }
+				: {
+						sourceType,
+						mode,
+						caseType: 'v',
+						availabilityKind: 'database',
+					};
+
+		expect(selectFieldState(selections).court).toBe(expected);
+	});
+});
+
+// Neither short-form domain type carries a date at all -- Month/Day/
+// Opinion year only apply to unreported full.
+describe('selectFieldState: date fields only apply to unreported full (§5.8)', () => {
+	it.each(['month', 'day', 'dateYear'] as const)(
+		'%s is required for unreported full, not-used for unreported short',
+		(field) => {
+			const full: Selections = {
+				sourceType: 'unreported',
+				mode: 'full',
+				caseType: 'v',
+				availabilityKind: 'database',
+			};
+			const short: Selections = {
+				sourceType: 'unreported',
+				mode: 'short',
+				caseType: 'v',
+				availabilityKind: 'database',
+			};
+
+			expect(selectFieldState(full)[field]).toBe('required');
+			expect(selectFieldState(short)[field]).toBe('not-used');
+		},
+	);
+
+	it.each(['month', 'day', 'dateYear'] as const)(
+		'%s is not-used for reported and statute',
+		(field) => {
+			const reported: Selections = {
+				sourceType: 'reported',
+				mode: 'full',
+				caseType: 'v',
+			};
+			const statute: Selections = {
+				sourceType: 'statute',
+				codeType: 'official',
+				hasSupplementDesignation: false,
+			};
+
+			expect(selectFieldState(reported)[field]).toBe('not-used');
+			expect(selectFieldState(statute)[field]).toBe('not-used');
+		},
+	);
+});
+
 describe('selectFieldState: reported-only fields (§3.2)', () => {
 	it.each(['volume', 'reporter', 'firstPage'] as const)(
-		'%s is required for reported, not-used for unreported and statute',
+		'%s is required for reported full, not-used for unreported and statute',
 		(field) => {
 			const reported: Selections = {
 				sourceType: 'reported',
@@ -78,6 +147,22 @@ describe('selectFieldState: reported-only fields (§3.2)', () => {
 			expect(selectFieldState(statute)[field]).toBe('not-used');
 		},
 	);
+
+	// No ReportedShortFormInput variant carries a first page -- unlike
+	// volume/reporter, which short form still needs (except nameVariant
+	// 'id', a display-state choice not modeled here).
+	it.each([
+		['full', 'required'],
+		['short', 'not-used'],
+	] as const)('mode %s -> firstPage %s', (mode, expected) => {
+		const reported: Selections = {
+			sourceType: 'reported',
+			mode,
+			caseType: 'v',
+		};
+
+		expect(selectFieldState(reported).firstPage).toBe(expected);
+	});
 });
 
 describe('selectFieldState: unreported-only fields (§3.3)', () => {
@@ -220,24 +305,35 @@ describe('selectFieldState: statute-only fields (§3.4)', () => {
 	);
 });
 
-describe('selectFieldState: year is universally required (§3.2/3.3/3.4)', () => {
+// "Year" (CitationFields.year) is the reported-only Decision year field --
+// unreported has its own separate date-year field (dateYear, "Opinion
+// year" in the UI), and neither short form nor statute uses this one at
+// all.
+describe('selectFieldState: year is reported-full only', () => {
 	it.each([
-		{ sourceType: 'reported', mode: 'full', caseType: 'v' },
-		{
-			sourceType: 'unreported',
-			mode: 'full',
-			caseType: 'v',
-			availabilityKind: 'database',
-		},
-		{
-			sourceType: 'statute',
-			codeType: 'official',
-			hasSupplementDesignation: false,
-		},
-	] as const satisfies Selections[])(
-		'year is required for $sourceType',
-		(selections) => {
-			expect(selectFieldState(selections).year).toBe('required');
+		[{ sourceType: 'reported', mode: 'full', caseType: 'v' }, 'required'],
+		[{ sourceType: 'reported', mode: 'short', caseType: 'v' }, 'not-used'],
+		[
+			{
+				sourceType: 'unreported',
+				mode: 'full',
+				caseType: 'v',
+				availabilityKind: 'database',
+			},
+			'not-used',
+		],
+		[
+			{
+				sourceType: 'statute',
+				codeType: 'official',
+				hasSupplementDesignation: false,
+			},
+			'not-used',
+		],
+	] as const satisfies [Selections, string][])(
+		'%#: year -> %s',
+		(selections, expected) => {
+			expect(selectFieldState(selections).year).toBe(expected);
 		},
 	);
 });
