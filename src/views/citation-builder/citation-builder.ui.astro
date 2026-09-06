@@ -1,88 +1,105 @@
 ---
 import { ids } from './ids';
+
+const fieldClass = 'block w-full min-w-0 max-w-full box-border';
 ---
 
-<form id={ids.form}>
-	<fieldset class="mb-4 flex flex-col gap-3">
+<form
+	id={ids.form}
+	class="w-full max-w-full"
+>
+	<fieldset class="mb-4 flex w-full max-w-full flex-col gap-3">
 		<legend class="font-semibold">Case identity</legend>
-		<div>
+		<div class="w-full">
 			<label for={ids.caseType}>Case type</label>
 			<select
 				id={ids.caseType}
 				name="caseType"
+				class={fieldClass}
 			>
 				<option value="v">v.</option>
 				<option value="in-re">In re</option>
 				<option value="ex-parte">Ex parte</option>
 			</select>
 		</div>
-		<div>
+		<div class="w-full">
 			<label for={ids.party1}>Party 1</label>
 			<input
 				id={ids.party1}
 				name="party1"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
-		<div id={ids.party2Row}>
+		<div
+			id={ids.party2Row}
+			class="w-full"
+		>
 			<label for={ids.party2}>Party 2</label>
 			<input
 				id={ids.party2}
 				name="party2"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
-		<div>
+		<div class="w-full">
 			<label for={ids.court}>Court</label>
 			<input
 				id={ids.court}
 				name="court"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
 	</fieldset>
 
-	<fieldset class="mb-4 flex flex-col gap-3">
+	<fieldset class="mb-4 flex w-full max-w-full flex-col gap-3">
 		<legend class="font-semibold">Reported case</legend>
-		<div>
+		<div class="w-full">
 			<label for={ids.volume}>Volume</label>
 			<input
 				id={ids.volume}
 				name="volume"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
-		<div>
+		<div class="w-full">
 			<label for={ids.reporter}>Reporter</label>
 			<input
 				id={ids.reporter}
 				name="reporter"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
-		<div>
+		<div class="w-full">
 			<label for={ids.firstPage}>First page</label>
 			<input
 				id={ids.firstPage}
 				name="firstPage"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
-		<div>
+		<div class="w-full">
 			<label for={ids.pincite}>Pincite</label>
 			<input
 				id={ids.pincite}
 				name="pincite"
 				type="text"
+				class={fieldClass}
 			/>
 		</div>
-		<div>
+		<div class="w-full">
 			<label for={ids.year}>Year</label>
 			<input
 				id={ids.year}
 				name="year"
 				type="text"
 				inputmode="numeric"
+				class={fieldClass}
 			/>
 		</div>
 	</fieldset>
@@ -98,6 +115,5 @@ import { ids } from './ids';
 	id={ids.output}
 	for={ids.form}
 	aria-live="polite"
-	class="mt-4 block"
->
-</output>
+	class="mt-4 block w-full max-w-full break-words"
+></output>

@@ -20,13 +20,16 @@ import { ids } from './ids';
 	<CitationBuilderUi />
 	<script>
 		import { assembleReportedCase } from '@components/citation-builder/domain/assemble';
-		import type { CaseNameInput } from '@components/citation-builder/domain/case-types';
+		import {
+			isCaseTypeId,
+			type CaseNameInput,
+			type CaseTypeId,
+		} from '@components/citation-builder/domain/case-types';
 		import { render } from '@components/citation-builder/domain/render';
 		import {
 			deriveSelections,
 			initialCitationFields,
 		} from '@components/citation-builder/state/citation-fields';
-		import type { CaseTypeId } from '@components/citation-builder/domain/case-types';
 		import { initialDisplayState } from '@components/citation-builder/state/display-state';
 		import { selectFieldState } from '@components/citation-builder/state/field-state';
 		import { ids } from '@src/views/citation-builder/ids';
@@ -36,7 +39,7 @@ import { ids } from './ids';
 		// the golden case from docs/citation-builder/phase-1-spec.md §8.3
 		// so the page shows a working example instead of a blank form.
 		const EXAMPLE = {
-			caseType: 'v' as CaseTypeId,
+			caseType: 'v',
 			party1: 'Dayton',
 			party2: 'Stewart',
 			court: 'Ohio Ct. App.',
@@ -45,7 +48,7 @@ import { ids } from './ids';
 			firstPage: '208',
 			pincite: '214',
 			year: '2021',
-		};
+		} as const;
 
 		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
 		const output = document.querySelector(`#${ids.output}`)!;
@@ -80,7 +83,8 @@ import { ids } from './ids';
 		)!;
 
 		function currentCaseType(): CaseTypeId {
-			return caseTypeSelect.value as CaseTypeId;
+			const { value } = caseTypeSelect;
+			return isCaseTypeId(value) ? value : 'v';
 		}
 
 		function updatePartyTwoState(): void {

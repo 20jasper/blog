@@ -42,6 +42,14 @@ const CASE_TYPE_BY_ID: Record<CaseTypeId, CaseType> = {
 	'ex-parte': EX_PARTE,
 };
 
+// Runtime guard for values crossing a type-unsafe boundary (a <select>
+// element's .value, for instance) -- narrows to CaseTypeId instead of
+// trusting a cast, so an unexpected DOM value can't silently masquerade
+// as a valid case type.
+export function isCaseTypeId(value: string): value is CaseTypeId {
+	return CASE_TYPES.some((caseType) => caseType.id === value);
+}
+
 // r[impl case-name.assembly]
 export function assembleCaseName(input: CaseNameInput): string {
 	const party2 = input.caseType === 'v' ? input.party2 : '';
