@@ -48,6 +48,24 @@ against the rule itself before inventing terminology.
 against carries an `r[...]` identifier. Descriptive prose, tables, and
 UI-affordance notes do not. If you add a normative rule, give it an ID.
 
+Every `r[...]` rule is one of exactly two classes, decided when the rule
+is written, not left to a later audit:
+
+- **Domain rule** — encodes a Bluebook citation format. Must name its
+  authority (rule/table number) in its own text at the point it's
+  defined, and must carry an external, worked-example source before it
+  can be marked anything but `asserted` in §13.2. No domain rule ships
+  as `internal` — if it has no citable authority, it isn't a domain
+  rule, it's a tool decision (below).
+- **UX / implementation rule** — a tool decision: architecture,
+  interaction, data model, accessibility. No Bluebook authority exists
+  or is claimed. Goes in §13.3, `internal`, with a one-line rationale
+  instead of a citation.
+
+§13.2 and §13.3 are the enforcement point: a domain rule missing from
+§13.2, or a §13.2 row with no source, is a spec defect, not a pending
+cleanup.
+
 ---
 
 ## 2. Rule reference map
