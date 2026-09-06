@@ -67,14 +67,12 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 			<TextField
 				id={ids.party1}
 				name="party1"
-				label="Party 1"
-				hint="Abbreviate names yourself (Rule 10.2)"
+				label="Party 1 (abbreviated)"
 			/>
 			<TextField
 				id={ids.party2}
 				name="party2"
-				label="Party 2"
-				hint="Abbreviate names yourself (Rule 10.2)"
+				label="Party 2 (abbreviated)"
 			/>
 			{
 				/* Freeform, unvalidated (§6) -- the label/hint just state the
@@ -120,7 +118,7 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 				id={ids.year}
 				name="year"
 				label="Decision year"
-				hint="Year the case was decided (Rule 10)"
+				hint="Year the case was decided"
 				inputmode="numeric"
 			/>
 		</div>

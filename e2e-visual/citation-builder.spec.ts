@@ -206,6 +206,38 @@ test('unreported case type enables its fields and disables reported/citation-for
 	).toBeDisabled();
 });
 
+// Regression: Mode radios weren't disabled for unreported, so picking
+// "Short form" while unreported silently did nothing (unreported output
+// never checks mode) -- gap in sourceType x mode coverage.
+test('unreported case type disables Mode and forces it back to Full citation', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+
+	await expect(
+		page.getByRole('radio', { name: 'Full citation' }),
+	).toBeChecked();
+	await expect(
+		page.getByRole('radio', { name: 'Full citation' }),
+	).toBeDisabled();
+	await expect(page.getByRole('radio', { name: 'Short form' })).toBeDisabled();
+});
+
+test('switching back to reported re-enables Mode', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Reported case', exact: true }).check();
+
+	await expect(
+		page.getByRole('radio', { name: 'Full citation' }),
+	).toBeEnabled();
+	await expect(page.getByRole('radio', { name: 'Short form' })).toBeEnabled();
+});
+
 test('unreported database availability matches the Lucko golden case', async ({
 	page,
 }) => {

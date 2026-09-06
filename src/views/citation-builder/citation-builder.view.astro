@@ -92,6 +92,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		)!;
 		const idCheckbox =
 			form.querySelector<HTMLInputElement>('input[name="id"]')!;
+		const modeFullRadio = form.querySelector<HTMLInputElement>(
+			'input[name="mode"][value="full"]',
+		)!;
+		const modeShortRadio = form.querySelector<HTMLInputElement>(
+			'input[name="mode"][value="short"]',
+		)!;
 
 		function currentSourceType(): 'reported' | 'unreported' {
 			const checked = form.querySelector<HTMLInputElement>(
@@ -172,8 +178,17 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				courtInput.disabled = false;
 				nameVariantSelect.disabled = true;
 				idCheckbox.disabled = true;
+				// Short form isn't wired for unreported yet -- disable Mode
+				// entirely and force it back to Full so the radio never
+				// shows "Short form" selected while a full citation renders.
+				modeFullRadio.checked = true;
+				modeFullRadio.disabled = true;
+				modeShortRadio.disabled = true;
 				return;
 			}
+
+			modeFullRadio.disabled = false;
+			modeShortRadio.disabled = false;
 
 			const isShort = currentMode() === 'short';
 			courtInput.disabled = isShort;
