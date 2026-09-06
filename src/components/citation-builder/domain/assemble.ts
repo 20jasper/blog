@@ -13,10 +13,18 @@ function nameSegment(name: CaseNameInput): Segment {
 }
 
 // r[impl assemble.composable]
-function appendPincite(pincite: string | undefined): Segment[] {
-	return pincite === undefined
+function maybeSegment(
+	value: string | undefined,
+	format: (value: string) => string,
+): Segment[] {
+	return value === undefined
 		? []
-		: [{ text: `, ${pincite}`, emphasized: false }];
+		: [{ text: format(value), emphasized: false }];
+}
+
+// r[impl assemble.composable]
+function appendPincite(pincite: string | undefined): Segment[] {
+	return maybeSegment(pincite, (value) => `, ${value}`);
 }
 
 // r[impl assemble.composable]
@@ -126,16 +134,14 @@ export type UnreportedCaseInput = {
 
 // r[impl assemble.composable]
 function appendDatabaseId(availability: Availability): Segment[] {
-	return availability.kind === 'database'
-		? [{ text: `, ${availability.databaseId}`, emphasized: false }]
-		: [];
+	const databaseId =
+		availability.kind === 'database' ? availability.databaseId : undefined;
+	return maybeSegment(databaseId, (value) => `, ${value}`);
 }
 
 // r[impl assemble.composable]
 function appendStarPincite(pincite: string | undefined): Segment[] {
-	return pincite === undefined
-		? []
-		: [{ text: `, at *${pincite}`, emphasized: false }];
+	return maybeSegment(pincite, (value) => `, at *${value}`);
 }
 
 // r[impl citation.unreported-long-form]
@@ -170,16 +176,20 @@ export type StatuteInput =
 			supplement: { designation: string; year: number } | undefined;
 	  };
 
+function supplementSuffix(
+	supplement: { designation: string; year: number } | undefined,
+): string {
+	return supplement === undefined
+		? ''
+		: ` & ${supplement.designation} ${supplement.year}`;
+}
+
 // r[impl citation.statute-long-form]
 export function assembleStatuteCase(input: StatuteInput): Segment[] {
 	const parenthetical =
 		input.codeType === 'official'
 			? `${input.year}`
-			: `${input.publisher} ${input.year}${
-					input.supplement === undefined
-						? ''
-						: ` & ${input.supplement.designation} ${input.supplement.year}`
-				}`;
+			: `${input.publisher} ${input.year}${supplementSuffix(input.supplement)}`;
 
 	const segments: Segment[] = [
 		{

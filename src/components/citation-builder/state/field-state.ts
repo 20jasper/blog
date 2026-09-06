@@ -28,6 +28,10 @@ export type FieldId =
 
 export type FieldRequirement = 'required' | 'optional' | 'not-used';
 
+function usedIf(condition: boolean, value: FieldRequirement): FieldRequirement {
+	return condition ? value : 'not-used';
+}
+
 export type Selections =
 	| { sourceType: 'reported'; mode: 'full' | 'short'; caseType: CaseTypeId }
 	| {
@@ -62,50 +66,36 @@ export function selectFieldState(
 		: false;
 
 	return {
-		caseType: isCaseType ? 'required' : 'not-used',
-		party1: isCaseType ? 'required' : 'not-used',
-		party2: isCaseType
-			? caseTypeChoice === 'v'
-				? 'required'
-				: 'not-used'
-			: 'not-used',
+		caseType: usedIf(isCaseType, 'required'),
+		party1: usedIf(isCaseType, 'required'),
+		party2: usedIf(isCaseType, usedIf(caseTypeChoice === 'v', 'required')),
 		// r[impl court.optional]
-		court: isCaseType ? 'optional' : 'not-used',
-		pincite: isCaseType
-			? mode === 'short'
-				? 'required'
-				: 'optional'
-			: 'not-used',
+		court: usedIf(isCaseType, 'optional'),
+		pincite: usedIf(isCaseType, mode === 'short' ? 'required' : 'optional'),
 
-		volume: isReported ? 'required' : 'not-used',
-		reporter: isReported ? 'required' : 'not-used',
-		firstPage: isReported ? 'required' : 'not-used',
+		volume: usedIf(isReported, 'required'),
+		reporter: usedIf(isReported, 'required'),
+		firstPage: usedIf(isReported, 'required'),
 
-		availability: isUnreported ? 'required' : 'not-used',
-		docketNumber: isUnreported ? 'required' : 'not-used',
-		databaseIdentifier: isUnreported
-			? availabilityKind === 'database'
-				? 'required'
-				: 'not-used'
-			: 'not-used',
-		month: isUnreported ? 'required' : 'not-used',
-		day: isUnreported ? 'required' : 'not-used',
+		availability: usedIf(isUnreported, 'required'),
+		docketNumber: usedIf(isUnreported, 'required'),
+		databaseIdentifier: usedIf(
+			isUnreported,
+			usedIf(availabilityKind === 'database', 'required'),
+		),
+		month: usedIf(isUnreported, 'required'),
+		day: usedIf(isUnreported, 'required'),
 
 		year: 'required',
 
-		codeType: isStatute ? 'required' : 'not-used',
-		codeAbbreviation: isStatute ? 'required' : 'not-used',
-		section: isStatute ? 'required' : 'not-used',
-		publisher: isStatute
-			? codeType === 'annotated'
-				? 'required'
-				: 'not-used'
-			: 'not-used',
-		supplementDesignation: isStatute ? 'optional' : 'not-used',
-		supplementYear: isStatute
-			? hasSupplementDesignation
-				? 'optional'
-				: 'not-used'
-			: 'not-used',
+		codeType: usedIf(isStatute, 'required'),
+		codeAbbreviation: usedIf(isStatute, 'required'),
+		section: usedIf(isStatute, 'required'),
+		publisher: usedIf(isStatute, usedIf(codeType === 'annotated', 'required')),
+		supplementDesignation: usedIf(isStatute, 'optional'),
+		supplementYear: usedIf(
+			isStatute,
+			usedIf(hasSupplementDesignation, 'optional'),
+		),
 	};
 }
