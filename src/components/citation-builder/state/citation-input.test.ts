@@ -19,7 +19,7 @@ describe('assemble', () => {
 			},
 		};
 
-		const { plain } = render(assemble(citation), { typeface: 'italic' });
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
 		expect(plain).toBe(
 			'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
@@ -33,7 +33,7 @@ describe('assemble', () => {
 			input: { nameVariant: 'id', pincite: '435' },
 		};
 
-		const { plain } = render(assemble(citation), { typeface: 'italic' });
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
 		expect(plain).toBe('Id. at 435.');
 	});
@@ -51,7 +51,7 @@ describe('assemble', () => {
 			},
 		};
 
-		const { plain } = render(assemble(citation), { typeface: 'italic' });
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
 		expect(plain).toBe(
 			'State v. Lucko, No. 2021CA0007, 2021 WL 4269952 (Ohio Ct. App. Sept. 17, 2021).',
@@ -70,7 +70,7 @@ describe('assemble', () => {
 			},
 		};
 
-		const { plain } = render(assemble(citation), { typeface: 'italic' });
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
 		expect(plain).toBe('Ohio Rev. Code § 3767.32(A) (2025).');
 	});

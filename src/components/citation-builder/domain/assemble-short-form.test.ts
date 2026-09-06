@@ -28,7 +28,7 @@ describe('assembleReportedShortForm', () => {
 		};
 
 		const { plain } = render(assembleReportedShortForm(input), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe(expected);
@@ -43,7 +43,7 @@ describe('assembleReportedShortForm', () => {
 		};
 
 		const { plain } = render(assembleReportedShortForm(input), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe('273 F.3d at 435.');
@@ -56,7 +56,7 @@ describe('assembleReportedShortForm', () => {
 		};
 
 		const { html, plain } = render(assembleReportedShortForm(input), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe('Id. at 435.');

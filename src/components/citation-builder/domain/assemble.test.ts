@@ -8,7 +8,7 @@ import { render } from './render';
 describe('assembleReportedCase: golden case', () => {
 	it('matches the §8.3 golden case exactly', () => {
 		const { plain } = render(assembleReportedCase(reportedCase()), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe(
@@ -18,7 +18,7 @@ describe('assembleReportedCase: golden case', () => {
 
 	it('italicizes only the case name', () => {
 		const { html } = render(assembleReportedCase(reportedCase()), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(html).toBe(
@@ -31,7 +31,7 @@ describe('assembleReportedCase: field variations', () => {
 	it('omits the pincite segment when absent, per §3.1 (optional for full citation)', () => {
 		const { plain } = render(
 			assembleReportedCase(reportedCase({ pincite: undefined })),
-			{ typeface: 'italic' },
+			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toBe(
@@ -44,7 +44,7 @@ describe('assembleReportedCase: field variations', () => {
 			assembleReportedCase(
 				reportedCase({ name: { caseType: 'in-re', party1: 'Smith' } }),
 			),
-			{ typeface: 'italic' },
+			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toBe(

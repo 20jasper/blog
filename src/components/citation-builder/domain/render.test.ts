@@ -12,7 +12,7 @@ describe('applyFraming', () => {
 		[true, 'Dayton v. stewart'],
 		[false, 'dayton v. stewart'],
 	])('capitalizeFirst: %s -> %j', (capitalizeFirst, expected) => {
-		const segments: Segment[] = [{ text: LOWERCASE_NAME, italic: true }];
+		const segments: Segment[] = [{ text: LOWERCASE_NAME, emphasized: true }];
 
 		const [framed] = applyFraming(segments, {
 			capitalizeFirst,
@@ -23,7 +23,7 @@ describe('applyFraming', () => {
 	});
 
 	it('leaves an empty first-segment text untouched rather than throwing', () => {
-		const segments: Segment[] = [{ text: '', italic: true }];
+		const segments: Segment[] = [{ text: '', emphasized: true }];
 
 		const [framed] = applyFraming(segments, {
 			capitalizeFirst: true,
@@ -34,7 +34,7 @@ describe('applyFraming', () => {
 	});
 
 	it('does not mutate the input segments (pure per §7.1/§7.3)', () => {
-		const segments: Segment[] = [{ text: LOWERCASE_NAME, italic: true }];
+		const segments: Segment[] = [{ text: LOWERCASE_NAME, emphasized: true }];
 
 		applyFraming(segments, { capitalizeFirst: true, terminalPeriod: true });
 
@@ -44,12 +44,12 @@ describe('applyFraming', () => {
 	it.each([
 		[
 			[
-				{ text: 'Dayton v. Stewart', italic: true },
-				{ text: ', 179 N.E.3d 208', italic: false },
+				{ text: 'Dayton v. Stewart', emphasized: true },
+				{ text: ', 179 N.E.3d 208', emphasized: false },
 			],
 			', 179 N.E.3d 208.',
 		],
-		[[{ text: 'already ends here.', italic: false }], 'already ends here.'],
+		[[{ text: 'already ends here.', emphasized: false }], 'already ends here.'],
 	] satisfies [Segment[], string][])(
 		'terminal period on the last segment -> %j',
 		(segments, expectedLast) => {
@@ -70,14 +70,15 @@ describe('applyFraming', () => {
 });
 
 // r[verify segment.representation]
+// r[verify segment.emphasis-is-abstract]
 describe('render', () => {
 	const segments: Segment[] = [
-		{ text: 'Dayton v. Stewart', italic: true },
-		{ text: ', 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).', italic: false },
+		{ text: 'Dayton v. Stewart', emphasized: true },
+		{ text: ', 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).', emphasized: false },
 	];
 
 	it('renders plain text by concatenating segment text, ignoring italics', () => {
-		const { plain } = render(segments, { typeface: 'italic' });
+		const { plain } = render(segments, { emphasis: 'italic' });
 
 		expect(plain).toBe(
 			'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
@@ -88,9 +89,9 @@ describe('render', () => {
 		['italic', 'i'],
 		['underline', 'u'],
 	] as const)(
-		'wraps italic segments in <%s> for typeface %s',
-		(typeface, tag) => {
-			const { html } = render(segments, { typeface });
+		'wraps emphasized segments in <%s> for emphasis %s',
+		(emphasis, tag) => {
+			const { html } = render(segments, { emphasis });
 
 			expect(html).toBe(
 				`<${tag}>Dayton v. Stewart</${tag}>, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).`,
@@ -100,8 +101,8 @@ describe('render', () => {
 
 	it('escapes HTML-significant characters in segment text', () => {
 		const { html, plain } = render(
-			[{ text: 'A & B <Corp> § 1', italic: false }],
-			{ typeface: 'italic' },
+			[{ text: 'A & B <Corp> § 1', emphasized: false }],
+			{ emphasis: 'italic' },
 		);
 
 		expect(html).toBe('A &amp; B &lt;Corp&gt; § 1');
@@ -109,7 +110,7 @@ describe('render', () => {
 	});
 
 	it('produces empty output for an empty segment list', () => {
-		expect(render([], { typeface: 'italic' })).toEqual({
+		expect(render([], { emphasis: 'italic' })).toEqual({
 			html: '',
 			plain: '',
 		});

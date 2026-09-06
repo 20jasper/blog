@@ -1,7 +1,7 @@
-import type { FramingOptions, Segment, Typeface } from './types';
+import type { Emphasis, FramingOptions, Segment } from './types';
 
 export type RenderOptions = {
-	typeface: Typeface;
+	emphasis: Emphasis;
 };
 
 export type RenderResult = {
@@ -43,16 +43,17 @@ export function applyFraming(
 }
 
 // r[impl segment.representation]
+// r[impl segment.emphasis-is-abstract]
 export function render(
 	segments: Segment[],
-	{ typeface }: RenderOptions,
+	{ emphasis }: RenderOptions,
 ): RenderResult {
-	const tag = typeface === 'italic' ? 'i' : 'u';
+	const tag = emphasis === 'italic' ? 'i' : 'u';
 
 	const html = segments
 		.map((segment) => {
 			const escaped = escapeHtml(segment.text);
-			return segment.italic ? `<${tag}>${escaped}</${tag}>` : escaped;
+			return segment.emphasized ? `<${tag}>${escaped}</${tag}>` : escaped;
 		})
 		.join('');
 

@@ -1,10 +1,11 @@
 // r[impl segment.representation]
+// r[impl segment.emphasis-is-abstract]
 export type Segment = {
 	text: string;
-	italic: boolean;
+	emphasized: boolean;
 };
 
-export type Typeface = 'italic' | 'underline';
+export type Emphasis = 'italic' | 'underline';
 
 export type FramingOptions = {
 	capitalizeFirst: boolean;

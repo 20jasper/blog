@@ -16,7 +16,7 @@ describe('assembleUnreportedCase', () => {
 	it('matches the Lucko golden case (database, with pincite)', () => {
 		const { plain } = render(
 			assembleUnreportedCase(unreportedCase({ pincite: '1–2' })),
-			{ typeface: 'italic' },
+			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toBe(
@@ -26,7 +26,7 @@ describe('assembleUnreportedCase', () => {
 
 	it('matches the Bennett golden case (database, no pincite)', () => {
 		const { plain } = render(assembleUnreportedCase(BENNETT), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe(
@@ -40,7 +40,7 @@ describe('assembleUnreportedCase', () => {
 				...BENNETT,
 				availability: { kind: 'slip-opinion' },
 			}),
-			{ typeface: 'italic' },
+			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toBe(
@@ -51,7 +51,7 @@ describe('assembleUnreportedCase', () => {
 	it('normalizes the docket number through the same rule as §4.1', () => {
 		const { plain } = render(
 			assembleUnreportedCase(unreportedCase({ docket: 'Case No. 2021CA0007' })),
-			{ typeface: 'italic' },
+			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toContain(', No. 2021CA0007,');

@@ -13,12 +13,14 @@ import type { DateParts, Segment } from './types';
 
 // r[impl assemble.composable]
 function nameSegment(name: CaseNameInput): Segment {
-	return { text: assembleCaseName(name), italic: true };
+	return { text: assembleCaseName(name), emphasized: true };
 }
 
 // r[impl assemble.composable]
 function appendPincite(pincite: string | undefined): Segment[] {
-	return pincite === undefined ? [] : [{ text: `, ${pincite}`, italic: false }];
+	return pincite === undefined
+		? []
+		: [{ text: `, ${pincite}`, emphasized: false }];
 }
 
 // r[impl assemble.composable]
@@ -45,10 +47,10 @@ export function assembleReportedCase(input: ReportedCaseInput): Segment[] {
 		nameSegment(input.name),
 		{
 			text: `, ${input.volume} ${input.reporter} ${input.firstPage}`,
-			italic: false,
+			emphasized: false,
 		},
 		...appendPincite(input.pincite),
-		{ text: ` (${input.court} ${input.year})`, italic: false },
+		{ text: ` (${input.court} ${input.year})`, emphasized: false },
 	];
 
 	return framePeriod(segments);
@@ -71,8 +73,8 @@ export function assembleReportedShortForm(
 ): Segment[] {
 	if (input.nameVariant === 'id') {
 		return framePeriod([
-			{ text: 'Id.', italic: true },
-			{ text: ` at ${input.pincite}`, italic: false },
+			{ text: 'Id.', emphasized: true },
+			{ text: ` at ${input.pincite}`, emphasized: false },
 		]);
 	}
 
@@ -85,7 +87,7 @@ export function assembleReportedShortForm(
 							input.nameVariant === 'full'
 								? assembleCaseName(input.name)
 								: shortCaseName(input.name),
-						italic: true,
+						emphasized: true,
 					},
 				];
 
@@ -94,7 +96,7 @@ export function assembleReportedShortForm(
 			? `${input.volume} ${input.reporter} at ${input.pincite}`
 			: `, ${input.volume} ${input.reporter} at ${input.pincite}`;
 
-	return framePeriod([...nameSeg, { text: core, italic: false }]);
+	return framePeriod([...nameSeg, { text: core, emphasized: false }]);
 }
 
 export type Availability =
@@ -112,7 +114,7 @@ export type UnreportedCaseInput = {
 // r[impl assemble.composable]
 function appendDatabaseId(availability: Availability): Segment[] {
 	return availability.kind === 'database'
-		? [{ text: `, ${availability.databaseId}`, italic: false }]
+		? [{ text: `, ${availability.databaseId}`, emphasized: false }]
 		: [];
 }
 
@@ -120,17 +122,20 @@ function appendDatabaseId(availability: Availability): Segment[] {
 function appendStarPincite(pincite: string | undefined): Segment[] {
 	return pincite === undefined
 		? []
-		: [{ text: `, at *${pincite}`, italic: false }];
+		: [{ text: `, at *${pincite}`, emphasized: false }];
 }
 
 // r[impl citation.unreported-long-form]
 export function assembleUnreportedCase(input: UnreportedCaseInput): Segment[] {
 	const segments: Segment[] = [
 		nameSegment(input.name),
-		{ text: `, ${normalizeDocketNumber(input.docket)}`, italic: false },
+		{ text: `, ${normalizeDocketNumber(input.docket)}`, emphasized: false },
 		...appendDatabaseId(input.availability),
 		...appendStarPincite(input.pincite),
-		{ text: ` (${input.court} ${assembleDate(input.date)})`, italic: false },
+		{
+			text: ` (${input.court} ${assembleDate(input.date)})`,
+			emphasized: false,
+		},
 	];
 
 	return framePeriod(segments);
@@ -166,7 +171,7 @@ export function assembleStatuteCase(input: StatuteInput): Segment[] {
 	const segments: Segment[] = [
 		{
 			text: `${input.codeAbbreviation} ${normalizeSection(input.section)} (${parenthetical})`,
-			italic: false,
+			emphasized: false,
 		},
 	];
 

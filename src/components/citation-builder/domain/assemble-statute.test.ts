@@ -7,7 +7,7 @@ import { render } from './render';
 describe('assembleStatuteCase', () => {
 	it('matches the §8.3 golden case exactly (annotated, no supplement)', () => {
 		const { plain } = render(assembleStatuteCase(annotatedStatute()), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe('Ohio Rev. Code Ann. § 3767.32(A) (West 2025).');
@@ -15,7 +15,7 @@ describe('assembleStatuteCase', () => {
 
 	it('omits the publisher segment for official code, per §5.6', () => {
 		const { plain } = render(assembleStatuteCase(officialStatute()), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe('Ohio Rev. Code § 3767.32(A) (2025).');
@@ -28,7 +28,7 @@ describe('assembleStatuteCase', () => {
 		});
 
 		const { plain } = render(assembleStatuteCase(input), {
-			typeface: 'italic',
+			emphasis: 'italic',
 		});
 
 		expect(plain).toBe(
@@ -39,7 +39,7 @@ describe('assembleStatuteCase', () => {
 	it('does not double the § symbol when section is already prefixed, per §4.2', () => {
 		const { plain } = render(
 			assembleStatuteCase(officialStatute({ section: '§ 3767.32(A)' })),
-			{ typeface: 'italic' },
+			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toContain('§ 3767.32(A)');
