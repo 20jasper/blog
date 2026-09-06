@@ -6,7 +6,7 @@ test('citation builder page loads with its heading', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 	const els = getCitationBuilderElements(page);
 
-	await expect(els.heading).toHaveText('Bluebook 22 Citation Generator');
+	await expect(els.heading).toHaveText('Bluebook Citation Generator');
 	await expect(els.intro).toHaveText(
 		'Bluebook-formatted citations, one at a time.',
 	);
