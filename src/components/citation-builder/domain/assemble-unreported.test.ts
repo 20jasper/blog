@@ -34,7 +34,7 @@ describe('assembleUnreportedCase', () => {
 		);
 	});
 
-	it('matches the Bennett slip-opinion variant, per Rule 10.8.1(b): same citation minus database ID', () => {
+	it('matches the Bennett slip-opinion variant, per Rule 10.8.1(b): drops the database ID (no pincite in this example either way)', () => {
 		const { plain } = render(
 			assembleUnreportedCase({
 				...BENNETT,
@@ -55,5 +55,46 @@ describe('assembleUnreportedCase', () => {
 		);
 
 		expect(plain).toContain(', No. 2021CA0007,');
+	});
+});
+
+// The Chatlas pair (r[citation.unreported-pincite-form]) is the one that
+// actually proves the two variants differ in pincite *form*, not just
+// database-ID presence -- unlike Bennett above, this case has a pincite
+// in both variants, so the star-page vs. "slip op. at" split is visible.
+// r[verify citation.unreported-pincite-form]
+describe('assembleUnreportedCase: pincite form split by Availability', () => {
+	const CHATLAS = unreportedCase({
+		name: { caseType: 'v', party1: 'Chatlas', party2: 'Allstate Ins. Co.' },
+		docket: '1-07-2937',
+		availability: { kind: 'database', databaseId: '2008 WL 2610471' },
+		court: 'Ill. App. Ct. 1st Dist.',
+		date: { month: 'June', day: 30, year: 2008 },
+	});
+
+	it('database: at *[Pincite]', () => {
+		const { plain } = render(
+			assembleUnreportedCase({ ...CHATLAS, pincite: '2' }),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			'Chatlas v. Allstate Ins. Co., No. 1-07-2937, 2008 WL 2610471, at *2 (Ill. App. Ct. 1st Dist. June 30, 2008).',
+		);
+	});
+
+	it('slip opinion: slip op. at [Pincite], never a star', () => {
+		const { plain } = render(
+			assembleUnreportedCase({
+				...CHATLAS,
+				availability: { kind: 'slip-opinion' },
+				pincite: '2',
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			'Chatlas v. Allstate Ins. Co., No. 1-07-2937, slip op. at 2 (Ill. App. Ct. 1st Dist. June 30, 2008).',
+		);
 	});
 });

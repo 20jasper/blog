@@ -139,9 +139,16 @@ function appendDatabaseId(availability: Availability): Segment[] {
 	return maybeSegment(databaseId, (value) => `, ${value}`);
 }
 
-// r[impl assemble.composable]
-function appendStarPincite(pincite: string | undefined): Segment[] {
-	return maybeSegment(pincite, (value) => `, at *${value}`);
+// r[impl citation.unreported-pincite-form]
+function appendUnreportedPincite(
+	pincite: string | undefined,
+	availability: Availability,
+): Segment[] {
+	return maybeSegment(pincite, (value) =>
+		availability.kind === 'database'
+			? `, at *${value}`
+			: `, slip op. at ${value}`,
+	);
 }
 
 // r[impl citation.unreported-long-form]
@@ -150,7 +157,7 @@ export function assembleUnreportedCase(input: UnreportedCaseInput): Segment[] {
 		nameSegment(input.name),
 		{ text: `, ${normalizeDocketNumber(input.docket)}`, emphasized: false },
 		...appendDatabaseId(input.availability),
-		...appendStarPincite(input.pincite),
+		...appendUnreportedPincite(input.pincite, input.availability),
 		{
 			text: ` (${input.court} ${assembleDate(input.date)})`,
 			emphasized: false,
