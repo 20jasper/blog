@@ -41,30 +41,26 @@ describe('applyFraming', () => {
 		expect(segments[0]?.text).toBe(LOWERCASE_NAME);
 	});
 
-	it('appends a terminal period to the last segment when missing', () => {
-		const segments: Segment[] = [
-			{ text: 'Dayton v. Stewart', italic: true },
-			{ text: ', 179 N.E.3d 208', italic: false },
-		];
+	it.each([
+		[
+			[
+				{ text: 'Dayton v. Stewart', italic: true },
+				{ text: ', 179 N.E.3d 208', italic: false },
+			],
+			', 179 N.E.3d 208.',
+		],
+		[[{ text: 'already ends here.', italic: false }], 'already ends here.'],
+	] satisfies [Segment[], string][])(
+		'terminal period on the last segment -> %j',
+		(segments, expectedLast) => {
+			const framed = applyFraming(segments, {
+				capitalizeFirst: false,
+				terminalPeriod: true,
+			});
 
-		const framed = applyFraming(segments, {
-			capitalizeFirst: false,
-			terminalPeriod: true,
-		});
-
-		expect(framed.at(-1)?.text).toBe(', 179 N.E.3d 208.');
-	});
-
-	it('does not double a terminal period already present', () => {
-		const segments: Segment[] = [{ text: 'already ends here.', italic: false }];
-
-		const framed = applyFraming(segments, {
-			capitalizeFirst: false,
-			terminalPeriod: true,
-		});
-
-		expect(framed.at(-1)?.text).toBe('already ends here.');
-	});
+			expect(framed.at(-1)?.text).toBe(expectedLast);
+		},
+	);
 
 	it('is a no-op on an empty segment list', () => {
 		expect(
