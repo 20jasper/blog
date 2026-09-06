@@ -31,7 +31,10 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			type Emphasis,
 			type SpanSeparator,
 		} from '@components/citation-builder/state/display-state';
-		import { selectFieldState } from '@components/citation-builder/state/field-state';
+		import {
+			selectFieldState,
+			type FieldRequirement,
+		} from '@components/citation-builder/state/field-state';
 		import { ids } from '@src/views/citation-builder/ids';
 
 		// Reported and unreported (both full + short) are wired up --
@@ -184,13 +187,37 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return checked?.value === 'en-dash' ? '–' : '-';
 		}
 
+		// Toggles both the native `required` attribute (so the browser's own
+		// validation -- triggered on Copy, a submit button -- tells the user
+		// exactly which field is missing) and the label's visual "*" marker,
+		// which is otherwise invisible to disabled fields' labels too.
+		function setRequired(
+			input: HTMLInputElement | HTMLSelectElement,
+			required: boolean,
+		): void {
+			input.required = required;
+			const marker =
+				input.labels?.[0]?.querySelector<HTMLElement>('.required-marker');
+			if (marker) {
+				marker.hidden = !required;
+			}
+		}
+
 		// Fields stay visible always (§3.5) -- only their disabled state
 		// changes, never their visibility, so switching source type/mode
-		// never shifts the layout. Every data field's disabled state comes
-		// from selectFieldState -- the same, already-unit-tested function
-		// that derives required/optional/not-used -- rather than a second,
-		// hand-rolled copy of the same rules living only here.
+		// never shifts the layout. Every data field's disabled/required
+		// state comes from selectFieldState -- the same, already-unit-tested
+		// function that derives required/optional/not-used -- rather than a
+		// second, hand-rolled copy of the same rules living only here.
 		// r[impl name-variant.short-form-only]
+		function setFieldRequirement(
+			input: HTMLInputElement | HTMLSelectElement,
+			requirement: FieldRequirement,
+		): void {
+			input.disabled = requirement === 'not-used';
+			setRequired(input, requirement === 'required');
+		}
+
 		function updateFieldState(): void {
 			const mode = currentMode();
 			const isShort = mode === 'short';
@@ -205,23 +232,38 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				deriveSelections(fields, { ...initialDisplayState(), mode }),
 			);
 
-			party2Input.disabled = fieldState.party2 === 'not-used';
-			courtInput.disabled = fieldState.court === 'not-used';
-			volumeInput.disabled = fieldState.volume === 'not-used';
-			reporterInput.disabled = fieldState.reporter === 'not-used';
-			firstPageInput.disabled = fieldState.firstPage === 'not-used';
-			yearInput.disabled = fieldState.year === 'not-used';
-			monthSelect.disabled = fieldState.month === 'not-used';
-			dayInput.disabled = fieldState.day === 'not-used';
-			dateYearInput.disabled = fieldState.dateYear === 'not-used';
-			docketNumberInput.disabled = fieldState.docketNumber === 'not-used';
-			databaseIdentifierInput.disabled =
-				fieldState.databaseIdentifier === 'not-used';
+			setFieldRequirement(caseTypeSelect, fieldState.caseType);
+			setFieldRequirement(party1Input, fieldState.party1);
+			setFieldRequirement(party2Input, fieldState.party2);
+			setFieldRequirement(courtInput, fieldState.court);
+			setFieldRequirement(pinciteInput, fieldState.pincite);
+			setFieldRequirement(volumeInput, fieldState.volume);
+			setFieldRequirement(reporterInput, fieldState.reporter);
+			setFieldRequirement(firstPageInput, fieldState.firstPage);
+			setFieldRequirement(yearInput, fieldState.year);
+			setFieldRequirement(monthSelect, fieldState.month);
+			setFieldRequirement(dayInput, fieldState.day);
+			setFieldRequirement(dateYearInput, fieldState.dateYear);
+			setFieldRequirement(docketNumberInput, fieldState.docketNumber);
+			setFieldRequirement(
+				databaseIdentifierInput,
+				fieldState.databaseIdentifier,
+			);
 
 			// Name variant / Id.: display controls, not CitationFields data --
 			// selectFieldState doesn't (and shouldn't) know about them.
 			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
 			idCheckbox.disabled = !isShort;
+
+			// Id. (ReportedShortFormInput's/UnreportedShortFormInput's 'id'
+			// variant) drops the name entirely, and for reported also drops
+			// volume/reporter -- neither is modeled in fieldState since it's
+			// a display-state choice, not FieldId data.
+			if (isShort && idCheckbox.checked) {
+				setRequired(party1Input, false);
+				setRequired(volumeInput, false);
+				setRequired(reporterInput, false);
+			}
 		}
 
 		function caseNameInput(): CaseNameInput {
@@ -291,7 +333,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
 			lastCitation = undefined;
-			copyButton.disabled = true;
 		}
 
 		function setCitationOutput(segments: Parameters<typeof render>[0]): void {
@@ -300,7 +341,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			});
 			output.innerHTML = html;
 			lastCitation = { html, plain };
-			copyButton.disabled = false;
 		}
 
 		function updateUnreportedOutput(): void {
@@ -456,7 +496,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		form.addEventListener('input', refresh);
 		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
-		copyButton.addEventListener('click', () => {
+		// Copy is a submit button (form={ids.form}) so clicking it while a
+		// required field is empty triggers the browser's own native
+		// validation UI -- pointing straight at the missing field -- instead
+		// of a hand-rolled banner. Only reaches here once that passes.
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
 			void copyCitation();
 		});
 

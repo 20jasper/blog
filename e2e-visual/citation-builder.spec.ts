@@ -456,7 +456,12 @@ test('clear empties unreported fields and resets Availability to database', asyn
 	await expect(page.getByLabel('Opinion year')).toHaveValue('');
 });
 
-test('Copy is enabled when a citation is shown, disabled once cleared', async ({
+// Copy is a submit button now (r[ui.error-association] simplified to
+// native HTML required-field validation rather than a hand-rolled
+// banner) -- it stays enabled so clicking it while required fields are
+// empty triggers the browser's own "please fill out this field" UI
+// instead of doing nothing.
+test('Copy stays enabled after clearing; native validation blocks the incomplete submit', async ({
 	page,
 }) => {
 	await page.goto('/tools/citation-builder');
@@ -466,7 +471,29 @@ test('Copy is enabled when a citation is shown, disabled once cleared', async ({
 
 	await page.getByRole('button', { name: 'Clear' }).click();
 
-	await expect(copyButton).toBeDisabled();
+	await expect(copyButton).toBeEnabled();
+	await copyButton.click();
+	// Native constraint validation cancels the submit before our
+	// handler runs, so the label never advances past "Copy".
+	await expect(copyButton).toHaveText('Copy');
+});
+
+test('required fields show a "*" marker that updates with source type and mode', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	const partyLabel = page.locator('label', { hasText: 'Party 1' });
+	const courtLabel = page.locator('label', { hasText: 'Court' });
+	await expect(partyLabel.locator('.required-marker')).toBeVisible();
+	await expect(courtLabel.locator('.required-marker')).toBeHidden();
+
+	const pinciteLabel = page.locator('label', { hasText: 'Pincite' });
+	await expect(pinciteLabel.locator('.required-marker')).toBeHidden();
+
+	await page.getByRole('radio', { name: 'Short form' }).check();
+
+	await expect(pinciteLabel.locator('.required-marker')).toBeVisible();
 });
 
 // text/html + text/plain (§5.11) -- clipboard permission grants only work

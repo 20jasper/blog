@@ -29,7 +29,13 @@ const { for: forId, label, hint } = Astro.props;
 	<label
 		for={forId}
 		class={labelClass}
-		>{label}</label
+		>{label}<span
+			class="required-marker text-accent"
+			aria-hidden="true"
+			hidden
+		>
+			{' '}*</span
+		></label
 	>
 	<p
 		id={`${forId}-hint`}
