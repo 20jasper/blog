@@ -5,7 +5,7 @@ import { defineConfig } from 'vitest/config';
 // root-relative (they don't inherit test.dir below), so widening these to
 // the whole repo would bury a real 100%-covered feature in 0%s from
 // every untested .astro page and chart-data file elsewhere in the blog.
-const DOMAIN = 'src/components/citation-builder/domain';
+const CITATION_BUILDER = 'src/components/citation-builder';
 
 export default defineConfig({
 	test: {
@@ -14,12 +14,12 @@ export default defineConfig({
 		silent: true,
 		typecheck: {
 			enabled: true,
-			include: [`${DOMAIN}/**/*.test.ts`],
+			include: [`${CITATION_BUILDER}/**/*.test.ts`],
 		},
 		coverage: {
 			provider: 'v8',
-			include: [`${DOMAIN}/**/*.ts`],
-			exclude: [`${DOMAIN}/**/*.test.ts`],
+			include: [`${CITATION_BUILDER}/**/*.ts`],
+			exclude: [`${CITATION_BUILDER}/**/*.test.ts`],
 		},
 	},
 });
