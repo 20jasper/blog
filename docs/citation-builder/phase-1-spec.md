@@ -72,6 +72,8 @@ UI-affordance notes do not. If you add a normative rule, give it an ID.
 | Abbreviation spacing (user's responsibility, §6)           | Rules 6.1–6.2   |
 | Statute popular name (unsupported, §6)                     | Rule 12.2.1     |
 | Year of code edition                                       | Rule 12.3.2     |
+| Turned comma in older case names (unsupported, §6)         | Rule 10.2.1(a)  |
+| Short-form eligibility scope (not modelled, §6)            | Rule 10.9       |
 | Month abbreviations                                        | Table 12        |
 
 Every generated citation must be traceable to a rule here. Anything not
@@ -677,6 +679,18 @@ not a malformed one.
   (`N.E.3d`, `F.3d`) but not single capitals followed by longer
   abbreviations (`F. Supp. 2d`). Freeform fields are rendered verbatim;
   the tool neither enforces nor corrects spacing.
+- **No turned-comma substitution in older case names.** The 22nd
+  edition's Rule 10.2.1(a) requires a turned comma (`ʻ`) rather than an
+  apostrophe (`'`) in older party names — a change from the 21st
+  edition. The tool renders party names exactly as typed and does not
+  substitute the character.
+- **Short-form eligibility scope is not modelled.** Rule 10.9 permits a
+  short form only when the full citation appears in the same general
+  discussion — within five footnotes in law-review format, or readily
+  findable in practitioner format. The tool has no view of the
+  surrounding document (no citation-sequence memory, below), so it
+  cannot check this; the same reasoning that gates _Id._ behind manual
+  confirmation applies to short forms generally, but is not enforced.
 - **No citation-sequence memory.** _Id._ can't be verified by the tool —
   it has no model of the surrounding document — hence the manual
   confirmation in §5.7 rather than an automatic option.
@@ -1156,6 +1170,27 @@ U.S.C. § 1983` — the `42` had nowhere to go. So did
     keystroke (r[ui.error-association]), so a message cannot vanish
     before it is read.
 
+**Rule provenance audit — findings 33–35:**
+
+33. **All three previously-`asserted` rules confirmed** (§13.6).
+    `citation.unreported-short-form` verified against Texas Southern and
+    Cincinnati worked examples; `case-name.assembly` against Colorado
+    CCS and Liberty; the `No.` prefix in `normalize.docket` across five
+    guides. The audit table now shows every Bluebook-derived rule
+    verified, none merely asserted.
+
+34. **Turned-comma substitution documented as unsupported** (§6, Rule
+    10.2.1(a)). New in the 22nd edition: older party names take a turned
+    comma (`ʻ`) rather than an apostrophe. The tool renders names as
+    typed. Found while confirming the edition pin.
+
+35. **Short-form eligibility scope documented as unmodelled** (§6, Rule
+    10.9). A short form is permitted only when the full citation is in
+    the same general discussion — five footnotes in law-review format,
+    or readily findable in practitioner format. Same root cause as the
+    _Id._ restriction: the tool cannot see the surrounding document.
+    Previously unstated.
+
 ---
 
 ## 11. Concrete data model
@@ -1429,3 +1464,140 @@ output remains readable and copyable.
 - `prefers-reduced-motion` respected on the copy-confirmation
   transition.
 - No hover-only affordances.
+
+---
+
+## 13. Rule provenance
+
+Every `r[...]` rule in this spec, with its authority and verification
+status. Purpose: nothing here should be an invented convention, and a
+reader adding jurisdiction-specific rules later needs to know which
+rules are national Bluebook doctrine and which are tool decisions that
+a state variant would leave alone.
+
+### 13.1 Schema
+
+| Column         | Meaning                                                                                                                                                   |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rule`         | The `r[...]` identifier                                                                                                                                   |
+| `authority`    | Bluebook rule/table, external standard, or `internal`                                                                                                     |
+| `status`       | `verified` (external source confirms), `asserted` (traced to a rule but not externally confirmed here), `internal` (tool decision, no external authority) |
+| `source`       | Where it was confirmed                                                                                                                                    |
+| `jurisdiction` | `universal` for all current rules. State variants would add `state:XX`; local court rules override Bluebook (§13.4)                                       |
+
+### 13.2 Bluebook-derived rules
+
+| rule                                      | authority             | status    | source                                                                                                                                                                                                                                                                                                                                                                             | jurisdiction |
+| ----------------------------------------- | --------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `court.optional`                          | Rule 10.4             | verified  | Georgetown Federal Courts; Monmouth (Supreme Court parenthetical omits court)                                                                                                                                                                                                                                                                                                      | universal    |
+| `short-form.party-choice`                 | Rule 10.9(a)(i)       | verified  | Georgetown Short Forms (_Corley_ retains second party)                                                                                                                                                                                                                                                                                                                             | universal    |
+| `case-name.short-form`                    | Rule 10.9(a)(i)       | verified  | Georgetown Short Forms                                                                                                                                                                                                                                                                                                                                                             | universal    |
+| `name-variant.short-form-only`            | Rule 10.9             | verified  | Georgetown Short Forms                                                                                                                                                                                                                                                                                                                                                             | universal    |
+| `name-variant.options`                    | Rule 10.9(a)(i)       | verified  | Georgetown Short Forms                                                                                                                                                                                                                                                                                                                                                             | universal    |
+| `case-name.assembly`                      | Rule 10.2.1           | verified  | Colorado CCS (Bluebook shortens procedural phrases to `In re` / `Ex parte`); Liberty ("in the matter of" and "petition of" → `In re`); first-listed-party rule (Notre Dame)                                                                                                                                                                                                        | universal    |
+| `citation.reported-long-form`             | Rule 10               | verified  | Georgetown Federal Courts; Monmouth (five/six-element structure)                                                                                                                                                                                                                                                                                                                   | universal    |
+| `citation.reported-short-form`            | Rule 10.9             | verified  | Georgetown Short Forms                                                                                                                                                                                                                                                                                                                                                             | universal    |
+| `citation.unreported-long-form`           | Rule 10.8.1(a)        | verified  | Georgetown Unpublished Opinions (_Bennett_); NIU (_Chatlas_)                                                                                                                                                                                                                                                                                                                       | universal    |
+| `citation.unreported-pincite-form`        | Rule 10.8.1(a)/(b)    | verified  | NIU (_Chatlas_ database vs. slip pair); Notre Dame, Monmouth (`slip op. at`)                                                                                                                                                                                                                                                                                                       | universal    |
+| `citation.unreported-short-form`          | Rule 10.9             | verified  | Texas Southern (`Albrecht, 1991 U.S. Dist. LEXIS 5088, at *3.`; `Kvass, 1991 WL 47632, at *3.`); Cincinnati (`Beaven, 2007 WL 1032301, at *3.` — database identifier used in the short form)                                                                                                                                                                                       | universal    |
+| `id.gating`                               | Rule 4.1              | verified  | Georgetown Short Forms                                                                                                                                                                                                                                                                                                                                                             | universal    |
+| `normalize.date`                          | Rule 10.8.1; Table 12 | verified  | Date format confirmed by worked examples (`Sept. 17, 2021`, `Oct. 21, 2005`)                                                                                                                                                                                                                                                                                                       | universal    |
+| `date.month-list`                         | Table 12              | verified  | Bluebook month list: `Jan., Feb., Mar., Apr., May, June, July, Aug., Sept., Oct., Nov., Dec.` — note this differs from AP style, which spells out March/April                                                                                                                                                                                                                      | universal    |
+| `normalize.span-separator`                | Rule 3.2(a)           | verified  | Georgetown Basic Bluebook handout; Tarlton (en dash **or** hyphen permitted)                                                                                                                                                                                                                                                                                                       | universal    |
+| `normalize.span-digits`                   | Rule 3.2(a)           | verified  | Georgetown handout (`111–12`, `1099–101`); Suffolk (`190-92`, `199-201`); Briefly (`495–97`, `498–503`)                                                                                                                                                                                                                                                                            | universal    |
+| `normalize.span-nonconsecutive`           | Rule 3.2(a)           | verified  | Georgetown handout (commas for non-consecutive); Monmouth (_Albrecht_, `at *1, *3`)                                                                                                                                                                                                                                                                                                | universal    |
+| `normalize.section`                       | Rule 6.2(c)           | verified  | Applied Antitrust Bluebook handout (space between section sign and number)                                                                                                                                                                                                                                                                                                         | universal    |
+| `normalize.docket`                        | Rule 10.8.1           | verified  | `No.` prefix confirmed across Georgetown, Akron, NIU, Loyola, Cincinnati worked examples. The strip-and-normalize _algorithm_ remains `internal` (§13.3)                                                                                                                                                                                                                           | universal    |
+| `statute.popular-name`                    | Rule 12.2.1           | verified  | Harvard Law Library (`Consumer Credit Code, Okla. Stat. tit. 14A, § 6-203 (1996)`)                                                                                                                                                                                                                                                                                                 | universal    |
+| `statute.title`                           | Rule 12.3             | **split** | Before-code shape verified — Georgetown Federal Statutes (`17 U.S.C. § 107 (2012)`), Florida A&M (title precedes code name). After-code, comma-separated shape (`Okla. Stat. tit. 14A, § 6-203`) is `asserted` only — Georgetown's State Statutes guide has no title/division worked example to check it against; see the "Verification status" note under r[statute.title] (§3.4) | universal    |
+| `statute.year-is-edition-year`            | Rule 12.3.2           | verified  | Pace (year of cited code edition — spine or copyright year)                                                                                                                                                                                                                                                                                                                        | universal    |
+| `citation.statute-long-form`              | Rule 12.3             | verified  | Hawaii (official vs. annotated, publisher placement)                                                                                                                                                                                                                                                                                                                               | universal    |
+| `citation.statute-supplement`             | Rule 12.3.1(e)        | verified  | Akron (`12 U.S.C. § 1455 (1982 & Supp. I 1983)`); Notre Dame; Hawaii                                                                                                                                                                                                                                                                                                               | universal    |
+| `statute.material-location`               | Rule 12.3.1(e)        | verified  | Akron (supplement-only form); Notre Dame (`42 U.S.C. § 1985 (Supp. V 1999)`)                                                                                                                                                                                                                                                                                                       | universal    |
+| `statute.supplement-scope`                | Rule 12.3.1(e)        | verified  | Hawaii (`Haw. Rev. Stat. § 703-309 (2014 & Supp. 2017)` — official code, no publisher)                                                                                                                                                                                                                                                                                             | universal    |
+| `statute.supplement-designation-freeform` | Rule 12.3.1(e)        | verified  | Roman-numeral designations in Akron and Notre Dame (`Supp. I`, `Supp. V`)                                                                                                                                                                                                                                                                                                          | universal    |
+| `citation.statute-short-form`             | Rule 12.10            | verified  | Pace (section alone acceptable); Briefly ("omit the date parenthetical in subsequent references: 42 U.S.C. § 1983")                                                                                                                                                                                                                                                                | universal    |
+| `normalize.span-passthrough` (¶ form)     | Rule 10.8.1(a)        | verified  | Loyola: for unpublished cases, pages take an asterisk and paragraphs take `¶` — confirms both forms the parser passes through                                                                                                                                                                                                                                                      | universal    |
+
+### 13.3 Tool-internal rules
+
+No Bluebook authority. These are implementation and interface
+decisions; a jurisdiction variant would not change them.
+
+| rule                               | category                        | rationale                                                        |
+| ---------------------------------- | ------------------------------- | ---------------------------------------------------------------- |
+| `normalize.span-input`             | parsing                         | Accepts reduced or full closing page; both normalize identically |
+| `normalize.span-passthrough`       | parsing                         | Guards the span normaliser so footnote/paragraph forms survive   |
+| `pincite.parse`                    | parsing                         | Comma-split algorithm (§11.4)                                    |
+| `pincite.no-validation`            | parsing                         | Consistent with freeform stance for reporters/courts             |
+| `statute.supplement-pairing`       | validation                      | Designation and year required together                           |
+| `types.numeric-fields-are-strings` | data model                      | Volumes/sections carry non-numeric characters                    |
+| `month.literal-values`             | data model                      | Stores rendered literal, not an index                            |
+| `segment.representation`           | architecture                    | Single IR, one renderer                                          |
+| `segment.emphasis-is-abstract`     | architecture                    | Builders mark what, renderer decides how                         |
+| `case-type.data`                   | architecture                    | Case types as records, not branches                              |
+| `assemble.composable`              | architecture                    | Ordered pure steps over the segment list                         |
+| `framing.parameter`                | architecture                    | Sentence framing configurable                                    |
+| `generate.explicit`                | interaction                     | Generate validates; placeholder before first run                 |
+| `generate.display-controls-live`   | interaction                     | Display changes re-render without revalidation                   |
+| `generate.stale-on-data-edit`      | interaction                     | Data edits invalidate                                            |
+| `generate.type-switch-stale`       | interaction                     | Type switch invalidates                                          |
+| `copy.stale-permitted`             | interaction                     | Stale output stays copyable                                      |
+| `ui.shared-marker`                 | interface                       | Shared-field affordance                                          |
+| `ui.state-not-colour-only`         | accessibility (WCAG 2.2 §1.4.1) | Colour is never the sole signal                                  |
+| `ui.error-association`             | accessibility (WCAG 2.2 §3.3.1) | `aria-invalid` + `aria-describedby`                              |
+| `ui.stale-affordance`              | accessibility (WCAG 2.2 §1.4.1) | Border and text, not colour alone                                |
+| `ui.responsive-targets`            | accessibility (WCAG 2.2 §2.5.8) | ≥44×44 px targets                                                |
+
+### 13.4 Adding jurisdictions later
+
+The `jurisdiction` column exists so state-specific behaviour can be
+added without re-auditing this table. Three things a future maintainer
+needs to know:
+
+1. **Bluebook is national; local court rules override it.** Suffolk's
+   guide is explicit that documents filed with a court must follow that
+   court's citation rules, and that local rules often require parallel
+   citations — which V1 does not support (§6). A jurisdiction layer is
+   therefore not cosmetic: it can change what a _correct_ citation is.
+2. **Table 1 already encodes per-jurisdiction formats.** State
+   statutory compilations and court abbreviations live in T1.3 / T1.4.
+   Any state layer should draw on Table 1 rather than inventing
+   per-state rules, and would pair naturally with the `reporters-db` /
+   `courts-db` datasets currently used only as a test corpus (§8.4).
+3. **Only §13.2 rules can vary by jurisdiction.** Everything in §13.3 is
+   a tool decision — a state variant changes citation format, never the
+   IR, the staleness model, or the accessibility requirements.
+
+### 13.5 Audit status
+
+- 28 Bluebook-derived rules: **27 verified, 1 split** (`statute.title` —
+  the before-code shape is externally confirmed, the after-code shape is
+  not; see §13.2).
+- 22 tool-internal rules: no external authority claimed or needed.
+- Sources span 14 independent institutions (Georgetown, Harvard, Akron,
+  Notre Dame, Hawaii, Pace, Suffolk, Tarlton/Texas, NIU, Loyola
+  Chicago, Cincinnati, Texas Southern, Florida A&M, Monmouth), so no
+  single guide's idiosyncrasy is load-bearing.
+
+### 13.6 Confirmed during the final audit
+
+Three rules previously marked `asserted` were confirmed, and the
+process surfaced two corrections:
+
+1. **`citation.unreported-short-form`** — confirmed exactly as speced.
+   Texas Southern gives `Albrecht, 1991 U.S. Dist. LEXIS 5088, at *3.`
+   and Cincinnati states the database identifier is what carries the
+   short form. Our template matches.
+2. **Slip-opinion pincite, reconciled.** Georgetown describes the slip
+   citation as "the same, except without the database identifier" —
+   `United States v. Bennett, No. 05-CR-6050 CJS (W.D.N.Y. Oct. 21,
+2005).` That example carries **no pincite**, which is why it looks
+   like a simple deletion. NIU shows the same case both ways: without a
+   pincite the citation is name/docket/court/date; _with_ one it is
+   `No. 1-07-2937, slip op. at 2`. Both sources are consistent, and
+   r[citation.unreported-pincite-form] is correct as written — the
+   `slip op. at` form applies only when a pincite is present, and the
+   spec already omits the pincite segment entirely when absent.
+3. **`case-name.assembly`** — `In re` and `Ex parte` confirmed as the
+   Bluebook's procedural-phrase forms.
