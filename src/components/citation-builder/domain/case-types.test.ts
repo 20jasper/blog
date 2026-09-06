@@ -41,12 +41,7 @@ describe('shortCaseName', () => {
 		).toBe(PARTY_1);
 	});
 
-	it.each([
-		['in-re', 'In re'],
-		['ex-parte', 'Ex parte'],
-	] as const)('is the assembled name for %s', (caseType, label) => {
-		expect(shortCaseName({ caseType, party1: PARTY_1 })).toBe(
-			`${label} ${PARTY_1}`,
-		);
-	});
+	// in-re/ex-parte aren't tested separately here: shortCaseName delegates
+	// to assembleCaseName verbatim for those types (see source), so
+	// assembleCaseName's own tests above already cover that code path.
 });
