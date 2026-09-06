@@ -66,7 +66,7 @@ describe('assemble', () => {
 				codeType: 'official',
 				codeAbbreviation: 'Ohio Rev. Code',
 				section: '3767.32(A)',
-				year: 2025,
+				materialLocation: { kind: 'main-volume', year: 2025 },
 			},
 		};
 

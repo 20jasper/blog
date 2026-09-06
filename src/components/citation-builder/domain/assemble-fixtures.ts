@@ -43,8 +43,7 @@ export function annotatedStatute(
 		codeAbbreviation: 'Ohio Rev. Code Ann.',
 		section: '3767.32(A)',
 		publisher: 'West',
-		year: 2025,
-		supplement: undefined,
+		materialLocation: { kind: 'main-volume', year: 2025 },
 		...overrides,
 	};
 }
@@ -56,7 +55,7 @@ export function officialStatute(
 		codeType: 'official',
 		codeAbbreviation: 'Ohio Rev. Code',
 		section: '3767.32(A)',
-		year: 2025,
+		materialLocation: { kind: 'main-volume', year: 2025 },
 		...overrides,
 	};
 }

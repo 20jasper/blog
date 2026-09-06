@@ -5,7 +5,7 @@ import { render } from './render';
 
 // r[verify citation.statute-long-form]
 describe('assembleStatuteCase', () => {
-	it('matches the §8.3 golden case exactly (annotated, no supplement)', () => {
+	it('matches the §8.3 golden case exactly (annotated, main volume only)', () => {
 		const { plain } = render(assembleStatuteCase(annotatedStatute()), {
 			emphasis: 'italic',
 		});
@@ -19,21 +19,6 @@ describe('assembleStatuteCase', () => {
 		});
 
 		expect(plain).toBe('Ohio Rev. Code § 3767.32(A) (2025).');
-	});
-
-	it('joins base year and supplement per the inferred §5.6 format, pending confirmation', () => {
-		const input = annotatedStatute({
-			year: 2018,
-			supplement: { designation: 'Supp.', year: 2020 },
-		});
-
-		const { plain } = render(assembleStatuteCase(input), {
-			emphasis: 'italic',
-		});
-
-		expect(plain).toBe(
-			'Ohio Rev. Code Ann. § 3767.32(A) (West 2018 & Supp. 2020).',
-		);
 	});
 
 	it('does not double the § symbol when section is already prefixed, per §4.2', () => {
@@ -54,7 +39,7 @@ describe('assembleStatuteCase', () => {
 					title: { text: '42', position: 'before-code' },
 					codeAbbreviation: 'U.S.C.',
 					section: '1983',
-					year: 1994,
+					materialLocation: { kind: 'main-volume', year: 1994 },
 				}),
 			),
 			{ emphasis: 'italic' },
@@ -71,7 +56,7 @@ describe('assembleStatuteCase', () => {
 					title: { text: 'tit. 14A', position: 'after-code' },
 					codeAbbreviation: 'Okla. Stat.',
 					section: '6-203',
-					year: 1996,
+					materialLocation: { kind: 'main-volume', year: 1996 },
 				}),
 			),
 			{ emphasis: 'italic' },
@@ -89,7 +74,7 @@ describe('assembleStatuteCase', () => {
 					title: { text: 'tit. 14A', position: 'after-code' },
 					codeAbbreviation: 'Okla. Stat.',
 					section: '6-203',
-					year: 1996,
+					materialLocation: { kind: 'main-volume', year: 1996 },
 				}),
 			),
 			{ emphasis: 'italic' },
@@ -98,5 +83,111 @@ describe('assembleStatuteCase', () => {
 		expect(plain).toBe(
 			'Consumer Credit Code, Okla. Stat. tit. 14A, § 6-203 (1996).',
 		);
+	});
+});
+
+// r[verify statute.material-location]
+// r[verify citation.statute-supplement]
+describe('assembleStatuteCase: material location and supplement forms', () => {
+	it('official, both main volume and supplement', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				officialStatute({
+					title: { text: '42', position: 'before-code' },
+					codeAbbreviation: 'U.S.C.',
+					section: '3001',
+					materialLocation: {
+						kind: 'both',
+						year: 1994,
+						supplement: { designation: 'Supp. V', year: 1999 },
+					},
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('42 U.S.C. § 3001 (1994 & Supp. V 1999).');
+	});
+
+	it('official, supplement only -- no base year at all', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				officialStatute({
+					title: { text: '42', position: 'before-code' },
+					codeAbbreviation: 'U.S.C.',
+					section: '1985',
+					materialLocation: {
+						kind: 'supplement-only',
+						supplement: { designation: 'Supp. V', year: 1999 },
+					},
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('42 U.S.C. § 1985 (Supp. V 1999).');
+	});
+
+	// r[verify statute.supplement-scope]
+	// r[verify statute.supplement-pairing]
+	// r[verify statute.supplement-designation-freeform]
+	it('official, both, no publisher -- confirms r[statute.supplement-scope]', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				officialStatute({
+					codeAbbreviation: 'Haw. Rev. Stat.',
+					section: '703-309',
+					materialLocation: {
+						kind: 'both',
+						year: 2014,
+						supplement: { designation: 'Supp.', year: 2017 },
+					},
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('Haw. Rev. Stat. § 703-309 (2014 & Supp. 2017).');
+	});
+
+	it('annotated, both main volume and supplement', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				annotatedStatute({
+					title: { text: '42', position: 'before-code' },
+					codeAbbreviation: 'U.S.C.A.',
+					section: '1983',
+					publisher: 'West',
+					materialLocation: {
+						kind: 'both',
+						year: 2000,
+						supplement: { designation: 'Supp.', year: 2002 },
+					},
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('42 U.S.C.A. § 1983 (West 2000 & Supp. 2002).');
+	});
+
+	it('annotated, supplement only -- no base year at all', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				annotatedStatute({
+					title: { text: '42', position: 'before-code' },
+					codeAbbreviation: 'U.S.C.A.',
+					section: '2001',
+					publisher: 'West',
+					materialLocation: {
+						kind: 'supplement-only',
+						supplement: { designation: 'Supp.', year: 2002 },
+					},
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('42 U.S.C.A. § 2001 (West Supp. 2002).');
 	});
 });

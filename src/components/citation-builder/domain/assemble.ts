@@ -172,32 +172,46 @@ export type StatuteTitle = {
 	position: 'before-code' | 'after-code';
 };
 
+type Supplement = { designation: string; year: number };
+
+// r[impl statute.material-location]
+// r[impl statute.supplement-pairing]
+export type MaterialLocation =
+	| { kind: 'main-volume'; year: number }
+	| { kind: 'both'; year: number; supplement: Supplement }
+	| { kind: 'supplement-only'; supplement: Supplement };
+
+// r[impl statute.supplement-scope]
 export type StatuteInput = (
 	| {
 			codeType: 'official';
 			codeAbbreviation: string;
 			section: string;
-			year: number;
+			materialLocation: MaterialLocation;
 	  }
 	| {
 			codeType: 'annotated';
 			codeAbbreviation: string;
 			section: string;
 			publisher: string;
-			year: number;
-			supplement: { designation: string; year: number } | undefined;
+			materialLocation: MaterialLocation;
 	  }
 ) & {
 	popularName?: string;
 	title?: StatuteTitle;
 };
 
-function supplementSuffix(
-	supplement: { designation: string; year: number } | undefined,
-): string {
-	return supplement === undefined
-		? ''
-		: ` & ${supplement.designation} ${supplement.year}`;
+// r[impl statute.material-location]
+// r[impl statute.supplement-designation-freeform]
+function materialLocationYear(materialLocation: MaterialLocation): string {
+	switch (materialLocation.kind) {
+		case 'main-volume':
+			return `${materialLocation.year}`;
+		case 'both':
+			return `${materialLocation.year} & ${materialLocation.supplement.designation} ${materialLocation.supplement.year}`;
+		case 'supplement-only':
+			return `${materialLocation.supplement.designation} ${materialLocation.supplement.year}`;
+	}
 }
 
 // r[impl statute.title]
@@ -219,11 +233,12 @@ function popularNamePrefix(popularName: string | undefined): string {
 }
 
 // r[impl citation.statute-long-form]
+// r[impl citation.statute-supplement]
 export function assembleStatuteCase(input: StatuteInput): Segment[] {
 	const parenthetical =
 		input.codeType === 'official'
-			? `${input.year}`
-			: `${input.publisher} ${input.year}${supplementSuffix(input.supplement)}`;
+			? materialLocationYear(input.materialLocation)
+			: `${input.publisher} ${materialLocationYear(input.materialLocation)}`;
 
 	const segments: Segment[] = [
 		{
