@@ -112,6 +112,10 @@ citation.
 
 ### 3.5 Field state and interaction rules
 
+r[field-state.derivation]
+Each field's required/optional/not-used state is derived purely from
+the current type/toggle selections, never from other fields' values.
+
 - Every field is always visible. Type/toggle selections change each
   field's **required / optional / not-used** state, never its visibility.
 - Fields marked **not used** for the current type are `disabled`, not
@@ -121,6 +125,14 @@ citation.
   required/optional/not-used tag) so it's clear why a value persisted
   after switching type.
 - Switching type never clears any field's value.
+
+> **Resolving a wording tension:** §3.4 says Supplement year is "shown
+> only if supplement designation is filled," which read literally
+> contradicts this section's "always visible." Since this section is
+> the more general, later-stated rule, "shown only if" is read as
+> **not-used** (disabled) rather than **hidden** when the designation
+> is empty -- consistent with every other conditional field on this
+> page.
 
 ---
 

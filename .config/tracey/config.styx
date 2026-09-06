@@ -11,6 +11,12 @@ specs (
 				exclude (src/components/citation-builder/domain/**/*.test.ts)
 				test_include (src/components/citation-builder/domain/**/*.test.ts)
 			}
+			{
+				name state
+				include (src/components/citation-builder/state/**/*.ts)
+				exclude (src/components/citation-builder/state/**/*.test.ts)
+				test_include (src/components/citation-builder/state/**/*.test.ts)
+			}
 		)
 	}
 )
