@@ -9,7 +9,7 @@ import {
 	normalizeSection,
 } from './normalize';
 import { applyFraming } from './render';
-import type { Month, Segment } from './types';
+import type { DateParts, Segment } from './types';
 
 // r[impl assemble.composable]
 function nameSegment(name: CaseNameInput): Segment {
@@ -17,8 +17,8 @@ function nameSegment(name: CaseNameInput): Segment {
 }
 
 // r[impl assemble.composable]
-function appendPincite(pincite: string): Segment[] {
-	return pincite === '' ? [] : [{ text: `, ${pincite}`, italic: false }];
+function appendPincite(pincite: string | undefined): Segment[] {
+	return pincite === undefined ? [] : [{ text: `, ${pincite}`, italic: false }];
 }
 
 // r[impl assemble.composable]
@@ -34,7 +34,7 @@ export type ReportedCaseInput = {
 	volume: string;
 	reporter: string;
 	firstPage: string;
-	pincite: string;
+	pincite?: string;
 	court: string;
 	year: number;
 };
@@ -104,11 +104,9 @@ export type UnreportedCaseInput = {
 	name: CaseNameInput;
 	docket: string;
 	availability: Availability;
-	pincite: string;
+	pincite?: string;
 	court: string;
-	month: Month;
-	day: number;
-	year: number;
+	date: DateParts;
 };
 
 // r[impl assemble.composable]
@@ -119,24 +117,20 @@ function appendDatabaseId(availability: Availability): Segment[] {
 }
 
 // r[impl assemble.composable]
-function appendStarPincite(pincite: string): Segment[] {
-	return pincite === '' ? [] : [{ text: `, at *${pincite}`, italic: false }];
+function appendStarPincite(pincite: string | undefined): Segment[] {
+	return pincite === undefined
+		? []
+		: [{ text: `, at *${pincite}`, italic: false }];
 }
 
 // r[impl citation.unreported-long-form]
 export function assembleUnreportedCase(input: UnreportedCaseInput): Segment[] {
-	const date = assembleDate({
-		month: input.month,
-		day: input.day,
-		year: input.year,
-	});
-
 	const segments: Segment[] = [
 		nameSegment(input.name),
 		{ text: `, ${normalizeDocketNumber(input.docket)}`, italic: false },
 		...appendDatabaseId(input.availability),
 		...appendStarPincite(input.pincite),
-		{ text: ` (${input.court} ${date})`, italic: false },
+		{ text: ` (${input.court} ${assembleDate(input.date)})`, italic: false },
 	];
 
 	return framePeriod(segments);

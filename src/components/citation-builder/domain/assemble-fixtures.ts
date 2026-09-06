@@ -4,9 +4,6 @@ import type {
 	UnreportedCaseInput,
 } from './assemble';
 
-// Test-only builders: each returns a known-good, spec-golden-case-shaped
-// input, so a test only has to state the field(s) it's actually varying.
-
 export function reportedCase(
 	overrides: Partial<ReportedCaseInput> = {},
 ): ReportedCaseInput {
@@ -29,11 +26,8 @@ export function unreportedCase(
 		name: { caseType: 'v', party1: 'State', party2: 'Lucko' },
 		docket: '2021CA0007',
 		availability: { kind: 'database', databaseId: '2021 WL 4269952' },
-		pincite: '',
 		court: 'Ohio Ct. App.',
-		month: 'Sept.',
-		day: 17,
-		year: 2021,
+		date: { month: 'Sept.', day: 17, year: 2021 },
 		...overrides,
 	};
 }

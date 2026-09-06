@@ -30,7 +30,7 @@ describe('assembleReportedCase: golden case', () => {
 describe('assembleReportedCase: field variations', () => {
 	it('omits the pincite segment when absent, per §3.1 (optional for full citation)', () => {
 		const { plain } = render(
-			assembleReportedCase(reportedCase({ pincite: '' })),
+			assembleReportedCase(reportedCase({ pincite: undefined })),
 			{ typeface: 'italic' },
 		);
 

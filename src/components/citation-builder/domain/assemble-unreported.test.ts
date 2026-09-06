@@ -8,9 +8,7 @@ const BENNETT = unreportedCase({
 	docket: '05-CR-6050 CJS',
 	availability: { kind: 'database', databaseId: '2005 WL 2709572' },
 	court: 'W.D.N.Y.',
-	month: 'Oct.',
-	day: 21,
-	year: 2005,
+	date: { month: 'Oct.', day: 21, year: 2005 },
 });
 
 // r[verify citation.unreported-long-form]

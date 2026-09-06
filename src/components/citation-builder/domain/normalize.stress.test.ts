@@ -4,10 +4,13 @@ import { normalizeDocketNumber, normalizeSection } from './normalize';
 const REPORTERS_DB_URL =
 	'https://raw.githubusercontent.com/freelawproject/reporters-db/main/reporters_db/data/reporters.json';
 
-type ReporterFamily = {
-	editions: Record<string, unknown>;
-	variations: Record<string, string>;
-};
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
+function keysOf(value: unknown): string[] {
+	return isRecord(value) ? Object.keys(value) : [];
+}
 
 // r[verify normalize.stress]
 describe('normalization stress test against reporters-db', () => {
@@ -19,20 +22,25 @@ describe('normalization stress test against reporters-db', () => {
 		'never throws and is idempotent for every real-world reporter string in reporters-db',
 		async () => {
 			const response = await fetch(REPORTERS_DB_URL);
-			// Trusted test-only external JSON; a runtime schema guard here
-			// would be more machinery than this stress test warrants.
-			// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-			const data = (await response.json()) as Record<string, ReporterFamily[]>;
+			const data: unknown = await response.json();
 
 			const strings = new Set<string>();
-			for (const [canonicalKey, families] of Object.entries(data)) {
-				strings.add(canonicalKey);
-				for (const family of families) {
-					for (const edition of Object.keys(family.editions)) {
-						strings.add(edition);
+			if (isRecord(data)) {
+				for (const [canonicalKey, families] of Object.entries(data)) {
+					strings.add(canonicalKey);
+					if (!Array.isArray(families)) {
+						continue;
 					}
-					for (const variation of Object.keys(family.variations)) {
-						strings.add(variation);
+					for (const family of families) {
+						if (!isRecord(family)) {
+							continue;
+						}
+						for (const edition of keysOf(family.editions)) {
+							strings.add(edition);
+						}
+						for (const variation of keysOf(family.variations)) {
+							strings.add(variation);
+						}
 					}
 				}
 			}
