@@ -63,6 +63,7 @@ describe('selectFieldState: reported-only fields (§3.2)', () => {
 			};
 			const unreported: Selections = {
 				sourceType: 'unreported',
+				mode: 'full',
 				caseType: 'v',
 				availabilityKind: 'database',
 			};
@@ -90,6 +91,7 @@ describe('selectFieldState: unreported-only fields (§3.3)', () => {
 			};
 			const unreported: Selections = {
 				sourceType: 'unreported',
+				mode: 'full',
 				caseType: 'v',
 				availabilityKind: 'database',
 			};
@@ -109,15 +111,43 @@ describe('selectFieldState: unreported-only fields (§3.3)', () => {
 		['database', 'required'],
 		['slip-opinion', 'not-used'],
 	] as const)(
-		'availability %s -> databaseIdentifier %s',
+		'availability %s -> databaseIdentifier %s (both modes)',
 		(availabilityKind, expected) => {
-			const selections: Selections = {
+			const full: Selections = {
 				sourceType: 'unreported',
+				mode: 'full',
+				caseType: 'v',
+				availabilityKind,
+			};
+			const short: Selections = {
+				sourceType: 'unreported',
+				mode: 'short',
 				caseType: 'v',
 				availabilityKind,
 			};
 
-			expect(selectFieldState(selections).databaseIdentifier).toBe(expected);
+			expect(selectFieldState(full).databaseIdentifier).toBe(expected);
+			expect(selectFieldState(short).databaseIdentifier).toBe(expected);
+		},
+	);
+
+	// r[verify citation.unreported-short-form]
+	it.each([
+		['full', 'database', 'required'],
+		['full', 'slip-opinion', 'required'],
+		['short', 'database', 'not-used'],
+		['short', 'slip-opinion', 'required'],
+	] as const)(
+		'mode %s, availability %s -> docketNumber %s',
+		(mode, availabilityKind, expected) => {
+			const selections: Selections = {
+				sourceType: 'unreported',
+				mode,
+				caseType: 'v',
+				availabilityKind,
+			};
+
+			expect(selectFieldState(selections).docketNumber).toBe(expected);
 		},
 	);
 });
@@ -130,6 +160,7 @@ describe('selectFieldState: statute-only fields (§3.4)', () => {
 	};
 	const UNREPORTED: Selections = {
 		sourceType: 'unreported',
+		mode: 'full',
 		caseType: 'v',
 		availabilityKind: 'database',
 	};
@@ -192,7 +223,12 @@ describe('selectFieldState: statute-only fields (§3.4)', () => {
 describe('selectFieldState: year is universally required (§3.2/3.3/3.4)', () => {
 	it.each([
 		{ sourceType: 'reported', mode: 'full', caseType: 'v' },
-		{ sourceType: 'unreported', caseType: 'v', availabilityKind: 'database' },
+		{
+			sourceType: 'unreported',
+			mode: 'full',
+			caseType: 'v',
+			availabilityKind: 'database',
+		},
 		{
 			sourceType: 'statute',
 			codeType: 'official',

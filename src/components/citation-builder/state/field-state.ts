@@ -36,6 +36,7 @@ export type Selections =
 	| { sourceType: 'reported'; mode: 'full' | 'short'; caseType: CaseTypeId }
 	| {
 			sourceType: 'unreported';
+			mode: 'full' | 'short';
 			caseType: CaseTypeId;
 			availabilityKind: 'database' | 'slip-opinion';
 	  }
@@ -44,6 +45,17 @@ export type Selections =
 			codeType: 'official' | 'annotated';
 			hasSupplementDesignation: boolean;
 	  };
+
+// r[impl citation.unreported-short-form]
+function unreportedDocketState(
+	mode: 'full' | 'short',
+	availabilityKind: 'database' | 'slip-opinion',
+): FieldRequirement {
+	if (mode === 'full') {
+		return 'required';
+	}
+	return availabilityKind === 'slip-opinion' ? 'required' : 'not-used';
+}
 
 // r[impl field-state.derivation]
 export function selectFieldState(
@@ -54,7 +66,7 @@ export function selectFieldState(
 	const isStatute = selections.sourceType === 'statute';
 	const isCaseType = isReported || isUnreported;
 
-	const mode = isReported ? selections.mode : 'full';
+	const mode = isReported || isUnreported ? selections.mode : 'full';
 	const caseTypeChoice =
 		isReported || isUnreported ? selections.caseType : undefined;
 	const availabilityKind = isUnreported
@@ -78,7 +90,10 @@ export function selectFieldState(
 		firstPage: usedIf(isReported, 'required'),
 
 		availability: usedIf(isUnreported, 'required'),
-		docketNumber: usedIf(isUnreported, 'required'),
+		docketNumber: usedIf(
+			isUnreported,
+			unreportedDocketState(mode, availabilityKind ?? 'database'),
+		),
 		databaseIdentifier: usedIf(
 			isUnreported,
 			usedIf(availabilityKind === 'database', 'required'),

@@ -2,31 +2,43 @@ import {
 	assembleReportedCase,
 	assembleReportedShortForm,
 	assembleUnreportedCase,
+	assembleUnreportedShortForm,
 	assembleStatuteCase,
+	type AssembleOptions,
 	type ReportedCaseInput,
 	type ReportedShortFormInput,
 	type UnreportedCaseInput,
+	type UnreportedShortFormInput,
 	type StatuteInput,
 } from '../domain/assemble';
 import type { Segment } from '../domain/types';
 
-// Only the modes actually built so far (see docs/citation-builder/phase-1-spec.md
-// open items): unreported and statute short form aren't here because no
-// source has confirmed either yet.
+// Statute short form isn't here yet -- deferred (see
+// docs/citation-builder/phase-1-spec.md, chunk 8 note).
 export type CitationInput =
 	| { sourceType: 'reported'; mode: 'full'; input: ReportedCaseInput }
 	| { sourceType: 'reported'; mode: 'short'; input: ReportedShortFormInput }
 	| { sourceType: 'unreported'; mode: 'full'; input: UnreportedCaseInput }
+	| {
+			sourceType: 'unreported';
+			mode: 'short';
+			input: UnreportedShortFormInput;
+	  }
 	| { sourceType: 'statute'; mode: 'full'; input: StatuteInput };
 
-export function assemble(citation: CitationInput): Segment[] {
+export function assemble(
+	citation: CitationInput,
+	options: AssembleOptions = {},
+): Segment[] {
 	switch (citation.sourceType) {
 		case 'reported':
 			return citation.mode === 'full'
-				? assembleReportedCase(citation.input)
-				: assembleReportedShortForm(citation.input);
+				? assembleReportedCase(citation.input, options)
+				: assembleReportedShortForm(citation.input, options);
 		case 'unreported':
-			return assembleUnreportedCase(citation.input);
+			return citation.mode === 'full'
+				? assembleUnreportedCase(citation.input, options)
+				: assembleUnreportedShortForm(citation.input, options);
 		case 'statute':
 			return assembleStatuteCase(citation.input);
 	}

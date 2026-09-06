@@ -58,6 +58,36 @@ describe('assemble', () => {
 		);
 	});
 
+	it('dispatches unreported/short to assembleUnreportedShortForm', () => {
+		const citation: CitationInput = {
+			sourceType: 'unreported',
+			mode: 'short',
+			input: {
+				nameVariant: 'none',
+				availability: { kind: 'slip-opinion', docket: '1-07-2937' },
+				pincite: '2',
+			},
+		};
+
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
+
+		expect(plain).toBe('No. 1-07-2937, slip op. at 2.');
+	});
+
+	it('threads spanSeparator through to the underlying assembler', () => {
+		const citation: CitationInput = {
+			sourceType: 'reported',
+			mode: 'short',
+			input: { nameVariant: 'id', pincite: '208-214' },
+		};
+
+		const { plain } = render(assemble(citation, { spanSeparator: '–' }), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).toBe('Id. at 208–14.');
+	});
+
 	it('dispatches statute/full to assembleStatuteCase', () => {
 		const citation: CitationInput = {
 			sourceType: 'statute',
