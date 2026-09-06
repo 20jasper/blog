@@ -69,7 +69,8 @@ export function selectFieldState(
 				? 'required'
 				: 'not-used'
 			: 'not-used',
-		court: isCaseType ? 'required' : 'not-used',
+		// r[impl court.optional]
+		court: isCaseType ? 'optional' : 'not-used',
 		pincite: isCaseType
 			? mode === 'short'
 				? 'required'

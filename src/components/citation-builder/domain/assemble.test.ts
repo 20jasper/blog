@@ -51,4 +51,24 @@ describe('assembleReportedCase: field variations', () => {
 			'In re Smith, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
 		);
 	});
+
+	// r[verify court.optional]
+	it('omits the court entirely when blank, matching the §8.3 Roe v. Wade golden case', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({
+					name: { caseType: 'v', party1: 'Roe', party2: 'Wade' },
+					volume: '410',
+					reporter: 'U.S.',
+					firstPage: '113',
+					pincite: '164',
+					court: undefined,
+					year: 1973,
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('Roe v. Wade, 410 U.S. 113, 164 (1973).');
+	});
 });

@@ -37,12 +37,18 @@ export type ReportedCaseInput = {
 	reporter: string;
 	firstPage: string;
 	pincite?: string;
-	court: string;
+	// r[impl court.optional]
+	court?: string;
 	year: number;
 };
 
 // r[impl citation.reported-long-form]
 export function assembleReportedCase(input: ReportedCaseInput): Segment[] {
+	const parenthetical =
+		input.court === undefined
+			? `${input.year}`
+			: `${input.court} ${input.year}`;
+
 	const segments: Segment[] = [
 		nameSegment(input.name),
 		{
@@ -50,7 +56,7 @@ export function assembleReportedCase(input: ReportedCaseInput): Segment[] {
 			emphasized: false,
 		},
 		...appendPincite(input.pincite),
-		{ text: ` (${input.court} ${input.year})`, emphasized: false },
+		{ text: ` (${parenthetical})`, emphasized: false },
 	];
 
 	return framePeriod(segments);

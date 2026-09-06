@@ -27,7 +27,7 @@ describe('selectFieldState: shared case-type fields', () => {
 		},
 	);
 
-	it.each(['caseType', 'party1', 'court'] as const)(
+	it.each(['caseType', 'party1'] as const)(
 		'%s is always required for a case-type source (reported/unreported)',
 		(field) => {
 			const selections: Selections = {
@@ -39,6 +39,17 @@ describe('selectFieldState: shared case-type fields', () => {
 			expect(selectFieldState(selections)[field]).toBe('required');
 		},
 	);
+
+	// r[verify court.optional]
+	it('court is optional (not required), per r[court.optional]', () => {
+		const selections: Selections = {
+			sourceType: 'reported',
+			mode: 'full',
+			caseType: 'v',
+		};
+
+		expect(selectFieldState(selections).court).toBe('optional');
+	});
 });
 
 describe('selectFieldState: reported-only fields (§3.2)', () => {
