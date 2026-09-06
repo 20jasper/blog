@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 test('citation builder page loads with its heading', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
@@ -28,13 +28,15 @@ test('editing a field updates the output live', async ({ page }) => {
 });
 
 for (const caseType of ['in-re', 'ex-parte'] as const) {
-	test(`case type ${caseType} hides and disables Party 2`, async ({ page }) => {
+	test(`case type ${caseType} disables Party 2 (never hides it, §3.5)`, async ({
+		page,
+	}) => {
 		await page.goto('/tools/citation-builder');
 
 		await page.getByLabel('Case type').selectOption(caseType);
 
 		const party2 = page.getByLabel('Party 2');
-		await expect(party2).toBeHidden();
+		await expect(party2).toBeVisible();
 		await expect(party2).toBeDisabled();
 	});
 }
@@ -49,16 +51,14 @@ test('case type in-re renders the single-party citation', async ({ page }) => {
 	);
 });
 
-test('switching back to v. restores Party 2', async ({ page }) => {
+test('switching back to v. re-enables Party 2', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 
 	const caseType = page.getByLabel('Case type');
 	await caseType.selectOption('in-re');
 	await caseType.selectOption('v');
 
-	const party2 = page.getByLabel('Party 2');
-	await expect(party2).toBeVisible();
-	await expect(party2).toBeEnabled();
+	await expect(page.getByLabel('Party 2')).toBeEnabled();
 	await expect(page.getByRole('status')).toHaveText(
 		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
 	);
@@ -78,7 +78,7 @@ test('clear empties every field and shows the placeholder', async ({
 	);
 });
 
-test('clear after switching case type resets Party 2 visibility too', async ({
+test('clear after switching case type re-enables Party 2 too', async ({
 	page,
 }) => {
 	await page.goto('/tools/citation-builder');
@@ -88,27 +88,25 @@ test('clear after switching case type resets Party 2 visibility too', async ({
 	await page.getByRole('button', { name: 'Clear' }).click();
 
 	await expect(caseType).toHaveValue('v');
-	const party2 = page.getByLabel('Party 2');
-	await expect(party2).toBeVisible();
-	await expect(party2).toBeEnabled();
+	await expect(page.getByLabel('Party 2')).toBeEnabled();
 });
 
-test('short form hides Court/First page/Year and shows Name variant + Id.', async ({
+test('short form disables Court/First page/Decision year, enables Name variant + Id.', async ({
 	page,
 }) => {
 	await page.goto('/tools/citation-builder');
 
 	await page.getByRole('radio', { name: 'Short form' }).check();
 
-	await expect(page.getByLabel('Court')).toBeHidden();
-	await expect(page.getByLabel('First page')).toBeHidden();
-	await expect(page.getByLabel('Year')).toBeHidden();
-	await expect(page.getByLabel('Name variant')).toBeVisible();
+	await expect(page.getByLabel('Court')).toBeDisabled();
+	await expect(page.getByLabel('First page')).toBeDisabled();
+	await expect(page.getByLabel('Decision year')).toBeDisabled();
+	await expect(page.getByLabel('Name variant')).toBeEnabled();
 	await expect(
 		page.getByRole('checkbox', {
 			name: /immediately follows one to the same source/u,
 		}),
-	).toBeVisible();
+	).toBeEnabled();
 	await expect(page.getByRole('status')).toHaveText(
 		'Dayton v. Stewart, 179 N.E.3d at 214.',
 	);
@@ -130,7 +128,7 @@ for (const [nameVariant, expected] of [
 	});
 }
 
-test('Id. hides Name variant and renders Id. form', async ({ page }) => {
+test('Id. disables Name variant and renders Id. form', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 
 	await page.getByRole('radio', { name: 'Short form' }).check();
@@ -140,11 +138,11 @@ test('Id. hides Name variant and renders Id. form', async ({ page }) => {
 		})
 		.check();
 
-	await expect(page.getByLabel('Name variant')).toBeHidden();
+	await expect(page.getByLabel('Name variant')).toBeDisabled();
 	await expect(page.getByRole('status')).toHaveText('Id. at 214.');
 });
 
-test('switching back to full citation restores Court/First page/Year', async ({
+test('switching back to full citation re-enables Court/First page/Decision year', async ({
 	page,
 }) => {
 	await page.goto('/tools/citation-builder');
@@ -152,9 +150,9 @@ test('switching back to full citation restores Court/First page/Year', async ({
 	await page.getByRole('radio', { name: 'Short form' }).check();
 	await page.getByRole('radio', { name: 'Full citation' }).check();
 
-	await expect(page.getByLabel('Court')).toBeVisible();
-	await expect(page.getByLabel('First page')).toBeVisible();
-	await expect(page.getByLabel('Year')).toBeVisible();
+	await expect(page.getByLabel('Court')).toBeEnabled();
+	await expect(page.getByLabel('First page')).toBeEnabled();
+	await expect(page.getByLabel('Decision year')).toBeEnabled();
 	await expect(page.getByRole('status')).toHaveText(
 		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
 	);
@@ -176,13 +174,87 @@ test('clear resets mode, name variant, and Id. back to defaults', async ({
 	await expect(
 		page.getByRole('radio', { name: 'Full citation' }),
 	).toBeChecked();
-	// Mode is back to full, so the row is legitimately hidden now --
-	// includeHidden to still check the underlying checked state reset.
+	await expect(idCheckbox).not.toBeChecked();
+	await expect(page.getByLabel('Court')).toBeEnabled();
+});
+
+async function fillUnreportedLucko(page: Page) {
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByLabel('Party 1').fill('State');
+	await page.getByLabel('Party 2').fill('Lucko');
+	await page.getByLabel('Court (abbreviated)').fill('Ohio Ct. App.');
+	await page.getByLabel('Docket number').fill('2021CA0007');
+	await page.getByLabel('Database identifier').fill('2021 WL 4269952');
+	await page.getByLabel('Month').selectOption('Sept.');
+	await page.getByLabel('Day').fill('17');
+	await page.getByLabel('Opinion year').fill('2021');
+}
+
+test('unreported case type enables its fields and disables reported/citation-form ones', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+
+	await expect(page.getByLabel('Volume')).toBeDisabled();
+	await expect(page.getByLabel('Docket number')).toBeEnabled();
 	await expect(
 		page.getByRole('checkbox', {
 			name: /immediately follows one to the same source/u,
-			includeHidden: true,
 		}),
-	).not.toBeChecked();
-	await expect(page.getByLabel('Court')).toBeVisible();
+	).toBeDisabled();
+});
+
+test('unreported database availability matches the Lucko golden case', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedLucko(page);
+
+	await expect(page.getByRole('status')).toHaveText(
+		'State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *214 (Ohio Ct. App. Sept. 17, 2021).',
+	);
+});
+
+test('unreported slip opinion disables Database identifier and drops the star', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedLucko(page);
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+
+	await expect(page.getByLabel('Database identifier')).toBeDisabled();
+	await expect(page.getByRole('status')).toHaveText(
+		'State v. Lucko, No. 2021CA0007, slip op. at 214 (Ohio Ct. App. Sept. 17, 2021).',
+	);
+});
+
+test('switching back to reported re-enables its fields and disables unreported ones', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Reported case', exact: true }).check();
+
+	await expect(page.getByLabel('Volume')).toBeEnabled();
+	await expect(page.getByLabel('Docket number')).toBeDisabled();
+	await expect(page.getByRole('status')).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+	);
+});
+
+test('clear resets source type back to reported', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('button', { name: 'Clear' }).click();
+
+	await expect(
+		page.getByRole('radio', { name: 'Reported case', exact: true }),
+	).toBeChecked();
+	await expect(page.getByLabel('Volume')).toBeEnabled();
 });

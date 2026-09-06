@@ -4,12 +4,14 @@ import Choice from './components/choice.astro';
 import SelectField from './components/select-field.astro';
 import TextField from './components/text-field.astro';
 import { ids } from './ids';
+import { MONTHS } from '@components/citation-builder/domain/types';
 
 const fieldsetClass = 'w-full max-w-full border-0 p-0';
 const legendClass =
 	'border-foreground-secondary/30 text-foreground mb-3 w-full border-b p-0 pb-2 text-lg font-semibold';
 const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
 const labelClass = 'text-sm font-medium text-foreground-secondary';
+const choiceRowClass = 'flex w-full flex-col gap-1';
 
 const CASE_TYPE_OPTIONS = [
 	{ value: 'v', text: 'v.' },
@@ -23,12 +25,36 @@ const NAME_VARIANT_OPTIONS = [
 	{ value: 'party2', text: 'Party 2' },
 	{ value: 'none', text: 'No name' },
 ];
+
+const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 ---
 
 <form
 	id={ids.form}
 	class="flex w-full max-w-full flex-col gap-6"
 >
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Source</legend>
+		<div class={choiceRowClass}>
+			<span class={labelClass}>Source type</span>
+			<div class="flex gap-4">
+				<Choice
+					type="radio"
+					name="sourceType"
+					value="reported"
+					checked
+					>Reported case</Choice
+				>
+				<Choice
+					type="radio"
+					name="sourceType"
+					value="unreported"
+					>Unreported case</Choice
+				>
+			</div>
+		</div>
+	</fieldset>
+
 	<fieldset class={fieldsetClass}>
 		<legend class={legendClass}>Case identity</legend>
 		<div class={gridClass}>
@@ -57,6 +83,11 @@ const NAME_VARIANT_OPTIONS = [
 				name="court"
 				label="Court (abbreviated)"
 			/>
+			<TextField
+				id={ids.pincite}
+				name="pincite"
+				label="Pincite"
+			/>
 		</div>
 	</fieldset>
 
@@ -79,14 +110,63 @@ const NAME_VARIANT_OPTIONS = [
 				label="First page"
 			/>
 			<TextField
-				id={ids.pincite}
-				name="pincite"
-				label="Pincite"
-			/>
-			<TextField
 				id={ids.year}
 				name="year"
-				label="Year"
+				label="Decision year"
+				inputmode="numeric"
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Unreported case</legend>
+		<div class={gridClass}>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Availability</span>
+				<div class="flex gap-4">
+					<Choice
+						type="radio"
+						name="availability"
+						value="database"
+						checked
+					>
+						In electronic database
+					</Choice>
+					<Choice
+						type="radio"
+						name="availability"
+						value="slip-opinion"
+					>
+						Slip opinion only
+					</Choice>
+				</div>
+			</div>
+			<TextField
+				id={ids.docketNumber}
+				name="docketNumber"
+				label="Docket number"
+			/>
+			<TextField
+				id={ids.databaseIdentifier}
+				name="databaseIdentifier"
+				label="Database identifier"
+			/>
+			<SelectField
+				id={ids.month}
+				name="month"
+				label="Month"
+				options={MONTH_OPTIONS}
+			/>
+			<TextField
+				id={ids.day}
+				name="day"
+				label="Day"
+				inputmode="numeric"
+			/>
+			<TextField
+				id={ids.dateYear}
+				name="dateYear"
+				label="Opinion year"
 				inputmode="numeric"
 			/>
 		</div>
@@ -95,7 +175,7 @@ const NAME_VARIANT_OPTIONS = [
 	<fieldset class={fieldsetClass}>
 		<legend class={legendClass}>Citation form</legend>
 		<div class={gridClass}>
-			<div class="flex w-full flex-col gap-1">
+			<div class={choiceRowClass}>
 				<span class={labelClass}>Mode</span>
 				<div class="flex gap-4">
 					<Choice
@@ -119,7 +199,7 @@ const NAME_VARIANT_OPTIONS = [
 				label="Name variant"
 				options={NAME_VARIANT_OPTIONS}
 			/>
-			<div class="flex w-full flex-col gap-1">
+			<div class={choiceRowClass}>
 				<Choice
 					type="checkbox"
 					name="id"

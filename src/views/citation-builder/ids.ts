@@ -15,6 +15,11 @@ export const ids = {
 	pincite: 'citation-builder-pincite',
 	year: 'citation-builder-year',
 	nameVariant: 'citation-builder-name-variant',
+	docketNumber: 'citation-builder-docket-number',
+	databaseIdentifier: 'citation-builder-database-identifier',
+	month: 'citation-builder-month',
+	day: 'citation-builder-day',
+	dateYear: 'citation-builder-date-year',
 } as const;
 
 export type ElementIds = typeof ids;

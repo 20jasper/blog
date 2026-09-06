@@ -10,6 +10,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		import {
 			assembleReportedCase,
 			assembleReportedShortForm,
+			assembleUnreportedCase,
 			type ReportedShortFormInput,
 		} from '@components/citation-builder/domain/assemble';
 		import {
@@ -18,6 +19,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			type CaseTypeId,
 		} from '@components/citation-builder/domain/case-types';
 		import { render } from '@components/citation-builder/domain/render';
+		import type { Month } from '@components/citation-builder/domain/types';
 		import {
 			deriveSelections,
 			initialCitationFields,
@@ -26,8 +28,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		import { selectFieldState } from '@components/citation-builder/state/field-state';
 		import { ids } from '@src/views/citation-builder/ids';
 
-		// Only reported is wired up so far -- unreported/statute forms
-		// come later. Prefilled with the golden case from
+		// Reported (full + short) and unreported (full only) are wired up
+		// so far -- unreported short form and statute come later.
+		// Prefilled with the golden case from
 		// docs/citation-builder/phase-1-spec.md §8.3 so the page shows a
 		// working example instead of a blank form.
 		const EXAMPLE = {
@@ -58,6 +61,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		const courtInput = document.querySelector<HTMLInputElement>(
 			`#${ids.court}`,
 		)!;
+		const pinciteInput = document.querySelector<HTMLInputElement>(
+			`#${ids.pincite}`,
+		)!;
 		const volumeInput = document.querySelector<HTMLInputElement>(
 			`#${ids.volume}`,
 		)!;
@@ -67,26 +73,39 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		const firstPageInput = document.querySelector<HTMLInputElement>(
 			`#${ids.firstPage}`,
 		)!;
-		const pinciteInput = document.querySelector<HTMLInputElement>(
-			`#${ids.pincite}`,
-		)!;
 		const yearInput = document.querySelector<HTMLInputElement>(`#${ids.year}`)!;
+		const docketNumberInput = document.querySelector<HTMLInputElement>(
+			`#${ids.docketNumber}`,
+		)!;
+		const databaseIdentifierInput = document.querySelector<HTMLInputElement>(
+			`#${ids.databaseIdentifier}`,
+		)!;
+		const monthSelect = document.querySelector<HTMLSelectElement>(
+			`#${ids.month}`,
+		)!;
+		const dayInput = document.querySelector<HTMLInputElement>(`#${ids.day}`)!;
+		const dateYearInput = document.querySelector<HTMLInputElement>(
+			`#${ids.dateYear}`,
+		)!;
 		const nameVariantSelect = document.querySelector<HTMLSelectElement>(
 			`#${ids.nameVariant}`,
 		)!;
 		const idCheckbox =
 			form.querySelector<HTMLInputElement>('input[name="id"]')!;
 
-		// Rows to show/hide are just the field's own parent -- no id
-		// needed to find them.
-		const party2Row = party2Input.parentElement!;
-		const courtRow = courtInput.parentElement!;
-		const firstPageRow = firstPageInput.parentElement!;
-		const yearRow = yearInput.parentElement!;
-		// SelectField wraps its <select> in an extra positioning div (for
-		// the chevron), so the actual field row is one level further up.
-		const nameVariantRow = nameVariantSelect.closest('div')!.parentElement!;
-		const idRow = idCheckbox.closest('div')!;
+		function currentSourceType(): 'reported' | 'unreported' {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="sourceType"]:checked',
+			);
+			return checked?.value === 'unreported' ? 'unreported' : 'reported';
+		}
+
+		function currentAvailability(): 'database' | 'slip-opinion' {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="availability"]:checked',
+			);
+			return checked?.value === 'slip-opinion' ? 'slip-opinion' : 'database';
+		}
 
 		function currentCaseType(): CaseTypeId {
 			const { value } = caseTypeSelect;
@@ -107,33 +126,61 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				: 'full';
 		}
 
+		// Fields stay visible always (§3.5) -- only their disabled state
+		// changes, never their visibility, so switching source type/mode
+		// never shifts the layout.
 		// r[impl name-variant.short-form-only]
-		function updateFieldVisibility(): void {
+		function updateFieldState(): void {
+			const sourceType = currentSourceType();
 			const fields = {
 				...initialCitationFields(),
-				sourceType: 'reported' as const,
+				sourceType,
 				caseType: currentCaseType(),
 			};
 			const fieldState = selectFieldState(
-				deriveSelections(fields, initialDisplayState()),
+				deriveSelections(fields, { ...initialDisplayState(), mode: 'full' }),
 			);
-			const party2NotUsed = fieldState.party2 === 'not-used';
-			party2Input.disabled = party2NotUsed;
-			party2Row.hidden = party2NotUsed;
+			party2Input.disabled = fieldState.party2 === 'not-used';
 
-			const isShort = currentMode() === 'short';
-			for (const [input, row] of [
-				[courtInput, courtRow],
-				[firstPageInput, firstPageRow],
-				[yearInput, yearRow],
-			] as const) {
-				input.disabled = isShort;
-				row.hidden = isShort;
+			const isUnreported = sourceType === 'unreported';
+
+			for (const input of [
+				volumeInput,
+				reporterInput,
+				firstPageInput,
+				yearInput,
+			]) {
+				input.disabled = isUnreported;
+			}
+			for (const input of [
+				docketNumberInput,
+				databaseIdentifierInput,
+				monthSelect,
+				dayInput,
+				dateYearInput,
+			]) {
+				input.disabled = !isUnreported;
 			}
 
-			nameVariantRow.hidden = !isShort || idCheckbox.checked;
+			const isDatabase = currentAvailability() === 'database';
+			databaseIdentifierInput.disabled = !isUnreported || !isDatabase;
+
+			if (isUnreported) {
+				// Court is required for unreported, unlike reported where
+				// it's optional and absent from short form -- reset it here
+				// in case the last state was reported short mode.
+				courtInput.disabled = false;
+				nameVariantSelect.disabled = true;
+				idCheckbox.disabled = true;
+				return;
+			}
+
+			const isShort = currentMode() === 'short';
+			courtInput.disabled = isShort;
+			firstPageInput.disabled = isShort;
+			yearInput.disabled = isShort;
+
 			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
-			idRow.hidden = !isShort;
 			idCheckbox.disabled = !isShort;
 		}
 
@@ -169,7 +216,43 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 					};
 		}
 
-		function updateOutput(): void {
+		function updateUnreportedOutput(): void {
+			const availability = currentAvailability();
+			const hasRequiredFields =
+				party1Input.value !== '' &&
+				courtInput.value !== '' &&
+				docketNumberInput.value !== '' &&
+				monthSelect.value !== '' &&
+				dayInput.value !== '' &&
+				dateYearInput.value !== '' &&
+				(availability === 'slip-opinion' ||
+					databaseIdentifierInput.value !== '');
+
+			if (!hasRequiredFields) {
+				output.textContent = 'Fill in the fields above to generate a citation.';
+				return;
+			}
+
+			const segments = assembleUnreportedCase({
+				name: caseNameInput(),
+				docket: docketNumberInput.value,
+				availability:
+					availability === 'database'
+						? { kind: 'database', databaseId: databaseIdentifierInput.value }
+						: { kind: 'slip-opinion' },
+				pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
+				court: courtInput.value,
+				date: {
+					month: monthSelect.value as Month,
+					day: Number(dayInput.value),
+					year: Number(dateYearInput.value),
+				},
+			});
+
+			output.innerHTML = render(segments, { emphasis: 'italic' }).html;
+		}
+
+		function updateReportedOutput(): void {
 			const mode = currentMode();
 
 			if (mode === 'short') {
@@ -216,8 +299,16 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			output.innerHTML = render(segments, { emphasis: 'italic' }).html;
 		}
 
+		function updateOutput(): void {
+			if (currentSourceType() === 'unreported') {
+				updateUnreportedOutput();
+				return;
+			}
+			updateReportedOutput();
+		}
+
 		function refresh(): void {
-			updateFieldVisibility();
+			updateFieldState();
 			updateOutput();
 		}
 
@@ -240,6 +331,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}
 			caseTypeSelect.value = 'v';
 			nameVariantSelect.value = 'full';
+			monthSelect.value = '';
 			refresh();
 		}
 
