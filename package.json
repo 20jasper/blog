@@ -13,6 +13,10 @@
 		"format:check": "prettier ./ --check",
 		"lint:links": "remark 'src/content/blog/**/*.md' --quiet --frail && remark 'src/content/blog/**/*.mdx' --quiet --frail --use remark-mdx",
 		"lint": "astro check && oxlint --type-aware --deny-warnings . && pnpm run lint:links",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"test:stress": "RUN_STRESS_TEST=1 vitest run normalize.stress.test.ts",
 		"test:visual:docker": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
 		"test:visual:docker:update": "HOST_UID=$(id -u) HOST_GID=$(id -g) PLAYWRIGHT_ARGS=--update-snapshots docker compose run --rm visual-tests"
 	},
@@ -39,6 +43,7 @@
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
 		"@playwright/test": "^1.62.1",
+		"@vitest/coverage-v8": "^5.0.0",
 		"feed": "^6.0.0",
 		"knip": "^6.33.0",
 		"lefthook": "^2.1.12",
@@ -51,7 +56,8 @@
 		"remark-frontmatter": "^5.0.0",
 		"remark-gfm": "^4.0.1",
 		"remark-mdx": "^3.1.1",
-		"remark-validate-links": "^13.1.0"
+		"remark-validate-links": "^13.1.0",
+		"vitest": "^5.0.0"
 	},
 	"engines": {
 		"node": ">=26",

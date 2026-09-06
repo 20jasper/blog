@@ -28,6 +28,14 @@
 		"no-useless-return": "off",
 		"oxc/no-map-spread": "off"
 	},
+	"overrides": [
+		{
+			"files": ["**/*.test.ts", "**/*.test.tsx"],
+			"rules": {
+				"max-lines-per-function": "off"
+			}
+		}
+	],
 	"env": {
 		"builtin": true
 	}
