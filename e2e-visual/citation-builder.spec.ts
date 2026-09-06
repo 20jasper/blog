@@ -206,36 +206,39 @@ test('unreported case type enables its fields and disables reported/citation-for
 	).toBeDisabled();
 });
 
-// Regression: Mode radios weren't disabled for unreported, so picking
-// "Short form" while unreported silently did nothing (unreported output
-// never checks mode) -- gap in sourceType x mode coverage.
-test('unreported case type disables Mode and forces it back to Full citation', async ({
+// Mode applies to both source types now -- unreported short form is
+// wired (assembleUnreportedShortForm), so Mode stays enabled and
+// Court/Month/Day/Opinion year (unreported-full-only) disable instead.
+test('unreported + short form disables Court/Month/Day/Opinion year, enables Docket per availability', async ({
 	page,
 }) => {
 	await page.goto('/tools/citation-builder');
 
-	await page.getByRole('radio', { name: 'Short form' }).check();
 	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Short form' }).check();
 
-	await expect(
-		page.getByRole('radio', { name: 'Full citation' }),
-	).toBeChecked();
-	await expect(
-		page.getByRole('radio', { name: 'Full citation' }),
-	).toBeDisabled();
-	await expect(page.getByRole('radio', { name: 'Short form' })).toBeDisabled();
+	await expect(page.getByRole('radio', { name: 'Short form' })).toBeEnabled();
+	await expect(page.getByLabel('Court')).toBeDisabled();
+	await expect(page.getByLabel('Month')).toBeDisabled();
+	await expect(page.getByLabel('Day')).toBeDisabled();
+	await expect(page.getByLabel('Opinion year')).toBeDisabled();
+	// Database is the default availability -- short form under database
+	// carries the database id instead of the docket (§5.8).
+	await expect(page.getByLabel('Docket number')).toBeDisabled();
+	await expect(page.getByLabel('Database identifier')).toBeEnabled();
 });
 
-test('switching back to reported re-enables Mode', async ({ page }) => {
+test('unreported + short form + slip opinion enables Docket, disables Database identifier', async ({
+	page,
+}) => {
 	await page.goto('/tools/citation-builder');
 
 	await page.getByRole('radio', { name: 'Unreported case' }).check();
-	await page.getByRole('radio', { name: 'Reported case', exact: true }).check();
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
 
-	await expect(
-		page.getByRole('radio', { name: 'Full citation' }),
-	).toBeEnabled();
-	await expect(page.getByRole('radio', { name: 'Short form' })).toBeEnabled();
+	await expect(page.getByLabel('Docket number')).toBeEnabled();
+	await expect(page.getByLabel('Database identifier')).toBeDisabled();
 });
 
 test('unreported database availability matches the Lucko golden case', async ({
@@ -262,6 +265,91 @@ test('unreported slip opinion disables Database identifier and drops the star', 
 	await expect(page.getByRole('status')).toHaveText(
 		'State v. Lucko, No. 2021CA0007, slip op. at 214 (Ohio Ct. App. Sept. 17, 2021).',
 	);
+});
+
+async function fillUnreportedChatlas(page: Page) {
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByLabel('Party 1').fill('Chatlas');
+	await page.getByLabel('Party 2').fill('Allstate Ins. Co.');
+	await page.getByLabel('Docket number').fill('1-07-2937');
+	await page.getByLabel('Database identifier').fill('2008 WL 2610471');
+	await page.getByLabel('Pincite').fill('2');
+	await page.getByRole('radio', { name: 'Short form' }).check();
+}
+
+test('unreported short form, database availability matches the Chatlas golden pair', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedChatlas(page);
+
+	await expect(page.getByRole('status')).toHaveText(
+		'Chatlas v. Allstate Ins. Co., 2008 WL 2610471, at *2.',
+	);
+});
+
+test('unreported short form, slip opinion drops the star and uses the docket', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedChatlas(page);
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+
+	await expect(page.getByRole('status')).toHaveText(
+		'Chatlas v. Allstate Ins. Co., No. 1-07-2937, slip op. at 2.',
+	);
+});
+
+for (const [nameVariant, expected] of [
+	['full', 'Chatlas v. Allstate Ins. Co., No. 1-07-2937, slip op. at 2.'],
+	['party1', 'Chatlas, No. 1-07-2937, slip op. at 2.'],
+	['party2', 'Allstate Ins. Co., No. 1-07-2937, slip op. at 2.'],
+	['none', 'No. 1-07-2937, slip op. at 2.'],
+] as const) {
+	test(`unreported short form name variant ${nameVariant}`, async ({
+		page,
+	}) => {
+		await page.goto('/tools/citation-builder');
+
+		await fillUnreportedChatlas(page);
+		await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+		await page.getByLabel('Name variant').selectOption(nameVariant);
+
+		await expect(page.getByRole('status')).toHaveText(expected);
+	});
+}
+
+test('unreported short form Id. renders Id. with no star (slip opinion)', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedChatlas(page);
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+	await page
+		.getByRole('checkbox', {
+			name: /immediately follows one to the same source/u,
+		})
+		.check();
+
+	await expect(page.getByRole('status')).toHaveText('Id. at 2.');
+});
+
+test('unreported short form Id. renders Id. with the star (database)', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await fillUnreportedChatlas(page);
+	await page
+		.getByRole('checkbox', {
+			name: /immediately follows one to the same source/u,
+		})
+		.check();
+
+	await expect(page.getByRole('status')).toHaveText('Id. at *2.');
 });
 
 // Gap: caseType x sourceType=unreported was never exercised through the
