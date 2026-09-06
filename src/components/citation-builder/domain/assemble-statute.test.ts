@@ -45,4 +45,58 @@ describe('assembleStatuteCase', () => {
 		expect(plain).toContain('§ 3767.32(A)');
 		expect(plain).not.toContain('§ § 3767.32(A)');
 	});
+
+	// r[verify statute.title]
+	it('renders the title before the code, no comma (federal shape)', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				officialStatute({
+					title: { text: '42', position: 'before-code' },
+					codeAbbreviation: 'U.S.C.',
+					section: '1983',
+					year: 1994,
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('42 U.S.C. § 1983 (1994).');
+	});
+
+	// r[verify statute.title]
+	it('renders the title after the code, comma-separated (state shape)', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				officialStatute({
+					title: { text: 'tit. 14A', position: 'after-code' },
+					codeAbbreviation: 'Okla. Stat.',
+					section: '6-203',
+					year: 1996,
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('Okla. Stat. tit. 14A, § 6-203 (1996).');
+	});
+
+	// r[verify statute.popular-name]
+	it('prefixes the popular name, comma-separated, per Rule 12.2.1', () => {
+		const { plain } = render(
+			assembleStatuteCase(
+				officialStatute({
+					popularName: 'Consumer Credit Code',
+					title: { text: 'tit. 14A', position: 'after-code' },
+					codeAbbreviation: 'Okla. Stat.',
+					section: '6-203',
+					year: 1996,
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			'Consumer Credit Code, Okla. Stat. tit. 14A, § 6-203 (1996).',
+		);
+	});
 });

@@ -153,18 +153,19 @@ wrong.
 
 ### 3.4 Statute only
 
-| Field                  | Input                                                   | Required?                                                                     |
-| ---------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Code type              | toggle: "Official code" / "Annotated / unofficial code" | required                                                                      |
-| Popular name           | text (e.g. `Consumer Credit Code`)                      | optional — see r[statute.popular-name]                                        |
-| Title / prefix         | text (e.g. `42`, `tit. 14A`)                            | optional — see r[statute.title]                                               |
-| Code abbreviation      | text (freeform, unvalidated)                            | required                                                                      |
-| Section                | text                                                    | required                                                                      |
-| Publisher              | text                                                    | required only if Code type = annotated; **disabled** if official              |
-| Material location      | select: "Main volume" / "Both" / "Supplement only"      | required                                                                      |
-| Code edition year      | number                                                  | required unless Material location = supplement only, where it is **disabled** |
-| Supplement designation | text (e.g. `Supp.`, `Supp. I`, `Supp. V`)               | required if Material location ≠ main volume; **disabled** if main volume      |
-| Supplement year        | number                                                  | required if Material location ≠ main volume; **disabled** if main volume      |
+| Field                  | Input                                                   | Required?                                                                      |
+| ---------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Code type              | toggle: "Official code" / "Annotated / unofficial code" | required                                                                       |
+| Popular name           | text (e.g. `Consumer Credit Code`)                      | optional — see r[statute.popular-name]                                         |
+| Title / prefix         | text (e.g. `42`, `tit. 14A`)                            | optional — see r[statute.title]                                                |
+| Title position         | toggle: "Before code" / "After code (comma-separated)"  | required if Title is filled; **not used** if Title is blank — r[statute.title] |
+| Code abbreviation      | text (freeform, unvalidated)                            | required                                                                       |
+| Section                | text                                                    | required                                                                       |
+| Publisher              | text                                                    | required only if Code type = annotated; **disabled** if official               |
+| Material location      | select: "Main volume" / "Both" / "Supplement only"      | required                                                                       |
+| Code edition year      | number                                                  | required unless Material location = supplement only, where it is **disabled**  |
+| Supplement designation | text (e.g. `Supp.`, `Supp. I`, `Supp. V`)               | required if Material location ≠ main volume; **disabled** if main volume       |
+| Supplement year        | number                                                  | required if Material location ≠ main volume; **disabled** if main volume       |
 
 r[statute.popular-name]
 Rule 12.2.1 prefixes the citation with the statute's common name when it
@@ -178,15 +179,39 @@ The variant that also carries the act's own section —
 section number belonging to the act rather than the code. Listed in §6.
 
 r[statute.title]
-Many codes carry a title or division element **before** the code
-abbreviation: `42 U.S.C. § 1983`, `18 U.S.C. § 510(b)`,
-`Okla. Stat. tit. 14A, § 6-203`. This is a separate structural element,
-not part of the code abbreviation, and the field holds it verbatim
-including any `tit.` prefix the jurisdiction uses.
+Many codes carry a title or division element, and its position relative
+to the code abbreviation is not one convention: `42 U.S.C. § 1983`
+places the title **before** the code, no comma; `Okla. Stat. tit. 14A,
+§ 6-203` places it **after** the code, comma-separated. This is a
+separate structural element, not part of the code abbreviation, and the
+field holds it verbatim including any `tit.` prefix the jurisdiction
+uses.
 
-Rendering: `[Title] [Code] § [Section]`, with the title omitted entirely
-when blank. Codes with no title division — `Ohio Rev. Code Ann.`,
-`Haw. Rev. Stat.` — leave it empty.
+> **Resolved ambiguity:** the two golden examples above use different
+> orderings, and the tool doesn't infer which applies from the title
+> string's content (same stance as r[court.optional] and
+> r[short-form.party-choice] -- no guessing from freeform text).
+> **Title position is therefore a second, explicit field**, alongside
+> Title itself: **Before code** / **After code (comma-separated)**.
+> Meaningful, required, and shown only when Title is filled.
+>
+> **Verification status, unequal between the two shapes:** the
+> before-code form is externally confirmed --
+> [Georgetown's Federal Statutes guide](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+> gives `17 U.S.C. § 107 (2012).`, title before code, no comma, matching
+> exactly. The after-code form (`Okla. Stat. tit. 14A, § 6-203`) is
+> **not** independently confirmed -- Georgetown's
+> [State Statutes guide](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383799)
+> covers no title/division example at all (its own worked example,
+> `Va. Code Ann. § x-x`, has no title element), so this shape rests on
+> the pasted spec text alone. A UI preset for "Federal" title placement
+> is safe to build on this basis; a "State" preset would encode an
+> unconfirmed guess as a default and should wait for a real source.
+
+Rendering: `[Title] [Code] § [Section]` (before code) or
+`[Code] [Title], § [Section]` (after code), with both fields omitted
+entirely when Title is blank. Codes with no title division —
+`Ohio Rev. Code Ann.`, `Haw. Rev. Stat.` — leave it empty.
 
 Optional rather than required because whether a code has a title element
 is a property of the jurisdiction, not something the tool can infer from

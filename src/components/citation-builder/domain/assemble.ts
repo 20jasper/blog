@@ -167,7 +167,12 @@ export function assembleUnreportedCase(input: UnreportedCaseInput): Segment[] {
 	return framePeriod(segments);
 }
 
-export type StatuteInput =
+export type StatuteTitle = {
+	text: string;
+	position: 'before-code' | 'after-code';
+};
+
+export type StatuteInput = (
 	| {
 			codeType: 'official';
 			codeAbbreviation: string;
@@ -181,7 +186,11 @@ export type StatuteInput =
 			publisher: string;
 			year: number;
 			supplement: { designation: string; year: number } | undefined;
-	  };
+	  }
+) & {
+	popularName?: string;
+	title?: StatuteTitle;
+};
 
 function supplementSuffix(
 	supplement: { designation: string; year: number } | undefined,
@@ -189,6 +198,24 @@ function supplementSuffix(
 	return supplement === undefined
 		? ''
 		: ` & ${supplement.designation} ${supplement.year}`;
+}
+
+// r[impl statute.title]
+function codeWithTitle(
+	codeAbbreviation: string,
+	title: StatuteTitle | undefined,
+): string {
+	if (title === undefined) {
+		return codeAbbreviation;
+	}
+	return title.position === 'before-code'
+		? `${title.text} ${codeAbbreviation}`
+		: `${codeAbbreviation} ${title.text},`;
+}
+
+// r[impl statute.popular-name]
+function popularNamePrefix(popularName: string | undefined): string {
+	return popularName === undefined ? '' : `${popularName}, `;
 }
 
 // r[impl citation.statute-long-form]
@@ -200,7 +227,7 @@ export function assembleStatuteCase(input: StatuteInput): Segment[] {
 
 	const segments: Segment[] = [
 		{
-			text: `${input.codeAbbreviation} ${normalizeSection(input.section)} (${parenthetical})`,
+			text: `${popularNamePrefix(input.popularName)}${codeWithTitle(input.codeAbbreviation, input.title)} ${normalizeSection(input.section)} (${parenthetical})`,
 			emphasized: false,
 		},
 	];
