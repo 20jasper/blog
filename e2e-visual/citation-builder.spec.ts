@@ -587,4 +587,92 @@ test('example buttons load their golden case', async ({ page }) => {
 	await expect(page.getByRole('status')).toHaveText(
 		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
 	);
+
+	await page
+		.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
+		.click();
+
+	await expect(page.getByRole('radio', { name: 'Statute' })).toBeChecked();
+	await expect(page.getByRole('status')).toHaveText(
+		'Ohio Rev. Code Ann. § 3767.32(A) (West 2025).',
+	);
 });
+
+test('statute short form drops the entire parenthetical', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	await page
+		.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
+		.click();
+	await page.getByRole('radio', { name: 'Short form' }).check();
+
+	await expect(page.getByLabel('Name variant')).toBeDisabled();
+	await expect(
+		page.getByRole('checkbox', {
+			name: /immediately follows one to the same source/u,
+		}),
+	).toBeDisabled();
+	await expect(page.getByRole('status')).toHaveText(
+		'Ohio Rev. Code Ann. § 3767.32(A).',
+	);
+});
+
+test('statute code type toggles Publisher required/disabled', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await page
+		.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
+		.click();
+
+	const publisher = page.getByLabel('Publisher');
+	await expect(publisher).toBeEnabled();
+	await expect(page.getByRole('status')).toHaveText(
+		'Ohio Rev. Code Ann. § 3767.32(A) (West 2025).',
+	);
+
+	await page.getByRole('radio', { name: 'Official code', exact: true }).check();
+
+	await expect(publisher).toBeDisabled();
+	await expect(page.getByRole('status')).toHaveText(
+		'Ohio Rev. Code Ann. § 3767.32(A) (2025).',
+	);
+});
+
+for (const [materialLocation, expected] of [
+	['main-volume', 'Ohio Rev. Code Ann. § 3767.32(A) (West 2025).'],
+	['both', 'Ohio Rev. Code Ann. § 3767.32(A) (West 2025 & Supp. V 1999).'],
+	['supplement-only', 'Ohio Rev. Code Ann. § 3767.32(A) (West Supp. V 1999).'],
+] as const) {
+	test(`material location ${materialLocation} produces the right parenthetical`, async ({
+		page,
+	}) => {
+		await page.goto('/tools/citation-builder');
+
+		await page
+			.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
+			.click();
+		await page.getByLabel('Material location').selectOption(materialLocation);
+
+		const codeYear = page.getByLabel('Code edition year');
+		const supplementDesignation = page.getByLabel('Supplement designation');
+		const supplementYear = page.getByLabel('Supplement year');
+
+		if (materialLocation === 'supplement-only') {
+			await expect(codeYear).toBeDisabled();
+		} else {
+			await expect(codeYear).toBeEnabled();
+		}
+
+		if (materialLocation === 'main-volume') {
+			await expect(supplementDesignation).toBeDisabled();
+			await expect(supplementYear).toBeDisabled();
+		} else {
+			await supplementDesignation.fill('Supp. V');
+			await supplementYear.fill('1999');
+		}
+
+		await expect(page.getByRole('status')).toHaveText(expected);
+	});
+}

@@ -20,6 +20,13 @@ export const ids = {
 	month: 'citation-builder-month',
 	day: 'citation-builder-day',
 	dateYear: 'citation-builder-date-year',
+	codeAbbreviation: 'citation-builder-code-abbreviation',
+	section: 'citation-builder-section',
+	publisher: 'citation-builder-publisher',
+	materialLocation: 'citation-builder-material-location',
+	codeYear: 'citation-builder-code-year',
+	supplementDesignation: 'citation-builder-supplement-designation',
+	supplementYear: 'citation-builder-supplement-year',
 } as const;
 
 export type ElementIds = typeof ids;

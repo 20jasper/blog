@@ -27,6 +27,12 @@ const NAME_VARIANT_OPTIONS = [
 ];
 
 const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
+
+const MATERIAL_LOCATION_OPTIONS = [
+	{ value: 'main-volume', text: 'Main volume' },
+	{ value: 'both', text: 'Both' },
+	{ value: 'supplement-only', text: 'Supplement only' },
+];
 ---
 
 <div class="mb-4 flex flex-wrap items-center gap-3">
@@ -40,6 +46,11 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 		type="button"
 		class="!bg-background-secondary/60 hover:!bg-background-secondary"
 		>State v. Lucko (unreported)</Button
+	>
+	<Button
+		type="button"
+		class="!bg-background-secondary/60 hover:!bg-background-secondary"
+		>Ohio Rev. Code Ann. (statute)</Button
 	>
 </div>
 
@@ -71,6 +82,12 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 					name="sourceType"
 					value="unreported"
 					>Unreported case</Choice
+				>
+				<Choice
+					type="radio"
+					name="sourceType"
+					value="statute"
+					>Statute</Choice
 				>
 			</div>
 		</div>
@@ -197,6 +214,75 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 				name="dateYear"
 				label="Opinion year"
 				hint="Year the opinion was issued"
+				inputmode="numeric"
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Statute</legend>
+		<div class={gridClass}>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Code type</span>
+				<div class="flex flex-col gap-2">
+					<Choice
+						type="radio"
+						name="codeType"
+						value="official"
+						checked
+					>
+						Official code
+					</Choice>
+					<Choice
+						type="radio"
+						name="codeType"
+						value="annotated"
+					>
+						Annotated / unofficial code
+					</Choice>
+				</div>
+			</div>
+			<TextField
+				id={ids.codeAbbreviation}
+				name="codeAbbreviation"
+				label="Code abbreviation"
+				hint="e.g., Ohio Rev. Code Ann., U.S.C."
+			/>
+			<TextField
+				id={ids.section}
+				name="section"
+				label="Section"
+				hint={'"§" is added automatically'}
+			/>
+			<TextField
+				id={ids.publisher}
+				name="publisher"
+				label="Publisher"
+				hint="Required for annotated codes, e.g. West"
+			/>
+			<SelectField
+				id={ids.materialLocation}
+				name="materialLocation"
+				label="Material location"
+				hint="Where the cited material appears"
+				options={MATERIAL_LOCATION_OPTIONS}
+			/>
+			<TextField
+				id={ids.codeYear}
+				name="codeYear"
+				label="Code edition year"
+				inputmode="numeric"
+			/>
+			<TextField
+				id={ids.supplementDesignation}
+				name="supplementDesignation"
+				label="Supplement designation"
+				hint="e.g., Supp., Supp. I, Supp. V"
+			/>
+			<TextField
+				id={ids.supplementYear}
+				name="supplementYear"
+				label="Supplement year"
 				inputmode="numeric"
 			/>
 		</div>
