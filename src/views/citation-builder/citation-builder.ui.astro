@@ -5,7 +5,6 @@ import Field from './components/field.astro';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
 import SelectField from './components/select-field.astro';
-import { stackClass } from './components/styles';
 import { ids } from './ids';
 import { MONTHS } from '@components/citation-builder/domain/types';
 import type { FieldSpec } from './components/field-spec';
@@ -296,7 +295,7 @@ const STATUTE_FIELDS: FieldSpec[] = [
 				options={MODE_OPTIONS}
 			/>
 			{CITATION_FORM_FIELDS.map((field) => <Field {...field} />)}
-			<div class={stackClass}>
+			<div class="flex w-full flex-col gap-1">
 				<Choice
 					type="checkbox"
 					name="id"

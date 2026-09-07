@@ -1,6 +1,4 @@
 ---
-import { stackClass, labelClass } from './styles';
-
 // Shared row shell for a labeled field -- label above the control,
 // optional format hint below the label, stacked in a flex column. Text
 // inputs and selects both wrap their control in this so spacing/label
@@ -16,6 +14,10 @@ import { stackClass, labelClass } from './styles';
 // the single-column mobile layout there's no row-mate to sync with, so
 // an empty hint should collapse instead of leaving a blank gap.
 const hintClass = 'text-foreground-secondary text-xs sm:min-h-4';
+const labelClass = 'text-base font-semibold text-foreground';
+// "Label + stuff underneath" column shell -- radio-group.astro keeps its
+// own copy of this string for the same shape.
+const stackClass = 'flex w-full flex-col gap-1';
 
 export type Props = {
 	for: string;

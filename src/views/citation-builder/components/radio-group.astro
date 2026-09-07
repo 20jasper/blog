@@ -1,11 +1,14 @@
 ---
 import Choice from './choice.astro';
-import { stackClass, labelClass } from './styles';
 
 // The repeated "labeled column of radios" shape -- Source type,
 // Availability, Code type, Mode, Typeface, Span separator all follow
 // this exact structure, so each is now a data array instead of its own
-// hand-written label + Choice list.
+// hand-written label + Choice list. labelClass/stackClass are the same
+// strings field-row.astro uses for its label + wrapper -- kept in sync
+// by hand since they're just Tailwind literals.
+const labelClass = 'text-base font-semibold text-foreground';
+const stackClass = 'flex w-full flex-col gap-1';
 export type Props = {
 	label: string;
 	name: string;
