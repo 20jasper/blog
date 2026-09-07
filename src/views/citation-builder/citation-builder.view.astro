@@ -7,88 +7,30 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
 	<CitationBuilderUi />
 	<script>
-		import type {
-			MaterialLocation,
-			ReportedCaseInput,
-			ReportedShortFormInput,
-			StatuteInput,
-			StatuteShortFormInput,
-			UnreportedCaseInput,
-			UnreportedShortFormInput,
-		} from '@components/citation-builder/domain/assemble';
 		import {
 			isCaseTypeId,
-			type CaseNameInput,
 			type CaseTypeId,
 		} from '@components/citation-builder/domain/case-types';
 		import { render } from '@components/citation-builder/domain/render';
-		import type { Month } from '@components/citation-builder/domain/types';
-		import {
-			deriveSelections,
-			initialCitationFields,
-		} from '@components/citation-builder/state/citation-fields';
 		import {
 			assemble,
-			type CitationInput,
-		} from '@components/citation-builder/state/citation-input';
-		import {
-			initialDisplayState,
-			type Emphasis,
-			type SpanSeparator,
-		} from '@components/citation-builder/state/display-state';
-		import {
+			buildCitationInput,
+			deriveSelections,
 			selectFieldState,
+			type CitationFields,
+			type DisplayState,
+			type Emphasis,
 			type FieldRequirement,
-		} from '@components/citation-builder/state/field-state';
-		import { ids } from '@src/views/citation-builder/ids';
-
-		// Reported, unreported, and statute (all full + short, except
-		// statute short which drops case-name concepts entirely) are wired
-		// up through the shared assemble()/CitationInput dispatcher.
-		// Prefilled with the golden case from
-		// docs/citation-builder/phase-1-spec.md §8.3 so the page shows a
-		// working example instead of a blank form.
-		const REPORTED_EXAMPLE = {
-			caseType: 'v',
-			party1: 'Dayton',
-			party2: 'Stewart',
-			court: 'Ohio Ct. App.',
-			volume: '179',
-			reporter: 'N.E.3d',
-			firstPage: '208',
-			pincite: '214',
-			year: '2021',
-		} as const;
-
-		// State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct.
-		// App. Sept. 17, 2021) -- the unreported golden case from the same
-		// spec section, offered as a second Example button so a user who
-		// never switches source type still sees what the unreported flow
-		// (star pages, docket normalization, date assembly) actually
-		// produces.
-		const UNREPORTED_EXAMPLE = {
-			caseType: 'v',
-			party1: 'State',
-			party2: 'Lucko',
-			court: 'Ohio Ct. App.',
-			docketNumber: '2021CA0007',
-			databaseIdentifier: '2021 WL 4269952',
-			pincite: '1-2',
-			month: 'Sept.',
-			day: '17',
-			dateYear: '2021',
-		} as const;
-
-		// Ohio Rev. Code Ann. § 3767.32(A) (West 2025) -- the annotated
-		// variant of the statute golden case from the same spec section.
-		const STATUTE_EXAMPLE = {
-			codeType: 'annotated',
-			codeAbbreviation: 'Ohio Rev. Code Ann.',
-			section: '3767.32(A)',
-			publisher: 'West',
-			materialLocation: 'main-volume',
-			codeYear: '2025',
-		} as const;
+			type SpanSeparator,
+		} from '@components/citation-builder/state';
+		import { createClipboardController } from './clipboard';
+		import { queryFormRefs } from './dom-refs';
+		import {
+			REPORTED_EXAMPLE,
+			STATUTE_EXAMPLE,
+			UNREPORTED_EXAMPLE,
+		} from './examples';
+		import { ids } from './ids';
 
 		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
 		const output = document.querySelector('output')!;
@@ -107,104 +49,33 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			b.textContent?.trim().startsWith('Copy'),
 		)!;
 
-		let copyResetTimeout: ReturnType<typeof setTimeout> | undefined;
-		let lastCitation: { html: string; plain: string } | undefined;
+		const clipboard = createClipboardController(copyButton, output);
 
-		function resetCopyButtonLabelSoon(): void {
-			clearTimeout(copyResetTimeout);
-			copyResetTimeout = setTimeout(() => {
-				copyButton.textContent = 'Copy';
-			}, 2000);
-		}
-
-		async function copyCitation(): Promise<void> {
-			if (lastCitation === undefined) {
-				return;
-			}
-			const { html, plain } = lastCitation;
-			try {
-				await navigator.clipboard.write([
-					new ClipboardItem({
-						'text/html': new Blob([html], { type: 'text/html' }),
-						'text/plain': new Blob([plain], { type: 'text/plain' }),
-					}),
-				]);
-				copyButton.textContent = 'Copied!';
-			} catch {
-				const selection = globalThis.getSelection();
-				const range = document.createRange();
-				range.selectNodeContents(output);
-				selection?.removeAllRanges();
-				selection?.addRange(range);
-				copyButton.textContent = 'Selected -- press Ctrl/Cmd+C';
-			}
-			resetCopyButtonLabelSoon();
-		}
-
-		const caseTypeSelect = document.querySelector<HTMLSelectElement>(
-			`#${ids.caseType}`,
-		)!;
-		const party1Input = document.querySelector<HTMLInputElement>(
-			`#${ids.party1}`,
-		)!;
-		const party2Input = document.querySelector<HTMLInputElement>(
-			`#${ids.party2}`,
-		)!;
-		const courtInput = document.querySelector<HTMLInputElement>(
-			`#${ids.court}`,
-		)!;
-		const pinciteInput = document.querySelector<HTMLInputElement>(
-			`#${ids.pincite}`,
-		)!;
-		const volumeInput = document.querySelector<HTMLInputElement>(
-			`#${ids.volume}`,
-		)!;
-		const reporterInput = document.querySelector<HTMLInputElement>(
-			`#${ids.reporter}`,
-		)!;
-		const firstPageInput = document.querySelector<HTMLInputElement>(
-			`#${ids.firstPage}`,
-		)!;
-		const yearInput = document.querySelector<HTMLInputElement>(`#${ids.year}`)!;
-		const docketNumberInput = document.querySelector<HTMLInputElement>(
-			`#${ids.docketNumber}`,
-		)!;
-		const databaseIdentifierInput = document.querySelector<HTMLInputElement>(
-			`#${ids.databaseIdentifier}`,
-		)!;
-		const monthSelect = document.querySelector<HTMLSelectElement>(
-			`#${ids.month}`,
-		)!;
-		const dayInput = document.querySelector<HTMLInputElement>(`#${ids.day}`)!;
-		const dateYearInput = document.querySelector<HTMLInputElement>(
-			`#${ids.dateYear}`,
-		)!;
-		const nameVariantSelect = document.querySelector<HTMLSelectElement>(
-			`#${ids.nameVariant}`,
-		)!;
-		const idCheckbox =
-			form.querySelector<HTMLInputElement>('input[name="id"]')!;
-		const codeAbbreviationInput = document.querySelector<HTMLInputElement>(
-			`#${ids.codeAbbreviation}`,
-		)!;
-		const sectionInput = document.querySelector<HTMLInputElement>(
-			`#${ids.section}`,
-		)!;
-		const publisherInput = document.querySelector<HTMLInputElement>(
-			`#${ids.publisher}`,
-		)!;
-		const materialLocationSelect = document.querySelector<HTMLSelectElement>(
-			`#${ids.materialLocation}`,
-		)!;
-		const codeYearInput = document.querySelector<HTMLInputElement>(
-			`#${ids.codeYear}`,
-		)!;
-		const supplementDesignationInput = document.querySelector<HTMLInputElement>(
-			`#${ids.supplementDesignation}`,
-		)!;
-		const supplementYearInput = document.querySelector<HTMLInputElement>(
-			`#${ids.supplementYear}`,
-		)!;
+		const {
+			caseTypeSelect,
+			party1Input,
+			party2Input,
+			courtInput,
+			pinciteInput,
+			volumeInput,
+			reporterInput,
+			firstPageInput,
+			yearInput,
+			docketNumberInput,
+			databaseIdentifierInput,
+			monthSelect,
+			dayInput,
+			dateYearInput,
+			nameVariantSelect,
+			idCheckbox,
+			codeAbbreviationInput,
+			sectionInput,
+			publisherInput,
+			materialLocationSelect,
+			codeYearInput,
+			supplementDesignationInput,
+			supplementYearInput,
+		} = queryFormRefs(form);
 
 		function currentSourceType(): 'reported' | 'unreported' | 'statute' {
 			const checked = form.querySelector<HTMLInputElement>(
@@ -271,6 +142,49 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return checked?.value === 'en-dash' ? '–' : '-';
 		}
 
+		// The single place the live DOM is read into the pure data shapes
+		// (CitationFields, DisplayState) that state/ actually operates on --
+		// everything past this point (deriveSelections, buildCitationInput)
+		// is DOM-free and unit-tested without a browser.
+		function readCitationFields(): CitationFields {
+			return {
+				sourceType: currentSourceType(),
+				caseType: currentCaseType(),
+				party1: party1Input.value,
+				party2: party2Input.value,
+				court: courtInput.value,
+				pincite: pinciteInput.value,
+				volume: volumeInput.value,
+				reporter: reporterInput.value,
+				firstPage: firstPageInput.value,
+				year: yearInput.value,
+				availability: currentAvailability(),
+				docketNumber: docketNumberInput.value,
+				databaseIdentifier: databaseIdentifierInput.value,
+				month: monthSelect.value,
+				day: dayInput.value,
+				dateYear: dateYearInput.value,
+				codeType: currentCodeType(),
+				codeAbbreviation: codeAbbreviationInput.value,
+				section: sectionInput.value,
+				publisher: publisherInput.value,
+				materialLocation: currentMaterialLocation(),
+				codeYear: codeYearInput.value,
+				supplementDesignation: supplementDesignationInput.value,
+				supplementYear: supplementYearInput.value,
+			};
+		}
+
+		function readDisplayState(): DisplayState {
+			return {
+				mode: currentMode(),
+				nameVariant: currentNameVariant(),
+				useId: idCheckbox.checked,
+				emphasis: currentEmphasis(),
+				spanSeparator: currentSpanSeparator(),
+			};
+		}
+
 		// Toggles both the native `required` attribute (so the browser's own
 		// validation -- triggered on Copy, a submit button -- tells the user
 		// exactly which field is missing) and the label's visual "*" marker,
@@ -303,22 +217,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		function updateFieldState(): void {
-			const sourceType = currentSourceType();
-			const mode = currentMode();
-			const isShort = mode === 'short';
-			const isStatute = sourceType === 'statute';
+			const fields = readCitationFields();
+			const display = readDisplayState();
+			const isShort = display.mode === 'short';
+			const isStatute = fields.sourceType === 'statute';
 
-			const fields = {
-				...initialCitationFields(),
-				sourceType,
-				caseType: currentCaseType(),
-				availability: currentAvailability(),
-				codeType: currentCodeType(),
-				materialLocation: currentMaterialLocation(),
-			};
-			const fieldState = selectFieldState(
-				deriveSelections(fields, { ...initialDisplayState(), mode }),
-			);
+			const fieldState = selectFieldState(deriveSelections(fields, display));
 
 			setFieldRequirement(caseTypeSelect, fieldState.caseType);
 			setFieldRequirement(party1Input, fieldState.party1);
@@ -366,178 +270,18 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}
 		}
 
-		function caseNameInput(): CaseNameInput {
-			const caseType = currentCaseType();
-			return caseType === 'v'
-				? {
-						caseType: 'v',
-						party1: party1Input.value,
-						party2: party2Input.value,
-					}
-				: { caseType, party1: party1Input.value };
-		}
-
-		function reportedShortFormInput(): ReportedShortFormInput {
-			if (idCheckbox.checked) {
-				return { nameVariant: 'id', pincite: pinciteInput.value };
-			}
-			const nameVariant = currentNameVariant();
-			return nameVariant === 'none'
-				? {
-						nameVariant: 'none',
-						volume: volumeInput.value,
-						reporter: reporterInput.value,
-						pincite: pinciteInput.value,
-					}
-				: {
-						nameVariant,
-						name: caseNameInput(),
-						volume: volumeInput.value,
-						reporter: reporterInput.value,
-						pincite: pinciteInput.value,
-					};
-		}
-
-		function unreportedShortFormAvailability() {
-			return currentAvailability() === 'database'
-				? {
-						kind: 'database' as const,
-						databaseId: databaseIdentifierInput.value,
-					}
-				: { kind: 'slip-opinion' as const, docket: docketNumberInput.value };
-		}
-
-		function unreportedShortFormInput(): UnreportedShortFormInput {
-			if (idCheckbox.checked) {
-				return {
-					nameVariant: 'id',
-					availability: unreportedShortFormAvailability(),
-					pincite: pinciteInput.value,
-				};
-			}
-			const nameVariant = currentNameVariant();
-			return nameVariant === 'none'
-				? {
-						nameVariant: 'none',
-						availability: unreportedShortFormAvailability(),
-						pincite: pinciteInput.value,
-					}
-				: {
-						nameVariant,
-						name: caseNameInput(),
-						availability: unreportedShortFormAvailability(),
-						pincite: pinciteInput.value,
-					};
-		}
-
-		function reportedFullInput(): ReportedCaseInput {
-			return {
-				name: caseNameInput(),
-				volume: volumeInput.value,
-				reporter: reporterInput.value,
-				firstPage: firstPageInput.value,
-				pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
-				court: courtInput.value === '' ? undefined : courtInput.value,
-				year: Number(yearInput.value),
-			};
-		}
-
-		function unreportedFullInput(): UnreportedCaseInput {
-			const availability = currentAvailability();
-			return {
-				name: caseNameInput(),
-				docket: docketNumberInput.value,
-				availability:
-					availability === 'database'
-						? { kind: 'database', databaseId: databaseIdentifierInput.value }
-						: { kind: 'slip-opinion' },
-				pincite: pinciteInput.value === '' ? undefined : pinciteInput.value,
-				court: courtInput.value,
-				date: {
-					month: monthSelect.value as Month,
-					day: Number(dayInput.value),
-					year: Number(dateYearInput.value),
-				},
-			};
-		}
-
-		function buildMaterialLocation(): MaterialLocation {
-			const supplement = {
-				designation: supplementDesignationInput.value,
-				year: Number(supplementYearInput.value),
-			};
-			switch (currentMaterialLocation()) {
-				case 'main-volume':
-					return { kind: 'main-volume', year: Number(codeYearInput.value) };
-				case 'both':
-					return {
-						kind: 'both',
-						year: Number(codeYearInput.value),
-						supplement,
-					};
-				case 'supplement-only':
-					return { kind: 'supplement-only', supplement };
-			}
-		}
-
-		function statuteFullInput(): StatuteInput {
-			const materialLocation = buildMaterialLocation();
-			return currentCodeType() === 'annotated'
-				? {
-						codeType: 'annotated',
-						codeAbbreviation: codeAbbreviationInput.value,
-						section: sectionInput.value,
-						publisher: publisherInput.value,
-						materialLocation,
-					}
-				: {
-						codeType: 'official',
-						codeAbbreviation: codeAbbreviationInput.value,
-						section: sectionInput.value,
-						materialLocation,
-					};
-		}
-
-		// Short form drops codeType/publisher/materialLocation/supplement
-		// entirely (r[citation.statute-short-form]) -- codeType doesn't even
-		// factor into which fields this needs.
-		function statuteShortFormInput(): StatuteShortFormInput {
-			return {
-				codeAbbreviation: codeAbbreviationInput.value,
-				section: sectionInput.value,
-			};
-		}
-
-		function buildCitationInput(): CitationInput {
-			const sourceType = currentSourceType();
-			const mode = currentMode();
-
-			if (sourceType === 'unreported') {
-				return mode === 'full'
-					? { sourceType, mode, input: unreportedFullInput() }
-					: { sourceType, mode, input: unreportedShortFormInput() };
-			}
-			if (sourceType === 'statute') {
-				return mode === 'full'
-					? { sourceType, mode, input: statuteFullInput() }
-					: { sourceType, mode, input: statuteShortFormInput() };
-			}
-			return mode === 'full'
-				? { sourceType, mode, input: reportedFullInput() }
-				: { sourceType, mode, input: reportedShortFormInput() };
-		}
-
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
-			lastCitation = undefined;
+			clipboard.setCitation(undefined);
 		}
 
-		function setCitationOutput(segments: Parameters<typeof render>[0]): void {
-			const { html, plain } = render(segments, {
-				emphasis: currentEmphasis(),
-			});
+		function setCitationOutput(
+			segments: Parameters<typeof render>[0],
+			emphasis: Emphasis,
+		): void {
+			const { html, plain } = render(segments, { emphasis });
 			output.innerHTML = html;
-			lastCitation = { html, plain };
+			clipboard.setCitation({ html, plain });
 		}
 
 		// Every field's disabled/required state (set by updateFieldState(),
@@ -551,10 +295,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				fillInPlaceholder();
 				return;
 			}
-			const segments = assemble(buildCitationInput(), {
-				spanSeparator: currentSpanSeparator(),
+			const fields = readCitationFields();
+			const display = readDisplayState();
+			const segments = assemble(buildCitationInput(fields, display), {
+				spanSeparator: display.spanSeparator,
 			});
-			setCitationOutput(segments);
+			setCitationOutput(segments, display.emphasis);
 		}
 
 		function refresh(): void {
@@ -669,7 +415,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		// of a hand-rolled banner. Only reaches here once that passes.
 		form.addEventListener('submit', (event) => {
 			event.preventDefault();
-			void copyCitation();
+			void clipboard.copy();
 		});
 
 		fillReportedExample();

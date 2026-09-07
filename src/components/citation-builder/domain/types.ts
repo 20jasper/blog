@@ -30,6 +30,10 @@ export const MONTHS = [
 
 export type Month = (typeof MONTHS)[number];
 
+export function isMonth(value: string): value is Month {
+	return (MONTHS as readonly string[]).includes(value);
+}
+
 export type DateParts = {
 	month: Month;
 	day: number;
