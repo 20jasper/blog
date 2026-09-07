@@ -36,7 +36,7 @@ Generalized beyond U.S. Reports:
 ```
 
 Volume, Reporter, First page, and Year are required. Pincite is
-optional here (required for short form — see Reported Short Form).
+optional here (required for short form; see Reported Short Form).
 Reporter is freeform, unvalidated against Table 1.
 
 ## Court Omission
@@ -48,8 +48,8 @@ Long Form) has no court element at all:
 > `Roe v. Wade, 410 U.S. 113 (1973)`
 > — [Georgetown, Federal Courts](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339383)
 
-The Federal Reporter format does have one -- "Name of the court
-(abbreviated according to Rule 10.4)" -- which is why a circuit case
+The Federal Reporter format does have one ("Name of the court
+(abbreviated according to Rule 10.4)"), which is why a circuit case
 carries it: `Universal City Studios, Inc. v. Corley, 273 F.3d 429 (2d
 Cir. 2001)`. Blank Court renders the year alone.
 
@@ -63,7 +63,7 @@ keeps the second, more distinctive party:
 > `Corley, 273 F.3d at 435`
 > — [Georgetown, Short Forms](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389)
 
-Not inferred here — the user picks Party 1 or Party 2.
+Not inferred here: the user picks Party 1 or Party 2.
 
 ## Case Name Assembly
 
@@ -92,8 +92,8 @@ r[id.gating]
 > citation and the citation included only that case."
 > — [Georgetown, Short Forms](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389)
 
-Rule 4.1. Gated behind a manual checkbox confirming exactly that — no
-citation-sequence memory to verify it automatically.
+Rule 4.1. Gated behind a manual checkbox confirming exactly that, since
+no citation-sequence memory exists to verify it automatically.
 
 ## Reported Short Form
 
@@ -152,7 +152,7 @@ r[normalize.span-separator]
 > numbers separated by either an en dash (–) or a hyphen (-)."
 > — [Tarlton, Pages, Paragraphs, and Pincites](https://tarlton.law.utexas.edu/bluebook-legal-citation/pages-paragraphs-pincites)
 
-Rule 3.2(a) — neither separator is required. Defaults to hyphen: Word's
+Rule 3.2(a): neither separator is required. Defaults to hyphen: Word's
 word counter reads `1065-66` as one word, `1065–66` as two, which
 matters under a brief's word limit.
 
@@ -166,8 +166,8 @@ r[normalize.span-digits]
 > — [Suffolk, Bluebook Guide: Cases](https://lawguides.suffolk.edu/bluebook/cases)
 
 Rule 3.2(a). Counts shared leading digits between start and end page
-(only when both have the same digit count -- `8-10` keeps both pages
-in full since they don't), then keeps at least the last two:
+(only when both have the same digit count; `8-10` keeps both pages in
+full since they don't), then keeps at least the last two:
 `keep = max(2, digits(end) - sharedLeadingDigits)`.
 
 | Span      | Output   |
@@ -180,7 +180,7 @@ in full since they don't), then keeps at least the last two:
 
 r[normalize.span-input]
 Accepts a span as typed, full (`208-214`) or already reduced
-(`208-14`) — both normalize identically.
+(`208-14`); both normalize identically.
 
 ## Non-Consecutive Pincites
 
