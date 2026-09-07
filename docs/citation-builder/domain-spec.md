@@ -39,18 +39,16 @@ Reporter is freeform, unvalidated against Table 1.
 ## Court Omission
 
 r[court.optional]
-Rule 10.4. The U.S. Reports citation format itself has no court
-element — five, not six:
+Rule 10.4. The U.S. Reports citation format (quoted under Reported
+Long Form) has no court element at all:
 
-> "Name of the case ... / Volume of the United States Reports /
-> Reporter abbreviation ("U.S.") / First page of the case / Year the
-> case was decided"
+> `Roe v. Wade, 410 U.S. 113 (1973)`
 > — [Georgetown, Federal Courts](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339383)
 
-`Roe v. Wade, 410 U.S. 113 (1973)`. Compare the Federal Reporter
-format, which adds a sixth: "Name of the court (abbreviated according
-to Rule 10.4)" — `Universal City Studios, Inc. v. Corley, 273 F.3d
-429 (2d Cir. 2001)`. Blank Court renders the year alone.
+The Federal Reporter format does have one -- "Name of the court
+(abbreviated according to Rule 10.4)" -- which is why a circuit case
+carries it: `Universal City Studios, Inc. v. Corley, 273 F.3d 429 (2d
+Cir. 2001)`. Blank Court renders the year alone.
 
 ## Short-Form Party Choice
 
@@ -164,8 +162,10 @@ r[normalize.span-digits]
 > 190-93)."
 > — [Suffolk, Bluebook Guide: Cases](https://lawguides.suffolk.edu/bluebook/cases)
 
-Rule 3.2(a). `commonPrefix = shared leading digits (equal length only);
-keep = max(2, digits(end) - commonPrefix)`.
+Rule 3.2(a). Counts shared leading digits between start and end page
+(only when both have the same digit count -- `8-10` keeps both pages
+in full since they don't), then keeps at least the last two:
+`keep = max(2, digits(end) - sharedLeadingDigits)`.
 
 | Span      | Output   |
 | --------- | -------- |
