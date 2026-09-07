@@ -51,16 +51,18 @@ Generalized beyond U.S. Reports:
 ## Court Omission
 
 r[court.optional]
-Rule 10.4. Georgetown's own worked example carries no court in the
-parenthetical:
+Rule 10.4. The U.S. Reports citation format itself has no court
+element — five, not six:
 
-> `Roe v. Wade, 410 U.S. 113 (1973)`
+> "Name of the case ... / Volume of the United States Reports /
+> Reporter abbreviation ("U.S.") / First page of the case / Year the
+> case was decided"
 > — [Georgetown, Federal Courts](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339383)
 
-U.S. Reports itself identifies the U.S. Supreme Court, so the court
-abbreviation is redundant and dropped — contrast a circuit case, which
-does carry one: `Universal City Studios, Inc. v. Corley, 273 F.3d 429
-(2d Cir. 2001)`. Blank Court renders the year alone.
+`Roe v. Wade, 410 U.S. 113 (1973)`. Compare the Federal Reporter
+format, which adds a sixth: "Name of the court (abbreviated according
+to Rule 10.4)" — `Universal City Studios, Inc. v. Corley, 273 F.3d
+429 (2d Cir. 2001)`. Blank Court renders the year alone.
 
 ## Short-Form Party Choice
 
