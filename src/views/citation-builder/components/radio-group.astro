@@ -14,8 +14,8 @@ export type Props = {
 const { label, name, options } = Astro.props;
 ---
 
-<div class="flex w-full flex-col gap-1">
-	<span class="text-foreground text-base font-semibold">{label}</span>
+<fieldset class="m-0 flex w-full flex-col gap-1 border-0 p-0">
+	<legend class="text-foreground p-0 text-base font-semibold">{label}</legend>
 	<div class="flex flex-col gap-2">
 		{
 			options.map((option) => (
@@ -30,4 +30,4 @@ const { label, name, options } = Astro.props;
 			))
 		}
 	</div>
-</div>
+</fieldset>
