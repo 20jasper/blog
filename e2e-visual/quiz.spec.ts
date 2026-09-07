@@ -1,14 +1,20 @@
 import { expect, test, type Page } from '@playwright/test';
 
-test('start screen is shown before starting', async ({ page }) => {
+test.beforeEach(async ({ page }) => {
 	await page.goto('/quiz');
+});
+
+async function startQuiz(page: Page): Promise<void> {
+	await page.getByRole('button', { name: 'Start Quiz' }).click();
+}
+
+test('start screen is shown before starting', async ({ page }) => {
 	await expect(page.getByRole('button', { name: 'Start Quiz' })).toBeVisible();
 	await expect(page.locator('#question-container')).toBeHidden();
 });
 
 test('starting the quiz reveals the first question', async ({ page }) => {
-	await page.goto('/quiz');
-	await page.getByRole('button', { name: 'Start Quiz' }).click();
+	await startQuiz(page);
 
 	await expect(page.locator('#starting-explanation')).toBeHidden();
 	await expect(page.locator('#question')).toHaveText(/question 1 of \d+/u);
@@ -16,8 +22,7 @@ test('starting the quiz reveals the first question', async ({ page }) => {
 });
 
 test('choosing the correct answer shows correct feedback', async ({ page }) => {
-	await page.goto('/quiz');
-	await page.getByRole('button', { name: 'Start Quiz' }).click();
+	await startQuiz(page);
 
 	// first question in the bank is valid JSON
 	await page.getByRole('button', { name: 'valid', exact: true }).click();
@@ -28,8 +33,7 @@ test('choosing the correct answer shows correct feedback', async ({ page }) => {
 });
 
 test('choosing the wrong answer shows wrong feedback', async ({ page }) => {
-	await page.goto('/quiz');
-	await page.getByRole('button', { name: 'Start Quiz' }).click();
+	await startQuiz(page);
 
 	// first question in the bank is valid JSON, so "invalid" is wrong
 	await page.getByRole('button', { name: 'invalid', exact: true }).click();
@@ -38,8 +42,7 @@ test('choosing the wrong answer shows wrong feedback', async ({ page }) => {
 });
 
 test('next advances to the following question', async ({ page }) => {
-	await page.goto('/quiz');
-	await page.getByRole('button', { name: 'Start Quiz' }).click();
+	await startQuiz(page);
 	await page.getByRole('button', { name: 'valid', exact: true }).click();
 	await page.getByRole('button', { name: 'Next' }).click();
 
@@ -49,8 +52,7 @@ test('next advances to the following question', async ({ page }) => {
 });
 
 test('finishing every question shows the final score', async ({ page }) => {
-	await page.goto('/quiz');
-	await page.getByRole('button', { name: 'Start Quiz' }).click();
+	await startQuiz(page);
 
 	const questionText = await page.locator('#question').textContent();
 	const totalQuestions = Number(questionText?.match(/of (\d+)/u)?.[1]);
