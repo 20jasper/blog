@@ -619,36 +619,14 @@ publisher, year, and any supplement. No name variant applies (statutes
 have no case name) and no pincite is appended: the statutory pinpoint is
 the subsection, which is already part of the Section field (§3.4).
 
-### 5.11 Generation and staleness model
+### 5.11 Rendering model
 
-Previously assumed by the test plan (§8.6) but never specified. Defined
-here.
-
-r[generate.explicit]
-Output is produced by an explicit **Generate** action, which validates
-required fields for the active source type (§3) and, on success, renders
-a citation. Before the first successful generation the output area shows
-a placeholder, not a partial citation.
-
-r[generate.display-controls-live]
-Once a citation has been generated, changing a **display** control —
-mode (full/short), name variant, Party 1/Party 2, typeface, Id. —
-re-renders immediately from the already-validated data. These do not
-require pressing Generate again, because they change presentation, not
-the underlying source data.
-
-r[generate.stale-on-data-edit]
-Editing any **data** field (§3) after a successful generation marks the
-displayed output **stale**: it is still shown, still copyable, and
-visibly flagged as no longer reflecting current field values. Staleness
-clears on the next successful Generate. The distinction is that display
-controls re-render, while data edits invalidate — a stale citation is
-the last _valid_ output, not a partial reflection of half-finished
-edits.
-
-r[generate.type-switch-stale]
-Switching source type marks output stale by the same rule, since the
-active field set changes.
+No explicit Generate action (an earlier draft specified one, with a
+stale-marking model for edits made after it ran — see §9 and §10 item 9);
+descoped for V1. Every field — data or display — re-renders the output
+live on each edit, validated against the active source type's required
+fields (§3). Before any required field has a value, the output area
+shows a placeholder, not a partial citation.
 
 ### 5.12 Copy behavior
 
@@ -656,11 +634,6 @@ Clipboard write includes both `text/html` (emphasis markup intact) and
 `text/plain`. Manual-selection fallback (if Clipboard API write fails)
 changes the copy button's label to confirm selection occurred — no
 live-region announcement needed.
-
-r[copy.stale-permitted]
-A stale citation (r[generate.stale-on-data-edit]) remains copyable. The
-user is warned, not blocked — the output is a previously valid citation,
-not a malformed one.
 
 ---
 
@@ -962,11 +935,6 @@ when Material location ≠ supplement only (r[statute.material-location]).
 - Material location switches which of Year / supplement fields are
   enabled (r[statute.material-location]); all remain visible, only their
   enabled state changes (§3.5).
-- Display-control changes re-render without a Generate press
-  (r[generate.display-controls-live]); data-field edits mark output
-  stale (r[generate.stale-on-data-edit]); type switch marks stale
-  (r[generate.type-switch-stale]).
-- Stale output remains copyable (r[copy.stale-permitted]).
 - Id. checkbox gating and its effect on hiding the name-variant control.
 - Clipboard write called with correct HTML + plain-text payloads (mock
   `navigator.clipboard`); emphasis renders as italic or underline per the
@@ -994,8 +962,11 @@ Contrast checked at WCAG AA minimum, including the disabled/dimmed state.
 Subsequent history, statute session-law citations, live reporter/court
 validation at runtime, all persistence/save/load/notes (Phase 2),
 parallel/historical citations, constitutions, regulations, court rules,
-record citations. See the master spec's deferred-features section for
-why each was cut and what would need to be resolved to pick it back up.
+record citations. An explicit **Generate** action with a stale-marking
+model for edits made after it ran (see §10 item 9) — every field
+re-renders the output live instead (§5.11). See the master spec's
+deferred-features section for why each was cut and what would need to
+be resolved to pick it back up.
 
 ---
 
@@ -1055,10 +1026,12 @@ reader of the earlier draft knows what changed and why.
 
 **Undefined behavior the tests assumed:**
 
-9. **Generation and staleness model** (§5.11). §8.6 tested
-   "stale-marking" against a model the spec never defined. Now specified:
-   display controls re-render live, data edits mark stale, stale output
-   stays copyable.
+9. **Generation and staleness model** (§5.11 at the time). §8.6 tested
+   "stale-marking" against a model the spec never defined. Specified: an
+   explicit Generate action, display controls re-rendering live, data
+   edits marking output stale, stale output staying copyable. Descoped
+   for V1 before implementation (§9) — §5.11 now specifies live
+   rendering only.
 
 10. **_Marbury_ assertion** (§8.3). "Fails as a non-goal, not a crash"
     was untestable. Now: renders the single reporter given, parallel
@@ -1306,9 +1279,8 @@ _validation_ happens at the boundary; storage is textual.
 
 ### 11.3 Display state
 
-Separate from field data, because changing it re-renders without
-re-validating (r[generate.display-controls-live]) and it is not saved
-in Phase 2 (§9 of the master spec).
+Separate from field data because it is presentation, not source data,
+and it is not saved in Phase 2 (§9 of the master spec).
 
 ```ts
 interface DisplayState {
@@ -1404,7 +1376,7 @@ stays visible at all times (§3.5).
 
 Three options, native radio inputs styled as a segmented control
 (`role="radiogroup"`, arrow-key navigable). Changing selection re-labels
-field states and marks output stale (r[generate.type-switch-stale]).
+field states and re-renders the output live (§5.11).
 
 ### 12.3 Field states
 
@@ -1456,8 +1428,7 @@ inside remain visible and disabled.
 - **Live example line** under the name-variant control showing the
   current selection applied to the user's own data.
 - **Output area** rendering the citation with emphasis applied.
-- **Copy button** writing `text/html` + `text/plain`
-  (r[copy.stale-permitted] — stale output stays copyable).
+- **Copy button** writing `text/html` + `text/plain`.
 
 ### 12.6 Validation display
 
@@ -1468,14 +1439,7 @@ associate the message via `aria-describedby`. The summary banner is
 generate, not on keystroke — so an error message doesn't disappear
 before it's read.
 
-### 12.7 Staleness display
-
-r[ui.stale-affordance]
-Stale output (r[generate.stale-on-data-edit]) is marked by a visible
-text note plus a border-style change, never a colour change alone. The
-output remains readable and copyable.
-
-### 12.8 Responsive and input targets
+### 12.7 Responsive and input targets
 
 - Interactive targets ≥44×44 px.
 - Two-column field rows collapse to one column below 480 px.
@@ -1557,15 +1521,9 @@ decisions; a jurisdiction variant would not change them.
 | `case-type.data`                   | architecture                    | Case types as records, not branches                              |
 | `assemble.composable`              | architecture                    | Ordered pure steps over the segment list                         |
 | `framing.parameter`                | architecture                    | Sentence framing configurable                                    |
-| `generate.explicit`                | interaction                     | Generate validates; placeholder before first run                 |
-| `generate.display-controls-live`   | interaction                     | Display changes re-render without revalidation                   |
-| `generate.stale-on-data-edit`      | interaction                     | Data edits invalidate                                            |
-| `generate.type-switch-stale`       | interaction                     | Type switch invalidates                                          |
-| `copy.stale-permitted`             | interaction                     | Stale output stays copyable                                      |
 | `ui.shared-marker`                 | interface                       | Shared-field affordance                                          |
 | `ui.state-not-colour-only`         | accessibility (WCAG 2.2 §1.4.1) | Colour is never the sole signal                                  |
 | `ui.error-association`             | accessibility (WCAG 2.2 §3.3.1) | `aria-invalid` + `aria-describedby`                              |
-| `ui.stale-affordance`              | accessibility (WCAG 2.2 §1.4.1) | Border and text, not colour alone                                |
 | `ui.responsive-targets`            | accessibility (WCAG 2.2 §2.5.8) | ≥44×44 px targets                                                |
 
 ### 13.4 Adding jurisdictions later
@@ -1586,7 +1544,7 @@ needs to know:
    `courts-db` datasets currently used only as a test corpus (§8.4).
 3. **Only §13.2 rules can vary by jurisdiction.** Everything in §13.3 is
    a tool decision — a state variant changes citation format, never the
-   IR, the staleness model, or the accessibility requirements.
+   IR or the accessibility requirements.
 
 ### 13.5 Audit status
 
