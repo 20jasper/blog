@@ -1,5 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 
+async function loadExample(
+	page: Page,
+	example: 'reported' | 'unreported' | 'statute',
+) {
+	await page.getByLabel('Example').selectOption(example);
+	await page.getByRole('button', { name: 'Load example' }).click();
+}
+
 test('citation builder page loads with its heading', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 
@@ -625,12 +633,12 @@ test('En dash switches the pincite span separator', async ({ page }) => {
 	);
 });
 
-test('example buttons load their golden case', async ({ page }) => {
+test('the example select + Load example button loads each golden case', async ({
+	page,
+}) => {
 	await page.goto('/tools/citation-builder');
 
-	await page
-		.getByRole('button', { name: 'State v. Lucko (unreported)' })
-		.click();
+	await loadExample(page, 'unreported');
 
 	await expect(
 		page.getByRole('radio', { name: 'Unreported case' }),
@@ -639,9 +647,7 @@ test('example buttons load their golden case', async ({ page }) => {
 		'State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct. App. Sept. 17, 2021).',
 	);
 
-	await page
-		.getByRole('button', { name: 'Dayton v. Stewart (reported)' })
-		.click();
+	await loadExample(page, 'reported');
 
 	await expect(
 		page.getByRole('radio', { name: 'Reported case', exact: true }),
@@ -650,9 +656,7 @@ test('example buttons load their golden case', async ({ page }) => {
 		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
 	);
 
-	await page
-		.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
-		.click();
+	await loadExample(page, 'statute');
 
 	await expect(page.getByRole('radio', { name: 'Statute' })).toBeChecked();
 	await expect(page.getByRole('status')).toHaveText(
@@ -663,9 +667,7 @@ test('example buttons load their golden case', async ({ page }) => {
 test('statute short form drops the entire parenthetical', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 
-	await page
-		.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
-		.click();
+	await loadExample(page, 'statute');
 	await page.getByRole('radio', { name: 'Short form' }).check();
 
 	await expect(page.getByLabel('Name variant')).toBeDisabled();
@@ -684,9 +686,7 @@ test('statute code type toggles Publisher required/disabled', async ({
 }) => {
 	await page.goto('/tools/citation-builder');
 
-	await page
-		.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
-		.click();
+	await loadExample(page, 'statute');
 
 	const publisher = page.getByLabel('Publisher');
 	await expect(publisher).toBeEnabled();
@@ -712,9 +712,7 @@ for (const [materialLocation, expected] of [
 	}) => {
 		await page.goto('/tools/citation-builder');
 
-		await page
-			.getByRole('button', { name: 'Ohio Rev. Code Ann. (statute)' })
-			.click();
+		await loadExample(page, 'statute');
 		await page.getByLabel('Material location').selectOption(materialLocation);
 
 		const codeYear = page.getByLabel('Code edition year');

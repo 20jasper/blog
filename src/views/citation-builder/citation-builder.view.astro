@@ -36,17 +36,14 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		const output = document.querySelector('output')!;
 		const buttons = Array.from(document.querySelectorAll('button'));
 		const clearButton = buttons.find((b) => b.textContent?.trim() === 'Clear')!;
-		const reportedExampleButton = buttons.find((b) =>
-			b.textContent?.trim().startsWith('Dayton v. Stewart'),
-		)!;
-		const unreportedExampleButton = buttons.find((b) =>
-			b.textContent?.trim().startsWith('State v. Lucko'),
-		)!;
-		const statuteExampleButton = buttons.find((b) =>
-			b.textContent?.trim().startsWith('Ohio Rev. Code Ann.'),
+		const loadExampleButton = buttons.find(
+			(b) => b.textContent?.trim() === 'Load example',
 		)!;
 		const copyButton = buttons.find((b) =>
 			b.textContent?.trim().startsWith('Copy'),
+		)!;
+		const exampleSelect = document.querySelector<HTMLSelectElement>(
+			`#${ids.exampleSelect}`,
 		)!;
 
 		const clipboard = createClipboardController(copyButton, output);
@@ -406,30 +403,26 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			refresh();
 		}
 
-		function loadReportedExample(): void {
+		function loadExample(): void {
 			resetToDefaults();
-			fillReportedExample();
-			refresh();
-		}
-
-		function loadUnreportedExample(): void {
-			resetToDefaults();
-			fillUnreportedExample();
-			refresh();
-		}
-
-		function loadStatuteExample(): void {
-			resetToDefaults();
-			fillStatuteExample();
+			switch (exampleSelect.value) {
+				case 'unreported':
+					fillUnreportedExample();
+					break;
+				case 'statute':
+					fillStatuteExample();
+					break;
+				default:
+					fillReportedExample();
+					break;
+			}
 			refresh();
 		}
 
 		form.addEventListener('input', refresh);
 		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
-		reportedExampleButton.addEventListener('click', loadReportedExample);
-		unreportedExampleButton.addEventListener('click', loadUnreportedExample);
-		statuteExampleButton.addEventListener('click', loadStatuteExample);
+		loadExampleButton.addEventListener('click', loadExample);
 		// Copy is a submit button (form={ids.form}) so clicking it while a
 		// required field is empty triggers the browser's own native
 		// validation UI -- pointing straight at the missing field -- instead

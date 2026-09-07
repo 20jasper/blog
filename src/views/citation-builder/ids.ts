@@ -27,6 +27,7 @@ export const ids = {
 	codeYear: 'citation-builder-code-year',
 	supplementDesignation: 'citation-builder-supplement-designation',
 	supplementYear: 'citation-builder-supplement-year',
+	exampleSelect: 'citation-builder-example-select',
 } as const;
 
 export type ElementIds = typeof ids;

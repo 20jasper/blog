@@ -33,24 +33,48 @@ const MATERIAL_LOCATION_OPTIONS = [
 	{ value: 'both', text: 'Both' },
 	{ value: 'supplement-only', text: 'Supplement only' },
 ];
+
+const EXAMPLE_OPTIONS = [
+	{ value: 'reported', text: 'Dayton v. Stewart (reported)' },
+	{ value: 'unreported', text: 'State v. Lucko (unreported)' },
+	{ value: 'statute', text: 'Ohio Rev. Code Ann. (statute)' },
+];
+
+const exampleFieldClass =
+	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/40 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent appearance-none pr-8';
+const exampleChevronClass =
+	'text-foreground-secondary pointer-events-none absolute inset-y-0 right-3 flex items-center';
 ---
 
-<div class="mb-4 flex flex-wrap items-center gap-3">
-	<span class="text-foreground-secondary text-sm">Examples:</span>
+<div class="mb-4 flex flex-wrap items-end gap-3">
+	<div class="flex flex-col gap-1">
+		<label
+			for={ids.exampleSelect}
+			class="text-foreground-secondary text-sm"
+			>Example</label
+		>
+		<div class="relative">
+			<select
+				id={ids.exampleSelect}
+				class={exampleFieldClass}
+			>
+				{
+					EXAMPLE_OPTIONS.map((option) => (
+						<option value={option.value}>{option.text}</option>
+					))
+				}
+			</select>
+			<span
+				class={exampleChevronClass}
+				aria-hidden="true"
+				>▾</span
+			>
+		</div>
+	</div>
 	<Button
 		type="button"
 		class="!bg-background-secondary/60 hover:!bg-background-secondary"
-		>Dayton v. Stewart (reported)</Button
-	>
-	<Button
-		type="button"
-		class="!bg-background-secondary/60 hover:!bg-background-secondary"
-		>State v. Lucko (unreported)</Button
-	>
-	<Button
-		type="button"
-		class="!bg-background-secondary/60 hover:!bg-background-secondary"
-		>Ohio Rev. Code Ann. (statute)</Button
+		>Load example</Button
 	>
 </div>
 
