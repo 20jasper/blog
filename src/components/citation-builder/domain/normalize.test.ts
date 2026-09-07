@@ -1,3 +1,4 @@
+import { assert, property, string } from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import {
 	assembleDate,
@@ -27,6 +28,21 @@ describe('normalizeDocketNumber', () => {
 	])('normalizes %j to %j', (input, expected) => {
 		expect(normalizeDocketNumber(input)).toBe(expected);
 	});
+
+	// Property, not a hand-picked case: for any string, applying the
+	// normalizer a second time is a no-op. Once-normalized output always
+	// starts with "No. ", which is itself a valid docket prefix the
+	// regex strips back off before re-adding it -- so this holds for
+	// arbitrary input, not just the table above.
+	it('is idempotent for any input', () => {
+		assert(
+			property(string(), (input) => {
+				const once = normalizeDocketNumber(input);
+				const twice = normalizeDocketNumber(once);
+				expect(twice).toBe(once);
+			}),
+		);
+	});
 });
 
 // r[verify normalize.section]
@@ -45,6 +61,19 @@ describe('normalizeSection', () => {
 		['  § 1983', '§ 1983'],
 	])('normalizes %j to %j', (input, expected) => {
 		expect(normalizeSection(input)).toBe(expected);
+	});
+
+	// Property, not a hand-picked case: the table above only proves
+	// idempotence for 10 specific strings ("doesn't double §" §4.2) --
+	// this proves it for any input the field could ever hold.
+	it('is idempotent for any input', () => {
+		assert(
+			property(string(), (input) => {
+				const once = normalizeSection(input);
+				const twice = normalizeSection(once);
+				expect(twice).toBe(once);
+			}),
+		);
 	});
 });
 

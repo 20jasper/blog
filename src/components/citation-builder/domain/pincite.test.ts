@@ -1,3 +1,13 @@
+import {
+	array,
+	assert,
+	boolean,
+	constantFrom,
+	nat,
+	oneof,
+	property,
+	tuple,
+} from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { parsePincite, reduceClosingPage } from './pincite';
 
@@ -53,6 +63,59 @@ describe('parsePincite: non-numeric passthrough', () => {
 	])('%s -> %s (accepted, not validated)', (raw, expected) => {
 		expect(parsePincite(raw, { separator: '-', starPages: false })).toBe(
 			expected,
+		);
+	});
+});
+
+// Properties, not hand-picked cases: generate arbitrary page/range
+// components rather than relying on the fixed examples above to happen
+// to cover every shape.
+describe('parsePincite: properties', () => {
+	const page = nat(999999).map(String);
+	const range = tuple(nat(999999), nat(999999)).map(([a, b]) => `${a}-${b}`);
+	const component = oneof(page, range);
+	const components = array(component, { minLength: 1, maxLength: 5 });
+
+	it('preserves the number of comma-separated components', () => {
+		assert(
+			property(components, (parts) => {
+				const result = parsePincite(parts.join(', '), {
+					separator: '-',
+					starPages: false,
+				});
+				expect(result.split(', ')).toHaveLength(parts.length);
+			}),
+		);
+	});
+
+	it('every component gets the star prefix iff starPages is true', () => {
+		assert(
+			property(components, boolean(), (parts, starPages) => {
+				const result = parsePincite(parts.join(', '), {
+					separator: '-',
+					starPages,
+				});
+				for (const segment of result.split(', ')) {
+					expect(segment.startsWith('*')).toBe(starPages);
+				}
+			}),
+		);
+	});
+
+	it('a numeric range always renders with the configured separator', () => {
+		assert(
+			property(
+				nat(999999),
+				nat(999999),
+				constantFrom('-' as const, '–' as const),
+				(a, b, separator) => {
+					const result = parsePincite(`${a}-${b}`, {
+						separator,
+						starPages: false,
+					});
+					expect(result).toContain(separator);
+				},
+			),
 		);
 	});
 });
