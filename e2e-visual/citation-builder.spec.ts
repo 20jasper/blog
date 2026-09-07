@@ -478,6 +478,27 @@ test('Copy stays enabled after clearing; native validation blocks the incomplete
 	await expect(copyButton).toHaveText('Copy');
 });
 
+// Fuzz-discovered (state/citation-input-builders.test.ts): a non-numeric
+// year used to silently coerce to NaN. The fix added pattern="[0-9]+" to
+// the numeric fields -- this confirms the browser itself now rejects it
+// via checkValidity(), not just the pure builder function.
+test('a non-numeric year fails native validity and blocks Copy', async ({
+	page,
+}) => {
+	await page.goto('/tools/citation-builder');
+
+	await page.getByLabel('Decision year').fill('abc');
+
+	const isValid = await page
+		.getByLabel('Decision year')
+		.evaluate((el: HTMLInputElement) => el.checkValidity());
+	expect(isValid).toBe(false);
+
+	const copyButton = page.getByRole('button', { name: /^Copy/u });
+	await copyButton.click();
+	await expect(copyButton).toHaveText('Copy');
+});
+
 test('required fields show a "*" marker that updates with source type and mode', async ({
 	page,
 }) => {

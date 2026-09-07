@@ -15,6 +15,10 @@ describe('buildCitationInput', () => {
 			...initialCitationFields(),
 			caseType: 'in-re',
 			party1: 'Smith',
+			volume: '1',
+			reporter: 'R',
+			firstPage: '2',
+			year: '2000',
 		};
 		const display: DisplayState = { ...initialDisplayState(), mode: 'full' };
 
@@ -392,5 +396,68 @@ describe('buildCitationInput', () => {
 			mode: 'short',
 			input: { codeAbbreviation: 'C.', section: '1' },
 		});
+	});
+});
+
+// Fuzz-discovered: the numeric fields (year/day/dateYear/codeYear/
+// supplementYear) used to go through plain Number(), which silently
+// produces NaN for non-digit text -- baking "NaN" into the rendered
+// citation -- since the DOM's inputmode="numeric" is only a keyboard
+// hint, not validation. A fuzz run on this function with an arbitrary
+// year string failed on its very first try ("year: ':'" -> NaN).
+// Fixed by validating digit-only in parseRequiredInt() (and a matching
+// pattern="[0-9]+" on the actual inputs) instead of coercing silently.
+describe('buildCitationInput: numeric fields reject non-digit input', () => {
+	it('throws rather than producing NaN for a non-numeric year', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			party1: 'A',
+			party2: 'B',
+			volume: '1',
+			reporter: 'R',
+			firstPage: '2',
+			year: ':',
+		};
+		const display: DisplayState = { ...initialDisplayState(), mode: 'full' };
+
+		expect(() => buildCitationInput(fields, display)).toThrow('invalid year');
+	});
+
+	it('throws rather than producing NaN for a non-numeric day', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			sourceType: 'unreported',
+			party1: 'A',
+			party2: 'B',
+			court: 'Ct.',
+			availability: 'database',
+			docketNumber: '1',
+			databaseIdentifier: 'X',
+			month: 'Jan.',
+			day: 'abc',
+			dateYear: '2000',
+		};
+		const display: DisplayState = { ...initialDisplayState(), mode: 'full' };
+
+		expect(() => buildCitationInput(fields, display)).toThrow('invalid day');
+	});
+
+	it('throws rather than producing NaN for a non-numeric codeYear/supplementYear', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			sourceType: 'statute',
+			codeType: 'official',
+			codeAbbreviation: 'C.',
+			section: '1',
+			materialLocation: 'both',
+			codeYear: 'x',
+			supplementDesignation: 'Supp.',
+			supplementYear: 'y',
+		};
+		const display: DisplayState = { ...initialDisplayState(), mode: 'full' };
+
+		expect(() => buildCitationInput(fields, display)).toThrow(
+			'invalid codeYear',
+		);
 	});
 });

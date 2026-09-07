@@ -19,6 +19,21 @@ import type { DisplayState } from './display-state';
 // how citation-fields.ts's deriveSelections already does this for
 // Selections.
 
+// Every numeric field here is a <input type="text" pattern="[0-9]+">
+// (inputmode="numeric" is just a mobile-keyboard hint, not validation)
+// validated by form.checkValidity() before this ever runs -- so a
+// non-digit value means a caller bug (or the pattern attribute getting
+// out of sync with this file), not a real input to coerce silently.
+// Number('') and Number(' ') are both 0, not NaN, so plain Number()
+// would never throw here -- it would just bake a wrong number into the
+// rendered citation.
+function parseRequiredInt(value: string, field: string): number {
+	if (!/^\d+$/u.test(value)) {
+		throw new Error(`invalid ${field}: ${value}`);
+	}
+	return Number(value);
+}
+
 function caseNameInput(fields: CitationFields): CaseNameInput {
 	return fields.caseType === 'v'
 		? { caseType: 'v', party1: fields.party1, party2: fields.party2 }
@@ -33,7 +48,7 @@ function reportedFullInput(fields: CitationFields): ReportedCaseInput {
 		firstPage: fields.firstPage,
 		pincite: fields.pincite === '' ? undefined : fields.pincite,
 		court: fields.court === '' ? undefined : fields.court,
-		year: Number(fields.year),
+		year: parseRequiredInt(fields.year, 'year'),
 	};
 }
 
@@ -82,8 +97,8 @@ function unreportedFullInput(fields: CitationFields): UnreportedCaseInput {
 		court: fields.court,
 		date: {
 			month: fields.month,
-			day: Number(fields.day),
-			year: Number(fields.dateYear),
+			day: parseRequiredInt(fields.day, 'day'),
+			year: parseRequiredInt(fields.dateYear, 'dateYear'),
 		},
 	};
 }
@@ -122,18 +137,32 @@ function unreportedShortFormInput(
 			};
 }
 
-function buildMaterialLocation(fields: CitationFields): MaterialLocation {
-	const supplement = {
+// supplementYear/codeYear are only actually filled (fieldState marks
+// them not-used, so they may be blank) for the materialLocation
+// branches that use them -- so each is parsed lazily, only inside the
+// branch that needs it, rather than eagerly for every call.
+function buildSupplement(fields: CitationFields) {
+	return {
 		designation: fields.supplementDesignation,
-		year: Number(fields.supplementYear),
+		year: parseRequiredInt(fields.supplementYear, 'supplementYear'),
 	};
+}
+
+function buildMaterialLocation(fields: CitationFields): MaterialLocation {
 	switch (fields.materialLocation) {
 		case 'main-volume':
-			return { kind: 'main-volume', year: Number(fields.codeYear) };
+			return {
+				kind: 'main-volume',
+				year: parseRequiredInt(fields.codeYear, 'codeYear'),
+			};
 		case 'both':
-			return { kind: 'both', year: Number(fields.codeYear), supplement };
+			return {
+				kind: 'both',
+				year: parseRequiredInt(fields.codeYear, 'codeYear'),
+				supplement: buildSupplement(fields),
+			};
 		case 'supplement-only':
-			return { kind: 'supplement-only', supplement };
+			return { kind: 'supplement-only', supplement: buildSupplement(fields) };
 	}
 }
 
