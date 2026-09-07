@@ -1,0 +1,23 @@
+import type { Page } from '@playwright/test';
+
+export function getCitationBuilderLocators(page: Page) {
+	return {
+		caseType: page.getByLabel('Case type'),
+		party1: page.getByLabel('Party 1'),
+		party2: page.getByLabel('Party 2'),
+		court: page.getByLabel('Court'),
+		pincite: page.getByLabel('Pincite'),
+		volume: page.getByLabel('Volume'),
+		reporter: page.getByLabel('Reporter'),
+		firstPage: page.getByLabel('First page'),
+		year: page.getByLabel('Decision year'),
+		nameVariant: page.getByLabel('Name variant'),
+		idCheckbox: page.getByRole('checkbox', {
+			name: /immediately follows one to the same source/u,
+		}),
+		output: page.getByRole('status'),
+		clearButton: page.getByRole('button', { name: 'Clear' }),
+		copyButton: page.getByRole('button', { name: /^Copy/u }),
+		loadExampleButton: page.getByRole('button', { name: 'Load example' }),
+	};
+}

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { globSync } from 'node:fs';
 import { join } from 'node:path';
-import { AxeBuilder } from '@axe-core/playwright';
+import { expectNoAxeViolations } from './axe';
 
 async function forceLoadLazyImages(page: Page): Promise<void> {
 	await page.evaluate(async () => {
@@ -64,24 +64,24 @@ test.describe('visual regression (curated pages)', () => {
 
 test.describe('accessibility and layout (every page)', () => {
 	for (const route of allRoutes) {
-		test(`${route} has no horizontal scroll or axe violations`, async ({
-			page,
-		}) => {
-			await page.goto(route);
-			await page.waitForLoadState('networkidle');
+		test.describe(route, () => {
+			test.beforeEach(async ({ page }) => {
+				await page.goto(route);
+				await page.waitForLoadState('networkidle');
+			});
 
-			const hasHorizontalScroll = await page.evaluate(
-				() =>
-					document.documentElement.scrollWidth >
-					document.documentElement.clientWidth,
-			);
-			expect(hasHorizontalScroll).toBe(false);
+			test('has no horizontal scroll', async ({ page }) => {
+				const hasHorizontalScroll = await page.evaluate(
+					() =>
+						document.documentElement.scrollWidth >
+						document.documentElement.clientWidth,
+				);
+				expect(hasHorizontalScroll).toBe(false);
+			});
 
-			const results = await new AxeBuilder({ page }).analyze();
-			expect(
-				results.violations,
-				JSON.stringify(results.violations, null, 2),
-			).toEqual([]);
+			test('has no axe violations', async ({ page }) => {
+				await expectNoAxeViolations(page);
+			});
 		});
 	}
 });
