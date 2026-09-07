@@ -3,7 +3,9 @@
 // instead of drifting between copies.
 
 export const labelClass = 'text-base font-semibold text-foreground';
-export const choiceRowClass = 'flex w-full flex-col gap-1';
+// The "label + stuff underneath" column shell, shared by radio groups,
+// field rows, and the standalone Id. checkbox row.
+export const stackClass = 'flex w-full flex-col gap-1';
 
 // The enabled/disabled treatment shared by text and select inputs -- see
 // text-field.astro's comment for why disabled uses a dashed border rather

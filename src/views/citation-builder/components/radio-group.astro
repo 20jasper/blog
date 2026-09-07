@@ -1,6 +1,6 @@
 ---
 import Choice from './choice.astro';
-import { choiceRowClass, labelClass } from './styles';
+import { stackClass, labelClass } from './styles';
 
 // The repeated "labeled column of radios" shape -- Source type,
 // Availability, Code type, Mode, Typeface, Span separator all follow
@@ -15,7 +15,7 @@ export type Props = {
 const { label, name, options } = Astro.props;
 ---
 
-<div class={choiceRowClass}>
+<div class={stackClass}>
 	<span class={labelClass}>{label}</span>
 	<div class="flex flex-col gap-2">
 		{

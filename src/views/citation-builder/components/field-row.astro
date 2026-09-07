@@ -1,5 +1,5 @@
 ---
-import { labelClass } from './styles';
+import { stackClass, labelClass } from './styles';
 
 // Shared row shell for a labeled field -- label above the control,
 // optional format hint below the label, stacked in a flex column. Text
@@ -26,7 +26,7 @@ export type Props = {
 const { for: forId, label, hint } = Astro.props;
 ---
 
-<div class="flex w-full flex-col gap-1">
+<div class={stackClass}>
 	<label
 		for={forId}
 		class={labelClass}
