@@ -10,6 +10,21 @@ import rehypeExternalLinks from 'rehype-external-links';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { unified } from '@astrojs/markdown-remark';
+import { visit } from 'unist-util-visit';
+import type { Root } from 'hast';
+
+function rehypeFocusableOverflow() {
+	return (tree: Root) => {
+		visit(tree, 'element', (node) => {
+			const classNames = node.properties?.className;
+			const isKatexDisplay =
+				Array.isArray(classNames) && classNames.includes('katex-display');
+			if (node.tagName === 'table' || isKatexDisplay) {
+				node.properties = { ...node.properties, tabIndex: 0 };
+			}
+		});
+	};
+}
 
 export default defineConfig({
 	site: 'https://jacobasper.com',
@@ -38,6 +53,7 @@ export default defineConfig({
 					},
 				],
 				rehypeKatex,
+				rehypeFocusableOverflow,
 				[
 					rehypeExternalLinks,
 					{

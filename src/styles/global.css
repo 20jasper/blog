@@ -60,6 +60,17 @@
 		color: var(--color-foreground-secondary);
 	}
 
+	/* katex tables and formulas can be wider than the page */
+	.prose table {
+		display: block;
+		overflow-x: auto;
+	}
+
+	.katex-display {
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+
 	[data-footnote-ref]::after {
 		content: ']';
 	}

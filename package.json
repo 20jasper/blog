@@ -34,11 +34,13 @@
 		"remark-math": "^6.0.0",
 		"sharp": "^0.35.4",
 		"tailwindcss": "^4.3.3",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"unist-util-visit": "^5.1.0"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
 		"@playwright/test": "^1.62.1",
+		"@types/hast": "^3.0.5",
 		"feed": "^6.0.0",
 		"knip": "^6.34.0",
 		"lefthook": "^2.1.12",

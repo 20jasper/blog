@@ -62,11 +62,21 @@ test.describe('visual regression (curated pages)', () => {
 	}
 });
 
-test.describe('accessibility (every page)', () => {
+test.describe('accessibility and layout (every page)', () => {
 	for (const route of allRoutes) {
-		test(`${route} has no axe violations`, async ({ page }) => {
+		test(`${route} has no horizontal scroll or axe violations`, async ({
+			page,
+		}) => {
 			await page.goto(route);
 			await page.waitForLoadState('networkidle');
+
+			const hasHorizontalScroll = await page.evaluate(
+				() =>
+					document.documentElement.scrollWidth >
+					document.documentElement.clientWidth,
+			);
+			expect(hasHorizontalScroll).toBe(false);
+
 			const results = await new AxeBuilder({ page }).analyze();
 			expect(
 				results.violations,
