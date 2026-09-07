@@ -1,8 +1,14 @@
 ---
 import FieldRow from './field-row.astro';
 
+// Border stays at full alpha in both states -- opacity-50 on the whole
+// element (previous approach) multiplied with the border's own alpha,
+// making an already-faint border nearly invisible once disabled. Only
+// the value text dims for disabled, which is enough of a visual cue on
+// its own and keeps the border legible (matches the field-state table's
+// own "AA for disabled text" contrast requirement).
 const fieldClass =
-	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/40 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50';
+	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/70 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent disabled:cursor-not-allowed disabled:text-foreground-secondary';
 
 export type Props = {
 	id: string;
