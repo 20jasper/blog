@@ -3,39 +3,43 @@ import { assemble } from './citation-input';
 import { render } from '../domain/render';
 import type { CitationInput } from './citation-input';
 
+// Exact golden-case wording for each assembler already lives in
+// assemble.test.ts/assemble-statute.test.ts; these only confirm assemble()
+// routes each (sourceType, mode) pair to the right function -- via a
+// structural marker unique to that branch, not a duplicated verbatim
+// sentence -- plus that options actually thread through.
 describe('assemble', () => {
 	it('dispatches reported/full to assembleReportedCase', () => {
 		const citation: CitationInput = {
 			sourceType: 'reported',
 			mode: 'full',
 			input: {
-				name: { caseType: 'v', party1: 'Dayton', party2: 'Stewart' },
-				volume: '179',
-				reporter: 'N.E.3d',
-				firstPage: '208',
-				pincite: '214',
-				court: 'Ohio Ct. App.',
-				year: 2021,
+				name: { caseType: 'v', party1: 'A', party2: 'B' },
+				volume: '1',
+				reporter: 'R',
+				firstPage: '2',
+				pincite: '3',
+				year: 2000,
 			},
 		};
 
 		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
-		expect(plain).toBe(
-			'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
-		);
+		// Only the full form carries volume/reporter/firstPage together.
+		expect(plain).toContain('1 R 2,');
 	});
 
 	it('dispatches reported/short to assembleReportedShortForm', () => {
 		const citation: CitationInput = {
 			sourceType: 'reported',
 			mode: 'short',
-			input: { nameVariant: 'id', pincite: '435' },
+			input: { nameVariant: 'id', pincite: '3' },
 		};
 
 		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
-		expect(plain).toBe('Id. at 435.');
+		// Only the short form's 'id' variant renders bare "Id. at ...".
+		expect(plain).toBe('Id. at 3.');
 	});
 
 	it('dispatches unreported/full to assembleUnreportedCase', () => {
@@ -43,19 +47,18 @@ describe('assemble', () => {
 			sourceType: 'unreported',
 			mode: 'full',
 			input: {
-				name: { caseType: 'v', party1: 'State', party2: 'Lucko' },
-				docket: '2021CA0007',
-				availability: { kind: 'database', databaseId: '2021 WL 4269952' },
-				court: 'Ohio Ct. App.',
-				date: { month: 'Sept.', day: 17, year: 2021 },
+				name: { caseType: 'v', party1: 'A', party2: 'B' },
+				docket: '1',
+				availability: { kind: 'database', databaseId: 'X' },
+				court: 'Ct.',
+				date: { month: 'Jan.', day: 1, year: 2000 },
 			},
 		};
 
 		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
-		expect(plain).toBe(
-			'State v. Lucko, No. 2021CA0007, 2021 WL 4269952 (Ohio Ct. App. Sept. 17, 2021).',
-		);
+		// Only the full form carries a date parenthetical.
+		expect(plain).toContain('Jan. 1, 2000');
 	});
 
 	it('dispatches unreported/short to assembleUnreportedShortForm', () => {
@@ -64,28 +67,15 @@ describe('assemble', () => {
 			mode: 'short',
 			input: {
 				nameVariant: 'none',
-				availability: { kind: 'slip-opinion', docket: '1-07-2937' },
+				availability: { kind: 'slip-opinion', docket: '1' },
 				pincite: '2',
 			},
 		};
 
 		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
-		expect(plain).toBe('No. 1-07-2937, slip op. at 2.');
-	});
-
-	it('threads spanSeparator through to the underlying assembler', () => {
-		const citation: CitationInput = {
-			sourceType: 'reported',
-			mode: 'short',
-			input: { nameVariant: 'id', pincite: '208-214' },
-		};
-
-		const { plain } = render(assemble(citation, { spanSeparator: '–' }), {
-			emphasis: 'italic',
-		});
-
-		expect(plain).toBe('Id. at 208–14.');
+		// "slip op." only appears in the short form's slip-opinion pincite.
+		expect(plain).toContain('slip op.');
 	});
 
 	it('dispatches statute/full to assembleStatuteCase', () => {
@@ -94,29 +84,42 @@ describe('assemble', () => {
 			mode: 'full',
 			input: {
 				codeType: 'official',
-				codeAbbreviation: 'Ohio Rev. Code',
-				section: '3767.32(A)',
-				materialLocation: { kind: 'main-volume', year: 2025 },
+				codeAbbreviation: 'C.',
+				section: '1',
+				materialLocation: { kind: 'main-volume', year: 2000 },
 			},
 		};
 
 		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
-		expect(plain).toBe('Ohio Rev. Code § 3767.32(A) (2025).');
+		// Only the full form carries the parenthetical at all.
+		expect(plain).toMatch(/\(.*\)/u);
 	});
 
 	it('dispatches statute/short to assembleStatuteShortForm', () => {
 		const citation: CitationInput = {
 			sourceType: 'statute',
 			mode: 'short',
-			input: {
-				codeAbbreviation: 'Ohio Rev. Code Ann.',
-				section: '3767.32(A)',
-			},
+			input: { codeAbbreviation: 'C.', section: '1' },
 		};
 
 		const { plain } = render(assemble(citation), { emphasis: 'italic' });
 
-		expect(plain).toBe('Ohio Rev. Code Ann. § 3767.32(A).');
+		// Short form drops the entire parenthetical.
+		expect(plain).not.toMatch(/\(.*\)/u);
+	});
+
+	it('threads spanSeparator through to the underlying assembler', () => {
+		const citation: CitationInput = {
+			sourceType: 'reported',
+			mode: 'short',
+			input: { nameVariant: 'id', pincite: '1-2' },
+		};
+
+		const { plain } = render(assemble(citation, { spanSeparator: '–' }), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).toBe('Id. at 1–2.');
 	});
 });

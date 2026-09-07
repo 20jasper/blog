@@ -330,6 +330,18 @@ function popularNamePrefix(popularName: string | undefined): string {
 	return popularName === undefined ? '' : `${popularName}, `;
 }
 
+// Shared by the full and short forms -- the popular name/title/code/
+// section prefix never changes between them; only the trailing
+// parenthetical (or its absence) does.
+function statuteCoreLine(
+	codeAbbreviation: string,
+	section: string,
+	popularName: string | undefined,
+	title: StatuteTitle | undefined,
+): string {
+	return `${popularNamePrefix(popularName)}${codeWithTitle(codeAbbreviation, title)} ${normalizeSection(section)}`;
+}
+
 // r[impl citation.statute-long-form]
 // r[impl citation.statute-supplement]
 export function assembleStatuteCase(input: StatuteInput): Segment[] {
@@ -340,7 +352,7 @@ export function assembleStatuteCase(input: StatuteInput): Segment[] {
 
 	const segments: Segment[] = [
 		{
-			text: `${popularNamePrefix(input.popularName)}${codeWithTitle(input.codeAbbreviation, input.title)} ${normalizeSection(input.section)} (${parenthetical})`,
+			text: `${statuteCoreLine(input.codeAbbreviation, input.section, input.popularName, input.title)} (${parenthetical})`,
 			emphasized: false,
 		},
 	];
@@ -365,7 +377,12 @@ export function assembleStatuteShortForm(
 ): Segment[] {
 	const segments: Segment[] = [
 		{
-			text: `${popularNamePrefix(input.popularName)}${codeWithTitle(input.codeAbbreviation, input.title)} ${normalizeSection(input.section)}`,
+			text: statuteCoreLine(
+				input.codeAbbreviation,
+				input.section,
+				input.popularName,
+				input.title,
+			),
 			emphasized: false,
 		},
 	];

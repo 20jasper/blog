@@ -562,46 +562,60 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			updateOutput();
 		}
 
+		function fillFields(
+			entries: [HTMLInputElement | HTMLSelectElement, string][],
+		): void {
+			for (const [input, value] of entries) {
+				input.value = value;
+			}
+		}
+
+		function checkRadio(name: string, value: string): void {
+			form.querySelector<HTMLInputElement>(
+				`input[name="${name}"][value="${value}"]`,
+			)!.checked = true;
+		}
+
 		function fillReportedExample(): void {
-			caseTypeSelect.value = REPORTED_EXAMPLE.caseType;
-			party1Input.value = REPORTED_EXAMPLE.party1;
-			party2Input.value = REPORTED_EXAMPLE.party2;
-			courtInput.value = REPORTED_EXAMPLE.court;
-			volumeInput.value = REPORTED_EXAMPLE.volume;
-			reporterInput.value = REPORTED_EXAMPLE.reporter;
-			firstPageInput.value = REPORTED_EXAMPLE.firstPage;
-			pinciteInput.value = REPORTED_EXAMPLE.pincite;
-			yearInput.value = REPORTED_EXAMPLE.year;
+			fillFields([
+				[caseTypeSelect, REPORTED_EXAMPLE.caseType],
+				[party1Input, REPORTED_EXAMPLE.party1],
+				[party2Input, REPORTED_EXAMPLE.party2],
+				[courtInput, REPORTED_EXAMPLE.court],
+				[volumeInput, REPORTED_EXAMPLE.volume],
+				[reporterInput, REPORTED_EXAMPLE.reporter],
+				[firstPageInput, REPORTED_EXAMPLE.firstPage],
+				[pinciteInput, REPORTED_EXAMPLE.pincite],
+				[yearInput, REPORTED_EXAMPLE.year],
+			]);
 		}
 
 		function fillUnreportedExample(): void {
-			form.querySelector<HTMLInputElement>(
-				'input[name="sourceType"][value="unreported"]',
-			)!.checked = true;
-			caseTypeSelect.value = UNREPORTED_EXAMPLE.caseType;
-			party1Input.value = UNREPORTED_EXAMPLE.party1;
-			party2Input.value = UNREPORTED_EXAMPLE.party2;
-			courtInput.value = UNREPORTED_EXAMPLE.court;
-			docketNumberInput.value = UNREPORTED_EXAMPLE.docketNumber;
-			databaseIdentifierInput.value = UNREPORTED_EXAMPLE.databaseIdentifier;
-			pinciteInput.value = UNREPORTED_EXAMPLE.pincite;
-			monthSelect.value = UNREPORTED_EXAMPLE.month;
-			dayInput.value = UNREPORTED_EXAMPLE.day;
-			dateYearInput.value = UNREPORTED_EXAMPLE.dateYear;
+			checkRadio('sourceType', 'unreported');
+			fillFields([
+				[caseTypeSelect, UNREPORTED_EXAMPLE.caseType],
+				[party1Input, UNREPORTED_EXAMPLE.party1],
+				[party2Input, UNREPORTED_EXAMPLE.party2],
+				[courtInput, UNREPORTED_EXAMPLE.court],
+				[docketNumberInput, UNREPORTED_EXAMPLE.docketNumber],
+				[databaseIdentifierInput, UNREPORTED_EXAMPLE.databaseIdentifier],
+				[pinciteInput, UNREPORTED_EXAMPLE.pincite],
+				[monthSelect, UNREPORTED_EXAMPLE.month],
+				[dayInput, UNREPORTED_EXAMPLE.day],
+				[dateYearInput, UNREPORTED_EXAMPLE.dateYear],
+			]);
 		}
 
 		function fillStatuteExample(): void {
-			form.querySelector<HTMLInputElement>(
-				'input[name="sourceType"][value="statute"]',
-			)!.checked = true;
-			form.querySelector<HTMLInputElement>(
-				`input[name="codeType"][value="${STATUTE_EXAMPLE.codeType}"]`,
-			)!.checked = true;
-			codeAbbreviationInput.value = STATUTE_EXAMPLE.codeAbbreviation;
-			sectionInput.value = STATUTE_EXAMPLE.section;
-			publisherInput.value = STATUTE_EXAMPLE.publisher;
-			materialLocationSelect.value = STATUTE_EXAMPLE.materialLocation;
-			codeYearInput.value = STATUTE_EXAMPLE.codeYear;
+			checkRadio('sourceType', 'statute');
+			checkRadio('codeType', STATUTE_EXAMPLE.codeType);
+			fillFields([
+				[codeAbbreviationInput, STATUTE_EXAMPLE.codeAbbreviation],
+				[sectionInput, STATUTE_EXAMPLE.section],
+				[publisherInput, STATUTE_EXAMPLE.publisher],
+				[materialLocationSelect, STATUTE_EXAMPLE.materialLocation],
+				[codeYearInput, STATUTE_EXAMPLE.codeYear],
+			]);
 		}
 
 		function resetToDefaults(): void {
