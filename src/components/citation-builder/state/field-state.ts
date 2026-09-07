@@ -5,8 +5,8 @@ import type { CitationFields } from './citation-fields';
 // from CitationFields rather than hand-listed, so a renamed or removed
 // field fails at compile time here instead of silently going stale.
 // Unlike CitationFields itself, this doesn't carry values -- only the
-// discriminant choices (§3.5: required/optional/not-used depends on
-// selections made, never on the values typed into other fields).
+// discriminant choices (required/optional/not-used depends on selections
+// made, never on the values typed into other fields).
 export type FieldId = Exclude<keyof CitationFields, 'sourceType'>;
 
 export type FieldRequirement = 'required' | 'optional' | 'not-used';

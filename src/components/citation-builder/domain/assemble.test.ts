@@ -6,7 +6,7 @@ import { render } from './render';
 // r[verify citation.reported-long-form]
 // r[verify assemble.composable]
 describe('assembleReportedCase: golden case', () => {
-	it('matches the §8.3 golden case exactly', () => {
+	it('matches the domain-spec.md §5.4 golden case exactly', () => {
 		const { plain } = render(assembleReportedCase(reportedCase()), {
 			emphasis: 'italic',
 		});
@@ -53,7 +53,7 @@ describe('assembleReportedCase: field variations', () => {
 	});
 
 	// r[verify court.optional]
-	it('omits the court entirely when blank, matching the §8.3 Roe v. Wade golden case', () => {
+	it('omits the court entirely when blank, matching the domain-spec.md §3.1 Roe v. Wade worked example', () => {
 		const { plain } = render(
 			assembleReportedCase(
 				reportedCase({

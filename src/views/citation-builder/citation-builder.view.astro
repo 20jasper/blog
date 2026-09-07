@@ -198,9 +198,10 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}
 		}
 
-		// Fields stay visible always (§3.5) -- only their disabled state
-		// changes, never their visibility, so switching source type/mode
-		// never shifts the layout. Every data field's disabled/required
+		// Fields within a visible fieldset stay visible always -- only their
+		// disabled state changes, never their visibility, so switching
+		// source type/mode never shifts the layout. Every data field's
+		// disabled/required
 		// state comes from selectFieldState -- the same, already-unit-tested
 		// function that derives required/optional/not-used -- rather than a
 		// second, hand-rolled copy of the same rules living only here.
@@ -213,16 +214,15 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setRequired(input, requirement === 'required');
 		}
 
-		// Deliberate departure from §3.5 ("every field always visible") --
-		// Reported/Unreported/Statute are mutually exclusive per source type,
-		// so showing all three's fields at once is more clutter than most
-		// single-page forms carry. Case identity is shared by
-		// reported/unreported but entirely not-used for statute, so it hides
-		// with statute too. Individual not-used fields *within* a visible
-		// fieldset (e.g. Party 2 for In re) still only disable, never hide --
-		// that's the §3.5 concern this doesn't touch: a value the user
-		// already typed staying visible so it's clear it didn't silently
-		// vanish.
+		// Reported/Unreported/Statute are mutually exclusive per source
+		// type, so showing all three's fields at once is more clutter than
+		// most single-page forms carry -- the inactive source type's
+		// fieldset is hidden entirely rather than shown-and-disabled. Case
+		// identity is shared by reported/unreported but entirely not-used
+		// for statute, so it hides with statute too. Individual not-used
+		// fields *within* a visible fieldset (e.g. Party 2 for In re) still
+		// only disable, never hide -- a value the user already typed stays
+		// visible so it's clear it didn't silently vanish.
 		function updateFieldsetVisibility(sourceType: string): void {
 			for (const fieldset of form.querySelectorAll<HTMLFieldSetElement>(
 				'fieldset[data-visible-for]',

@@ -16,11 +16,11 @@ export type CodeType = StatuteInput['codeType'];
 export type MaterialLocationKind = MaterialLocation['kind'];
 
 // One flat object -- fields unused by the active sourceType stay
-// populated (§3.5: switching type never clears a value). Matches
-// docs/citation-builder/phase-1-spec.md §10.2, using the domain's
-// existing kebab-case CaseTypeId and field-state.ts's FieldId names
-// rather than the spec's own draft naming, since those are what the
-// rest of the code already consumes.
+// populated; switching type never clears a value. Matches
+// docs/citation-builder/architecture-spec.md §6 item 2, using the
+// domain's existing kebab-case CaseTypeId and field-state.ts's FieldId
+// names rather than the spec's own draft naming, since those are what
+// the rest of the code already consumes.
 export type CitationFields = {
 	sourceType: SourceType;
 

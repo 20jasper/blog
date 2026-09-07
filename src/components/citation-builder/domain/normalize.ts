@@ -1,7 +1,7 @@
 import type { DateParts } from './types';
 
 // Rule 10.8.1. Widened lookahead vs. the original spec draft -- see
-// docs/citation-builder/phase-1-spec.md §4.1 for why a digit also counts
+// docs/citation-builder/domain-spec.md §4.1 for why a digit also counts
 // as a valid boundary (fixes "No.05-1234"), while a following letter
 // still fails it (guards "North-123" -> "No. rth-123").
 const DOCKET_PREFIX = /^(?:case\s+no\.?|docket\s+no\.?|no\.?)(?=\s|$|\d)\s*/iu;

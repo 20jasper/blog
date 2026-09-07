@@ -1,4 +1,5 @@
-// Golden cases from docs/citation-builder/phase-1-spec.md §8.3, offered
+// Golden cases verified against domain-spec.md §5 (see the golden-case
+// tests under src/components/citation-builder/domain/*.test.ts), offered
 // as Example buttons so a visitor sees a real, working citation for each
 // source type instead of a blank form or just the default reported one.
 

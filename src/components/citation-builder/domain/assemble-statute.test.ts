@@ -5,7 +5,7 @@ import { render } from './render';
 
 // r[verify citation.statute-long-form]
 describe('assembleStatuteCase', () => {
-	it('matches the §8.3 golden case exactly (annotated, main volume only)', () => {
+	it('matches the domain-spec.md §5.6 golden case exactly (annotated, main volume only)', () => {
 		const { plain } = render(assembleStatuteCase(annotatedStatute()), {
 			emphasis: 'italic',
 		});

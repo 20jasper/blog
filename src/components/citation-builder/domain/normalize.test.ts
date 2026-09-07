@@ -8,7 +8,7 @@ import {
 
 // r[verify normalize.docket]
 describe('normalizeDocketNumber', () => {
-	// Rule 10.8.1: §8.4 table, verbatim, plus extra boundary coverage.
+	// Rule 10.8.1: domain-spec.md §4.1 table, verbatim, plus extra boundary coverage.
 	it.each([
 		['05-CR-6050 CJS', 'No. 05-CR-6050 CJS'],
 		['No. 05-CR-6050 CJS', 'No. 05-CR-6050 CJS'],
@@ -47,7 +47,7 @@ describe('normalizeDocketNumber', () => {
 
 // r[verify normalize.section]
 describe('normalizeSection', () => {
-	// Rule 12: §8.4 table, verbatim.
+	// Rule 12: domain-spec.md §4.2, verbatim.
 	it.each([
 		['3767.32(A)', '§ 3767.32(A)'],
 		['§ 3767.32(A)', '§ 3767.32(A)'],
