@@ -22,8 +22,11 @@ test('editing a field updates the output live', async ({ page }) => {
 	await expect(output).toContainText('220');
 });
 
-for (const caseType of ['in-re', 'ex-parte'] as const) {
-	test(`case type ${caseType} disables Party 2, never hides it`, async ({
+for (const [caseType, expectedName] of [
+	['in-re', 'In re Dayton'],
+	['ex-parte', 'Ex parte Dayton'],
+] as const) {
+	test(`case type ${caseType} disables Party 2 and renders the single-party name`, async ({
 		page,
 	}) => {
 		const locators = getCitationBuilderLocators(page);
@@ -32,16 +35,9 @@ for (const caseType of ['in-re', 'ex-parte'] as const) {
 
 		await expect(locators.party2).toBeVisible();
 		await expect(locators.party2).toBeDisabled();
+		await expect(locators.output).toContainText(expectedName);
 	});
 }
-
-test('case type in-re renders the single-party citation', async ({ page }) => {
-	const { caseType, output } = getCitationBuilderLocators(page);
-
-	await caseType.selectOption('in-re');
-
-	await expect(output).toContainText('In re Dayton');
-});
 
 test('switching back to v. re-enables Party 2', async ({ page }) => {
 	const { caseType, party2, output } = getCitationBuilderLocators(page);
