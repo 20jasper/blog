@@ -266,6 +266,16 @@ validation error (§8.5), never a silently half-rendered parenthetical.
 
 ### 3.5 Field state and interaction rules
 
+- V1 departure from the original rule below: the fieldset for a
+  not-active **source type** (Reported case / Unreported case /
+  Statute, plus Case identity when Statute is active) is hidden
+  entirely, not just disabled — three source types' worth of fields
+  shown at once was more clutter than a single-page form should carry.
+  A value already typed into a hidden field is not lost; switching back
+  reveals it still there. This applies only at the source-type level —
+  individual not-used fields _within_ a visible fieldset (Party 2 for
+  `In re`, Publisher for an official code, etc.) still only disable,
+  never hide, per the original rule:
 - Every field is always visible. Type/toggle selections change each
   field's **required / optional / not-used** state, never its visibility.
 - Fields marked **not used** for the current type are `disabled`, not
@@ -1369,8 +1379,9 @@ Per r[segment.emphasis-is-abstract], `emphasized` is abstract; the
 ### 12.1 Layout
 
 Single column. Three regions in fixed order: **source-type selector**,
-**field form**, **output panel**. No tabs, no accordions — every field
-stays visible at all times (§3.5).
+**field form**, **output panel**. No tabs, no accordions -- the group
+for a not-active source type is hidden rather than shown-and-disabled,
+a V1 departure from the field-level rule (§3.5).
 
 ### 12.2 Source-type selector
 
@@ -1409,8 +1420,9 @@ simultaneously shared and required/optional/not-used.
 | Unreported      | `availability`, `docket`, `databaseId`, `month`, `day`, `dateYear`                                                                                          |
 | Statute         | `codeType`, `popularName`, `statuteTitle`, `codeAbbrev`, `section`, `publisher`, `materialLocation`, `codeEditionYear`, `supplementDesig`, `supplementYear` |
 
-Group headings dim when the group is not used by the active type; fields
-inside remain visible and disabled.
+The group for a not-active source type is hidden entirely (§3.5 V1
+departure); fields _within_ the active group that are individually
+not-used still only disable, never hide.
 
 ### 12.5 Output panel
 

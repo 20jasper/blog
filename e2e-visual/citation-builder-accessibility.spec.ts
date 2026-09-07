@@ -20,6 +20,20 @@ test.describe('citation builder accessibility', () => {
 		).toEqual([]);
 	});
 
+	test('no axe violations after switching source type (fieldsets hidden)', async ({
+		page,
+	}) => {
+		await page.goto('/tools/citation-builder');
+		await page.getByRole('radio', { name: 'Unreported case' }).check();
+		await page.getByRole('radio', { name: 'Statute' }).check();
+
+		const results = await new AxeBuilder({ page }).analyze();
+		expect(
+			results.violations,
+			JSON.stringify(results.violations, null, 2),
+		).toEqual([]);
+	});
+
 	test('no axe violations after clearing the form', async ({ page }) => {
 		await page.goto('/tools/citation-builder');
 		await page.getByRole('button', { name: 'Clear' }).click();

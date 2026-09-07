@@ -17,6 +17,44 @@ test('starts prefilled with a working example', async ({ page }) => {
 	);
 });
 
+// Deliberate departure from the "every field always visible" default
+// (§3.5): Reported/Unreported/Statute are mutually exclusive per source
+// type, so only the active one's fieldset (plus Case identity, shared by
+// reported/unreported) is shown -- not just disabled. A value already
+// typed into a hidden field is not lost (switching back reveals it
+// still there), just not visible while it doesn't apply.
+test('only the active source type’s fieldset is shown', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	const legend = (text: string) =>
+		page.locator('legend', { hasText: new RegExp(`^${text}$`, 'u') });
+
+	await expect(legend('Case identity')).toBeVisible();
+	await expect(legend('Reported case')).toBeVisible();
+	await expect(legend('Unreported case')).toBeHidden();
+	await expect(legend('Statute')).toBeHidden();
+
+	await page.getByLabel('Volume').fill('999');
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+
+	await expect(legend('Case identity')).toBeVisible();
+	await expect(legend('Reported case')).toBeHidden();
+	await expect(legend('Unreported case')).toBeVisible();
+	await expect(legend('Statute')).toBeHidden();
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+
+	await expect(legend('Case identity')).toBeHidden();
+	await expect(legend('Reported case')).toBeHidden();
+	await expect(legend('Unreported case')).toBeHidden();
+	await expect(legend('Statute')).toBeVisible();
+
+	// Switching back to reported: the value typed earlier is still there,
+	// it was hidden, not lost.
+	await page.getByRole('radio', { name: 'Reported case', exact: true }).check();
+	await expect(page.getByLabel('Volume')).toHaveValue('999');
+});
+
 test('editing a field updates the output live', async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 
@@ -446,6 +484,9 @@ test('clear empties unreported fields and resets Availability to database', asyn
 	await fillUnreportedLucko(page);
 	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
 	await page.getByRole('button', { name: 'Clear' }).click();
+	// Clear resets sourceType to reported, which hides the Unreported
+	// fieldset entirely -- switch back to it to inspect the reset values.
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
 
 	await expect(
 		page.getByRole('radio', { name: 'In electronic database' }),

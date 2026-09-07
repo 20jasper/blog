@@ -93,7 +93,10 @@ const MATERIAL_LOCATION_OPTIONS = [
 		</div>
 	</fieldset>
 
-	<fieldset class={fieldsetClass}>
+	<fieldset
+		class={fieldsetClass}
+		data-visible-for="reported unreported"
+	>
 		<legend class={legendClass}>Case identity</legend>
 		<div class={gridClass}>
 			<SelectField
@@ -131,7 +134,10 @@ const MATERIAL_LOCATION_OPTIONS = [
 		</div>
 	</fieldset>
 
-	<fieldset class={fieldsetClass}>
+	<fieldset
+		class={fieldsetClass}
+		data-visible-for="reported"
+	>
 		<legend class={legendClass}>Reported case</legend>
 		<div class={gridClass}>
 			<TextField
@@ -163,7 +169,10 @@ const MATERIAL_LOCATION_OPTIONS = [
 		</div>
 	</fieldset>
 
-	<fieldset class={fieldsetClass}>
+	<fieldset
+		class={fieldsetClass}
+		data-visible-for="unreported"
+	>
 		<legend class={legendClass}>Unreported case</legend>
 		<div class={gridClass}>
 			<div class={choiceRowClass}>
@@ -222,7 +231,10 @@ const MATERIAL_LOCATION_OPTIONS = [
 		</div>
 	</fieldset>
 
-	<fieldset class={fieldsetClass}>
+	<fieldset
+		class={fieldsetClass}
+		data-visible-for="statute"
+	>
 		<legend class={legendClass}>Statute</legend>
 		<div class={gridClass}>
 			<div class={choiceRowClass}>

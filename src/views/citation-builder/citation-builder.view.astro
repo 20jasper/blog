@@ -216,11 +216,32 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setRequired(input, requirement === 'required');
 		}
 
+		// Deliberate departure from §3.5 ("every field always visible") --
+		// Reported/Unreported/Statute are mutually exclusive per source type,
+		// so showing all three's fields at once is more clutter than most
+		// single-page forms carry. Case identity is shared by
+		// reported/unreported but entirely not-used for statute, so it hides
+		// with statute too. Individual not-used fields *within* a visible
+		// fieldset (e.g. Party 2 for In re) still only disable, never hide --
+		// that's the §3.5 concern this doesn't touch: a value the user
+		// already typed staying visible so it's clear it didn't silently
+		// vanish.
+		function updateFieldsetVisibility(sourceType: string): void {
+			for (const fieldset of form.querySelectorAll<HTMLFieldSetElement>(
+				'fieldset[data-visible-for]',
+			)) {
+				const visibleFor = fieldset.dataset.visibleFor?.split(' ') ?? [];
+				fieldset.hidden = !visibleFor.includes(sourceType);
+			}
+		}
+
 		function updateFieldState(): void {
 			const fields = readCitationFields();
 			const display = readDisplayState();
 			const isShort = display.mode === 'short';
 			const isStatute = fields.sourceType === 'statute';
+
+			updateFieldsetVisibility(fields.sourceType);
 
 			const fieldState = selectFieldState(deriveSelections(fields, display));
 
