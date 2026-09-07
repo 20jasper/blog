@@ -1,0 +1,245 @@
+---
+import PageLayout from '@layouts/page-layout.astro';
+import CitationBuilderUi from './citation-builder.ui.astro';
+---
+
+<PageLayout title="Bluebook 22 Citation Generator">
+	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
+	<CitationBuilderUi />
+	<script>
+		import {
+			isCaseTypeId,
+			type CaseTypeId,
+		} from '@components/citation-builder/domain/case-types';
+		import { render } from '@components/citation-builder/domain/render';
+		import {
+			assemble,
+			buildCitationInput,
+			deriveSelections,
+			selectFieldState,
+			type CitationFields,
+			type DisplayState,
+			type Emphasis,
+			type FieldRequirement,
+			type SpanSeparator,
+		} from '@components/citation-builder/state';
+		import { createClipboardController } from './clipboard';
+		import { queryFormRefs } from './dom-refs';
+		import { REPORTED_EXAMPLE } from './examples';
+		import { ids } from './ids';
+
+		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
+		const output = document.querySelector('output')!;
+		const buttons = Array.from(document.querySelectorAll('button'));
+		const clearButton = buttons.find((b) => b.textContent?.trim() === 'Clear')!;
+		const loadExampleButton = buttons.find(
+			(b) => b.textContent?.trim() === 'Load example',
+		)!;
+		const copyButton = buttons.find((b) =>
+			b.textContent?.trim().startsWith('Copy'),
+		)!;
+
+		const clipboard = createClipboardController(copyButton, output);
+
+		const {
+			caseTypeSelect,
+			party1Input,
+			party2Input,
+			courtInput,
+			pinciteInput,
+			volumeInput,
+			reporterInput,
+			firstPageInput,
+			yearInput,
+			nameVariantSelect,
+			idCheckbox,
+		} = queryFormRefs(form);
+
+		function currentCaseType(): CaseTypeId {
+			const { value } = caseTypeSelect;
+			return isCaseTypeId(value) ? value : 'v';
+		}
+
+		function currentMode(): 'full' | 'short' {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="mode"]:checked',
+			);
+			return checked?.value === 'short' ? 'short' : 'full';
+		}
+
+		function currentNameVariant(): 'full' | 'party1' | 'party2' | 'none' {
+			const { value } = nameVariantSelect;
+			return value === 'party1' || value === 'party2' || value === 'none'
+				? value
+				: 'full';
+		}
+
+		function currentEmphasis(): Emphasis {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="emphasis"]:checked',
+			);
+			return checked?.value === 'underline' ? 'underline' : 'italic';
+		}
+
+		function currentSpanSeparator(): SpanSeparator {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="spanSeparator"]:checked',
+			);
+			return checked?.value === 'en-dash' ? '–' : '-';
+		}
+
+		function readCitationFields(): CitationFields {
+			return {
+				caseType: currentCaseType(),
+				party1: party1Input.value,
+				party2: party2Input.value,
+				court: courtInput.value,
+				pincite: pinciteInput.value,
+				volume: volumeInput.value,
+				reporter: reporterInput.value,
+				firstPage: firstPageInput.value,
+				year: yearInput.value,
+			};
+		}
+
+		function readDisplayState(): DisplayState {
+			return {
+				mode: currentMode(),
+				nameVariant: currentNameVariant(),
+				useId: idCheckbox.checked,
+				emphasis: currentEmphasis(),
+				spanSeparator: currentSpanSeparator(),
+			};
+		}
+
+		function setRequired(
+			input: HTMLInputElement | HTMLSelectElement,
+			required: boolean,
+		): void {
+			input.required = required;
+			const marker =
+				input.labels?.[0]?.querySelector<HTMLElement>('.required-marker');
+			if (marker) {
+				marker.hidden = !required;
+			}
+		}
+
+		function setFieldRequirement(
+			input: HTMLInputElement | HTMLSelectElement,
+			requirement: FieldRequirement,
+		): void {
+			input.disabled = requirement === 'not-used';
+			setRequired(input, requirement === 'required');
+		}
+
+		function updateFieldState(): void {
+			const fields = readCitationFields();
+			const display = readDisplayState();
+			const isShort = display.mode === 'short';
+
+			const fieldState = selectFieldState(deriveSelections(fields, display));
+
+			setFieldRequirement(caseTypeSelect, fieldState.caseType);
+			setFieldRequirement(party1Input, fieldState.party1);
+			setFieldRequirement(party2Input, fieldState.party2);
+			setFieldRequirement(courtInput, fieldState.court);
+			setFieldRequirement(pinciteInput, fieldState.pincite);
+			setFieldRequirement(volumeInput, fieldState.volume);
+			setFieldRequirement(reporterInput, fieldState.reporter);
+			setFieldRequirement(firstPageInput, fieldState.firstPage);
+			setFieldRequirement(yearInput, fieldState.year);
+
+			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
+			idCheckbox.disabled = !isShort;
+
+			if (isShort && idCheckbox.checked) {
+				setRequired(party1Input, false);
+				setRequired(volumeInput, false);
+				setRequired(reporterInput, false);
+			}
+		}
+
+		function fillInPlaceholder(): void {
+			output.textContent = 'Fill in the fields above to generate a citation.';
+			clipboard.setCitation(undefined);
+		}
+
+		function setCitationOutput(
+			segments: Parameters<typeof render>[0],
+			emphasis: Emphasis,
+		): void {
+			const { html, plain } = render(segments, { emphasis });
+			output.innerHTML = html;
+			clipboard.setCitation({ html, plain });
+		}
+
+		function updateOutput(): void {
+			if (!form.checkValidity()) {
+				fillInPlaceholder();
+				return;
+			}
+			const fields = readCitationFields();
+			const display = readDisplayState();
+			const segments = assemble(buildCitationInput(fields, display), {
+				spanSeparator: display.spanSeparator,
+			});
+			setCitationOutput(segments, display.emphasis);
+		}
+
+		function refresh(): void {
+			updateFieldState();
+			updateOutput();
+		}
+
+		function fillFields(
+			entries: [HTMLInputElement | HTMLSelectElement, string][],
+		): void {
+			for (const [input, value] of entries) {
+				input.value = value;
+			}
+		}
+
+		function resetToDefaults(): void {
+			form.reset();
+			for (const input of form.querySelectorAll<HTMLInputElement>(
+				'input:not([type="radio"]):not([type="checkbox"])',
+			)) {
+				input.value = '';
+			}
+			caseTypeSelect.value = 'v';
+			nameVariantSelect.value = 'full';
+		}
+
+		function clearFields(): void {
+			resetToDefaults();
+			refresh();
+		}
+
+		function loadExample(): void {
+			resetToDefaults();
+			fillFields([
+				[caseTypeSelect, REPORTED_EXAMPLE.caseType],
+				[party1Input, REPORTED_EXAMPLE.party1],
+				[party2Input, REPORTED_EXAMPLE.party2],
+				[courtInput, REPORTED_EXAMPLE.court],
+				[volumeInput, REPORTED_EXAMPLE.volume],
+				[reporterInput, REPORTED_EXAMPLE.reporter],
+				[firstPageInput, REPORTED_EXAMPLE.firstPage],
+				[pinciteInput, REPORTED_EXAMPLE.pincite],
+				[yearInput, REPORTED_EXAMPLE.year],
+			]);
+			refresh();
+		}
+
+		form.addEventListener('input', refresh);
+		form.addEventListener('change', refresh);
+		clearButton.addEventListener('click', clearFields);
+		loadExampleButton.addEventListener('click', loadExample);
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
+			void clipboard.copy();
+		});
+
+		loadExample();
+	</script>
+</PageLayout>

@@ -1,0 +1,30 @@
+---
+import Choice from './choice.astro';
+
+// The repeated "labeled column of radios" shape, as a data array.
+export type Props = {
+	label: string;
+	name: string;
+	options: { value: string; text: string; checked?: boolean }[];
+};
+
+const { label, name, options } = Astro.props;
+---
+
+<fieldset class="m-0 flex w-full flex-col gap-1 border-0 p-0">
+	<legend class="text-foreground p-0 text-base font-semibold">{label}</legend>
+	<div class="flex flex-col gap-2">
+		{
+			options.map((option) => (
+				<Choice
+					type="radio"
+					name={name}
+					value={option.value}
+					checked={option.checked}
+				>
+					{option.text}
+				</Choice>
+			))
+		}
+	</div>
+</fieldset>

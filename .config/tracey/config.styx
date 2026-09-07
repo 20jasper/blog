@@ -1,0 +1,22 @@
+@schema {id crate:tracey-config@1, cli tracey}
+
+specs (
+	{
+		name citation-builder
+		include (docs/citation-builder/**/*.md)
+		impls (
+			{
+				name domain
+				include (src/components/citation-builder/domain/**/*.ts)
+				exclude (src/components/citation-builder/domain/**/*.test.ts)
+				test_include (src/components/citation-builder/domain/**/*.test.ts)
+			}
+			{
+				name state
+				include (src/components/citation-builder/state/**/*.ts)
+				exclude (src/components/citation-builder/state/**/*.test.ts)
+				test_include (src/components/citation-builder/state/**/*.test.ts)
+			}
+		)
+	}
+)

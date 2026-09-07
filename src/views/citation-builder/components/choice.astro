@@ -1,0 +1,25 @@
+---
+// Radio/checkbox with an implicit (wrapping) label -- no id/for needed
+// for accessibility since the control is nested inside its own label.
+export type Props = {
+	type: 'radio' | 'checkbox';
+	name: string;
+	value?: string;
+	checked?: boolean;
+};
+
+const { type, name, value, checked = false } = Astro.props;
+---
+
+<label
+	class="flex items-center gap-2 text-base has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+>
+	<input
+		type={type}
+		name={name}
+		value={value}
+		checked={checked}
+		class="accent-accent h-4 w-4 disabled:cursor-not-allowed disabled:opacity-40"
+	/>
+	<slot />
+</label>

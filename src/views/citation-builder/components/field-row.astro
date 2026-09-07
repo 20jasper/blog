@@ -1,0 +1,35 @@
+---
+// Shared row shell: label, optional hint, then the control.
+export type Props = {
+	for: string;
+	label: string;
+	hint?: string;
+};
+
+const { for: forId, label, hint } = Astro.props;
+---
+
+<div class="flex w-full flex-col gap-1">
+	<label
+		for={forId}
+		class="text-foreground text-base font-semibold"
+		>{label}<span
+			class="required-marker text-accent"
+			aria-hidden="true"
+			hidden
+		>
+			{' '}*</span
+		></label
+	>
+	{
+		/* sm:min-h-4 reserves the hint's height only in the 2-column grid,
+		so a hint-less row stays aligned with its row-mate. */
+	}
+	<p
+		id={`${forId}-hint`}
+		class="text-foreground-secondary text-xs sm:min-h-4"
+	>
+		{hint}
+	</p>
+	<slot />
+</div>

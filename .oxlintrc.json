@@ -17,6 +17,7 @@
 		"logical-assignment-operators": "warn",
 		"newline-after-import": "warn",
 		"max-lines": "off",
+		"max-lines-per-function": "off",
 		"import/no-namespace": "warn",
 		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
 		"unicorn/filename-case": "warn",

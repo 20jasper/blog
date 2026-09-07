@@ -1,0 +1,27 @@
+---
+import SelectField from './select-field.astro';
+import TextField from './text-field.astro';
+
+type BaseFieldSpec = {
+	id: string;
+	name: string;
+	label: string;
+	hint?: string;
+};
+
+export type Props =
+	| (BaseFieldSpec & {
+			kind: 'text';
+			inputmode?: 'numeric';
+			// Native validation, unlike inputmode -- rejects before Number().
+			pattern?: string;
+	  })
+	| (BaseFieldSpec & {
+			kind: 'select';
+			options: { value: string; text: string }[];
+	  });
+
+const spec = Astro.props;
+---
+
+{spec.kind === 'select' ? <SelectField {...spec} /> : <TextField {...spec} />}

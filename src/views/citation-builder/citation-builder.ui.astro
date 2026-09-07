@@ -1,0 +1,205 @@
+---
+import Button from '@components/button.astro';
+import Choice from './components/choice.astro';
+import Field from './components/field.astro';
+import FieldGrid from './components/field-grid.astro';
+import Fieldset from './components/fieldset.astro';
+import RadioGroup from './components/radio-group.astro';
+import { ids } from './ids';
+import type { Props as FieldSpec } from './components/field.astro';
+
+const MODE_OPTIONS = [
+	{ value: 'full', text: 'Full citation', checked: true },
+	{ value: 'short', text: 'Short form' },
+];
+
+const EMPHASIS_OPTIONS = [
+	{ value: 'italic', text: 'Italic', checked: true },
+	{ value: 'underline', text: 'Underline' },
+];
+
+const SPAN_SEPARATOR_OPTIONS = [
+	{ value: 'hyphen', text: 'Hyphen (208-14)', checked: true },
+	{ value: 'en-dash', text: 'En dash (208–14)' },
+];
+
+const CITATION_FORM_FIELDS: FieldSpec[] = [
+	{
+		kind: 'select',
+		id: ids.nameVariant,
+		name: 'nameVariant',
+		label: 'Name variant',
+		hint: 'Which party name the short form uses',
+		options: [
+			{ value: 'full', text: 'Full name' },
+			{ value: 'party1', text: 'Party 1' },
+			{ value: 'party2', text: 'Party 2' },
+			{ value: 'none', text: 'No name' },
+		],
+	},
+];
+
+const CASE_IDENTITY_FIELDS: FieldSpec[] = [
+	{
+		kind: 'select',
+		id: ids.caseType,
+		name: 'caseType',
+		label: 'Case type',
+		options: [
+			{ value: 'v', text: 'v.' },
+			{ value: 'in-re', text: 'In re' },
+			{ value: 'ex-parte', text: 'Ex parte' },
+		],
+	},
+	{
+		kind: 'text',
+		id: ids.party1,
+		name: 'party1',
+		label: 'Party 1 (abbreviated)',
+	},
+	{
+		kind: 'text',
+		id: ids.party2,
+		name: 'party2',
+		label: 'Party 2 (abbreviated)',
+	},
+	{
+		kind: 'text',
+		id: ids.court,
+		name: 'court',
+		label: 'Court (abbreviated)',
+		hint: 'e.g., Ohio Ct. App., 2d Cir.',
+	},
+	{
+		kind: 'text',
+		id: ids.pincite,
+		name: 'pincite',
+		label: 'Pincite',
+		hint: 'Page, range, or list, e.g. 214, 208-14, or 490, 495',
+	},
+];
+
+const REPORTED_FIELDS: FieldSpec[] = [
+	{
+		kind: 'text',
+		id: ids.volume,
+		name: 'volume',
+		label: 'Volume',
+		hint: 'Reporter volume number',
+	},
+	{
+		kind: 'text',
+		id: ids.reporter,
+		name: 'reporter',
+		label: 'Reporter',
+		hint: 'Abbreviated series, e.g. N.E.3d',
+	},
+	{
+		kind: 'text',
+		id: ids.firstPage,
+		name: 'firstPage',
+		label: 'First page',
+		hint: 'First page of the opinion in the reporter',
+	},
+	{
+		kind: 'text',
+		id: ids.year,
+		name: 'year',
+		label: 'Decision year',
+		hint: 'Year the case was decided',
+		inputmode: 'numeric',
+		pattern: '[0-9]+',
+	},
+];
+---
+
+<div class="mb-4 flex flex-wrap items-end gap-3">
+	<Button
+		type="button"
+		class="!bg-background-secondary/60 hover:!bg-background-secondary"
+	>
+		Load example
+	</Button>
+</div>
+
+<p class="text-foreground-secondary mb-2 text-sm">
+	<span
+		class="text-accent"
+		aria-hidden="true"
+		>*</span
+	> required
+</p>
+<form
+	id={ids.form}
+	class="flex w-full max-w-full flex-col gap-6"
+>
+	<Fieldset legend="Citation form">
+		<FieldGrid>
+			<RadioGroup
+				label="Mode"
+				name="mode"
+				options={MODE_OPTIONS}
+			/>
+			{CITATION_FORM_FIELDS.map((field) => <Field {...field} />)}
+			<div class="flex w-full flex-col gap-1">
+				<Choice
+					type="checkbox"
+					name="id"
+				>
+					This citation immediately follows one to the same source (Id.)
+				</Choice>
+			</div>
+			<RadioGroup
+				label="Typeface"
+				name="emphasis"
+				options={EMPHASIS_OPTIONS}
+			/>
+			<RadioGroup
+				label="Span separator"
+				name="spanSeparator"
+				options={SPAN_SEPARATOR_OPTIONS}
+			/>
+		</FieldGrid>
+	</Fieldset>
+
+	<Fieldset legend="Case identity">
+		<FieldGrid>
+			{CASE_IDENTITY_FIELDS.map((field) => <Field {...field} />)}
+		</FieldGrid>
+	</Fieldset>
+
+	<Fieldset legend="Reported case">
+		<FieldGrid>
+			{REPORTED_FIELDS.map((field) => <Field {...field} />)}
+		</FieldGrid>
+	</Fieldset>
+</form>
+
+<div
+	role="region"
+	aria-label="Citation result"
+	class="border-foreground-secondary/30 bg-background-secondary sticky bottom-0 mt-6 rounded-2xl border px-4 py-3"
+>
+	<p class="text-foreground text-xs font-semibold tracking-wide uppercase">
+		Citation
+	</p>
+	<output
+		for={ids.form}
+		class="mt-1 block max-h-24 w-full max-w-full overflow-y-auto text-lg break-words"
+	></output>
+	<div class="mt-3 flex flex-wrap gap-3">
+		<Button
+			type="button"
+			class="!bg-background hover:!bg-background/80"
+		>
+			Clear
+		</Button>
+		<Button
+			type="submit"
+			form={ids.form}
+			class="!bg-background hover:!bg-background/80"
+		>
+			Copy
+		</Button>
+	</div>
+</div>
