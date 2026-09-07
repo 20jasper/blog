@@ -117,6 +117,86 @@ const exampleChevronClass =
 		</div>
 	</fieldset>
 
+	{
+		/* Mode (and the display controls next to it) determine which
+		fields below are required/optional/not-used, so it's chosen before
+		the fields it affects rather than after them. */
+	}
+	<fieldset class={fieldsetClass}>
+		<legend class={legendClass}>Citation form</legend>
+		<div class={gridClass}>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Mode</span>
+				<div class="flex flex-col gap-2">
+					<Choice
+						type="radio"
+						name="mode"
+						value="full"
+						checked
+						>Full citation</Choice
+					>
+					<Choice
+						type="radio"
+						name="mode"
+						value="short"
+						>Short form</Choice
+					>
+				</div>
+			</div>
+			<SelectField
+				id={ids.nameVariant}
+				name="nameVariant"
+				label="Name variant"
+				hint="Which party name the short form uses"
+				options={NAME_VARIANT_OPTIONS}
+			/>
+			<div class={choiceRowClass}>
+				<Choice
+					type="checkbox"
+					name="id"
+				>
+					This citation immediately follows one to the same source (Id.)
+				</Choice>
+			</div>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Typeface</span>
+				<div class="flex flex-col gap-2">
+					<Choice
+						type="radio"
+						name="emphasis"
+						value="italic"
+						checked
+						>Italic</Choice
+					>
+					<Choice
+						type="radio"
+						name="emphasis"
+						value="underline"
+						>Underline</Choice
+					>
+				</div>
+			</div>
+			<div class={choiceRowClass}>
+				<span class={labelClass}>Span separator</span>
+				<div class="flex flex-col gap-2">
+					<Choice
+						type="radio"
+						name="spanSeparator"
+						value="hyphen"
+						checked
+						>Hyphen (208-14)</Choice
+					>
+					<Choice
+						type="radio"
+						name="spanSeparator"
+						value="en-dash"
+						>En dash (208–14)</Choice
+					>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+
 	<fieldset
 		class={fieldsetClass}
 		data-visible-for="reported unreported"
@@ -326,81 +406,6 @@ const exampleChevronClass =
 				inputmode="numeric"
 				pattern="[0-9]+"
 			/>
-		</div>
-	</fieldset>
-
-	<fieldset class={fieldsetClass}>
-		<legend class={legendClass}>Citation form</legend>
-		<div class={gridClass}>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Mode</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="mode"
-						value="full"
-						checked
-						>Full citation</Choice
-					>
-					<Choice
-						type="radio"
-						name="mode"
-						value="short"
-						>Short form</Choice
-					>
-				</div>
-			</div>
-			<SelectField
-				id={ids.nameVariant}
-				name="nameVariant"
-				label="Name variant"
-				hint="Which party name the short form uses"
-				options={NAME_VARIANT_OPTIONS}
-			/>
-			<div class={choiceRowClass}>
-				<Choice
-					type="checkbox"
-					name="id"
-				>
-					This citation immediately follows one to the same source (Id.)
-				</Choice>
-			</div>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Typeface</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="emphasis"
-						value="italic"
-						checked
-						>Italic</Choice
-					>
-					<Choice
-						type="radio"
-						name="emphasis"
-						value="underline"
-						>Underline</Choice
-					>
-				</div>
-			</div>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Span separator</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="spanSeparator"
-						value="hyphen"
-						checked
-						>Hyphen (208-14)</Choice
-					>
-					<Choice
-						type="radio"
-						name="spanSeparator"
-						value="en-dash"
-						>En dash (208–14)</Choice
-					>
-				</div>
-			</div>
 		</div>
 	</fieldset>
 </form>
