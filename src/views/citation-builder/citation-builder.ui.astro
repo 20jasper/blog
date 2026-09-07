@@ -8,7 +8,7 @@ import RadioGroup from './components/radio-group.astro';
 import SelectField from './components/select-field.astro';
 import { ids } from './ids';
 import { MONTHS } from '@components/citation-builder/domain/types';
-import type { FieldSpec } from './components/field-spec';
+import type { Props as FieldSpec } from './components/field.astro';
 
 const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 
@@ -50,10 +50,9 @@ const SPAN_SEPARATOR_OPTIONS = [
 	{ value: 'en-dash', text: 'En dash (208–14)' },
 ];
 
-// Field lists, one array per fieldset -- see components/field.astro and
-// field-spec.ts. Each fieldset's markup below is just `{LIST.map((field)
-// => <Field {...field} />)}` instead of one hand-written <TextField>/
-// <SelectField> per field.
+// Field lists, one array per fieldset -- see components/field.astro. Each
+// fieldset's markup below is just `{LIST.map((field) => <Field {...field}
+// />)}` instead of one hand-written <TextField>/<SelectField> per field.
 const CITATION_FORM_FIELDS: FieldSpec[] = [
 	{
 		kind: 'select',
