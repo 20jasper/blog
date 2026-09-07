@@ -1,10 +1,9 @@
 ---
 import FieldRow from './field-row.astro';
+import { fieldClass } from './styles';
 
 // Solid border enabled, dashed border + background tint + dimmed text
 // disabled -- see text-field.astro's matching comment for why.
-const fieldClass =
-	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/70 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent disabled:cursor-not-allowed disabled:border-dashed disabled:border-foreground-secondary/50 disabled:bg-foreground-secondary/10 disabled:text-foreground-secondary';
 const selectClass = `${fieldClass} appearance-none pr-8`;
 const chevronClass =
 	'text-foreground-secondary pointer-events-none absolute inset-y-0 right-3 flex items-center';

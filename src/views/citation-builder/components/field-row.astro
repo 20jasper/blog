@@ -1,4 +1,6 @@
 ---
+import { labelClass } from './styles';
+
 // Shared row shell for a labeled field -- label above the control,
 // optional format hint below the label, stacked in a flex column. Text
 // inputs and selects both wrap their control in this so spacing/label
@@ -13,7 +15,6 @@
 // columns even though the grid row itself is tall enough for both. On
 // the single-column mobile layout there's no row-mate to sync with, so
 // an empty hint should collapse instead of leaving a blank gap.
-const labelClass = 'text-base font-semibold text-foreground';
 const hintClass = 'text-foreground-secondary text-xs sm:min-h-4';
 
 export type Props = {

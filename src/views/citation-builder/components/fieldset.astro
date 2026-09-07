@@ -1,0 +1,25 @@
+---
+// The repeated "<fieldset><legend>...</legend>...</fieldset>" shell used
+// by every group in citation-builder.ui.astro. `visibleFor` maps to
+// data-visible-for, read by updateFieldsetVisibility() in
+// citation-builder.view.astro to hide fieldsets for inactive source
+// types; omit it for fieldsets that are always shown.
+const fieldsetClass = 'w-full max-w-full border-0 p-0';
+const legendClass =
+	'border-foreground-secondary/30 text-foreground mb-3 w-full border-b p-0 pb-2 text-lg font-semibold';
+
+export type Props = {
+	legend: string;
+	visibleFor?: string;
+};
+
+const { legend, visibleFor } = Astro.props;
+---
+
+<fieldset
+	class={fieldsetClass}
+	data-visible-for={visibleFor}
+>
+	<legend class={legendClass}>{legend}</legend>
+	<slot />
+</fieldset>

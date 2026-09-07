@@ -1,0 +1,30 @@
+---
+import SelectField from './select-field.astro';
+import TextField from './text-field.astro';
+import type { FieldSpec } from './field-spec';
+
+export type Props = FieldSpec;
+
+const spec = Astro.props;
+---
+
+{
+	spec.kind === 'select' ? (
+		<SelectField
+			id={spec.id}
+			name={spec.name}
+			label={spec.label}
+			hint={spec.hint}
+			options={spec.options}
+		/>
+	) : (
+		<TextField
+			id={spec.id}
+			name={spec.name}
+			label={spec.label}
+			hint={spec.hint}
+			inputmode={spec.inputmode}
+			pattern={spec.pattern}
+		/>
+	)
+}

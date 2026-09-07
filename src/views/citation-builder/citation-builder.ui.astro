@@ -1,38 +1,20 @@
 ---
 import Button from '@components/button.astro';
 import Choice from './components/choice.astro';
+import Field from './components/field.astro';
+import Fieldset from './components/fieldset.astro';
+import RadioGroup from './components/radio-group.astro';
 import SelectField from './components/select-field.astro';
-import TextField from './components/text-field.astro';
+import { choiceRowClass } from './components/styles';
 import { ids } from './ids';
 import { MONTHS } from '@components/citation-builder/domain/types';
+import type { FieldSpec } from './components/field-spec';
 
-const fieldsetClass = 'w-full max-w-full border-0 p-0';
-const legendClass =
-	'border-foreground-secondary/30 text-foreground mb-3 w-full border-b p-0 pb-2 text-lg font-semibold';
 const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
-const labelClass = 'text-base font-semibold text-foreground';
-const choiceRowClass = 'flex w-full flex-col gap-1';
-
-const CASE_TYPE_OPTIONS = [
-	{ value: 'v', text: 'v.' },
-	{ value: 'in-re', text: 'In re' },
-	{ value: 'ex-parte', text: 'Ex parte' },
-];
-
-const NAME_VARIANT_OPTIONS = [
-	{ value: 'full', text: 'Full name' },
-	{ value: 'party1', text: 'Party 1' },
-	{ value: 'party2', text: 'Party 2' },
-	{ value: 'none', text: 'No name' },
-];
+// Shared by Clear and Copy -- Load example uses the default Button look.
+const outputButtonClass = '!bg-background hover:!bg-background/80';
 
 const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
-
-const MATERIAL_LOCATION_OPTIONS = [
-	{ value: 'main-volume', text: 'Main volume' },
-	{ value: 'both', text: 'Both' },
-	{ value: 'supplement-only', text: 'Supplement only' },
-];
 
 const EXAMPLE_OPTIONS = [
 	{ value: 'reported', text: 'Dayton v. Stewart (reported)' },
@@ -40,37 +22,241 @@ const EXAMPLE_OPTIONS = [
 	{ value: 'statute', text: 'Ohio Rev. Code Ann. (statute)' },
 ];
 
-const exampleFieldClass =
-	'block w-full min-w-0 max-w-full box-border rounded-md border border-foreground-secondary/40 bg-background px-3 py-2 text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent appearance-none pr-8';
-const exampleChevronClass =
-	'text-foreground-secondary pointer-events-none absolute inset-y-0 right-3 flex items-center';
+// Radio groups, one array per group -- see components/radio-group.astro.
+const SOURCE_TYPE_OPTIONS = [
+	{ value: 'reported', text: 'Reported case', checked: true },
+	{ value: 'unreported', text: 'Unreported case' },
+	{ value: 'statute', text: 'Statute' },
+];
+
+const MODE_OPTIONS = [
+	{ value: 'full', text: 'Full citation', checked: true },
+	{ value: 'short', text: 'Short form' },
+];
+
+const AVAILABILITY_OPTIONS = [
+	{ value: 'database', text: 'In electronic database', checked: true },
+	{ value: 'slip-opinion', text: 'Slip opinion only' },
+];
+
+const CODE_TYPE_OPTIONS = [
+	{ value: 'official', text: 'Official code', checked: true },
+	{ value: 'annotated', text: 'Annotated / unofficial code' },
+];
+
+const EMPHASIS_OPTIONS = [
+	{ value: 'italic', text: 'Italic', checked: true },
+	{ value: 'underline', text: 'Underline' },
+];
+
+const SPAN_SEPARATOR_OPTIONS = [
+	{ value: 'hyphen', text: 'Hyphen (208-14)', checked: true },
+	{ value: 'en-dash', text: 'En dash (208–14)' },
+];
+
+// Field lists, one array per fieldset -- see components/field.astro and
+// field-spec.ts. Each fieldset's markup below is just `{LIST.map((field)
+// => <Field {...field} />)}` instead of one hand-written <TextField>/
+// <SelectField> per field.
+const CITATION_FORM_FIELDS: FieldSpec[] = [
+	{
+		kind: 'select',
+		id: ids.nameVariant,
+		name: 'nameVariant',
+		label: 'Name variant',
+		hint: 'Which party name the short form uses',
+		options: [
+			{ value: 'full', text: 'Full name' },
+			{ value: 'party1', text: 'Party 1' },
+			{ value: 'party2', text: 'Party 2' },
+			{ value: 'none', text: 'No name' },
+		],
+	},
+];
+
+const CASE_IDENTITY_FIELDS: FieldSpec[] = [
+	{
+		kind: 'select',
+		id: ids.caseType,
+		name: 'caseType',
+		label: 'Case type',
+		options: [
+			{ value: 'v', text: 'v.' },
+			{ value: 'in-re', text: 'In re' },
+			{ value: 'ex-parte', text: 'Ex parte' },
+		],
+	},
+	{
+		kind: 'text',
+		id: ids.party1,
+		name: 'party1',
+		label: 'Party 1 (abbreviated)',
+	},
+	{
+		kind: 'text',
+		id: ids.party2,
+		name: 'party2',
+		label: 'Party 2 (abbreviated)',
+	},
+	// Freeform, unvalidated (§6) -- the hint states the expected format,
+	// not a validation disclaimer.
+	{
+		kind: 'text',
+		id: ids.court,
+		name: 'court',
+		label: 'Court (abbreviated)',
+		hint: 'e.g., Ohio Ct. App., 2d Cir.',
+	},
+	{
+		kind: 'text',
+		id: ids.pincite,
+		name: 'pincite',
+		label: 'Pincite',
+		hint: 'Page, range, or list, e.g. 214, 208-14, or 490, 495',
+	},
+];
+
+const REPORTED_FIELDS: FieldSpec[] = [
+	{
+		kind: 'text',
+		id: ids.volume,
+		name: 'volume',
+		label: 'Volume',
+		hint: 'Reporter volume number',
+	},
+	{
+		kind: 'text',
+		id: ids.reporter,
+		name: 'reporter',
+		label: 'Reporter',
+		hint: 'Abbreviated series, e.g. N.E.3d',
+	},
+	{
+		kind: 'text',
+		id: ids.firstPage,
+		name: 'firstPage',
+		label: 'First page',
+		hint: 'First page of the opinion in the reporter',
+	},
+	{
+		kind: 'text',
+		id: ids.year,
+		name: 'year',
+		label: 'Decision year',
+		hint: 'Year the case was decided',
+		inputmode: 'numeric',
+		pattern: '[0-9]+',
+	},
+];
+
+const UNREPORTED_FIELDS: FieldSpec[] = [
+	{
+		kind: 'text',
+		id: ids.docketNumber,
+		name: 'docketNumber',
+		label: 'Docket number',
+		hint: '"No." is added automatically',
+	},
+	{
+		kind: 'text',
+		id: ids.databaseIdentifier,
+		name: 'databaseIdentifier',
+		label: 'Database identifier',
+		hint: 'e.g., 2021 WL 4269952',
+	},
+	{
+		kind: 'select',
+		id: ids.month,
+		name: 'month',
+		label: 'Month',
+		options: MONTH_OPTIONS,
+	},
+	{
+		kind: 'text',
+		id: ids.day,
+		name: 'day',
+		label: 'Day',
+		inputmode: 'numeric',
+		pattern: '[0-9]+',
+	},
+	{
+		kind: 'text',
+		id: ids.dateYear,
+		name: 'dateYear',
+		label: 'Opinion year',
+		hint: 'Year the opinion was issued',
+		inputmode: 'numeric',
+		pattern: '[0-9]+',
+	},
+];
+
+const STATUTE_FIELDS: FieldSpec[] = [
+	{
+		kind: 'text',
+		id: ids.codeAbbreviation,
+		name: 'codeAbbreviation',
+		label: 'Code abbreviation',
+		hint: 'e.g., Ohio Rev. Code Ann., U.S.C.',
+	},
+	{
+		kind: 'text',
+		id: ids.section,
+		name: 'section',
+		label: 'Section',
+		hint: '"§" is added automatically',
+	},
+	{
+		kind: 'text',
+		id: ids.publisher,
+		name: 'publisher',
+		label: 'Publisher',
+		hint: 'Required for annotated codes, e.g. West',
+	},
+	{
+		kind: 'select',
+		id: ids.materialLocation,
+		name: 'materialLocation',
+		label: 'Material location',
+		hint: 'Where the cited material appears',
+		options: [
+			{ value: 'main-volume', text: 'Main volume' },
+			{ value: 'both', text: 'Both' },
+			{ value: 'supplement-only', text: 'Supplement only' },
+		],
+	},
+	{
+		kind: 'text',
+		id: ids.codeYear,
+		name: 'codeYear',
+		label: 'Code edition year',
+		inputmode: 'numeric',
+		pattern: '[0-9]+',
+	},
+	{
+		kind: 'text',
+		id: ids.supplementDesignation,
+		name: 'supplementDesignation',
+		label: 'Supplement designation',
+		hint: 'e.g., Supp., Supp. I, Supp. V',
+	},
+	{
+		kind: 'text',
+		id: ids.supplementYear,
+		name: 'supplementYear',
+		label: 'Supplement year',
+		inputmode: 'numeric',
+		pattern: '[0-9]+',
+	},
+];
 ---
 
 <div class="mb-4 flex flex-wrap items-end gap-3">
-	<div class="flex flex-col gap-1">
-		<label
-			for={ids.exampleSelect}
-			class="text-foreground-secondary text-sm"
-			>Example</label
-		>
-		<div class="relative">
-			<select
-				id={ids.exampleSelect}
-				class={exampleFieldClass}
-			>
-				{
-					EXAMPLE_OPTIONS.map((option) => (
-						<option value={option.value}>{option.text}</option>
-					))
-				}
-			</select>
-			<span
-				class={exampleChevronClass}
-				aria-hidden="true"
-				>▾</span
-			>
-		</div>
-	</div>
+	<SelectField
+		id={ids.exampleSelect}
+		name="example"
+		label="Example"
+		options={EXAMPLE_OPTIONS}
+	/>
 	<Button
 		type="button"
 		class="!bg-background-secondary/60 hover:!bg-background-secondary"
@@ -89,67 +275,27 @@ const exampleChevronClass =
 	id={ids.form}
 	class="flex w-full max-w-full flex-col gap-6"
 >
-	<fieldset class={fieldsetClass}>
-		<legend class={legendClass}>Source</legend>
-		<div class={choiceRowClass}>
-			<span class={labelClass}>Source type</span>
-			<div class="flex flex-col gap-2">
-				<Choice
-					type="radio"
-					name="sourceType"
-					value="reported"
-					checked
-					>Reported case</Choice
-				>
-				<Choice
-					type="radio"
-					name="sourceType"
-					value="unreported"
-					>Unreported case</Choice
-				>
-				<Choice
-					type="radio"
-					name="sourceType"
-					value="statute"
-					>Statute</Choice
-				>
-			</div>
-		</div>
-	</fieldset>
+	<Fieldset legend="Source">
+		<RadioGroup
+			label="Source type"
+			name="sourceType"
+			options={SOURCE_TYPE_OPTIONS}
+		/>
+	</Fieldset>
 
 	{
 		/* Mode (and the display controls next to it) determine which
 		fields below are required/optional/not-used, so it's chosen before
 		the fields it affects rather than after them. */
 	}
-	<fieldset class={fieldsetClass}>
-		<legend class={legendClass}>Citation form</legend>
+	<Fieldset legend="Citation form">
 		<div class={gridClass}>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Mode</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="mode"
-						value="full"
-						checked
-						>Full citation</Choice
-					>
-					<Choice
-						type="radio"
-						name="mode"
-						value="short"
-						>Short form</Choice
-					>
-				</div>
-			</div>
-			<SelectField
-				id={ids.nameVariant}
-				name="nameVariant"
-				label="Name variant"
-				hint="Which party name the short form uses"
-				options={NAME_VARIANT_OPTIONS}
+			<RadioGroup
+				label="Mode"
+				name="mode"
+				options={MODE_OPTIONS}
 			/>
+			{CITATION_FORM_FIELDS.map((field) => <Field {...field} />)}
 			<div class={choiceRowClass}>
 				<Choice
 					type="checkbox"
@@ -158,256 +304,64 @@ const exampleChevronClass =
 					This citation immediately follows one to the same source (Id.)
 				</Choice>
 			</div>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Typeface</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="emphasis"
-						value="italic"
-						checked
-						>Italic</Choice
-					>
-					<Choice
-						type="radio"
-						name="emphasis"
-						value="underline"
-						>Underline</Choice
-					>
-				</div>
-			</div>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Span separator</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="spanSeparator"
-						value="hyphen"
-						checked
-						>Hyphen (208-14)</Choice
-					>
-					<Choice
-						type="radio"
-						name="spanSeparator"
-						value="en-dash"
-						>En dash (208–14)</Choice
-					>
-				</div>
-			</div>
+			<RadioGroup
+				label="Typeface"
+				name="emphasis"
+				options={EMPHASIS_OPTIONS}
+			/>
+			<RadioGroup
+				label="Span separator"
+				name="spanSeparator"
+				options={SPAN_SEPARATOR_OPTIONS}
+			/>
 		</div>
-	</fieldset>
+	</Fieldset>
 
-	<fieldset
-		class={fieldsetClass}
-		data-visible-for="reported unreported"
+	<Fieldset
+		legend="Case identity"
+		visibleFor="reported unreported"
 	>
-		<legend class={legendClass}>Case identity</legend>
 		<div class={gridClass}>
-			<SelectField
-				id={ids.caseType}
-				name="caseType"
-				label="Case type"
-				options={CASE_TYPE_OPTIONS}
-			/>
-			<TextField
-				id={ids.party1}
-				name="party1"
-				label="Party 1 (abbreviated)"
-			/>
-			<TextField
-				id={ids.party2}
-				name="party2"
-				label="Party 2 (abbreviated)"
-			/>
-			{
-				/* Freeform, unvalidated (§6) -- the label/hint just state the
-			expected format; not a validation disclaimer. */
-			}
-			<TextField
-				id={ids.court}
-				name="court"
-				label="Court (abbreviated)"
-				hint="e.g., Ohio Ct. App., 2d Cir."
-			/>
-			<TextField
-				id={ids.pincite}
-				name="pincite"
-				label="Pincite"
-				hint="Page, range, or list, e.g. 214, 208-14, or 490, 495"
-			/>
+			{CASE_IDENTITY_FIELDS.map((field) => <Field {...field} />)}
 		</div>
-	</fieldset>
+	</Fieldset>
 
-	<fieldset
-		class={fieldsetClass}
-		data-visible-for="reported"
+	<Fieldset
+		legend="Reported case"
+		visibleFor="reported"
 	>
-		<legend class={legendClass}>Reported case</legend>
 		<div class={gridClass}>
-			<TextField
-				id={ids.volume}
-				name="volume"
-				label="Volume"
-				hint="Reporter volume number"
-			/>
-			<TextField
-				id={ids.reporter}
-				name="reporter"
-				label="Reporter"
-				hint="Abbreviated series, e.g. N.E.3d"
-			/>
-			<TextField
-				id={ids.firstPage}
-				name="firstPage"
-				label="First page"
-				hint="First page of the opinion in the reporter"
-			/>
-			<TextField
-				id={ids.year}
-				name="year"
-				label="Decision year"
-				hint="Year the case was decided"
-				inputmode="numeric"
-				pattern="[0-9]+"
-			/>
+			{REPORTED_FIELDS.map((field) => <Field {...field} />)}
 		</div>
-	</fieldset>
+	</Fieldset>
 
-	<fieldset
-		class={fieldsetClass}
-		data-visible-for="unreported"
+	<Fieldset
+		legend="Unreported case"
+		visibleFor="unreported"
 	>
-		<legend class={legendClass}>Unreported case</legend>
 		<div class={gridClass}>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Availability</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="availability"
-						value="database"
-						checked
-					>
-						In electronic database
-					</Choice>
-					<Choice
-						type="radio"
-						name="availability"
-						value="slip-opinion"
-					>
-						Slip opinion only
-					</Choice>
-				</div>
-			</div>
-			<TextField
-				id={ids.docketNumber}
-				name="docketNumber"
-				label="Docket number"
-				hint={'"No." is added automatically'}
+			<RadioGroup
+				label="Availability"
+				name="availability"
+				options={AVAILABILITY_OPTIONS}
 			/>
-			<TextField
-				id={ids.databaseIdentifier}
-				name="databaseIdentifier"
-				label="Database identifier"
-				hint="e.g., 2021 WL 4269952"
-			/>
-			<SelectField
-				id={ids.month}
-				name="month"
-				label="Month"
-				options={MONTH_OPTIONS}
-			/>
-			<TextField
-				id={ids.day}
-				name="day"
-				label="Day"
-				inputmode="numeric"
-				pattern="[0-9]+"
-			/>
-			<TextField
-				id={ids.dateYear}
-				name="dateYear"
-				label="Opinion year"
-				hint="Year the opinion was issued"
-				inputmode="numeric"
-				pattern="[0-9]+"
-			/>
+			{UNREPORTED_FIELDS.map((field) => <Field {...field} />)}
 		</div>
-	</fieldset>
+	</Fieldset>
 
-	<fieldset
-		class={fieldsetClass}
-		data-visible-for="statute"
+	<Fieldset
+		legend="Statute"
+		visibleFor="statute"
 	>
-		<legend class={legendClass}>Statute</legend>
 		<div class={gridClass}>
-			<div class={choiceRowClass}>
-				<span class={labelClass}>Code type</span>
-				<div class="flex flex-col gap-2">
-					<Choice
-						type="radio"
-						name="codeType"
-						value="official"
-						checked
-					>
-						Official code
-					</Choice>
-					<Choice
-						type="radio"
-						name="codeType"
-						value="annotated"
-					>
-						Annotated / unofficial code
-					</Choice>
-				</div>
-			</div>
-			<TextField
-				id={ids.codeAbbreviation}
-				name="codeAbbreviation"
-				label="Code abbreviation"
-				hint="e.g., Ohio Rev. Code Ann., U.S.C."
+			<RadioGroup
+				label="Code type"
+				name="codeType"
+				options={CODE_TYPE_OPTIONS}
 			/>
-			<TextField
-				id={ids.section}
-				name="section"
-				label="Section"
-				hint={'"§" is added automatically'}
-			/>
-			<TextField
-				id={ids.publisher}
-				name="publisher"
-				label="Publisher"
-				hint="Required for annotated codes, e.g. West"
-			/>
-			<SelectField
-				id={ids.materialLocation}
-				name="materialLocation"
-				label="Material location"
-				hint="Where the cited material appears"
-				options={MATERIAL_LOCATION_OPTIONS}
-			/>
-			<TextField
-				id={ids.codeYear}
-				name="codeYear"
-				label="Code edition year"
-				inputmode="numeric"
-				pattern="[0-9]+"
-			/>
-			<TextField
-				id={ids.supplementDesignation}
-				name="supplementDesignation"
-				label="Supplement designation"
-				hint="e.g., Supp., Supp. I, Supp. V"
-			/>
-			<TextField
-				id={ids.supplementYear}
-				name="supplementYear"
-				label="Supplement year"
-				inputmode="numeric"
-				pattern="[0-9]+"
-			/>
+			{STATUTE_FIELDS.map((field) => <Field {...field} />)}
 		</div>
-	</fieldset>
+	</Fieldset>
 </form>
 
 {
@@ -436,13 +390,13 @@ const exampleChevronClass =
 	<div class="mt-3 flex flex-wrap gap-3">
 		<Button
 			type="button"
-			class="!bg-background hover:!bg-background/80"
+			class={outputButtonClass}
 			>Clear</Button
 		>
 		<Button
 			type="submit"
 			form={ids.form}
-			class="!bg-background hover:!bg-background/80"
+			class={outputButtonClass}
 			>Copy</Button
 		>
 	</div>

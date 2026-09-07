@@ -1,0 +1,34 @@
+---
+import Choice from './choice.astro';
+import { choiceRowClass, labelClass } from './styles';
+
+// The repeated "labeled column of radios" shape -- Source type,
+// Availability, Code type, Mode, Typeface, Span separator all follow
+// this exact structure, so each is now a data array instead of its own
+// hand-written label + Choice list.
+export type Props = {
+	label: string;
+	name: string;
+	options: { value: string; text: string; checked?: boolean }[];
+};
+
+const { label, name, options } = Astro.props;
+---
+
+<div class={choiceRowClass}>
+	<span class={labelClass}>{label}</span>
+	<div class="flex flex-col gap-2">
+		{
+			options.map((option) => (
+				<Choice
+					type="radio"
+					name={name}
+					value={option.value}
+					checked={option.checked}
+				>
+					{option.text}
+				</Choice>
+			))
+		}
+	</div>
+</div>
