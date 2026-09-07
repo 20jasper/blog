@@ -66,7 +66,8 @@
 		overflow-x: auto;
 	}
 
-	.katex-display {
+	.math-overflow {
+		display: block;
 		overflow-x: auto;
 		overflow-y: hidden;
 	}
