@@ -41,7 +41,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		// statute comes later. Prefilled with the golden case from
 		// docs/citation-builder/phase-1-spec.md §8.3 so the page shows a
 		// working example instead of a blank form.
-		const EXAMPLE = {
+		const REPORTED_EXAMPLE = {
 			caseType: 'v',
 			party1: 'Dayton',
 			party2: 'Stewart',
@@ -53,10 +53,35 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			year: '2021',
 		} as const;
 
+		// State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct.
+		// App. Sept. 17, 2021) -- the unreported golden case from the same
+		// spec section, offered as a second Example button so a user who
+		// never switches source type still sees what the unreported flow
+		// (star pages, docket normalization, date assembly) actually
+		// produces.
+		const UNREPORTED_EXAMPLE = {
+			caseType: 'v',
+			party1: 'State',
+			party2: 'Lucko',
+			court: 'Ohio Ct. App.',
+			docketNumber: '2021CA0007',
+			databaseIdentifier: '2021 WL 4269952',
+			pincite: '1-2',
+			month: 'Sept.',
+			day: '17',
+			dateYear: '2021',
+		} as const;
+
 		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
 		const output = document.querySelector('output')!;
 		const buttons = Array.from(document.querySelectorAll('button'));
 		const clearButton = buttons.find((b) => b.textContent?.trim() === 'Clear')!;
+		const reportedExampleButton = buttons.find((b) =>
+			b.textContent?.trim().startsWith('Dayton v. Stewart'),
+		)!;
+		const unreportedExampleButton = buttons.find((b) =>
+			b.textContent?.trim().startsWith('State v. Lucko'),
+		)!;
 		const copyButton = buttons.find((b) =>
 			b.textContent?.trim().startsWith('Copy'),
 		)!;
@@ -71,7 +96,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}, 2000);
 		}
 
-		// r[impl copy.stale-permitted]
 		async function copyCitation(): Promise<void> {
 			if (lastCitation === undefined) {
 				return;
@@ -470,32 +494,72 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			updateOutput();
 		}
 
-		function fillExample(): void {
-			caseTypeSelect.value = EXAMPLE.caseType;
-			party1Input.value = EXAMPLE.party1;
-			party2Input.value = EXAMPLE.party2;
-			courtInput.value = EXAMPLE.court;
-			volumeInput.value = EXAMPLE.volume;
-			reporterInput.value = EXAMPLE.reporter;
-			firstPageInput.value = EXAMPLE.firstPage;
-			pinciteInput.value = EXAMPLE.pincite;
-			yearInput.value = EXAMPLE.year;
+		function fillReportedExample(): void {
+			caseTypeSelect.value = REPORTED_EXAMPLE.caseType;
+			party1Input.value = REPORTED_EXAMPLE.party1;
+			party2Input.value = REPORTED_EXAMPLE.party2;
+			courtInput.value = REPORTED_EXAMPLE.court;
+			volumeInput.value = REPORTED_EXAMPLE.volume;
+			reporterInput.value = REPORTED_EXAMPLE.reporter;
+			firstPageInput.value = REPORTED_EXAMPLE.firstPage;
+			pinciteInput.value = REPORTED_EXAMPLE.pincite;
+			yearInput.value = REPORTED_EXAMPLE.year;
 		}
 
-		function clearFields(): void {
+		function fillUnreportedExample(): void {
+			form.querySelector<HTMLInputElement>(
+				'input[name="sourceType"][value="unreported"]',
+			)!.checked = true;
+			caseTypeSelect.value = UNREPORTED_EXAMPLE.caseType;
+			party1Input.value = UNREPORTED_EXAMPLE.party1;
+			party2Input.value = UNREPORTED_EXAMPLE.party2;
+			courtInput.value = UNREPORTED_EXAMPLE.court;
+			docketNumberInput.value = UNREPORTED_EXAMPLE.docketNumber;
+			databaseIdentifierInput.value = UNREPORTED_EXAMPLE.databaseIdentifier;
+			pinciteInput.value = UNREPORTED_EXAMPLE.pincite;
+			monthSelect.value = UNREPORTED_EXAMPLE.month;
+			dayInput.value = UNREPORTED_EXAMPLE.day;
+			dateYearInput.value = UNREPORTED_EXAMPLE.dateYear;
+		}
+
+		function resetToDefaults(): void {
 			form.reset();
-			for (const input of form.querySelectorAll('input')) {
+			// Radios/checkboxes reset via their defaultChecked above --
+			// blanking their `value` too would corrupt the attribute
+			// selectors (like fillUnreportedExample's) rely on to pick a
+			// specific option.
+			for (const input of form.querySelectorAll<HTMLInputElement>(
+				'input:not([type="radio"]):not([type="checkbox"])',
+			)) {
 				input.value = '';
 			}
 			caseTypeSelect.value = 'v';
 			nameVariantSelect.value = 'full';
 			monthSelect.value = '';
+		}
+
+		function clearFields(): void {
+			resetToDefaults();
+			refresh();
+		}
+
+		function loadReportedExample(): void {
+			resetToDefaults();
+			fillReportedExample();
+			refresh();
+		}
+
+		function loadUnreportedExample(): void {
+			resetToDefaults();
+			fillUnreportedExample();
 			refresh();
 		}
 
 		form.addEventListener('input', refresh);
 		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
+		reportedExampleButton.addEventListener('click', loadReportedExample);
+		unreportedExampleButton.addEventListener('click', loadUnreportedExample);
 		// Copy is a submit button (form={ids.form}) so clicking it while a
 		// required field is empty triggers the browser's own native
 		// validation UI -- pointing straight at the missing field -- instead
@@ -505,7 +569,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			void copyCitation();
 		});
 
-		fillExample();
+		fillReportedExample();
 		refresh();
 	</script>
 </PageLayout>

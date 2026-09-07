@@ -562,3 +562,29 @@ test('En dash switches the pincite span separator', async ({ page }) => {
 		'Dayton v. Stewart, 179 N.E.3d 208, 208–14 (Ohio Ct. App. 2021).',
 	);
 });
+
+test('example buttons load their golden case', async ({ page }) => {
+	await page.goto('/tools/citation-builder');
+
+	await page
+		.getByRole('button', { name: 'State v. Lucko (unreported)' })
+		.click();
+
+	await expect(
+		page.getByRole('radio', { name: 'Unreported case' }),
+	).toBeChecked();
+	await expect(page.getByRole('status')).toHaveText(
+		'State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct. App. Sept. 17, 2021).',
+	);
+
+	await page
+		.getByRole('button', { name: 'Dayton v. Stewart (reported)' })
+		.click();
+
+	await expect(
+		page.getByRole('radio', { name: 'Reported case', exact: true }),
+	).toBeChecked();
+	await expect(page.getByRole('status')).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+	);
+});

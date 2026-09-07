@@ -29,6 +29,20 @@ const NAME_VARIANT_OPTIONS = [
 const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 ---
 
+<div class="mb-4 flex flex-wrap items-center gap-3">
+	<span class="text-foreground-secondary text-sm">Examples:</span>
+	<Button
+		type="button"
+		class="!bg-background-secondary/60 hover:!bg-background-secondary"
+		>Dayton v. Stewart (reported)</Button
+	>
+	<Button
+		type="button"
+		class="!bg-background-secondary/60 hover:!bg-background-secondary"
+		>State v. Lucko (unreported)</Button
+	>
+</div>
+
 <p class="text-foreground-secondary mb-2 text-sm">
 	<span
 		class="text-accent"
@@ -287,7 +301,7 @@ const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 		for={ids.form}
 		class="mt-1 block max-h-24 w-full max-w-full overflow-y-auto text-lg break-words"
 	></output>
-	<div class="mt-3 flex gap-3">
+	<div class="mt-3 flex flex-wrap gap-3">
 		<Button
 			type="button"
 			class="!bg-background hover:!bg-background/80"
