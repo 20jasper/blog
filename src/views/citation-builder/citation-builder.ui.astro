@@ -2,16 +2,13 @@
 import Button from '@components/button.astro';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
+import FieldGrid from './components/field-grid.astro';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
 import SelectField from './components/select-field.astro';
 import { ids } from './ids';
 import { MONTHS } from '@components/citation-builder/domain/types';
 import type { FieldSpec } from './components/field-spec';
-
-const gridClass = 'grid w-full max-w-full grid-cols-1 gap-4 sm:grid-cols-2';
-// Shared by Clear and Copy -- Load example uses the default Button look.
-const outputButtonClass = '!bg-background hover:!bg-background/80';
 
 const MONTH_OPTIONS = MONTHS.map((month) => ({ value: month, text: month }));
 
@@ -288,7 +285,7 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		the fields it affects rather than after them. */
 	}
 	<Fieldset legend="Citation form">
-		<div class={gridClass}>
+		<FieldGrid>
 			<RadioGroup
 				label="Mode"
 				name="mode"
@@ -313,53 +310,53 @@ const STATUTE_FIELDS: FieldSpec[] = [
 				name="spanSeparator"
 				options={SPAN_SEPARATOR_OPTIONS}
 			/>
-		</div>
+		</FieldGrid>
 	</Fieldset>
 
 	<Fieldset
 		legend="Case identity"
 		visibleFor="reported unreported"
 	>
-		<div class={gridClass}>
+		<FieldGrid>
 			{CASE_IDENTITY_FIELDS.map((field) => <Field {...field} />)}
-		</div>
+		</FieldGrid>
 	</Fieldset>
 
 	<Fieldset
 		legend="Reported case"
 		visibleFor="reported"
 	>
-		<div class={gridClass}>
+		<FieldGrid>
 			{REPORTED_FIELDS.map((field) => <Field {...field} />)}
-		</div>
+		</FieldGrid>
 	</Fieldset>
 
 	<Fieldset
 		legend="Unreported case"
 		visibleFor="unreported"
 	>
-		<div class={gridClass}>
+		<FieldGrid>
 			<RadioGroup
 				label="Availability"
 				name="availability"
 				options={AVAILABILITY_OPTIONS}
 			/>
 			{UNREPORTED_FIELDS.map((field) => <Field {...field} />)}
-		</div>
+		</FieldGrid>
 	</Fieldset>
 
 	<Fieldset
 		legend="Statute"
 		visibleFor="statute"
 	>
-		<div class={gridClass}>
+		<FieldGrid>
 			<RadioGroup
 				label="Code type"
 				name="codeType"
 				options={CODE_TYPE_OPTIONS}
 			/>
 			{STATUTE_FIELDS.map((field) => <Field {...field} />)}
-		</div>
+		</FieldGrid>
 	</Fieldset>
 </form>
 
@@ -389,13 +386,13 @@ const STATUTE_FIELDS: FieldSpec[] = [
 	<div class="mt-3 flex flex-wrap gap-3">
 		<Button
 			type="button"
-			class={outputButtonClass}
+			class="!bg-background hover:!bg-background/80"
 			>Clear</Button
 		>
 		<Button
 			type="submit"
 			form={ids.form}
-			class={outputButtonClass}
+			class="!bg-background hover:!bg-background/80"
 			>Copy</Button
 		>
 	</div>

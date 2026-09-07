@@ -1,9 +1,6 @@
 ---
 // Radio/checkbox with an implicit (wrapping) label -- no id/for needed
 // for accessibility since the control is nested inside its own label.
-const choiceClass =
-	'accent-accent h-4 w-4 disabled:cursor-not-allowed disabled:opacity-40';
-
 export type Props = {
 	type: 'radio' | 'checkbox';
 	name: string;
@@ -22,7 +19,7 @@ const { type, name, value, checked = false } = Astro.props;
 		name={name}
 		value={value}
 		checked={checked}
-		class={choiceClass}
+		class="accent-accent h-4 w-4 disabled:cursor-not-allowed disabled:opacity-40"
 	/>
 	<slot />
 </label>

@@ -3,22 +3,6 @@
 // optional format hint below the label, stacked in a flex column. Text
 // inputs and selects both wrap their control in this so spacing/label
 // styling stays in one place.
-//
-// The hint line reserves one line of height (sm:min-h-4, matching
-// text-xs's line-height) only from the sm: breakpoint up, where the
-// grid becomes 2 columns (see gridClass in citation-builder.ui.astro)
-// and fields land in the same row as an unrelated neighbor -- without a
-// fixed reservation there, a field with a hint (or a longer one) pushes
-// its own input down relative to the row-mate's, desyncing the two
-// columns even though the grid row itself is tall enough for both. On
-// the single-column mobile layout there's no row-mate to sync with, so
-// an empty hint should collapse instead of leaving a blank gap.
-const hintClass = 'text-foreground-secondary text-xs sm:min-h-4';
-const labelClass = 'text-base font-semibold text-foreground';
-// "Label + stuff underneath" column shell -- radio-group.astro keeps its
-// own copy of this string for the same shape.
-const stackClass = 'flex w-full flex-col gap-1';
-
 export type Props = {
 	for: string;
 	label: string;
@@ -28,10 +12,10 @@ export type Props = {
 const { for: forId, label, hint } = Astro.props;
 ---
 
-<div class={stackClass}>
+<div class="flex w-full flex-col gap-1">
 	<label
 		for={forId}
-		class={labelClass}
+		class="text-foreground text-base font-semibold"
 		>{label}<span
 			class="required-marker text-accent"
 			aria-hidden="true"
@@ -40,9 +24,20 @@ const { for: forId, label, hint } = Astro.props;
 			{' '}*</span
 		></label
 	>
+	{
+		/* The hint line reserves one line of height (sm:min-h-4, matching
+		text-xs's line-height) only from the sm: breakpoint up, where the
+		grid becomes 2 columns (see FieldGrid.astro) and fields land in the
+		same row as an unrelated neighbor -- without a fixed reservation
+		there, a field with a hint (or a longer one) pushes its own input
+		down relative to the row-mate's, desyncing the two columns even
+		though the grid row itself is tall enough for both. On the
+		single-column mobile layout there's no row-mate to sync with, so an
+		empty hint should collapse instead of leaving a blank gap. */
+	}
 	<p
 		id={`${forId}-hint`}
-		class={hintClass}
+		class="text-foreground-secondary text-xs sm:min-h-4"
 	>
 		{hint}
 	</p>
