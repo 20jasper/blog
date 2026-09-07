@@ -131,14 +131,27 @@ Rule 10.9. Pincite required. _Id._ replaces name+reporter with `Id.`
 ## Name Variant Scope
 
 r[name-variant.short-form-only]
+
+> "Thus far, this guide has described how to cite cases in long form,
+> i.e., how you cite a case for the first time in a document. ...
+> [t]he Bluebook has established a 'short form' for use in subsequent
+> citations."
+> — [Georgetown, Short Forms](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389)
+
 Rule 10.9: applies to short forms only. A full citation always carries
 the complete name; the control is hidden in full-citation mode.
 
 ## Name Variant Options
 
 r[name-variant.options]
-Full name / Party 1 / Party 2 / No name. Party 1/Party 2 collapse to
-one option for `In re`/`Ex parte` (single-party types).
+
+> "Other short forms are acceptable as long as it's clear which case
+> you are citing."
+> — [Georgetown, Short Forms](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389)
+
+Full name / Party 1 / Party 2 / No name (the four forms Georgetown's
+own example list shows). Party 1/Party 2 collapse to one option for
+`In re`/`Ex parte` (single-party types).
 
 ## Pincite Span Separator
 
@@ -179,14 +192,25 @@ Accepts a span as typed, full (`208-214`) or already reduced
 ## Non-Consecutive Pincites
 
 r[normalize.span-nonconsecutive]
-Rule 3.2(a): non-consecutive pages are comma-separated (`490, 495`),
-not a span. Each component parses independently.
+
+> "Citations to multiple, non-consecutive pages are separated by
+> commas: _Edgewater Foundation v. Thompson_, 350 F.3d 694, 695, 697
+> (7th Cir. 2003)."
+> — [Tarlton, Pages, Paragraphs, and Pincites](https://tarlton.law.utexas.edu/bluebook-legal-citation/pages-paragraphs-pincites)
+
+Rule 3.2(a). `490, 495`, not a span. Each component parses
+independently.
 
 ## Footnote Pincite Passthrough
 
 r[normalize.span-passthrough]
-Rule 3.2(b): non-numeric-span components (`1137 n.4`) pass through
-verbatim, unvalidated.
+
+> "For a citation directly to a footnote, give the page number on
+> which the note begins, the abbreviation "n." and the footnote
+> number."
+> — [Tarlton, Pages, Paragraphs, and Pincites](https://tarlton.law.utexas.edu/bluebook-legal-citation/pages-paragraphs-pincites)
+
+`1137 n.4` passes through verbatim, unvalidated.
 
 ---
 
