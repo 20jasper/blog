@@ -1,4 +1,4 @@
-import { assert, property, string } from 'fast-check';
+import { assert, integer, property, string } from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import {
 	assembleDate,
@@ -73,6 +73,29 @@ describe('normalizeSection', () => {
 				const twice = normalizeSection(once);
 				expect(twice).toBe(once);
 			}),
+		);
+	});
+});
+
+// DOCKET_PREFIX/SECTION_SYMBOL run against freeform, unvalidated text
+// (§6) on every keystroke -- neither has nested quantifiers so
+// catastrophic backtracking shouldn't be possible, but that's exactly
+// the kind of regex property that's easy to break in a future edit
+// without anyone noticing until a real pathological input hits it.
+describe('normalize: no catastrophic backtracking on adversarial input', () => {
+	it('stays fast on long repeated-character strings', () => {
+		assert(
+			property(
+				string({ minLength: 1, maxLength: 50 }),
+				integer({ min: 1, max: 2000 }),
+				(unit, repeat) => {
+					const input = unit.repeat(repeat);
+					const start = performance.now();
+					normalizeDocketNumber(input);
+					normalizeSection(input);
+					expect(performance.now() - start).toBeLessThan(50);
+				},
+			),
 		);
 	});
 });

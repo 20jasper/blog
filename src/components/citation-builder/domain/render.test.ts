@@ -1,3 +1,4 @@
+import { assert, property, string } from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { applyFraming, render } from './render';
 import type { Segment } from './types';
@@ -114,5 +115,56 @@ describe('render', () => {
 			html: '',
 			plain: '',
 		});
+	});
+});
+
+// render() is the one place freeform, unvalidated user text (party
+// names, court, docket, code abbreviation -- §6 explicitly allows any
+// of these to hold arbitrary text) reaches output.innerHTML verbatim.
+// One hand-picked example above isn't enough to trust that boundary;
+// these hold for any input, which is the actual security property that
+// matters here.
+function unescapeHtml(html: string): string {
+	return html
+		.replaceAll('&lt;', '<')
+		.replaceAll('&gt;', '>')
+		.replaceAll('&amp;', '&');
+}
+
+describe('render: escaping is safe for any input (property)', () => {
+	it('never leaves a raw < or > in the html output', () => {
+		assert(
+			property(string(), (text) => {
+				const { html } = render([{ text, emphasized: false }], {
+					emphasis: 'italic',
+				});
+				expect(html).not.toMatch(/[<>]/u);
+			}),
+		);
+	});
+
+	it('escaping is reversible -- unescaping the html recovers plain', () => {
+		assert(
+			property(string(), (text) => {
+				const { html, plain } = render([{ text, emphasized: false }], {
+					emphasis: 'italic',
+				});
+				expect(unescapeHtml(html)).toBe(plain);
+			}),
+		);
+	});
+
+	it('emphasized segments still only add exactly one <tag> pair', () => {
+		assert(
+			property(string(), (text) => {
+				const { html } = render([{ text, emphasized: true }], {
+					emphasis: 'italic',
+				});
+				// Exactly the wrapper's own <i> and </i> -- nothing from text
+				// escapes into forming a third tag boundary.
+				expect(html.match(/<\/?i>/gu)).toHaveLength(2);
+				expect(html.replaceAll(/<\/?i>/gu, '')).not.toMatch(/[<>]/u);
+			}),
+		);
 	});
 });

@@ -3,9 +3,11 @@ import {
 	assert,
 	boolean,
 	constantFrom,
+	integer,
 	nat,
 	oneof,
 	property,
+	string,
 	tuple,
 } from 'fast-check';
 import { describe, expect, it } from 'vitest';
@@ -114,6 +116,26 @@ describe('parsePincite: properties', () => {
 						starPages: false,
 					});
 					expect(result).toContain(separator);
+				},
+			),
+		);
+	});
+
+	// SPAN also runs against freeform text on every keystroke; no nested
+	// quantifiers so it shouldn't backtrack catastrophically, but that's
+	// worth confirming rather than assuming.
+	it('stays fast on long adversarial input', () => {
+		assert(
+			property(
+				string({ minLength: 1, maxLength: 50 }),
+				integer({ min: 1, max: 2000 }),
+				(unit, repeat) => {
+					const start = performance.now();
+					parsePincite(unit.repeat(repeat), {
+						separator: '-',
+						starPages: false,
+					});
+					expect(performance.now() - start).toBeLessThan(50);
 				},
 			),
 		);
