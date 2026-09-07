@@ -1,8 +1,5 @@
 ---
-// Shared row shell for a labeled field -- label above the control,
-// optional format hint below the label, stacked in a flex column. Text
-// inputs and selects both wrap their control in this so spacing/label
-// styling stays in one place.
+// Shared row shell: label, optional hint, then the control.
 export type Props = {
 	for: string;
 	label: string;
@@ -25,15 +22,8 @@ const { for: forId, label, hint } = Astro.props;
 		></label
 	>
 	{
-		/* The hint line reserves one line of height (sm:min-h-4, matching
-		text-xs's line-height) only from the sm: breakpoint up, where the
-		grid becomes 2 columns (see FieldGrid.astro) and fields land in the
-		same row as an unrelated neighbor -- without a fixed reservation
-		there, a field with a hint (or a longer one) pushes its own input
-		down relative to the row-mate's, desyncing the two columns even
-		though the grid row itself is tall enough for both. On the
-		single-column mobile layout there's no row-mate to sync with, so an
-		empty hint should collapse instead of leaving a blank gap. */
+		/* sm:min-h-4 reserves the hint's height only in the 2-column grid,
+		so a hint-less row stays aligned with its row-mate. */
 	}
 	<p
 		id={`${forId}-hint`}

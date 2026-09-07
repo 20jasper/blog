@@ -139,10 +139,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return checked?.value === 'en-dash' ? '–' : '-';
 		}
 
-		// The single place the live DOM is read into the pure data shapes
-		// (CitationFields, DisplayState) that state/ actually operates on --
-		// everything past this point (deriveSelections, buildCitationInput)
-		// is DOM-free and unit-tested without a browser.
 		function readCitationFields(): CitationFields {
 			return {
 				sourceType: currentSourceType(),
@@ -182,10 +178,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			};
 		}
 
-		// Toggles both the native `required` attribute (so the browser's own
-		// validation -- triggered on Copy, a submit button -- tells the user
-		// exactly which field is missing) and the label's visual "*" marker,
-		// which is otherwise invisible to disabled fields' labels too.
 		function setRequired(
 			input: HTMLInputElement | HTMLSelectElement,
 			required: boolean,
@@ -198,13 +190,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}
 		}
 
-		// Fields within a visible fieldset stay visible always -- only their
-		// disabled state changes, never their visibility, so switching
-		// source type/mode never shifts the layout. Every data field's
-		// disabled/required
-		// state comes from selectFieldState -- the same, already-unit-tested
-		// function that derives required/optional/not-used -- rather than a
-		// second, hand-rolled copy of the same rules living only here.
+		// Fields within a visible fieldset only ever disable, never hide, so
+		// switching source type/mode never shifts the layout.
 		// r[impl name-variant.short-form-only]
 		function setFieldRequirement(
 			input: HTMLInputElement | HTMLSelectElement,
@@ -214,15 +201,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setRequired(input, requirement === 'required');
 		}
 
-		// Reported/Unreported/Statute are mutually exclusive per source
-		// type, so showing all three's fields at once is more clutter than
-		// most single-page forms carry -- the inactive source type's
-		// fieldset is hidden entirely rather than shown-and-disabled. Case
-		// identity is shared by reported/unreported but entirely not-used
-		// for statute, so it hides with statute too. Individual not-used
-		// fields *within* a visible fieldset (e.g. Party 2 for In re) still
-		// only disable, never hide -- a value the user already typed stays
-		// visible so it's clear it didn't silently vanish.
+		// Inactive source type's fieldset hides entirely (more clutter
+		// otherwise); fields within a visible one still only disable.
 		function updateFieldsetVisibility(sourceType: string): void {
 			for (const fieldset of form.querySelectorAll<HTMLFieldSetElement>(
 				'fieldset[data-visible-for]',
@@ -270,17 +250,13 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			);
 			setFieldRequirement(supplementYearInput, fieldState.supplementYear);
 
-			// Name variant / Id.: display controls, not CitationFields data --
-			// selectFieldState doesn't (and shouldn't) know about them.
-			// Statutes have no case name at all (§5.7 V1 simplification), so
-			// both stay disabled regardless of mode there.
+			// Display controls, not CitationFields data -- selectFieldState
+			// doesn't know about them. No case name for statutes (§5.7).
 			nameVariantSelect.disabled = !isShort || idCheckbox.checked || isStatute;
 			idCheckbox.disabled = !isShort || isStatute;
 
-			// Id. (ReportedShortFormInput's/UnreportedShortFormInput's 'id'
-			// variant) drops the name entirely, and for reported also drops
-			// volume/reporter -- neither is modeled in fieldState since it's
-			// a display-state choice, not FieldId data.
+			// Id. drops the name (and for reported, volume/reporter too) --
+			// a display-state choice, not modeled in fieldState.
 			if (isShort && idCheckbox.checked) {
 				setRequired(party1Input, false);
 				setRequired(volumeInput, false);
@@ -302,12 +278,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			clipboard.setCitation({ html, plain });
 		}
 
-		// Every field's disabled/required state (set by updateFieldState(),
-		// which always runs first in refresh()) already mirrors
-		// selectFieldState -- so the browser's own constraint validation is
-		// the single source of truth for "is there enough here to render,"
-		// rather than a hand-rolled required-fields check per source
-		// type/mode.
+		// Browser constraint validation is the single "enough to render"
+		// check -- no hand-rolled required-fields check per source type.
 		function updateOutput(): void {
 			if (!form.checkValidity()) {
 				fillInPlaceholder();
@@ -384,10 +356,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function resetToDefaults(): void {
 			form.reset();
-			// Radios/checkboxes reset via their defaultChecked above --
-			// blanking their `value` too would corrupt the attribute
-			// selectors (like fillUnreportedExample's) rely on to pick a
-			// specific option.
+			// Radios/checkboxes already reset via defaultChecked -- blanking
+			// their `value` too would break attribute-selector lookups.
 			for (const input of form.querySelectorAll<HTMLInputElement>(
 				'input:not([type="radio"]):not([type="checkbox"])',
 			)) {
@@ -423,10 +393,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
 		loadExampleButton.addEventListener('click', loadExample);
-		// Copy is a submit button (form={ids.form}) so clicking it while a
-		// required field is empty triggers the browser's own native
-		// validation UI -- pointing straight at the missing field -- instead
-		// of a hand-rolled banner. Only reaches here once that passes.
+		// Copy is a submit button, so an empty required field triggers
+		// native validation UI first -- this only runs once that passes.
 		form.addEventListener('submit', (event) => {
 			event.preventDefault();
 			void clipboard.copy();

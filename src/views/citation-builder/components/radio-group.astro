@@ -1,10 +1,7 @@
 ---
 import Choice from './choice.astro';
 
-// The repeated "labeled column of radios" shape -- Source type,
-// Availability, Code type, Mode, Typeface, Span separator all follow
-// this exact structure, so each is now a data array instead of its own
-// hand-written label + Choice list.
+// The repeated "labeled column of radios" shape, as a data array.
 export type Props = {
 	label: string;
 	name: string;

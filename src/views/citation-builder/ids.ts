@@ -1,8 +1,5 @@
-// Ids exist only where HTML requires one: an explicit <label for> target,
-// or <output for> pointing at the form. Everything else (rows to
-// show/hide, the mode radios, the Id. checkbox, the Clear button) is
-// found via name attributes, DOM structure, or role/label -- both in the
-// view script and in the Playwright specs -- rather than a dedicated id.
+// Ids exist only where HTML requires one (<label for>, <output for>).
+// Everything else is found via name/role/label instead.
 export const ids = {
 	form: 'citation-builder-form',
 	caseType: 'citation-builder-case-type',

@@ -7,9 +7,8 @@ export type Props = {
 	label: string;
 	hint?: string;
 	inputmode?: 'numeric';
-	// Native constraint validation, not a display hint like inputmode --
-	// so checkValidity() actually rejects non-numeric input before it
-	// ever reaches Number() in state/citation-input-builders.ts.
+	// Native validation, unlike inputmode -- rejects non-numeric before
+	// it reaches Number() in citation-input-builders.ts.
 	pattern?: string;
 };
 
@@ -22,18 +21,7 @@ const { id, name, label, hint, inputmode, pattern } = Astro.props;
 	hint={hint}
 >
 	{
-		/* Enabled: a bright, solid, clearly-visible border (opacity-50 on
-		the whole element, the previous approach, multiplied with the
-		border's own alpha and made it nearly invisible). Disabled: a
-		*dashed* border -- a pattern change, not just a color change, so
-		it reads as "inactive" on its own without needing an enabled
-		neighbor to compare against (a plain lighter/tinted color, tried
-		first, still looked like a normal field in isolation) -- plus a
-		background tint and dimmed value text. Disabled-ness itself is
-		also exposed to assistive tech via the native `disabled`
-		attribute, independent of any of this styling. select-field.astro
-		has the same base classes on its <select> -- if you change one,
-		change the other. */
+		/* Dashed, not just dimmed, when disabled -- color alone read as active in testing. */
 	}
 	<input
 		id={id}

@@ -1,7 +1,4 @@
-// Public surface of the state layer for external consumers (the view).
-// Internal modules here still import each other directly -- this barrel
-// exists so a consumer like the view depends on "the state layer" as one
-// unit instead of reaching into five separate files.
+// Barrel so the view depends on "the state layer," not five separate files.
 
 export { deriveSelections, initialCitationFields } from './citation-fields';
 export type {

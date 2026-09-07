@@ -1,9 +1,6 @@
 import type { DateParts } from './types';
 
-// Rule 10.8.1. Widened lookahead vs. the original spec draft -- see
-// docs/citation-builder/domain-spec.md §4.1 for why a digit also counts
-// as a valid boundary (fixes "No.05-1234"), while a following letter
-// still fails it (guards "North-123" -> "No. rth-123").
+// A digit also ends the prefix ("No.05-1234"); a letter doesn't ("North-123").
 const DOCKET_PREFIX = /^(?:case\s+no\.?|docket\s+no\.?|no\.?)(?=\s|$|\d)\s*/iu;
 
 // r[impl normalize.docket]

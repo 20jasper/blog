@@ -1,10 +1,7 @@
-// Golden cases verified against domain-spec.md §5 (see the golden-case
-// tests under src/components/citation-builder/domain/*.test.ts), offered
-// as Example buttons so a visitor sees a real, working citation for each
-// source type instead of a blank form or just the default reported one.
+// Golden cases verified against domain-spec.md §5, offered as Example
+// buttons so a visitor sees a real citation for each source type.
 
-// Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021) -- loaded
-// on page load by default.
+// Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021) -- default.
 export const REPORTED_EXAMPLE = {
 	caseType: 'v',
 	party1: 'Dayton',
@@ -17,8 +14,8 @@ export const REPORTED_EXAMPLE = {
 	year: '2021',
 } as const;
 
-// State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct. App.
-// Sept. 17, 2021).
+// State v. Lucko, No. 2021CA0007, 2021 WL 4269952, at *1-2 (Ohio Ct.
+// App. Sept. 17, 2021).
 export const UNREPORTED_EXAMPLE = {
 	caseType: 'v',
 	party1: 'State',
@@ -32,8 +29,7 @@ export const UNREPORTED_EXAMPLE = {
 	dateYear: '2021',
 } as const;
 
-// Ohio Rev. Code Ann. § 3767.32(A) (West 2025) -- the annotated variant
-// of the same statute golden case.
+// Ohio Rev. Code Ann. § 3767.32(A) (West 2025) -- annotated variant.
 export const STATUTE_EXAMPLE = {
 	codeType: 'annotated',
 	codeAbbreviation: 'Ohio Rev. Code Ann.',

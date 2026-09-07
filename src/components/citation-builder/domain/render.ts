@@ -10,8 +10,7 @@ export type RenderResult = {
 };
 
 function escapeHtml(text: string): string {
-	// Order matters: '&' must go first, since the other two replacements
-	// don't introduce new '&' characters that would otherwise get escaped.
+	// '&' must go first -- the other replacements don't introduce new '&'s.
 	return text
 		.replaceAll('&', '&amp;')
 		.replaceAll('<', '&lt;')

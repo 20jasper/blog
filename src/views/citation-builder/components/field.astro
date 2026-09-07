@@ -13,10 +13,7 @@ export type Props =
 	| (BaseFieldSpec & {
 			kind: 'text';
 			inputmode?: 'numeric';
-			// Native constraint validation, not a display hint like
-			// inputmode -- so checkValidity() actually rejects non-numeric
-			// input before it ever reaches Number() in
-			// state/citation-input-builders.ts.
+			// Native validation, unlike inputmode -- rejects before Number().
 			pattern?: string;
 	  })
 	| (BaseFieldSpec & {

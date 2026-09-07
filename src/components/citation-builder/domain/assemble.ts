@@ -101,8 +101,7 @@ function shortFormName(
 	nameVariant: 'full' | 'party1' | 'party2',
 	name: CaseNameInput,
 ): string {
-	// In re/Ex parte have only one party -- Party 1/Party 2 collapse to the
-	// same assembled name regardless of which the user picked.
+	// In re/Ex parte have one party -- Party 1/Party 2 collapse to the same name.
 	if (nameVariant === 'full' || name.caseType !== 'v') {
 		return assembleCaseName(name);
 	}
@@ -330,9 +329,7 @@ function popularNamePrefix(popularName: string | undefined): string {
 	return popularName === undefined ? '' : `${popularName}, `;
 }
 
-// Shared by the full and short forms -- the popular name/title/code/
-// section prefix never changes between them; only the trailing
-// parenthetical (or its absence) does.
+// Shared prefix for full/short forms -- only the trailing parenthetical differs.
 function statuteCoreLine(
 	codeAbbreviation: string,
 	section: string,
@@ -368,10 +365,7 @@ export type StatuteShortFormInput = {
 	title?: StatuteTitle;
 };
 
-// Drops the entire parenthetical -- publisher, year, and any supplement.
-// No name variant applies (statutes have no case name) and no pincite is
-// appended: the statutory pinpoint is the subsection, already part of
-// the Section field.
+// Drops the parenthetical -- pinpoint is the subsection, already in Section.
 export function assembleStatuteShortForm(
 	input: StatuteShortFormInput,
 ): Segment[] {

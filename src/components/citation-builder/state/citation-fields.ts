@@ -8,19 +8,13 @@ import type { DisplayState } from './display-state';
 import type { Selections } from './field-state';
 
 export type SourceType = 'reported' | 'unreported' | 'statute';
-// Derived from the domain types that actually consume them, so a new
-// Availability/StatuteInput/MaterialLocation variant surfaces here at
-// compile time instead of drifting from a hand-duplicated literal union.
+// Derived from domain types so a new variant fails to compile, not drifts.
 export type AvailabilityKind = Availability['kind'];
 export type CodeType = StatuteInput['codeType'];
 export type MaterialLocationKind = MaterialLocation['kind'];
 
-// One flat object -- fields unused by the active sourceType stay
-// populated; switching type never clears a value. Matches
-// docs/citation-builder/architecture-spec.md §6 item 2, using the
-// domain's existing kebab-case CaseTypeId and field-state.ts's FieldId
-// names rather than the spec's own draft naming, since those are what
-// the rest of the code already consumes.
+// Unused fields stay populated; switching type never clears a value
+// (architecture-spec.md §6 item 2). Names match existing code conventions.
 export type CitationFields = {
 	sourceType: SourceType;
 

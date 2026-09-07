@@ -18,7 +18,7 @@ const EXAMPLE_OPTIONS = [
 	{ value: 'statute', text: 'Ohio Rev. Code Ann. (statute)' },
 ];
 
-// Radio groups, one array per group -- see components/radio-group.astro.
+// One array per radio group -- see components/radio-group.astro.
 const SOURCE_TYPE_OPTIONS = [
 	{ value: 'reported', text: 'Reported case', checked: true },
 	{ value: 'unreported', text: 'Unreported case' },
@@ -50,9 +50,7 @@ const SPAN_SEPARATOR_OPTIONS = [
 	{ value: 'en-dash', text: 'En dash (208–14)' },
 ];
 
-// Field lists, one array per fieldset -- see components/field.astro. Each
-// fieldset's markup below is just `{LIST.map((field) => <Field {...field}
-// />)}` instead of one hand-written <TextField>/<SelectField> per field.
+// One array per fieldset -- see components/field.astro.
 const CITATION_FORM_FIELDS: FieldSpec[] = [
 	{
 		kind: 'select',
@@ -93,8 +91,7 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 		name: 'party2',
 		label: 'Party 2 (abbreviated)',
 	},
-	// Freeform, unvalidated (§6) -- the hint states the expected format,
-	// not a validation disclaimer.
+	// Freeform, unvalidated (domain-spec.md §6) -- hint, not a disclaimer.
 	{
 		kind: 'text',
 		id: ids.court,
@@ -279,9 +276,8 @@ const STATUTE_FIELDS: FieldSpec[] = [
 	</Fieldset>
 
 	{
-		/* Mode (and the display controls next to it) determine which
-		fields below are required/optional/not-used, so it's chosen before
-		the fields it affects rather than after them. */
+		/* Mode is chosen before the fields whose required/optional state
+		it determines, not after them. */
 	}
 	<Fieldset legend="Citation form">
 		<FieldGrid>
@@ -360,15 +356,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 </form>
 
 {
-	/* Sticky so Clear/Copy/the current result stay reachable without
-	scrolling back down through ~20 fields across four fieldsets (or up,
-	if you're mid-form). Sticky is CSS-only -- it doesn't move these
-	elements in the DOM, so tab order and a screen reader's linear
-	reading order are unaffected; role="region" just gives AT users a
-	direct landmark to jump to instead of finding it by depth. The
-	<output> lives only here (not duplicated up by the form) since it
-	already carries an implicit role="status" live region -- a second
-	copy would double-announce every live update. */
+	/* Sticky is CSS-only -- doesn't move DOM order, so a11y is unaffected.
+	role="region" gives a landmark shortcut. <output> lives only here --
+	its implicit role="status" would double-announce if duplicated. */
 }
 <div
 	role="region"

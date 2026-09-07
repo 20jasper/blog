@@ -1,9 +1,6 @@
 import { ids } from './ids';
 
-// Ids exist only where HTML requires one (see ids.ts) -- everything else
-// (radios, the Id. checkbox, buttons) is found by name/role/text at each
-// call site instead. Centralized here so the view script's top isn't
-// ~50 lines of querySelector calls before any actual logic starts.
+// Centralized so the view script's top isn't ~50 lines of querySelectors.
 export function queryFormRefs(form: HTMLFormElement) {
 	return {
 		caseTypeSelect: document.querySelector<HTMLSelectElement>(

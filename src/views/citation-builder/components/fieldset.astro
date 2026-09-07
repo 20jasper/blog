@@ -1,9 +1,6 @@
 ---
-// The repeated "<fieldset><legend>...</legend>...</fieldset>" shell used
-// by every group in citation-builder.ui.astro. `visibleFor` maps to
-// data-visible-for, read by updateFieldsetVisibility() in
-// citation-builder.view.astro to hide fieldsets for inactive source
-// types; omit it for fieldsets that are always shown.
+// `visibleFor` maps to data-visible-for, read by updateFieldsetVisibility()
+// in citation-builder.view.astro; omit for always-shown fieldsets.
 export type Props = {
 	legend: string;
 	visibleFor?: string;

@@ -13,20 +13,9 @@ import type { CitationFields } from './citation-fields';
 import type { CitationInput } from './citation-input';
 import type { DisplayState } from './display-state';
 
-// Pure CitationFields (+ DisplayState for the Id./name-variant nuances
-// selectFieldState doesn't model) -> domain assemble() input transforms.
-// Kept out of the view so they're unit-testable without a DOM, mirroring
-// how citation-fields.ts's deriveSelections already does this for
-// Selections.
-
-// Every numeric field here is a <input type="text" pattern="[0-9]+">
-// (inputmode="numeric" is just a mobile-keyboard hint, not validation)
-// validated by form.checkValidity() before this ever runs -- so a
-// non-digit value means a caller bug (or the pattern attribute getting
-// out of sync with this file), not a real input to coerce silently.
-// Number('') and Number(' ') are both 0, not NaN, so plain Number()
-// would never throw here -- it would just bake a wrong number into the
-// rendered citation.
+// Pattern-validated by checkValidity() first, so a non-digit value means
+// a caller bug, not real input -- plain Number() silently returns 0 for
+// '' rather than NaN, which would bake a wrong number into the citation.
 function parseRequiredInt(value: string, field: string): number {
 	if (!/^\d+$/u.test(value)) {
 		throw new Error(`invalid ${field}: ${value}`);
@@ -52,8 +41,6 @@ function reportedFullInput(fields: CitationFields): ReportedCaseInput {
 	};
 }
 
-// Id. (ReportedShortFormInput's 'id' variant) carries neither
-// volume/reporter nor a name -- only pincite.
 function reportedShortFormInput(
 	fields: CitationFields,
 	display: DisplayState,
@@ -79,9 +66,8 @@ function reportedShortFormInput(
 }
 
 function unreportedFullInput(fields: CitationFields): UnreportedCaseInput {
-	// The month <select> only ever offers the 12 MONTHS options (no blank
-	// one), and this is only called after form.checkValidity() -- so a
-	// non-Month value here means a caller bug, not a real input to handle.
+	// <select> only ever offers the 12 MONTHS options -- a non-Month value
+	// here means a caller bug, not real input.
 	if (!isMonth(fields.month)) {
 		throw new Error(`invalid month: ${fields.month}`);
 	}
@@ -109,8 +95,6 @@ function unreportedShortFormAvailability(fields: CitationFields) {
 		: { kind: 'slip-opinion' as const, docket: fields.docketNumber };
 }
 
-// Id.'s 'id' variant keeps availability (unlike reported short form,
-// which drops volume/reporter entirely) but drops the name.
 function unreportedShortFormInput(
 	fields: CitationFields,
 	display: DisplayState,
@@ -137,10 +121,7 @@ function unreportedShortFormInput(
 			};
 }
 
-// supplementYear/codeYear are only actually filled (fieldState marks
-// them not-used, so they may be blank) for the materialLocation
-// branches that use them -- so each is parsed lazily, only inside the
-// branch that needs it, rather than eagerly for every call.
+// Parsed lazily -- these may be blank when not-used for the branch.
 function buildSupplement(fields: CitationFields) {
 	return {
 		designation: fields.supplementDesignation,
@@ -184,8 +165,6 @@ function statuteFullInput(fields: CitationFields): StatuteInput {
 			};
 }
 
-// Short form drops codeType/publisher/materialLocation/supplement
-// entirely (r[citation.statute-short-form]).
 function statuteShortFormInput(fields: CitationFields): StatuteShortFormInput {
 	return {
 		codeAbbreviation: fields.codeAbbreviation,
@@ -193,9 +172,7 @@ function statuteShortFormInput(fields: CitationFields): StatuteShortFormInput {
 	};
 }
 
-// r[impl field-state.derivation] -- mirrors deriveSelections' switch
-// shape, but builds the domain assemble() input rather than the
-// field-requirement selector.
+// r[impl field-state.derivation]
 export function buildCitationInput(
 	fields: CitationFields,
 	display: DisplayState,
