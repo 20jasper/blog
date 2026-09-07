@@ -1,7 +1,6 @@
 # Bluebook 22
 
-_AI-generated. Verify against the actual Bluebook and cited sources
-before relying on it._
+_AI-generated, human-validated._
 
 ---
 
