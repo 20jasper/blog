@@ -16,16 +16,6 @@
 
 ---
 
-## Data Model
-
-**Shared:** Case type (`v.` / `In re` / `Ex parte`, required), Party 1
-(required), Party 2 (required iff `v.`), Court (optional), Pincite
-(optional full / required short).
-
-**Reported:** Volume, Reporter, First page, Year — all required.
-
----
-
 ## Reported Long Form
 
 r[citation.reported-long-form]
@@ -41,6 +31,9 @@ Generalized beyond U.S. Reports:
 ```
 [Name], [Volume] [Reporter] [First page], [Pincite] ([Court] [Year]).
 ```
+
+Volume, Reporter, First page, and Year are required. Pincite is
+optional here (required for short form — see Reported Short Form).
 
 ## Court Omission
 
@@ -79,7 +72,8 @@ r[case-name.assembly]
 > — [Colorado CCS, Bluebook Citation](https://cccs.libguides.com/c.php?g=1318336&p=9697124)
 
 `Party1 v. Party2`, `In re Party1`, or `Ex parte Party1` depending on
-case type (Rule 10.2.1).
+case type (Rule 10.2.1). Case type and Party 1 are always required;
+Party 2 is required only for `v.`
 
 ## Short-Form Case Name
 
