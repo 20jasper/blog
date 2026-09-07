@@ -2,6 +2,8 @@
 
 _AI-generated, human-validated._
 
+`<required>` `[optional]`
+
 ---
 
 ## Glossary
@@ -31,12 +33,11 @@ r[citation.reported-long-form]
 Generalized beyond U.S. Reports:
 
 ```
-[Name], [Volume] [Reporter] [First page], [Pincite] ([Court] [Year]).
+<Name>, <Volume> <Reporter> <First page>, [Pincite] ([Court] <Year>).
 ```
 
-Volume, Reporter, First page, and Year are required. Pincite is
-optional here (required for short form; see Reported Short Form).
-Reporter is freeform, unvalidated against Table 1.
+Pincite required for short form (see Reported Short Form). Reporter is
+freeform, unvalidated against Table 1.
 
 ## Court Omission
 
@@ -73,9 +74,8 @@ r[case-name.assembly]
 > — [Colorado CCS, Bluebook Citation](https://cccs.libguides.com/c.php?g=1318336&p=9697124)
 
 `Party1 v. Party2`, `In re Party1`, or `Ex parte Party1` depending on
-case type (Rule 10.2.1). Case type and Party 1 are always required;
-Party 2 is required only for `v.` Party names are typed in already
-abbreviated (Rule 10.2 abbreviation itself isn't automated).
+case type (Rule 10.2.1). Party names are typed in already abbreviated
+(Rule 10.2 abbreviation itself isn't automated).
 
 ## Short-Form Case Name
 
@@ -105,10 +105,10 @@ r[citation.reported-short-form]
 > — [Georgetown, Short Forms](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339389)
 
 ```
-[Name?], [Volume] [Reporter] at [Pincite].
+[Name], <Volume> <Reporter> at <Pincite>.
 ```
 
-Rule 10.9. Pincite required. _Id._ replaces name+reporter with `Id.`
+Rule 10.9. _Id._ replaces name+reporter with `Id.`
 
 | Name variant | Output                                                     |
 | ------------ | ---------------------------------------------------------- |
