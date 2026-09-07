@@ -111,8 +111,9 @@ describe('selectFieldState: date fields only apply to unreported full (§5.8)', 
 			};
 			const statute: Selections = {
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			};
 
 			expect(selectFieldState(reported)[field]).toBe('not-used');
@@ -138,8 +139,9 @@ describe('selectFieldState: reported-only fields (§3.2)', () => {
 			};
 			const statute: Selections = {
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			};
 
 			expect(selectFieldState(reported)[field]).toBe('required');
@@ -182,8 +184,9 @@ describe('selectFieldState: unreported-only fields (§3.3)', () => {
 			};
 			const statute: Selections = {
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			};
 
 			expect(selectFieldState(unreported)[field]).toBe('required');
@@ -255,8 +258,9 @@ describe('selectFieldState: statute-only fields (§3.4)', () => {
 		(field) => {
 			const statute: Selections = {
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			};
 
 			expect(selectFieldState(statute)[field]).toBe('required');
@@ -271,36 +275,91 @@ describe('selectFieldState: statute-only fields (§3.4)', () => {
 	] as const)('codeType %s -> publisher %s', (codeType, expected) => {
 		const selections: Selections = {
 			sourceType: 'statute',
+			mode: 'full',
 			codeType,
-			hasSupplementDesignation: false,
+			materialLocation: 'main-volume',
 		};
 
 		expect(selectFieldState(selections).publisher).toBe(expected);
 	});
 
-	it('supplementDesignation is optional for statute regardless of whether it is filled', () => {
-		const selections: Selections = {
-			sourceType: 'statute',
-			codeType: 'official',
-			hasSupplementDesignation: false,
-		};
-
-		expect(selectFieldState(selections).supplementDesignation).toBe('optional');
-	});
-
+	// r[verify statute.material-location]
+	// Material location is its own required select (§3.4) -- not inferred
+	// from which fields happen to be filled. It drives codeYear (required
+	// unless supplement-only) and supplementDesignation/supplementYear
+	// (required unless main-volume) -- disabled, not merely optional, at
+	// the opposite end, per §3.4's table.
 	it.each([
-		[false, 'not-used'],
-		[true, 'optional'],
+		['main-volume', 'required'],
+		['both', 'required'],
+		['supplement-only', 'not-used'],
 	] as const)(
-		'hasSupplementDesignation %s -> supplementYear %s',
-		(hasSupplementDesignation, expected) => {
+		'materialLocation %s -> codeYear %s',
+		(materialLocation, expected) => {
 			const selections: Selections = {
 				sourceType: 'statute',
-				codeType: 'annotated',
-				hasSupplementDesignation,
+				mode: 'full',
+				codeType: 'official',
+				materialLocation,
 			};
 
+			expect(selectFieldState(selections).codeYear).toBe(expected);
+		},
+	);
+
+	// r[verify statute.supplement-pairing]
+	it.each([
+		['main-volume', 'not-used'],
+		['both', 'required'],
+		['supplement-only', 'required'],
+	] as const)(
+		'materialLocation %s -> supplementDesignation/supplementYear %s',
+		(materialLocation, expected) => {
+			const selections: Selections = {
+				sourceType: 'statute',
+				mode: 'full',
+				codeType: 'official',
+				materialLocation,
+			};
+
+			expect(selectFieldState(selections).supplementDesignation).toBe(expected);
 			expect(selectFieldState(selections).supplementYear).toBe(expected);
+		},
+	);
+
+	// r[verify citation.statute-short-form]
+	// Short form drops the entire parenthetical -- publisher, materialLocation,
+	// codeYear, and any supplement -- keeping only codeType-independent
+	// codeAbbreviation/section.
+	it.each([
+		'codeType',
+		'publisher',
+		'materialLocation',
+		'codeYear',
+		'supplementDesignation',
+		'supplementYear',
+	] as const)('%s is not-used for statute short form', (field) => {
+		const selections: Selections = {
+			sourceType: 'statute',
+			mode: 'short',
+			codeType: 'annotated',
+			materialLocation: 'both',
+		};
+
+		expect(selectFieldState(selections)[field]).toBe('not-used');
+	});
+
+	it.each(['codeAbbreviation', 'section'] as const)(
+		'%s stays required for statute short form',
+		(field) => {
+			const selections: Selections = {
+				sourceType: 'statute',
+				mode: 'short',
+				codeType: 'annotated',
+				materialLocation: 'both',
+			};
+
+			expect(selectFieldState(selections)[field]).toBe('required');
 		},
 	);
 });
@@ -325,8 +384,9 @@ describe('selectFieldState: year is reported-full only', () => {
 		[
 			{
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			},
 			'not-used',
 		],
@@ -359,8 +419,9 @@ describe('selectFieldState: case-type fields are not-used for statute', () => {
 		(field) => {
 			const selections: Selections = {
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			};
 
 			expect(selectFieldState(selections)[field]).toBe('not-used');

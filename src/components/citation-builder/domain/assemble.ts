@@ -347,3 +347,28 @@ export function assembleStatuteCase(input: StatuteInput): Segment[] {
 
 	return framePeriod(segments);
 }
+
+// r[impl citation.statute-short-form]
+export type StatuteShortFormInput = {
+	codeAbbreviation: string;
+	section: string;
+	popularName?: string;
+	title?: StatuteTitle;
+};
+
+// Drops the entire parenthetical -- publisher, year, and any supplement.
+// No name variant applies (statutes have no case name) and no pincite is
+// appended: the statutory pinpoint is the subsection, already part of
+// the Section field.
+export function assembleStatuteShortForm(
+	input: StatuteShortFormInput,
+): Segment[] {
+	const segments: Segment[] = [
+		{
+			text: `${popularNamePrefix(input.popularName)}${codeWithTitle(input.codeAbbreviation, input.title)} ${normalizeSection(input.section)}`,
+			emphasized: false,
+		},
+	];
+
+	return framePeriod(segments);
+}

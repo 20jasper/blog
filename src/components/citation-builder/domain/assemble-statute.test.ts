@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assembleStatuteCase } from './assemble';
+import { assembleStatuteCase, assembleStatuteShortForm } from './assemble';
 import { annotatedStatute, officialStatute } from './assemble-fixtures';
 import { render } from './render';
 
@@ -189,5 +189,73 @@ describe('assembleStatuteCase: material location and supplement forms', () => {
 		);
 
 		expect(plain).toBe('42 U.S.C.A. § 2001 (West Supp. 2002).');
+	});
+});
+
+// r[verify citation.statute-short-form]
+describe('assembleStatuteShortForm', () => {
+	it('drops the entire parenthetical -- publisher, year, and any supplement', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({
+				codeAbbreviation: 'Ohio Rev. Code Ann.',
+				section: '3767.32(A)',
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('Ohio Rev. Code Ann. § 3767.32(A).');
+	});
+
+	it('renders the title before the code, no comma (federal shape)', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({
+				codeAbbreviation: 'U.S.C.',
+				section: '1983',
+				title: { text: '42', position: 'before-code' },
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('42 U.S.C. § 1983.');
+	});
+
+	it('renders the title after the code, comma-separated (state shape)', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({
+				codeAbbreviation: 'Okla. Stat.',
+				section: '6-203',
+				title: { text: 'tit. 14A', position: 'after-code' },
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('Okla. Stat. tit. 14A, § 6-203.');
+	});
+
+	it('prefixes the popular name, comma-separated', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({
+				codeAbbreviation: 'Okla. Stat.',
+				section: '6-203',
+				title: { text: 'tit. 14A', position: 'after-code' },
+				popularName: 'Consumer Credit Code',
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('Consumer Credit Code, Okla. Stat. tit. 14A, § 6-203.');
+	});
+
+	it('does not double the § symbol when section is already prefixed, per §4.2', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({
+				codeAbbreviation: 'Ohio Rev. Code Ann.',
+				section: '§ 3767.32(A)',
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toContain('§ 3767.32(A)');
+		expect(plain).not.toContain('§ § 3767.32(A)');
 	});
 });

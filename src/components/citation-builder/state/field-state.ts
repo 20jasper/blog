@@ -15,6 +15,8 @@ function usedIf(condition: boolean, value: FieldRequirement): FieldRequirement {
 	return condition ? value : 'not-used';
 }
 
+type MaterialLocationKind = 'main-volume' | 'both' | 'supplement-only';
+
 export type Selections =
 	| { sourceType: 'reported'; mode: 'full' | 'short'; caseType: CaseTypeId }
 	| {
@@ -25,8 +27,9 @@ export type Selections =
 	  }
 	| {
 			sourceType: 'statute';
+			mode: 'full' | 'short';
 			codeType: 'official' | 'annotated';
-			hasSupplementDesignation: boolean;
+			materialLocation: MaterialLocationKind;
 	  };
 
 // r[impl citation.unreported-short-form]
@@ -65,16 +68,15 @@ export function selectFieldState(
 	const isStatute = selections.sourceType === 'statute';
 	const isCaseType = isReported || isUnreported;
 
-	const mode = isReported || isUnreported ? selections.mode : 'full';
+	const { mode } = selections;
+	const isFull = mode === 'full';
 	const caseTypeChoice =
 		isReported || isUnreported ? selections.caseType : undefined;
 	const availabilityKind = isUnreported
 		? selections.availabilityKind
 		: undefined;
 	const codeType = isStatute ? selections.codeType : undefined;
-	const hasSupplementDesignation = isStatute
-		? selections.hasSupplementDesignation
-		: false;
+	const materialLocation = isStatute ? selections.materialLocation : undefined;
 
 	return {
 		caseType: usedIf(isCaseType, 'required'),
@@ -113,14 +115,31 @@ export function selectFieldState(
 		// from unreported entirely (which has its own dateYear).
 		year: usedIf(isReported, usedIf(mode === 'full', 'required')),
 
-		codeType: usedIf(isStatute, 'required'),
+		// Short form (r[citation.statute-short-form]) drops the entire
+		// parenthetical -- codeType, publisher, materialLocation, codeYear,
+		// and any supplement -- keeping only codeAbbreviation/section.
 		codeAbbreviation: usedIf(isStatute, 'required'),
 		section: usedIf(isStatute, 'required'),
-		publisher: usedIf(isStatute, usedIf(codeType === 'annotated', 'required')),
-		supplementDesignation: usedIf(isStatute, 'optional'),
+		codeType: usedIf(isStatute, usedIf(isFull, 'required')),
+		publisher: usedIf(
+			isStatute,
+			usedIf(isFull && codeType === 'annotated', 'required'),
+		),
+		// r[impl statute.material-location]
+		materialLocation: usedIf(isStatute, usedIf(isFull, 'required')),
+		// r[impl statute.material-location]
+		codeYear: usedIf(
+			isStatute,
+			usedIf(isFull && materialLocation !== 'supplement-only', 'required'),
+		),
+		// r[impl statute.supplement-pairing]
+		supplementDesignation: usedIf(
+			isStatute,
+			usedIf(isFull && materialLocation !== 'main-volume', 'required'),
+		),
 		supplementYear: usedIf(
 			isStatute,
-			usedIf(hasSupplementDesignation, 'optional'),
+			usedIf(isFull && materialLocation !== 'main-volume', 'required'),
 		),
 	};
 }

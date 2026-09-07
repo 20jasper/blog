@@ -104,4 +104,19 @@ describe('assemble', () => {
 
 		expect(plain).toBe('Ohio Rev. Code § 3767.32(A) (2025).');
 	});
+
+	it('dispatches statute/short to assembleStatuteShortForm', () => {
+		const citation: CitationInput = {
+			sourceType: 'statute',
+			mode: 'short',
+			input: {
+				codeAbbreviation: 'Ohio Rev. Code Ann.',
+				section: '3767.32(A)',
+			},
+		};
+
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
+
+		expect(plain).toBe('Ohio Rev. Code Ann. § 3767.32(A).');
+	});
 });

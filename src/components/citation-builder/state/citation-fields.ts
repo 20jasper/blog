@@ -1,14 +1,19 @@
-import type { Availability, StatuteInput } from '../domain/assemble';
+import type {
+	Availability,
+	MaterialLocation,
+	StatuteInput,
+} from '../domain/assemble';
 import type { CaseTypeId } from '../domain/case-types';
 import type { DisplayState } from './display-state';
 import type { Selections } from './field-state';
 
 export type SourceType = 'reported' | 'unreported' | 'statute';
 // Derived from the domain types that actually consume them, so a new
-// Availability/StatuteInput variant surfaces here at compile time
-// instead of drifting from a hand-duplicated literal union.
+// Availability/StatuteInput/MaterialLocation variant surfaces here at
+// compile time instead of drifting from a hand-duplicated literal union.
 export type AvailabilityKind = Availability['kind'];
 export type CodeType = StatuteInput['codeType'];
+export type MaterialLocationKind = MaterialLocation['kind'];
 
 // One flat object -- fields unused by the active sourceType stay
 // populated (§3.5: switching type never clears a value). Matches
@@ -41,6 +46,8 @@ export type CitationFields = {
 	codeAbbreviation: string;
 	section: string;
 	publisher: string;
+	materialLocation: MaterialLocationKind;
+	codeYear: string;
 	supplementDesignation: string;
 	supplementYear: string;
 };
@@ -71,6 +78,8 @@ export function initialCitationFields(): CitationFields {
 		codeAbbreviation: '',
 		section: '',
 		publisher: '',
+		materialLocation: 'main-volume',
+		codeYear: '',
 		supplementDesignation: '',
 		supplementYear: '',
 	};
@@ -98,8 +107,9 @@ export function deriveSelections(
 		case 'statute':
 			return {
 				sourceType: 'statute',
+				mode: display.mode,
 				codeType: fields.codeType,
-				hasSupplementDesignation: fields.supplementDesignation !== '',
+				materialLocation: fields.materialLocation,
 			};
 	}
 }

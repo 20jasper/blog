@@ -44,31 +44,33 @@ describe('deriveSelections', () => {
 			},
 		],
 		[
-			'statute, no supplement',
+			'statute, main volume',
 			{
 				sourceType: 'statute',
 				codeType: 'official',
-				supplementDesignation: '',
+				materialLocation: 'main-volume',
 			},
-			{},
+			{ mode: 'full' },
 			{
 				sourceType: 'statute',
+				mode: 'full',
 				codeType: 'official',
-				hasSupplementDesignation: false,
+				materialLocation: 'main-volume',
 			},
 		],
 		[
-			'statute, with supplement',
+			'statute, short form',
 			{
 				sourceType: 'statute',
 				codeType: 'annotated',
-				supplementDesignation: 'Supp.',
+				materialLocation: 'both',
 			},
-			{},
+			{ mode: 'short' },
 			{
 				sourceType: 'statute',
+				mode: 'short',
 				codeType: 'annotated',
-				hasSupplementDesignation: true,
+				materialLocation: 'both',
 			},
 		],
 	] as const)('%s', (_label, fieldOverrides, displayOverrides, expected) => {

@@ -4,17 +4,17 @@ import {
 	assembleUnreportedCase,
 	assembleUnreportedShortForm,
 	assembleStatuteCase,
+	assembleStatuteShortForm,
 	type AssembleOptions,
 	type ReportedCaseInput,
 	type ReportedShortFormInput,
 	type UnreportedCaseInput,
 	type UnreportedShortFormInput,
 	type StatuteInput,
+	type StatuteShortFormInput,
 } from '../domain/assemble';
 import type { Segment } from '../domain/types';
 
-// Statute short form isn't here yet -- deferred (see
-// docs/citation-builder/phase-1-spec.md, chunk 8 note).
 export type CitationInput =
 	| { sourceType: 'reported'; mode: 'full'; input: ReportedCaseInput }
 	| { sourceType: 'reported'; mode: 'short'; input: ReportedShortFormInput }
@@ -24,7 +24,8 @@ export type CitationInput =
 			mode: 'short';
 			input: UnreportedShortFormInput;
 	  }
-	| { sourceType: 'statute'; mode: 'full'; input: StatuteInput };
+	| { sourceType: 'statute'; mode: 'full'; input: StatuteInput }
+	| { sourceType: 'statute'; mode: 'short'; input: StatuteShortFormInput };
 
 export function assemble(
 	citation: CitationInput,
@@ -40,6 +41,8 @@ export function assemble(
 				? assembleUnreportedCase(citation.input, options)
 				: assembleUnreportedShortForm(citation.input, options);
 		case 'statute':
-			return assembleStatuteCase(citation.input);
+			return citation.mode === 'full'
+				? assembleStatuteCase(citation.input)
+				: assembleStatuteShortForm(citation.input);
 	}
 }
