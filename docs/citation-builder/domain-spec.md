@@ -1,10 +1,4 @@
-# Citation Builder — Domain Spec
-
-Bluebook 22nd ed. rules for the reported-case slice. Each rule below is
-`r[id]`-tagged for tracey, tracked against `domain/` and `state/`. Rule
-text is quoted from source where the source states it in quotable form;
-tool-behavior consequences that aren't themselves quotable Bluebook
-text are stated plainly instead.
+# Bluebook 22
 
 ---
 
