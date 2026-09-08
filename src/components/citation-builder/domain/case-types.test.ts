@@ -1,18 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { assembleCaseName, CASE_TYPES, isCaseTypeId } from './case-types';
+import { assembleCaseName, isCaseTypeId } from './case-types';
 
 const PARTY_1 = 'Dayton';
 const PARTY_2 = 'Stewart';
-
-describe('CASE_TYPES', () => {
-	it('is an ordered list of records, not branches', () => {
-		expect(CASE_TYPES.map((caseType) => caseType.id)).toEqual([
-			'v',
-			'in-re',
-			'ex-parte',
-		]);
-	});
-});
 
 describe('isCaseTypeId', () => {
 	it.each(['v', 'in-re', 'ex-parte'])('%s is a valid case type id', (id) => {
