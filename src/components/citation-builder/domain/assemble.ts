@@ -8,34 +8,18 @@ export type SpanSeparator = PinciteOptions['separator'];
 // r[impl normalize.span-separator]
 const DEFAULT_SEPARATOR: SpanSeparator = '-';
 
-// r[impl assemble.composable]
-function nameSegment(name: CaseNameInput): Segment {
-	return { text: assembleCaseName(name), emphasized: true };
-}
-
-// r[impl assemble.composable]
-function maybeSegment(
-	value: string | undefined,
-	format: (value: string) => string,
-): Segment[] {
-	return value === undefined
-		? []
-		: [{ text: format(value), emphasized: false }];
-}
-
-// r[impl assemble.composable]
 // r[impl normalize.span-input]
 function appendPincite(
 	pincite: string | undefined,
 	separator: SpanSeparator,
 ): Segment[] {
-	return maybeSegment(
-		pincite,
-		(value) => `, ${parsePincite(value, { separator, starPages: false })}`,
-	);
+	if (pincite === undefined) {
+		return [];
+	}
+	const parsed = parsePincite(pincite, { separator, starPages: false });
+	return [{ text: `, ${parsed}`, emphasized: false }];
 }
 
-// r[impl assemble.composable]
 function framePeriod(segments: Segment[]): Segment[] {
 	return applyFraming(segments, {
 		capitalizeFirst: true,
@@ -67,7 +51,7 @@ export function assembleReportedCase(
 			: `${input.court} ${input.year}`;
 
 	const segments: Segment[] = [
-		nameSegment(input.name),
+		{ text: assembleCaseName(input.name), emphasized: true },
 		{
 			text: `, ${input.volume} ${input.reporter} ${input.firstPage}`,
 			emphasized: false,
@@ -119,20 +103,14 @@ export function assembleReportedShortForm(
 		]);
 	}
 
-	const nameSeg: Segment[] =
-		input.nameVariant === 'none'
-			? []
-			: [
-					{
-						text: shortFormName(input.nameVariant, input.name),
-						emphasized: true,
-					},
-				];
+	const citeText = `${input.volume} ${input.reporter} at ${pincite}`;
 
-	const core =
-		nameSeg.length === 0
-			? `${input.volume} ${input.reporter} at ${pincite}`
-			: `, ${input.volume} ${input.reporter} at ${pincite}`;
+	if (input.nameVariant === 'none') {
+		return framePeriod([{ text: citeText, emphasized: false }]);
+	}
 
-	return framePeriod([...nameSeg, { text: core, emphasized: false }]);
+	return framePeriod([
+		{ text: shortFormName(input.nameVariant, input.name), emphasized: true },
+		{ text: `, ${citeText}`, emphasized: false },
+	]);
 }
