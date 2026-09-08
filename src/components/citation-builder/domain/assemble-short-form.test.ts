@@ -88,6 +88,7 @@ describe('assembleReportedShortForm', () => {
 });
 
 // r[verify normalize.span-input]
+// r[verify normalize.span-separator]
 describe('assembleReportedShortForm: pincite is parsed, not passed through raw', () => {
 	it.each([
 		['435', undefined, '435'],

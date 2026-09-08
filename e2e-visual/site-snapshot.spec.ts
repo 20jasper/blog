@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { globSync } from 'node:fs';
 import { join } from 'node:path';
 import { expectNoAxeViolations } from './axe';
+import { expectNoHorizontalScroll } from './zoom';
 
 async function forceLoadLazyImages(page: Page): Promise<void> {
 	await page.evaluate(async () => {
@@ -71,12 +72,7 @@ test.describe('accessibility and layout (every page)', () => {
 			});
 
 			test('has no horizontal scroll', async ({ page }) => {
-				const hasHorizontalScroll = await page.evaluate(
-					() =>
-						document.documentElement.scrollWidth >
-						document.documentElement.clientWidth,
-				);
-				expect(hasHorizontalScroll).toBe(false);
+				await expectNoHorizontalScroll(page);
 			});
 
 			test('has no axe violations', async ({ page }) => {
