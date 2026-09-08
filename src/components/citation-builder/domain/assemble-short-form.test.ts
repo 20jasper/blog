@@ -91,9 +91,9 @@ describe('assembleReportedShortForm', () => {
 // r[verify normalize.span-separator]
 describe('assembleReportedShortForm: pincite is parsed, not passed through raw', () => {
 	it.each([
-		['435', undefined, '435'],
-		['208-214', undefined, '208-14'],
-		['208-214', '–' as const, '208–14'],
+		['435', undefined, '273 F.3d at 435.'],
+		['208-214', undefined, '273 F.3d at 208-14.'],
+		['208-214', '–' as const, '273 F.3d at 208–14.'],
 	])(
 		'pincite %s with separator %s -> %s',
 		(pincite, spanSeparator, expected) => {
@@ -106,10 +106,12 @@ describe('assembleReportedShortForm: pincite is parsed, not passed through raw',
 
 			const { plain } = render(
 				assembleReportedShortForm(input, { spanSeparator }),
-				{ emphasis: 'italic' },
+				{
+					emphasis: 'italic',
+				},
 			);
 
-			expect(plain).toBe(`273 F.3d at ${expected}.`);
+			expect(plain).toBe(expected);
 		},
 	);
 });

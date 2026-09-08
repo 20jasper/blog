@@ -90,22 +90,40 @@ describe('assembleReportedCase: field variations', () => {
 // r[verify normalize.span-separator]
 describe('assembleReportedCase: pincite is parsed, not passed through raw', () => {
 	it.each([
-		['214', undefined, '208, 214'],
-		['208-214', undefined, '208, 208-14'],
-		['208-214', '–' as const, '208, 208–14'],
-		['490, 495', undefined, '208, 490, 495'],
-		['1137 n.4', undefined, '208, 1137 n.4'],
+		[
+			'214',
+			undefined,
+			'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+		],
+		[
+			'208-214',
+			undefined,
+			'Dayton v. Stewart, 179 N.E.3d 208, 208-14 (Ohio Ct. App. 2021).',
+		],
+		[
+			'208-214',
+			'–' as const,
+			'Dayton v. Stewart, 179 N.E.3d 208, 208–14 (Ohio Ct. App. 2021).',
+		],
+		[
+			'490, 495',
+			undefined,
+			'Dayton v. Stewart, 179 N.E.3d 208, 490, 495 (Ohio Ct. App. 2021).',
+		],
+		[
+			'1137 n.4',
+			undefined,
+			'Dayton v. Stewart, 179 N.E.3d 208, 1137 n.4 (Ohio Ct. App. 2021).',
+		],
 	])(
 		'pincite %s with separator %s -> %s',
-		(pincite, spanSeparator, expectedFirstPageAndPincite) => {
+		(pincite, spanSeparator, expected) => {
 			const { plain } = render(
 				assembleReportedCase(reportedCase({ pincite }), { spanSeparator }),
 				{ emphasis: 'italic' },
 			);
 
-			expect(plain).toBe(
-				`Dayton v. Stewart, 179 N.E.3d ${expectedFirstPageAndPincite} (Ohio Ct. App. 2021).`,
-			);
+			expect(plain).toBe(expected);
 		},
 	);
 });
