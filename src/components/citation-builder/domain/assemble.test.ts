@@ -1,7 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { assembleReportedCase } from './assemble';
-import { reportedCase } from './assemble-fixtures';
+import { assembleReportedCase, type ReportedCaseInput } from './assemble';
 import { render } from './render';
+
+function reportedCase(
+	overrides: Partial<ReportedCaseInput> = {},
+): ReportedCaseInput {
+	return {
+		name: { caseType: 'v', party1: 'Dayton', party2: 'Stewart' },
+		volume: '179',
+		reporter: 'N.E.3d',
+		firstPage: '208',
+		pincite: '214',
+		court: 'Ohio Ct. App.',
+		year: 2021,
+		...overrides,
+	};
+}
 
 // r[verify citation.reported-long-form]
 // r[verify assemble.composable]
