@@ -98,21 +98,27 @@ export function assembleReportedShortForm(
 		starPages: false,
 	});
 
-	if (input.nameVariant === 'id') {
-		return framePeriod([
-			{ text: 'Id.', emphasized: true },
-			{ text: ` at ${pincite}` },
-		]);
+	switch (input.nameVariant) {
+		case 'id':
+			return framePeriod([
+				{ text: 'Id.', emphasized: true },
+				{ text: ` at ${pincite}` },
+			]);
+		case 'none':
+		case 'full':
+		case 'party1':
+		case 'party2': {
+			const citeText = `${input.volume} ${input.reporter} at ${pincite}`;
+			if (input.nameVariant === 'none') {
+				return framePeriod([{ text: citeText }]);
+			}
+			return framePeriod([
+				{
+					text: shortFormName(input.nameVariant, input.name),
+					emphasized: true,
+				},
+				{ text: `, ${citeText}` },
+			]);
+		}
 	}
-
-	const citeText = `${input.volume} ${input.reporter} at ${pincite}`;
-
-	if (input.nameVariant === 'none') {
-		return framePeriod([{ text: citeText }]);
-	}
-
-	return framePeriod([
-		{ text: shortFormName(input.nameVariant, input.name), emphasized: true },
-		{ text: `, ${citeText}` },
-	]);
 }
