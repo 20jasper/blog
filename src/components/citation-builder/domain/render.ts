@@ -48,7 +48,9 @@ export function render(
 	const html = segments
 		.map((segment) => {
 			const escaped = escapeHtml(segment.text);
-			return segment.emphasized ? `<${tag}>${escaped}</${tag}>` : escaped;
+			return segment.emphasized === true
+				? `<${tag}>${escaped}</${tag}>`
+				: escaped;
 		})
 		.join('');
 

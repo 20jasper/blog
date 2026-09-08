@@ -45,18 +45,14 @@ export function assembleReportedCase(
 			: [
 					{
 						text: `, ${parsePincite(input.pincite, { separator: spanSeparator, starPages: false })}`,
-						emphasized: false,
 					},
 				];
 
 	const segments: Segment[] = [
 		{ text: assembleCaseName(input.name), emphasized: true },
-		{
-			text: `, ${input.volume} ${input.reporter} ${input.firstPage}`,
-			emphasized: false,
-		},
+		{ text: `, ${input.volume} ${input.reporter} ${input.firstPage}` },
 		...pincite,
-		{ text: ` (${parenthetical})`, emphasized: false },
+		{ text: ` (${parenthetical})` },
 	];
 
 	return framePeriod(segments);
@@ -80,11 +76,12 @@ export type ReportedShortFormInput =
 function shortFormName(nameVariant: PartyChoice, name: CaseNameInput): string {
 	switch (nameVariant) {
 		case 'party1':
-			// only one party in in-re and ex-parte cases, as well as non full formats
-			return name.caseType === 'v' ? name.party1 : assembleCaseName(name);
 		case 'party2':
 			// only one party in in-re and ex-parte cases, as well as non full formats
-			return name.caseType === 'v' ? name.party2 : assembleCaseName(name);
+			if (name.caseType !== 'v') {
+				return assembleCaseName(name);
+			}
+			return nameVariant === 'party1' ? name.party1 : name.party2;
 		case 'full':
 			// format both parties for full and v cases
 			return assembleCaseName(name);
@@ -104,18 +101,18 @@ export function assembleReportedShortForm(
 	if (input.nameVariant === 'id') {
 		return framePeriod([
 			{ text: 'Id.', emphasized: true },
-			{ text: ` at ${pincite}`, emphasized: false },
+			{ text: ` at ${pincite}` },
 		]);
 	}
 
 	const citeText = `${input.volume} ${input.reporter} at ${pincite}`;
 
 	if (input.nameVariant === 'none') {
-		return framePeriod([{ text: citeText, emphasized: false }]);
+		return framePeriod([{ text: citeText }]);
 	}
 
 	return framePeriod([
 		{ text: shortFormName(input.nameVariant, input.name), emphasized: true },
-		{ text: `, ${citeText}`, emphasized: false },
+		{ text: `, ${citeText}` },
 	]);
 }

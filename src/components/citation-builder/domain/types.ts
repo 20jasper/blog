@@ -1,6 +1,6 @@
 export type Segment = {
 	text: string;
-	emphasized: boolean;
+	emphasized?: boolean;
 };
 
 export type Emphasis = 'italic' | 'underline';
