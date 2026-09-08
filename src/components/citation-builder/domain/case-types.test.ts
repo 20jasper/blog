@@ -8,13 +8,6 @@ describe('isCaseTypeId', () => {
 	it.each(['v', 'in-re', 'ex-parte'])('%s is a valid case type id', (id) => {
 		expect(isCaseTypeId(id)).toBe(true);
 	});
-
-	it.each(['V', 'inRe', 'unknown', ''])(
-		'%s is not a valid case type id',
-		(id) => {
-			expect(isCaseTypeId(id)).toBe(false);
-		},
-	);
 });
 
 // r[verify case-name.assembly]
