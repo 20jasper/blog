@@ -21,10 +21,6 @@ const digitString = array(integer({ min: 0, max: 9 }), {
 	maxLength: 6,
 }).map((digits) => digits.join(''));
 
-// fc.string() alone rarely lands on "a valid digit string plus one stray
-// character", which is exactly the shape a naive regex tweak breaks --
-// insert an adversarial character into an otherwise-valid digit string so
-// that case is actually well-represented, not left to chance.
 const adversarialChar = constantFrom('.', '-', ' ', 'a', '４', '٤');
 const digitStringPlusOneBadChar = tuple(
 	digitString,

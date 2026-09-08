@@ -13,11 +13,6 @@ const CORLEY_NAME = {
 // r[verify case-name.short-form]
 // r[verify short-form.party-choice]
 describe('assembleReportedShortForm', () => {
-	// Worked example from domain-spec.md §5.7 (Corley, 273 F.3d 429 (2d
-	// Cir. 2001), at page 435) -- Party 2 is the real Rule 10.9(a)(i) form
-	// a practitioner would pick, since the corporate plaintiff is the
-	// less distinctive party. The tool presents the choice rather than
-	// guessing it, so both party1 and party2 are equally valid outputs.
 	it.each([
 		['full', 'Universal City Studios, Inc. v. Corley, 273 F.3d at 435.'],
 		['party1', 'Universal City Studios, Inc., 273 F.3d at 435.'],

@@ -3,9 +3,6 @@ import { assemble } from './citation-input';
 import { render } from '../domain/render';
 import type { CitationInput } from './citation-input';
 
-// Exact golden-case wording already lives in assemble.test.ts; these only
-// confirm assemble() routes each mode to the right function and that
-// options actually thread through.
 describe('assemble', () => {
 	it('dispatches full to assembleReportedCase', () => {
 		const citation: CitationInput = {
