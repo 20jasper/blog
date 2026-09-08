@@ -1,5 +1,6 @@
 ---
 import FieldRow from './field-row.astro';
+import { FIELD_CONTROL_CLASS } from './field-control-class';
 
 export type Props = {
 	name: string;
@@ -30,6 +31,6 @@ const id = name;
 		inputmode={inputmode}
 		pattern={pattern}
 		aria-describedby={hint === undefined ? undefined : `${id}-hint`}
-		class="border-foreground-secondary/70 bg-background text-foreground focus:border-accent focus:ring-accent disabled:border-foreground-secondary/50 disabled:bg-foreground-secondary/10 disabled:text-foreground-secondary box-border block w-full max-w-full min-w-0 rounded-md border px-3 py-2 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:border-dashed"
+		class={FIELD_CONTROL_CLASS}
 	/>
 </FieldRow>

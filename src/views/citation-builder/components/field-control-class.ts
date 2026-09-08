@@ -1,0 +1,2 @@
+export const FIELD_CONTROL_CLASS =
+	'border-foreground-secondary/70 bg-background text-foreground focus:border-accent focus:ring-accent disabled:border-foreground-secondary/50 disabled:bg-foreground-secondary/10 disabled:text-foreground-secondary box-border block w-full max-w-full min-w-0 rounded-md border px-3 py-2 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:border-dashed';
