@@ -2,7 +2,6 @@
 import FieldRow from './field-row.astro';
 
 export type Props = {
-	id: string;
 	name: string;
 	label: string;
 	hint?: string;
@@ -12,7 +11,8 @@ export type Props = {
 	pattern?: string;
 };
 
-const { id, name, label, hint, inputmode, pattern } = Astro.props;
+const { name, label, hint, inputmode, pattern } = Astro.props;
+const id = name;
 ---
 
 <FieldRow

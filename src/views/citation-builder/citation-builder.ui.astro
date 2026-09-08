@@ -5,8 +5,9 @@ import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
-import { ids } from './ids';
 import type { Props as FieldSpec } from './components/field.astro';
+
+const FORM_ID = 'citation-builder-form';
 
 const MODE_OPTIONS = [
 	{ value: 'full', text: 'Full citation', checked: true },
@@ -26,7 +27,6 @@ const SPAN_SEPARATOR_OPTIONS = [
 const CITATION_FORM_FIELDS: FieldSpec[] = [
 	{
 		kind: 'select',
-		id: ids.nameVariant,
 		name: 'nameVariant',
 		label: 'Name variant',
 		hint: 'Which party name the short form uses',
@@ -42,7 +42,6 @@ const CITATION_FORM_FIELDS: FieldSpec[] = [
 const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 	{
 		kind: 'select',
-		id: ids.caseType,
 		name: 'caseType',
 		label: 'Case type',
 		options: [
@@ -53,26 +52,22 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 	},
 	{
 		kind: 'text',
-		id: ids.party1,
 		name: 'party1',
 		label: 'Party 1 (abbreviated)',
 	},
 	{
 		kind: 'text',
-		id: ids.party2,
 		name: 'party2',
 		label: 'Party 2 (abbreviated)',
 	},
 	{
 		kind: 'text',
-		id: ids.court,
 		name: 'court',
 		label: 'Court (abbreviated)',
 		hint: 'e.g., Ohio Ct. App., 2d Cir.',
 	},
 	{
 		kind: 'text',
-		id: ids.pincite,
 		name: 'pincite',
 		label: 'Pincite',
 		hint: 'Page, range, or list, e.g. 214, 208-14, or 490, 495',
@@ -82,28 +77,24 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 const REPORTED_FIELDS: FieldSpec[] = [
 	{
 		kind: 'text',
-		id: ids.volume,
 		name: 'volume',
 		label: 'Volume',
 		hint: 'Reporter volume number',
 	},
 	{
 		kind: 'text',
-		id: ids.reporter,
 		name: 'reporter',
 		label: 'Reporter',
 		hint: 'Abbreviated series, e.g. N.E.3d',
 	},
 	{
 		kind: 'text',
-		id: ids.firstPage,
 		name: 'firstPage',
 		label: 'First page',
 		hint: 'First page of the opinion in the reporter',
 	},
 	{
 		kind: 'text',
-		id: ids.year,
 		name: 'year',
 		label: 'Decision year',
 		hint: 'Year the case was decided',
@@ -130,7 +121,7 @@ const REPORTED_FIELDS: FieldSpec[] = [
 	> required
 </p>
 <form
-	id={ids.form}
+	id={FORM_ID}
 	class="flex w-full max-w-full flex-col gap-6"
 >
 	<Fieldset legend="Citation form">
@@ -184,7 +175,7 @@ const REPORTED_FIELDS: FieldSpec[] = [
 		Citation
 	</p>
 	<output
-		for={ids.form}
+		for={FORM_ID}
 		class="mt-1 block max-h-24 w-full max-w-full overflow-y-auto text-lg break-words"
 	></output>
 	<div class="mt-3 flex flex-wrap gap-3">
@@ -196,7 +187,7 @@ const REPORTED_FIELDS: FieldSpec[] = [
 		</Button>
 		<Button
 			type="submit"
-			form={ids.form}
+			form={FORM_ID}
 			class="!bg-background hover:!bg-background/80"
 		>
 			Copy

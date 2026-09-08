@@ -32,9 +32,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		import { createClipboardController } from './clipboard';
 		import { queryFormRefs } from './dom-refs';
 		import { REPORTED_EXAMPLE } from './examples';
-		import { ids } from './ids';
 
-		const form = document.querySelector<HTMLFormElement>(`#${ids.form}`)!;
+		const form = document.querySelector<HTMLFormElement>('form')!;
 		const output = document.querySelector('output')!;
 		const buttons = Array.from(document.querySelectorAll('button'));
 		const clearButton = buttons.find((b) => b.textContent?.trim() === 'Clear')!;
