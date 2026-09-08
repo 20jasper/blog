@@ -1,5 +1,6 @@
 import type { CaseTypeId } from '../domain/case-types';
 import type { CitationFields } from './citation-fields';
+import type { Mode } from './display-state';
 
 export type FieldId = keyof CitationFields;
 
@@ -9,7 +10,7 @@ function usedIf(condition: boolean, value: FieldRequirement): FieldRequirement {
 	return condition ? value : 'not-used';
 }
 
-export type Selections = { mode: 'full' | 'short'; caseType: CaseTypeId };
+export type Selections = { mode: Mode; caseType: CaseTypeId };
 
 export function selectFieldState(
 	selections: Selections,

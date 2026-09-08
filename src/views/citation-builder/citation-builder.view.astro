@@ -21,6 +21,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			type DisplayState,
 			type Emphasis,
 			type FieldRequirement,
+			type Mode,
+			type NameVariant,
 			type SpanSeparator,
 		} from '@components/citation-builder/state';
 		import { createClipboardController } from './clipboard';
@@ -60,14 +62,14 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return isCaseTypeId(value) ? value : 'v';
 		}
 
-		function currentMode(): 'full' | 'short' {
+		function currentMode(): Mode {
 			const checked = form.querySelector<HTMLInputElement>(
 				'input[name="mode"]:checked',
 			);
 			return checked?.value === 'short' ? 'short' : 'full';
 		}
 
-		function currentNameVariant(): 'full' | 'party1' | 'party2' | 'none' {
+		function currentNameVariant(): NameVariant {
 			const { value } = nameVariantSelect;
 			return value === 'party1' || value === 'party2' || value === 'none'
 				? value
@@ -191,14 +193,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			updateOutput();
 		}
 
-		function fillFields(
-			entries: [HTMLInputElement | HTMLSelectElement, string][],
-		): void {
-			for (const [input, value] of entries) {
-				input.value = value;
-			}
-		}
-
 		function resetToDefaults(): void {
 			form.reset();
 			for (const input of form.querySelectorAll<HTMLInputElement>(
@@ -217,17 +211,15 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function loadExample(): void {
 			resetToDefaults();
-			fillFields([
-				[caseTypeSelect, REPORTED_EXAMPLE.caseType],
-				[party1Input, REPORTED_EXAMPLE.party1],
-				[party2Input, REPORTED_EXAMPLE.party2],
-				[courtInput, REPORTED_EXAMPLE.court],
-				[volumeInput, REPORTED_EXAMPLE.volume],
-				[reporterInput, REPORTED_EXAMPLE.reporter],
-				[firstPageInput, REPORTED_EXAMPLE.firstPage],
-				[pinciteInput, REPORTED_EXAMPLE.pincite],
-				[yearInput, REPORTED_EXAMPLE.year],
-			]);
+			caseTypeSelect.value = REPORTED_EXAMPLE.caseType;
+			party1Input.value = REPORTED_EXAMPLE.party1;
+			party2Input.value = REPORTED_EXAMPLE.party2;
+			courtInput.value = REPORTED_EXAMPLE.court;
+			volumeInput.value = REPORTED_EXAMPLE.volume;
+			reporterInput.value = REPORTED_EXAMPLE.reporter;
+			firstPageInput.value = REPORTED_EXAMPLE.firstPage;
+			pinciteInput.value = REPORTED_EXAMPLE.pincite;
+			yearInput.value = REPORTED_EXAMPLE.year;
 			refresh();
 		}
 

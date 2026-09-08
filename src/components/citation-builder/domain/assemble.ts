@@ -63,11 +63,13 @@ export function assembleReportedCase(
 	return framePeriod(segments);
 }
 
+type PartyChoice = 'full' | 'party1' | 'party2';
+
 export type ReportedShortFormInput =
 	| { nameVariant: 'id'; pincite: string }
 	| { nameVariant: 'none'; volume: string; reporter: string; pincite: string }
 	| {
-			nameVariant: 'full' | 'party1' | 'party2';
+			nameVariant: PartyChoice;
 			name: CaseNameInput;
 			volume: string;
 			reporter: string;
@@ -76,10 +78,7 @@ export type ReportedShortFormInput =
 
 // r[impl case-name.short-form]
 // r[impl short-form.party-choice]
-function shortFormName(
-	nameVariant: 'full' | 'party1' | 'party2',
-	name: CaseNameInput,
-): string {
+function shortFormName(nameVariant: PartyChoice, name: CaseNameInput): string {
 	if (nameVariant === 'full' || name.caseType !== 'v') {
 		return assembleCaseName(name);
 	}
