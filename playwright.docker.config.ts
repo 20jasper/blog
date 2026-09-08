@@ -1,10 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Host rendering (fonts, subpixel metrics) differs from the Docker image
-// CI actually uses, which has silently produced wrong baselines before.
 if (process.env.RUNNING_IN_VISUAL_DOCKER !== 'true') {
 	throw new Error(
-		'Visual tests must run in Docker: pnpm run test:visual:docker (or :update).',
+		'Fonts and OS rendering differ outside Docker, producing wrong baselines. Run: pnpm run test:visual:docker',
 	);
 }
 
