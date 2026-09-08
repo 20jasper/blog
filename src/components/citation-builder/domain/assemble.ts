@@ -8,18 +8,6 @@ export type SpanSeparator = PinciteOptions['separator'];
 // r[impl normalize.span-separator]
 const DEFAULT_SEPARATOR: SpanSeparator = '-';
 
-// r[impl normalize.span-input]
-function appendPincite(
-	pincite: string | undefined,
-	separator: SpanSeparator,
-): Segment[] {
-	if (pincite === undefined) {
-		return [];
-	}
-	const parsed = parsePincite(pincite, { separator, starPages: false });
-	return [{ text: `, ${parsed}`, emphasized: false }];
-}
-
 function framePeriod(segments: Segment[]): Segment[] {
 	return applyFraming(segments, {
 		capitalizeFirst: true,
@@ -50,13 +38,24 @@ export function assembleReportedCase(
 			? `${input.year}`
 			: `${input.court} ${input.year}`;
 
+	// r[impl normalize.span-input]
+	const pincite =
+		input.pincite === undefined
+			? []
+			: [
+					{
+						text: `, ${parsePincite(input.pincite, { separator: spanSeparator, starPages: false })}`,
+						emphasized: false,
+					},
+				];
+
 	const segments: Segment[] = [
 		{ text: assembleCaseName(input.name), emphasized: true },
 		{
 			text: `, ${input.volume} ${input.reporter} ${input.firstPage}`,
 			emphasized: false,
 		},
-		...appendPincite(input.pincite, spanSeparator),
+		...pincite,
 		{ text: ` (${parenthetical})`, emphasized: false },
 	];
 
