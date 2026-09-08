@@ -13,8 +13,6 @@ export function reduceClosingPage(start: string, end: string): string {
 	return end.slice(-keep);
 }
 
-// visually near-identical -- U+002D vs U+2013, named so callers never retype
-// the raw character.
 export const HYPHEN = '-';
 export const EN_DASH = '–';
 
