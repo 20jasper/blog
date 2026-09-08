@@ -5,6 +5,7 @@ services:
     ipc: host
     environment:
       CI: 'true'
+      RUNNING_IN_VISUAL_DOCKER: 'true'
       HOST_UID: '${HOST_UID:-1000}'
       HOST_GID: '${HOST_GID:-1000}'
       PLAYWRIGHT_ARGS: '${PLAYWRIGHT_ARGS:-}'
