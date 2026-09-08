@@ -108,20 +108,18 @@ export function assembleReportedShortForm(
 				{ text: ` at ${pincite}` },
 			]);
 		case 'none':
+			return framePeriod([
+				{ text: `${input.volume} ${input.reporter} at ${pincite}` },
+			]);
 		case 'full':
 		case 'party1':
-		case 'party2': {
-			const citeText = `${input.volume} ${input.reporter} at ${pincite}`;
-			if (input.nameVariant === 'none') {
-				return framePeriod([{ text: citeText }]);
-			}
+		case 'party2':
 			return framePeriod([
 				{
 					text: shortFormName(input.nameVariant, input.name),
 					emphasized: true,
 				},
-				{ text: `, ${citeText}` },
+				{ text: `, ${input.volume} ${input.reporter} at ${pincite}` },
 			]);
-		}
 	}
 }
