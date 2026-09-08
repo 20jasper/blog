@@ -16,8 +16,10 @@ export function reduceClosingPage(start: string, end: string): string {
 export const HYPHEN = '-';
 export const EN_DASH = '–';
 
+export type SpanSeparator = typeof HYPHEN | typeof EN_DASH;
+
 export type PinciteOptions = {
-	separator: typeof HYPHEN | typeof EN_DASH;
+	separator: SpanSeparator;
 	starPages: boolean;
 };
 

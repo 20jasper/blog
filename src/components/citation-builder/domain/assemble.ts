@@ -1,9 +1,10 @@
 import { assembleCaseName, type CaseNameInput } from './case-types';
-import { HYPHEN, parsePincite, type PinciteOptions } from './pincite';
+import { HYPHEN, parsePincite } from './pincite';
 import { applyFraming } from './render';
 import type { Segment } from './types';
+import type { SpanSeparator } from './pincite';
 
-export type SpanSeparator = PinciteOptions['separator'];
+export type { SpanSeparator };
 
 // r[impl normalize.span-separator]
 const DEFAULT_SEPARATOR: SpanSeparator = HYPHEN;
