@@ -152,7 +152,11 @@ describe('buildCitationInput', () => {
 });
 
 describe('buildCitationInput: numeric fields reject non-digit input', () => {
-	it('throws rather than producing NaN for a non-numeric year', () => {
+	it.each([
+		[':', 'an ASCII symbol'],
+		['４', 'a full-width Unicode digit, not ASCII 0-9'],
+		['٤', 'an Arabic-Indic Unicode digit, not ASCII 0-9'],
+	])('throws rather than producing NaN for year %s (%s)', (year) => {
 		const fields: CitationFields = {
 			...initialCitationFields(),
 			party1: 'A',
@@ -160,7 +164,7 @@ describe('buildCitationInput: numeric fields reject non-digit input', () => {
 			volume: '1',
 			reporter: 'R',
 			firstPage: '2',
-			year: ':',
+			year,
 		};
 		const display: DisplayState = { ...initialDisplayState(), mode: 'full' };
 

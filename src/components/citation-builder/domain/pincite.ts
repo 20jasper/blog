@@ -2,11 +2,8 @@ function commonPrefixLength(a: string, b: string): number {
 	if (a.length !== b.length) {
 		return 0;
 	}
-	let i = 0;
-	while (i < a.length && a[i] === b[i]) {
-		i++;
-	}
-	return i;
+	const diffIndex = a.split('').findIndex((char, i) => char !== b[i]);
+	return diffIndex === -1 ? a.length : diffIndex;
 }
 
 // r[impl normalize.span-digits]
