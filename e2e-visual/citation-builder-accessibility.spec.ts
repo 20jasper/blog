@@ -3,8 +3,6 @@ import { expectNoAxeViolations } from './axe';
 import { getCitationBuilderLocators } from './citation-builder-locators';
 import { expectNoHorizontalScroll, zoomTo } from './zoom';
 
-// site-snapshot.spec.ts already axe-scans every page on initial load.
-
 test.beforeEach(async ({ page }) => {
 	await page.goto('/tools/citation-builder');
 });
