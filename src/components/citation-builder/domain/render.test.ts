@@ -86,16 +86,20 @@ describe('render', () => {
 	});
 
 	it.each([
-		['italic', 'i'],
-		['underline', 'u'],
+		[
+			'italic',
+			'<i>Dayton v. Stewart</i>, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+		],
+		[
+			'underline',
+			'<u>Dayton v. Stewart</u>, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+		],
 	] as const)(
-		'wraps emphasized segments in <%s> for emphasis %s',
-		(emphasis, tag) => {
+		'wraps emphasized segments for emphasis %s',
+		(emphasis, expected) => {
 			const { html } = render(segments, { emphasis });
 
-			expect(html).toBe(
-				`<${tag}>Dayton v. Stewart</${tag}>, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).`,
-			);
+			expect(html).toBe(expected);
 		},
 	);
 

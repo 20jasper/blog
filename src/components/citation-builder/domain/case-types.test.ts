@@ -33,15 +33,13 @@ describe('assembleCaseName', () => {
 	it('assembles v as "Party1 v. Party2"', () => {
 		expect(
 			assembleCaseName({ caseType: 'v', party1: PARTY_1, party2: PARTY_2 }),
-		).toBe(`${PARTY_1} v. ${PARTY_2}`);
+		).toBe('Dayton v. Stewart');
 	});
 
 	it.each([
-		['in-re', 'In re'],
-		['ex-parte', 'Ex parte'],
-	] as const)('assembles %s as "%s Party1"', (caseType, label) => {
-		expect(assembleCaseName({ caseType, party1: PARTY_1 })).toBe(
-			`${label} ${PARTY_1}`,
-		);
+		['in-re', 'In re Dayton'],
+		['ex-parte', 'Ex parte Dayton'],
+	] as const)('assembles %s as "%s"', (caseType, expected) => {
+		expect(assembleCaseName({ caseType, party1: PARTY_1 })).toBe(expected);
 	});
 });
