@@ -81,10 +81,10 @@ export type ReportedShortFormInput =
 function shortFormName(nameVariant: PartyChoice, name: CaseNameInput): string {
 	switch (nameVariant) {
 		case 'party1':
-			// only one party in in-re and ex-parte cases, as well as non-v formats
+			// only one party in in-re and ex-parte cases, as well as non full formats
 			return name.caseType === 'v' ? name.party1 : assembleCaseName(name);
 		case 'party2':
-			// only one party in in-re and ex-parte cases, as well as non-v formats
+			// only one party in in-re and ex-parte cases, as well as non full formats
 			return name.caseType === 'v' ? name.party2 : assembleCaseName(name);
 		case 'full':
 			// format both parties for full and v cases
