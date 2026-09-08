@@ -8,7 +8,7 @@ export type CaseNameInput =
 type CaseType = {
 	id: CaseTypeId;
 	label: string;
-	template: (party1: string, party2: string) => string;
+	template: (party1: string, party2?: string) => string;
 };
 
 const V: CaseType = {
@@ -41,6 +41,8 @@ export function isCaseTypeId(value: string): value is CaseTypeId {
 
 // r[impl case-name.assembly]
 export function assembleCaseName(input: CaseNameInput): string {
-	const party2 = input.caseType === 'v' ? input.party2 : '';
-	return CASE_TYPE_BY_ID[input.caseType].template(input.party1, party2);
+	const caseType = CASE_TYPE_BY_ID[input.caseType];
+	return input.caseType === 'v'
+		? caseType.template(input.party1, input.party2)
+		: caseType.template(input.party1);
 }
