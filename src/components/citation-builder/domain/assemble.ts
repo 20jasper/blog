@@ -1,12 +1,12 @@
 import { assembleCaseName, type CaseNameInput } from './case-types';
-import { parsePincite, type PinciteOptions } from './pincite';
+import { HYPHEN, parsePincite, type PinciteOptions } from './pincite';
 import { applyFraming } from './render';
 import type { Segment } from './types';
 
 export type SpanSeparator = PinciteOptions['separator'];
 
 // r[impl normalize.span-separator]
-const DEFAULT_SEPARATOR: SpanSeparator = '-';
+const DEFAULT_SEPARATOR: SpanSeparator = HYPHEN;
 
 function framePeriod(segments: Segment[]): Segment[] {
 	return applyFraming(segments, {

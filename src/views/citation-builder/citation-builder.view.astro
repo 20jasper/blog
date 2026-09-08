@@ -11,6 +11,10 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			isCaseTypeId,
 			type CaseTypeId,
 		} from '@components/citation-builder/domain/case-types';
+		import {
+			EN_DASH,
+			HYPHEN,
+		} from '@components/citation-builder/domain/pincite';
 		import { render } from '@components/citation-builder/domain/render';
 		import {
 			assemble,
@@ -87,7 +91,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			const checked = form.querySelector<HTMLInputElement>(
 				'input[name="spanSeparator"]:checked',
 			);
-			return checked?.value === 'en-dash' ? '–' : '-';
+			return checked?.value === 'en-dash' ? EN_DASH : HYPHEN;
 		}
 
 		function readCitationFields(): CitationFields {
