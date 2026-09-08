@@ -2,16 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { applyFraming, render } from './render';
 import type { Segment } from './types';
 
-// Lowercased so the capitalization behavior under test is visible in the
-// expected output rather than already true of the input.
-const LOWERCASE_NAME = 'dayton v. stewart';
-
 describe('applyFraming', () => {
+	const lowercaseName = 'dayton v. stewart';
+
 	it.each([
 		[true, 'Dayton v. stewart'],
 		[false, 'dayton v. stewart'],
 	])('capitalizeFirst: %s -> %j', (capitalizeFirst, expected) => {
-		const segments: Segment[] = [{ text: LOWERCASE_NAME, emphasized: true }];
+		const segments: Segment[] = [{ text: lowercaseName, emphasized: true }];
 
 		const [framed] = applyFraming(segments, {
 			capitalizeFirst,
@@ -33,11 +31,11 @@ describe('applyFraming', () => {
 	});
 
 	it('does not mutate the input segments (pure per §7.1/§7.3)', () => {
-		const segments: Segment[] = [{ text: LOWERCASE_NAME, emphasized: true }];
+		const segments: Segment[] = [{ text: lowercaseName, emphasized: true }];
 
 		applyFraming(segments, { capitalizeFirst: true, terminalPeriod: true });
 
-		expect(segments[0]?.text).toBe(LOWERCASE_NAME);
+		expect(segments[0]?.text).toBe(lowercaseName);
 	});
 
 	it.each([

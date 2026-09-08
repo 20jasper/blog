@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest';
+import { array, assert, integer, property, tuple } from 'fast-check';
 import { parsePincite, reduceClosingPage } from './pincite';
+
+const digitStringOfLength = (length: number) =>
+	array(integer({ min: 0, max: 9 }), {
+		minLength: length,
+		maxLength: length,
+	}).map((digits) => digits.join(''));
+
+const equalLengthDigitPair = integer({ min: 2, max: 6 }).chain((length) =>
+	tuple(digitStringOfLength(length), digitStringOfLength(length)),
+);
 
 // r[verify normalize.span-digits]
 describe('reduceClosingPage', () => {
@@ -17,6 +28,28 @@ describe('reduceClosingPage', () => {
 		['495', '97', '97', 'already reduced, unchanged'],
 	])('%s-%s -> %s (%s)', (start, end, expected) => {
 		expect(reduceClosingPage(start, end)).toBe(expected);
+	});
+
+	it('always returns a suffix of end, at least 2 digits, never more than end.length', () => {
+		assert(
+			property(equalLengthDigitPair, ([start, end]) => {
+				const result = reduceClosingPage(start, end);
+				expect(end.endsWith(result)).toBe(true);
+				expect(result.length).toBeGreaterThanOrEqual(2);
+				expect(result.length).toBeLessThanOrEqual(end.length);
+			}),
+		);
+	});
+
+	it('keeps exactly 2 digits when start equals end', () => {
+		assert(
+			property(
+				integer({ min: 2, max: 6 }).chain(digitStringOfLength),
+				(page) => {
+					expect(reduceClosingPage(page, page)).toBe(page.slice(-2));
+				},
+			),
+		);
 	});
 });
 
@@ -40,6 +73,26 @@ describe('parsePincite', () => {
 		expect(
 			parsePincite(raw, { separator: '-', starPages: false, ...opts }),
 		).toBe(expected);
+	});
+
+	it('star-pages every comma-separated component when starPages is true', () => {
+		assert(
+			property(
+				array(integer({ min: 0, max: 9999 }).map(String), {
+					minLength: 1,
+					maxLength: 5,
+				}).map((pages) => pages.join(', ')),
+				(raw) => {
+					const result = parsePincite(raw, {
+						separator: '-',
+						starPages: true,
+					});
+					for (const component of result.split(', ')) {
+						expect(component.startsWith('*')).toBe(true);
+					}
+				},
+			),
+		);
 	});
 });
 
