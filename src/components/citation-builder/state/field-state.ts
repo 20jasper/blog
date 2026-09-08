@@ -11,7 +11,6 @@ function usedIf(condition: boolean, value: FieldRequirement): FieldRequirement {
 
 export type Selections = { mode: 'full' | 'short'; caseType: CaseTypeId };
 
-// r[impl field-state.derivation]
 export function selectFieldState(
 	selections: Selections,
 ): Record<FieldId, FieldRequirement> {

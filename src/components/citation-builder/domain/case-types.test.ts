@@ -4,7 +4,6 @@ import { assembleCaseName, CASE_TYPES, isCaseTypeId } from './case-types';
 const PARTY_1 = 'Dayton';
 const PARTY_2 = 'Stewart';
 
-// r[verify case-type.data]
 describe('CASE_TYPES', () => {
 	it('is an ordered list of records, not branches', () => {
 		expect(CASE_TYPES.map((caseType) => caseType.id)).toEqual([

@@ -33,6 +33,7 @@ function reportedFullInput(fields: CitationFields): ReportedCaseInput {
 	};
 }
 
+// r[impl id.gating]
 function reportedShortFormInput(
 	fields: CitationFields,
 	display: DisplayState,
@@ -57,7 +58,6 @@ function reportedShortFormInput(
 			};
 }
 
-// r[impl field-state.derivation]
 export function buildCitationInput(
 	fields: CitationFields,
 	display: DisplayState,

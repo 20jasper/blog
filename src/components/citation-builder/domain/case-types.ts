@@ -27,7 +27,6 @@ const EX_PARTE: CaseType = {
 	template: (party1) => `Ex parte ${party1}`,
 };
 
-// r[impl case-type.data]
 export const CASE_TYPES: CaseType[] = [V, IN_RE, EX_PARTE];
 
 const CASE_TYPE_BY_ID: Record<CaseTypeId, CaseType> = {

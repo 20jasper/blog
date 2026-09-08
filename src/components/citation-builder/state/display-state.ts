@@ -1,4 +1,5 @@
 export type Mode = 'full' | 'short';
+// r[impl name-variant.options]
 export type NameVariant = 'full' | 'party1' | 'party2' | 'none';
 export type Emphasis = 'italic' | 'underline';
 export type SpanSeparator = '-' | '–';

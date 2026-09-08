@@ -30,7 +30,6 @@ export function initialCitationFields(): CitationFields {
 	};
 }
 
-// r[impl field-state.derivation]
 export function deriveSelections(
 	fields: CitationFields,
 	display: DisplayState,

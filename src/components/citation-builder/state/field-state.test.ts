@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { selectFieldState } from './field-state';
 import type { Selections } from './field-state';
 
-// r[verify field-state.derivation]
 describe('selectFieldState: case identity', () => {
 	it('party2 is required when caseType is v', () => {
 		const selections: Selections = { mode: 'full', caseType: 'v' };

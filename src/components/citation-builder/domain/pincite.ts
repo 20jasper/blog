@@ -36,8 +36,6 @@ function normalizeSpan(component: string, separator: string): string {
 	return `${start}${separator}${reduceClosingPage(start, end)}`;
 }
 
-// r[impl pincite.parse]
-// r[impl pincite.no-validation]
 // r[impl normalize.span-nonconsecutive]
 // r[impl normalize.span-passthrough]
 // r[impl normalize.span-separator]

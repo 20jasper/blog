@@ -16,7 +16,6 @@ function escapeHtml(text: string): string {
 		.replaceAll('>', '&gt;');
 }
 
-// r[impl framing.parameter]
 export function applyFraming(
 	segments: Segment[],
 	{ capitalizeFirst, terminalPeriod }: FramingOptions,
@@ -40,8 +39,6 @@ export function applyFraming(
 	return framed;
 }
 
-// r[impl segment.representation]
-// r[impl segment.emphasis-is-abstract]
 export function render(
 	segments: Segment[],
 	{ emphasis }: RenderOptions,

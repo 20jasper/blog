@@ -20,7 +20,6 @@ describe('reduceClosingPage', () => {
 	});
 });
 
-// r[verify pincite.parse]
 // r[verify normalize.span-input]
 // r[verify normalize.span-nonconsecutive]
 // r[verify normalize.span-separator]
@@ -44,7 +43,6 @@ describe('parsePincite', () => {
 	});
 });
 
-// r[verify pincite.no-validation]
 // r[verify normalize.span-passthrough]
 describe('parsePincite: non-numeric passthrough', () => {
 	it.each([

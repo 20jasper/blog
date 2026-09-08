@@ -1,5 +1,3 @@
-// r[impl segment.representation]
-// r[impl segment.emphasis-is-abstract]
 export type Segment = {
 	text: string;
 	emphasized: boolean;

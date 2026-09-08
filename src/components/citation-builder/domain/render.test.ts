@@ -6,7 +6,6 @@ import type { Segment } from './types';
 // expected output rather than already true of the input.
 const LOWERCASE_NAME = 'dayton v. stewart';
 
-// r[verify framing.parameter]
 describe('applyFraming', () => {
 	it.each([
 		[true, 'Dayton v. stewart'],
@@ -69,8 +68,6 @@ describe('applyFraming', () => {
 	});
 });
 
-// r[verify segment.representation]
-// r[verify segment.emphasis-is-abstract]
 describe('render', () => {
 	const segments: Segment[] = [
 		{ text: 'Dayton v. Stewart', emphasized: true },

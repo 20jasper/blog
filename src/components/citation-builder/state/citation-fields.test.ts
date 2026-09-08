@@ -4,7 +4,6 @@ import { initialDisplayState } from './display-state';
 import type { CitationFields } from './citation-fields';
 import type { DisplayState } from './display-state';
 
-// r[verify field-state.derivation]
 describe('deriveSelections', () => {
 	it.each([
 		[{ caseType: 'v' }, { mode: 'full' }, { mode: 'full', caseType: 'v' }],

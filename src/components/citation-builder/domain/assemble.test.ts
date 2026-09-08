@@ -18,7 +18,6 @@ function reportedCase(
 }
 
 // r[verify citation.reported-long-form]
-// r[verify assemble.composable]
 describe('assembleReportedCase: golden case', () => {
 	it('matches the domain-spec.md §5.4 golden case exactly', () => {
 		const { plain } = render(assembleReportedCase(reportedCase()), {
