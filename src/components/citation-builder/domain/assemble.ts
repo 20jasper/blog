@@ -74,18 +74,20 @@ export type ReportedShortFormInput =
 // r[impl case-name.short-form]
 // r[impl short-form.party-choice]
 function shortFormName(nameVariant: PartyChoice, name: CaseNameInput): string {
-	// only one party in in-re and ex-parte cases, as well as non full formats
-	if (name.caseType !== 'v') {
-		return assembleCaseName(name);
-	}
-	switch (nameVariant) {
-		case 'full':
-			// format both parties for full and v cases
+	switch (name.caseType) {
+		// only one party in in-re and ex-parte cases, regardless of variant
+		case 'in-re':
+		case 'ex-parte':
 			return assembleCaseName(name);
-		case 'party1':
-			return name.party1;
-		case 'party2':
-			return name.party2;
+		case 'v':
+			switch (nameVariant) {
+				case 'full':
+					return assembleCaseName(name);
+				case 'party1':
+					return name.party1;
+				case 'party2':
+					return name.party2;
+			}
 	}
 }
 
