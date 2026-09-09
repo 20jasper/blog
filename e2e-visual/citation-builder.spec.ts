@@ -367,6 +367,39 @@ test('unreported case, slip availability, disables Database identifier', async (
 	await expect(databaseId).toBeDisabled();
 });
 
+test('unreported case, short form with Id., reuses Mode/Name variant/Id. controls', async ({
+	page,
+}) => {
+	const { pincite, output } = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await page
+		.getByRole('checkbox', {
+			name: /immediately follows one to the same source/u,
+		})
+		.check();
+	await pincite.fill('2');
+
+	await expect(output).toHaveText('Id. at *2.');
+});
+
+test('unreported case, short form, slip availability renders docket + slip op.', async ({
+	page,
+}) => {
+	const { docket, pincite, nameVariant, output } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await nameVariant.selectOption('none');
+	await docket.fill('1-07-2937');
+	await pincite.fill('2');
+
+	await expect(output).toHaveText('No. 1-07-2937, slip op. at 2.');
+});
+
 test('switching back to reported re-enables Volume/Reporter/First page', async ({
 	page,
 }) => {

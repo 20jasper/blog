@@ -150,6 +150,23 @@ describe('selectFieldState: unreported', () => {
 		},
 	);
 
+	it.each(['database', 'slip'] as const)(
+		'Id. drops docket and databaseId entirely, availability %s',
+		(availability) => {
+			const sourceShape: SourceShape = {
+				sourceType: 'unreported',
+				mode: 'short',
+				kind: 'id',
+				availability,
+			};
+			const state = selectFieldState({ sourceShape, caseType: 'v' });
+
+			expect(state.docket).toBe('not-used');
+			expect(state.databaseId).toBe('not-used');
+			expect(state.pincite).toBe('required');
+		},
+	);
+
 	it('requires month/day/year only for full, never for short', () => {
 		const full = selectFieldState({
 			sourceShape: {

@@ -86,6 +86,16 @@ function reportedFieldState(
 
 type UnreportedShape = Extract<SourceShape, { sourceType: 'unreported' }>;
 
+// r[impl id.gating]
+function usesIdentifier(shape: UnreportedShape): boolean {
+	switch (shape.mode) {
+		case 'full':
+			return true;
+		case 'short':
+			return shape.kind !== 'id';
+	}
+}
+
 // r[impl unreported.availability]
 function unreportedFieldState(
 	shape: UnreportedShape,
@@ -94,6 +104,7 @@ function unreportedFieldState(
 	const isFull = shape.mode === 'full';
 	const isDatabase = shape.availability === 'database';
 	const { usesName } = usageFor(shape);
+	const usesIdentifierFields = usesIdentifier(shape);
 
 	return {
 		...NOT_USED,
@@ -103,8 +114,8 @@ function unreportedFieldState(
 
 		// r[impl citation.unreported-long-form]
 		// r[impl citation.unreported-short-form]
-		docket: usedIf(isFull || !isDatabase, 'required'),
-		databaseId: usedIf(isDatabase, 'required'),
+		docket: usedIf(usesIdentifierFields && (isFull || !isDatabase), 'required'),
+		databaseId: usedIf(usesIdentifierFields && isDatabase, 'required'),
 		month: usedIf(isFull, 'required'),
 		day: usedIf(isFull, 'required'),
 		year: usedIf(isFull, 'required'),
