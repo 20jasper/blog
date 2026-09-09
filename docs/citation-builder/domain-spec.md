@@ -207,15 +207,11 @@ r[normalize.span-passthrough]
 r[normalize.docket]
 
 > `United States v. Bennett, No. 05-CR-6050 CJS, 2005 WL 2709572`
-> — [Georgetown, Unpublished Cases](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
+> — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
 
-Rule 10.8.1. Strip any prefix the user already typed (`No.`, `Case No.`,
-`Docket No.`, case-insensitive) before re-prepending `No. `, so
-re-editing a filled field never doubles it. The strip only fires when
-the prefix is followed by whitespace, end of string, or a digit — never
-another letter, since `North-123` and `Norfolk County 44` are real
-docket-adjacent strings that happen to start with "No" and must not be
-mangled into `No. rth-123`.
+Rule 10.8.1. Strip any existing `No./Case No./Docket No.` prefix before
+re-prepending `No. ` (boundary: whitespace/end/digit only, never a
+letter — `North-123` must not become `No. rth-123`).
 
 | Input               | Output          |
 | ------------------- | --------------- |
@@ -229,14 +225,18 @@ mangled into `No. rth-123`.
 
 r[date.month-list]
 
-> `"Sept." in 21st edition is now "Sep." in the 22nd edition.`
-> — [UW Law, Bluebook 101: 22nd Edition Tables](https://lib.law.uw.edu/bluebook101/22nd_tables)
-
-Table 12. The date parenthetical's Month field offers exactly these
-twelve values and no others — several are not the obvious three-letter
-truncation, and September lost its extra letter in the 22nd edition:
+> "date the case was decided, including month (Table 12), day, and
+> year"
+> — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
 
 `Jan.` `Feb.` `Mar.` `Apr.` `May` `June` `July` `Aug.` `Sep.` `Oct.`
-`Nov.` `Dec.`
+`Nov.` `Dec.` — Sep. per the 22nd edition, not the 21st's `Sept.`.
 
-A fixed select exists precisely so these cannot be entered wrong.
+## Date Assembly
+
+r[normalize.date]
+
+> `(W.D.N.Y. Oct. 21, 2005)`
+> — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
+
+`[Month] [Day], [Year]`
