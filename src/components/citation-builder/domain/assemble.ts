@@ -59,7 +59,7 @@ export function assembleReportedCase(
 	return framePeriod(segments);
 }
 
-type PartyChoice = 'full' | 'party1' | 'party2';
+export type PartyChoice = 'full' | 'party1' | 'party2';
 
 export type ReportedShortFormInput =
 	| { nameVariant: 'id'; pincite: string }

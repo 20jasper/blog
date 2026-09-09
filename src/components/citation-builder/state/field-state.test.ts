@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { selectFieldState } from './field-state';
 import type { Selections } from './field-state';
+import type { FormShape } from './form-shape';
 
-const BASE: Selections = {
-	mode: 'full',
-	caseType: 'v',
+const FULL: FormShape = { mode: 'full' };
+const SHORT_NAME: FormShape = {
+	mode: 'short',
+	kind: 'name',
 	nameVariant: 'full',
-	useId: false,
 };
+const SHORT_ID: FormShape = { mode: 'short', kind: 'id' };
+const SHORT_NONE: FormShape = { mode: 'short', kind: 'none' };
+
+const BASE: Selections = { formShape: FULL, caseType: 'v' };
 
 describe('selectFieldState: case identity', () => {
 	it('party2 is required when caseType is v', () => {
@@ -35,18 +40,23 @@ describe('selectFieldState: case identity', () => {
 
 describe('selectFieldState: mode affects court/pincite/volume/reporter/firstPage/year', () => {
 	it.each([
-		['full', 'optional', 'optional'],
-		['short', 'not-used', 'required'],
-	] as const)('mode %s -> court %s, pincite %s', (mode, court, pincite) => {
-		const state = selectFieldState({ ...BASE, mode });
+		[FULL, 'optional', 'optional'],
+		[SHORT_NAME, 'not-used', 'required'],
+	] as const)(
+		'formShape %#: court %s, pincite %s',
+		(formShape, court, pincite) => {
+			const state = selectFieldState({ ...BASE, formShape });
 
-		expect(state.court).toBe(court);
-		expect(state.pincite).toBe(pincite);
-	});
+			expect(state.court).toBe(court);
+			expect(state.pincite).toBe(pincite);
+		},
+	);
 
 	it.each(['volume', 'reporter'] as const)('%s is always required', (field) => {
-		expect(selectFieldState({ ...BASE, mode: 'full' })[field]).toBe('required');
-		expect(selectFieldState({ ...BASE, mode: 'short' })[field]).toBe(
+		expect(selectFieldState({ ...BASE, formShape: FULL })[field]).toBe(
+			'required',
+		);
+		expect(selectFieldState({ ...BASE, formShape: SHORT_NAME })[field]).toBe(
 			'required',
 		);
 	});
@@ -54,10 +64,10 @@ describe('selectFieldState: mode affects court/pincite/volume/reporter/firstPage
 	it.each(['firstPage', 'year'] as const)(
 		'%s is required for full, not-used for short',
 		(field) => {
-			expect(selectFieldState({ ...BASE, mode: 'full' })[field]).toBe(
+			expect(selectFieldState({ ...BASE, formShape: FULL })[field]).toBe(
 				'required',
 			);
-			expect(selectFieldState({ ...BASE, mode: 'short' })[field]).toBe(
+			expect(selectFieldState({ ...BASE, formShape: SHORT_NAME })[field]).toBe(
 				'not-used',
 			);
 		},
@@ -65,8 +75,8 @@ describe('selectFieldState: mode affects court/pincite/volume/reporter/firstPage
 });
 
 describe('selectFieldState: id. and nameVariant none drop the case name', () => {
-	it('useId marks party1/party2/volume/reporter not-used, even when caseType is v', () => {
-		const state = selectFieldState({ ...BASE, mode: 'short', useId: true });
+	it('id shape marks party1/party2/volume/reporter not-used, even when caseType is v', () => {
+		const state = selectFieldState({ formShape: SHORT_ID, caseType: 'v' });
 
 		expect(state.party1).toBe('not-used');
 		expect(state.party2).toBe('not-used');
@@ -75,12 +85,8 @@ describe('selectFieldState: id. and nameVariant none drop the case name', () => 
 		expect(state.pincite).toBe('required');
 	});
 
-	it('nameVariant none marks party1/party2 not-used but keeps volume/reporter required', () => {
-		const state = selectFieldState({
-			...BASE,
-			mode: 'short',
-			nameVariant: 'none',
-		});
+	it('none shape marks party1/party2 not-used but keeps volume/reporter required', () => {
+		const state = selectFieldState({ formShape: SHORT_NONE, caseType: 'v' });
 
 		expect(state.party1).toBe('not-used');
 		expect(state.party2).toBe('not-used');
@@ -88,13 +94,8 @@ describe('selectFieldState: id. and nameVariant none drop the case name', () => 
 		expect(state.reporter).toBe('required');
 	});
 
-	it('full mode always requires the name regardless of nameVariant/useId', () => {
-		const state = selectFieldState({
-			...BASE,
-			mode: 'full',
-			nameVariant: 'none',
-			useId: true,
-		});
+	it('full mode always requires the name regardless of shape details', () => {
+		const state = selectFieldState({ formShape: FULL, caseType: 'v' });
 
 		expect(state.party1).toBe('required');
 		expect(state.party2).toBe('required');

@@ -7,6 +7,7 @@ import type { CitationFields } from './citation-fields';
 import type { CitationInput } from './citation-input';
 import type { DisplayState } from './display-state';
 import { emptyToUndefined } from './empty-to-undefined';
+import { resolveFormShape, type ShortFormShape } from './form-shape';
 
 // Number('') is 0, not NaN -- would bake a wrong number into the citation.
 function parseRequiredInt(value: string, field: string): number {
@@ -37,34 +38,41 @@ function reportedFullInput(fields: CitationFields): ReportedCaseInput {
 // r[impl id.gating]
 function reportedShortFormInput(
 	fields: CitationFields,
-	display: DisplayState,
+	shortForm: ShortFormShape,
 ): ReportedShortFormInput {
-	if (display.useId) {
-		return { nameVariant: 'id', pincite: fields.pincite };
-	}
-	const { nameVariant } = display;
-	return nameVariant === 'none'
-		? {
+	switch (shortForm.kind) {
+		case 'id':
+			return { nameVariant: 'id', pincite: fields.pincite };
+		case 'none':
+			return {
 				nameVariant: 'none',
 				volume: fields.volume,
 				reporter: fields.reporter,
 				pincite: fields.pincite,
-			}
-		: {
-				nameVariant,
+			};
+		case 'name':
+			return {
+				nameVariant: shortForm.nameVariant,
 				name: caseNameInput(fields),
 				volume: fields.volume,
 				reporter: fields.reporter,
 				pincite: fields.pincite,
 			};
+	}
 }
 
 export function buildCitationInput(
 	fields: CitationFields,
 	display: DisplayState,
 ): CitationInput {
-	const { mode } = display;
-	return mode === 'full'
-		? { mode, input: reportedFullInput(fields) }
-		: { mode, input: reportedShortFormInput(fields, display) };
+	const formShape = resolveFormShape(display);
+	switch (formShape.mode) {
+		case 'full':
+			return { mode: 'full', input: reportedFullInput(fields) };
+		case 'short':
+			return {
+				mode: 'short',
+				input: reportedShortFormInput(fields, formShape),
+			};
+	}
 }

@@ -1,6 +1,7 @@
 import type { CaseTypeId } from '../domain/case-types';
 import type { DisplayState } from './display-state';
 import type { Selections } from './field-state';
+import { resolveFormShape } from './form-shape';
 
 export type CitationFields = {
 	caseType: CaseTypeId;
@@ -34,10 +35,5 @@ export function deriveSelections(
 	fields: CitationFields,
 	display: DisplayState,
 ): Selections {
-	return {
-		mode: display.mode,
-		caseType: fields.caseType,
-		nameVariant: display.nameVariant,
-		useId: display.useId,
-	};
+	return { formShape: resolveFormShape(display), caseType: fields.caseType };
 }

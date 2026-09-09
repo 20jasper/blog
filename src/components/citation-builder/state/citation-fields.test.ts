@@ -9,12 +9,15 @@ describe('deriveSelections', () => {
 		[
 			{ caseType: 'v' },
 			{ mode: 'full' },
-			{ mode: 'full', caseType: 'v', nameVariant: 'full', useId: false },
+			{ formShape: { mode: 'full' }, caseType: 'v' },
 		],
 		[
 			{ caseType: 'in-re' },
 			{ mode: 'short' },
-			{ mode: 'short', caseType: 'in-re', nameVariant: 'full', useId: false },
+			{
+				formShape: { mode: 'short', kind: 'name', nameVariant: 'full' },
+				caseType: 'in-re',
+			},
 		],
 	] as const)('%o + %o -> %o', (fieldOverrides, displayOverrides, expected) => {
 		const fields: CitationFields = {
