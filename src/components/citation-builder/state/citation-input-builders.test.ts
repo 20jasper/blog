@@ -85,6 +85,7 @@ describe('buildCitationInput', () => {
 		const citation = buildCitationInput(fields, display);
 
 		expect(citation).toEqual({
+			sourceType: 'reported',
 			mode: 'full',
 			input: {
 				name: { caseType: 'v', party1: 'A', party2: 'B' },
@@ -137,6 +138,7 @@ describe('buildCitationInput', () => {
 		const citation = buildCitationInput(fields, display);
 
 		expect(citation).toEqual({
+			sourceType: 'reported',
 			mode: 'short',
 			input: { nameVariant: 'id', pincite: '3' },
 		});
@@ -158,6 +160,7 @@ describe('buildCitationInput', () => {
 		const citation = buildCitationInput(fields, display);
 
 		expect(citation).toEqual({
+			sourceType: 'reported',
 			mode: 'short',
 			input: { nameVariant: 'none', volume: '1', reporter: 'R', pincite: '3' },
 		});
@@ -181,6 +184,7 @@ describe('buildCitationInput', () => {
 		const citation = buildCitationInput(fields, display);
 
 		expect(citation).toEqual({
+			sourceType: 'reported',
 			mode: 'short',
 			input: {
 				nameVariant: 'party1',
@@ -188,6 +192,98 @@ describe('buildCitationInput', () => {
 				volume: '1',
 				reporter: 'R',
 				pincite: '3',
+			},
+		});
+	});
+});
+
+describe('buildCitationInput: unreported', () => {
+	it('full form carries docket regardless of availability, databaseId only for database', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			party1: 'A',
+			party2: 'B',
+			docket: '05-1234',
+			databaseId: '2005 WL 2709572',
+			month: 'Oct.',
+			day: '21',
+			year: '2005',
+		};
+		const display: DisplayState = {
+			...initialDisplayState(),
+			sourceType: 'unreported',
+			mode: 'full',
+			availability: 'database',
+		};
+
+		const citation = buildCitationInput(fields, display);
+
+		expect(citation).toEqual({
+			sourceType: 'unreported',
+			mode: 'full',
+			input: {
+				name: { caseType: 'v', party1: 'A', party2: 'B' },
+				docket: '05-1234',
+				pincite: undefined,
+				court: undefined,
+				month: 'Oct.',
+				day: 21,
+				year: 2005,
+				availability: 'database',
+				databaseId: '2005 WL 2709572',
+			},
+		});
+	});
+
+	it('slip availability omits databaseId entirely', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			party1: 'A',
+			party2: 'B',
+			docket: '05-1234',
+			month: 'Oct.',
+			day: '21',
+			year: '2005',
+		};
+		const display: DisplayState = {
+			...initialDisplayState(),
+			sourceType: 'unreported',
+			mode: 'full',
+			availability: 'slip',
+		};
+
+		const citation = buildCitationInput(fields, display);
+
+		expect(citation).toMatchObject({
+			input: { availability: 'slip', docket: '05-1234' },
+		});
+		expect(citation.input).not.toHaveProperty('databaseId');
+	});
+
+	it('short form with slip availability carries docket, not databaseId', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			docket: '05-1234',
+			pincite: '2',
+		};
+		const display: DisplayState = {
+			...initialDisplayState(),
+			sourceType: 'unreported',
+			mode: 'short',
+			nameVariant: 'none',
+			availability: 'slip',
+		};
+
+		const citation = buildCitationInput(fields, display);
+
+		expect(citation).toEqual({
+			sourceType: 'unreported',
+			mode: 'short',
+			input: {
+				nameVariant: 'none',
+				pincite: '2',
+				availability: 'slip',
+				docket: '05-1234',
 			},
 		});
 	});
