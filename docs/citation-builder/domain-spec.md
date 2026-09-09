@@ -284,3 +284,15 @@ r[normalize.section]
 | `§1350`     | `§ 1350`     |
 | `§ 1350`    | `§ 1350`     |
 | `§§1350-51` | `§§ 1350-51` |
+
+## Statute Code Type
+
+r[statute.code-type]
+
+> "Cite to the official United Statutes Code (U.S.C.), if available;
+> otherwise, cite an unofficial code, such as the United States Code
+> Annotated (U.S.C.A.), available on Westlaw, or the United States Code
+> Service (U.S.C.S.), available on Lexis."
+> — [Suffolk, Statutory Citation: Rule 12](https://lawguides.suffolk.edu/bluebook/statutes)
+
+`official` | `annotated`
