@@ -109,6 +109,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function readDisplayState(): DisplayState {
 			return {
+				sourceType: 'reported',
 				mode: currentMode(),
 				nameVariant: currentNameVariant(),
 				useId: idCheckbox.checked,

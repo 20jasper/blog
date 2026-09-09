@@ -16,8 +16,11 @@ export type {
 	Emphasis,
 	Mode,
 	NameVariant,
+	SourceType,
 	SpanSeparator,
 } from './display-state';
+
+export { isSourceType } from './source-type';
 
 export { selectFieldState } from './field-state';
 export type { FieldId, FieldRequirement, Selections } from './field-state';

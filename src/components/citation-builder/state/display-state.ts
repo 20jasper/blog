@@ -1,13 +1,15 @@
 import { HYPHEN } from '../domain/pincite';
 import type { SpanSeparator } from '../domain/assemble';
+import type { SourceType } from './source-type';
 
 export type Mode = 'full' | 'short';
 // r[impl name-variant.options]
 export type NameVariant = 'full' | 'party1' | 'party2' | 'none';
 export type Emphasis = 'italic' | 'underline';
-export type { SpanSeparator };
+export type { SpanSeparator, SourceType };
 
 export type DisplayState = {
+	sourceType: SourceType;
 	mode: Mode;
 	nameVariant: NameVariant;
 	useId: boolean;
@@ -17,6 +19,7 @@ export type DisplayState = {
 
 export function initialDisplayState(): DisplayState {
 	return {
+		sourceType: 'reported',
 		mode: 'full',
 		nameVariant: 'full',
 		useId: false,
