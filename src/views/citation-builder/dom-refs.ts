@@ -21,6 +21,16 @@ export function queryFormRefs(form: HTMLFormElement) {
 		databaseIdInput: field<HTMLInputElement>(form, 'databaseId'),
 		monthSelect: field<HTMLSelectElement>(form, 'month'),
 		dayInput: field<HTMLInputElement>(form, 'day'),
+		popularNameInput: field<HTMLInputElement>(form, 'popularName'),
+		titleInput: field<HTMLInputElement>(form, 'title'),
+		codeInput: field<HTMLInputElement>(form, 'code'),
+		sectionInput: field<HTMLInputElement>(form, 'section'),
+		publisherInput: field<HTMLInputElement>(form, 'publisher'),
+		supplementDesignationInput: field<HTMLInputElement>(
+			form,
+			'supplementDesignation',
+		),
+		supplementYearInput: field<HTMLInputElement>(form, 'supplementYear'),
 	};
 }
 

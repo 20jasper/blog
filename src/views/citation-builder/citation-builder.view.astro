@@ -7,36 +7,32 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
 	<CitationBuilderUi />
 	<script>
-		import {
-			isAvailability,
-			type Availability,
-		} from '@components/citation-builder/domain/availability';
-		import {
-			isCaseTypeId,
-			type CaseTypeId,
-		} from '@components/citation-builder/domain/case-types';
-		import {
-			isMonth,
-			type Month,
-		} from '@components/citation-builder/domain/months';
-		import {
-			EN_DASH,
-			HYPHEN,
-		} from '@components/citation-builder/domain/pincite';
 		import { render } from '@components/citation-builder/domain/render';
 		import {
 			assemble,
 			buildCitationInput,
 			deriveSelections,
+			EN_DASH,
+			HYPHEN,
+			isAvailability,
+			isCaseTypeId,
+			isCodeType,
+			isMaterialLocation,
+			isMonth,
 			isNameVariant,
 			isSourceType,
 			resolveShortFormKind,
 			selectFieldState,
+			type Availability,
+			type CaseTypeId,
 			type CitationFields,
+			type CodeType,
 			type DisplayState,
 			type Emphasis,
 			type FieldRequirement,
+			type MaterialLocation,
 			type Mode,
+			type Month,
 			type NameVariant,
 			type SourceType,
 			type SpanSeparator,
@@ -74,6 +70,13 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			databaseIdInput,
 			monthSelect,
 			dayInput,
+			popularNameInput,
+			titleInput,
+			codeInput,
+			sectionInput,
+			publisherInput,
+			supplementDesignationInput,
+			supplementYearInput,
 		} = queryFormRefs(form);
 
 		function currentCaseType(): CaseTypeId {
@@ -104,6 +107,24 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return checked !== null && isAvailability(checked.value)
 				? checked.value
 				: 'database';
+		}
+
+		function currentCodeType(): CodeType {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="codeType"]:checked',
+			);
+			return checked !== null && isCodeType(checked.value)
+				? checked.value
+				: 'official';
+		}
+
+		function currentMaterialLocation(): MaterialLocation {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="materialLocation"]:checked',
+			);
+			return checked !== null && isMaterialLocation(checked.value)
+				? checked.value
+				: 'main';
 		}
 
 		function currentNameVariant(): NameVariant {
@@ -145,13 +166,13 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				databaseId: databaseIdInput.value,
 				month: currentMonth(),
 				day: dayInput.value,
-				popularName: '',
-				title: '',
-				code: '',
-				section: '',
-				publisher: '',
-				supplementDesignation: '',
-				supplementYear: '',
+				popularName: popularNameInput.value,
+				title: titleInput.value,
+				code: codeInput.value,
+				section: sectionInput.value,
+				publisher: publisherInput.value,
+				supplementDesignation: supplementDesignationInput.value,
+				supplementYear: supplementYearInput.value,
 			};
 		}
 
@@ -159,8 +180,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return {
 				sourceType: currentSourceType(),
 				availability: currentAvailability(),
-				codeType: 'official',
-				materialLocation: 'main',
+				codeType: currentCodeType(),
+				materialLocation: currentMaterialLocation(),
 				mode: currentMode(),
 				nameVariant: currentNameVariant(),
 				useId: idCheckbox.checked,
@@ -218,6 +239,16 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setFieldRequirement(databaseIdInput, fieldState.databaseId);
 			setFieldRequirement(monthSelect, fieldState.month);
 			setFieldRequirement(dayInput, fieldState.day);
+			setFieldRequirement(popularNameInput, fieldState.popularName);
+			setFieldRequirement(titleInput, fieldState.title);
+			setFieldRequirement(codeInput, fieldState.code);
+			setFieldRequirement(sectionInput, fieldState.section);
+			setFieldRequirement(publisherInput, fieldState.publisher);
+			setFieldRequirement(
+				supplementDesignationInput,
+				fieldState.supplementDesignation,
+			);
+			setFieldRequirement(supplementYearInput, fieldState.supplementYear);
 
 			nameVariantSelect.disabled = shortFormKind !== 'name';
 			idCheckbox.disabled = shortFormKind === undefined;
@@ -225,6 +256,10 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				'availability',
 				display.sourceType !== 'unreported',
 			);
+			const isStatuteFull =
+				display.sourceType === 'statute' && display.mode === 'full';
+			setRadioGroupDisabled('codeType', !isStatuteFull);
+			setRadioGroupDisabled('materialLocation', !isStatuteFull);
 		}
 
 		function fillInPlaceholder(): void {

@@ -412,3 +412,81 @@ test('switching back to reported re-enables Volume/Reporter/First page', async (
 	await expect(reporter).toBeEnabled();
 	await expect(firstPage).toBeEnabled();
 });
+
+test('statute disables case-identity and reported/unreported fields', async ({
+	page,
+}) => {
+	const { party1, volume, docket, code, section } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+
+	await expect(party1).toBeDisabled();
+	await expect(volume).toBeDisabled();
+	await expect(docket).toBeDisabled();
+	await expect(code).toBeEnabled();
+	await expect(section).toBeEnabled();
+});
+
+test('statute, official code, main volume renders the 17 U.S.C. § 107 worked example', async ({
+	page,
+}) => {
+	const { code, section, year, output } = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+	await code.fill('U.S.C.');
+	await section.fill('107');
+	await year.fill('2012');
+
+	await expect(output).toHaveText('U.S.C. § 107 (2012).');
+});
+
+test('statute, annotated code, requires and renders Publisher', async ({
+	page,
+}) => {
+	const { code, section, year, publisher, output } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+	await page
+		.getByRole('radio', { name: 'Annotated / unofficial code' })
+		.check();
+	await code.fill('U.S.C.A.');
+	await section.fill('107');
+	await year.fill('2015');
+	await publisher.fill('West');
+
+	await expect(publisher).toBeEnabled();
+	await expect(output).toHaveText('U.S.C.A. § 107 (West 2015).');
+});
+
+test('statute, supplement-only material location, omits base year', async ({
+	page,
+}) => {
+	const { code, section, year, supplementDesignation, supplementYear, output } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+	await page.getByRole('radio', { name: 'Supplement only' }).check();
+	await code.fill('U.S.C.');
+	await section.fill('107');
+	await supplementDesignation.fill('Supp. I');
+	await supplementYear.fill('2014');
+
+	await expect(year).toBeDisabled();
+	await expect(output).toHaveText('U.S.C. § 107 (Supp. I 2014).');
+});
+
+test('statute, short form, drops the parenthetical entirely', async ({
+	page,
+}) => {
+	const { code, section, title, output } = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await title.fill('17');
+	await code.fill('U.S.C.');
+	await section.fill('107');
+
+	await expect(output).toHaveText('17 U.S.C. § 107.');
+});

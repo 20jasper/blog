@@ -1,5 +1,22 @@
 // Barrel so the view depends on "the state layer," not five separate files.
 
+export { isAvailability } from '../domain/availability';
+export type { Availability } from '../domain/availability';
+
+export { isCaseTypeId } from '../domain/case-types';
+export type { CaseTypeId } from '../domain/case-types';
+
+export { isCodeType } from '../domain/code-type';
+export type { CodeType } from '../domain/code-type';
+
+export { isMaterialLocation } from '../domain/material-location';
+export type { MaterialLocation } from '../domain/material-location';
+
+export { isMonth } from '../domain/months';
+export type { Month } from '../domain/months';
+
+export { EN_DASH, HYPHEN } from '../domain/pincite';
+
 export { deriveSelections, initialCitationFields } from './citation-fields';
 export type { CitationFields } from './citation-fields';
 

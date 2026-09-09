@@ -13,6 +13,7 @@ const FORM_ID = 'citation-builder-form';
 const SOURCE_TYPE_OPTIONS = [
 	{ value: 'reported', text: 'Reported case', checked: true },
 	{ value: 'unreported', text: 'Unreported case' },
+	{ value: 'statute', text: 'Statute' },
 ];
 
 const MODE_OPTIONS = [
@@ -23,6 +24,17 @@ const MODE_OPTIONS = [
 const AVAILABILITY_OPTIONS = [
 	{ value: 'database', text: 'In electronic database', checked: true },
 	{ value: 'slip', text: 'Slip opinion only' },
+];
+
+const CODE_TYPE_OPTIONS = [
+	{ value: 'official', text: 'Official code', checked: true },
+	{ value: 'annotated', text: 'Annotated / unofficial code' },
+];
+
+const MATERIAL_LOCATION_OPTIONS = [
+	{ value: 'main', text: 'Main volume', checked: true },
+	{ value: 'both', text: 'Both' },
+	{ value: 'supplement', text: 'Supplement only' },
 ];
 
 const EMPHASIS_OPTIONS = [
@@ -141,6 +153,52 @@ const UNREPORTED_FIELDS: FieldSpec[] = [
 		pattern: '\\d+',
 	},
 ];
+
+const STATUTE_FIELDS: FieldSpec[] = [
+	{
+		kind: 'text',
+		name: 'popularName',
+		label: 'Popular name',
+		hint: 'e.g. Consumer Credit Code -- optional',
+	},
+	{
+		kind: 'text',
+		name: 'title',
+		label: 'Title',
+		hint: 'e.g. 17 -- optional, precedes the code, no comma',
+	},
+	{
+		kind: 'text',
+		name: 'code',
+		label: 'Code abbreviation',
+		hint: 'e.g. U.S.C., U.S.C.A.',
+	},
+	{
+		kind: 'text',
+		name: 'section',
+		label: 'Section',
+		hint: 'e.g. 107 or § 107 -- "§ " is added automatically',
+	},
+	{
+		kind: 'text',
+		name: 'publisher',
+		label: 'Publisher',
+		hint: 'e.g. West, LexisNexis -- annotated codes only',
+	},
+	{
+		kind: 'text',
+		name: 'supplementDesignation',
+		label: 'Supplement designation',
+		hint: 'e.g. Supp. I',
+	},
+	{
+		kind: 'text',
+		name: 'supplementYear',
+		label: 'Supplement year',
+		inputmode: 'numeric',
+		pattern: '\\d+',
+	},
+];
 ---
 
 <div class="mb-4 flex flex-wrap items-end gap-3">
@@ -217,6 +275,22 @@ const UNREPORTED_FIELDS: FieldSpec[] = [
 				options={AVAILABILITY_OPTIONS}
 			/>
 			{UNREPORTED_FIELDS.map((field) => <Field {...field} />)}
+		</FieldGrid>
+	</Fieldset>
+
+	<Fieldset legend="Statute">
+		<FieldGrid>
+			<RadioGroup
+				label="Code type"
+				name="codeType"
+				options={CODE_TYPE_OPTIONS}
+			/>
+			<RadioGroup
+				label="Material location"
+				name="materialLocation"
+				options={MATERIAL_LOCATION_OPTIONS}
+			/>
+			{STATUTE_FIELDS.map((field) => <Field {...field} />)}
 		</FieldGrid>
 	</Fieldset>
 </form>
