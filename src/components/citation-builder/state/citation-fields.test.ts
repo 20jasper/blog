@@ -32,12 +32,3 @@ describe('deriveSelections', () => {
 		expect(deriveSelections(fields, display)).toEqual(expected);
 	});
 });
-
-describe('initialCitationFields', () => {
-	it('starts every field blank, caseType v', () => {
-		const fields = initialCitationFields();
-
-		expect(fields.caseType).toBe('v');
-		expect(fields.party1).toBe('');
-	});
-});

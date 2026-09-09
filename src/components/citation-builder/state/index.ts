@@ -20,7 +20,5 @@ export type {
 	SpanSeparator,
 } from './display-state';
 
-export { isSourceType } from './source-type';
-
 export { selectFieldState } from './field-state';
 export type { FieldId, FieldRequirement, Selections } from './field-state';

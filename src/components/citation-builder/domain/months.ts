@@ -1,3 +1,4 @@
+// r[impl date.month-list]
 export const MONTHS = [
 	'Jan.',
 	'Feb.',
@@ -14,8 +15,3 @@ export const MONTHS = [
 ] as const;
 
 export type Month = (typeof MONTHS)[number];
-
-// r[impl date.month-list]
-export function isMonth(value: string): value is Month {
-	return (MONTHS as readonly string[]).includes(value);
-}
