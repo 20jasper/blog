@@ -15,7 +15,10 @@ export function assemble(
 	citation: CitationInput,
 	options: AssembleOptions = {},
 ): Segment[] {
-	return citation.mode === 'full'
-		? assembleReportedCase(citation.input, options)
-		: assembleReportedShortForm(citation.input, options);
+	switch (citation.mode) {
+		case 'full':
+			return assembleReportedCase(citation.input, options);
+		case 'short':
+			return assembleReportedShortForm(citation.input, options);
+	}
 }

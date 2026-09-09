@@ -46,7 +46,11 @@ export function hasSecondParty(caseType: CaseTypeId): boolean {
 // r[impl case-name.assembly]
 export function assembleCaseName(input: CaseNameInput): string {
 	const caseType = CASE_TYPE_BY_ID[input.caseType];
-	return input.caseType === 'v'
-		? caseType.template(input.party1, input.party2)
-		: caseType.template(input.party1);
+	switch (input.caseType) {
+		case 'v':
+			return caseType.template(input.party1, input.party2);
+		case 'in-re':
+		case 'ex-parte':
+			return caseType.template(input.party1);
+	}
 }

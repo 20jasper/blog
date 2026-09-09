@@ -18,9 +18,13 @@ function parseRequiredInt(value: string, field: string): number {
 }
 
 function caseNameInput(fields: CitationFields): CaseNameInput {
-	return fields.caseType === 'v'
-		? { caseType: 'v', party1: fields.party1, party2: fields.party2 }
-		: { caseType: fields.caseType, party1: fields.party1 };
+	switch (fields.caseType) {
+		case 'v':
+			return { caseType: 'v', party1: fields.party1, party2: fields.party2 };
+		case 'in-re':
+		case 'ex-parte':
+			return { caseType: fields.caseType, party1: fields.party1 };
+	}
 }
 
 function reportedFullInput(fields: CitationFields): ReportedCaseInput {
