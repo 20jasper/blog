@@ -305,3 +305,12 @@ r[statute.material-location]
 > — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
 
 `main` | `both` | `supplement`
+
+## Statute Date Parenthetical
+
+r[statute.supplement-pairing]
+
+> `17 U.S.C. § 107 (2012)`
+> `17 U.S.C. § 107 (Supp. I 2014)`
+> `17 U.S.C. § 107 (2012 & Supp. I 2014)`
+> — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
