@@ -296,3 +296,12 @@ r[statute.code-type]
 > — [Suffolk, Statutory Citation: Rule 12](https://lawguides.suffolk.edu/bluebook/statutes)
 
 `official` | `annotated`
+
+## Statute Material Location
+
+r[statute.material-location]
+
+> `17 U.S.C. § 107 (2012 & Supp. I 2014)`
+> — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+
+`main` | `both` | `supplement`
