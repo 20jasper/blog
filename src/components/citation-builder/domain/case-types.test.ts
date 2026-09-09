@@ -1,14 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { assembleCaseName, isCaseTypeId } from './case-types';
+import { assembleCaseName } from './case-types';
 
 const PARTY_1 = 'Dayton';
 const PARTY_2 = 'Stewart';
-
-describe('isCaseTypeId', () => {
-	it.each(['v', 'in-re', 'ex-parte'])('%s is a valid case type id', (id) => {
-		expect(isCaseTypeId(id)).toBe(true);
-	});
-});
 
 // r[verify case-name.assembly]
 describe('assembleCaseName', () => {

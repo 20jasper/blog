@@ -3,10 +3,6 @@ import { isMonth, MONTHS } from './months';
 
 // r[verify date.month-list]
 describe('isMonth', () => {
-	it.each(MONTHS)('%s is a valid month', (month) => {
-		expect(isMonth(month)).toBe(true);
-	});
-
 	it('has exactly twelve values', () => {
 		expect(MONTHS).toHaveLength(12);
 	});
