@@ -245,3 +245,16 @@ r[unreported.availability]
 > — [UC Cincinnati, Commercial Databases](https://guides.libraries.uc.edu/c.php?g=222561&p=1472887)
 
 `database` | `slip`
+
+## Unreported Long Form
+
+r[citation.unreported-long-form]
+r[citation.unreported-pincite-form]
+
+> `No. 1-07-2937, slip op. at 2 (Ill. App. Ct. 1st Dist. June 30, 2008)`
+> — [NIU, Sample Bluebook Citations](https://libguides.niu.edu/c.php?g=700603&p=4971129)
+
+```
+[Name], No. [Docket], [Database ID], at *[Pincite] ([Court] [Month] [Day], [Year]).
+[Name], No. [Docket], slip op. at [Pincite] ([Court] [Month] [Day], [Year]).
+```

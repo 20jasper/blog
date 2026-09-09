@@ -1,4 +1,7 @@
 import { assembleCaseName, type CaseNameInput } from './case-types';
+import { assembleDate } from './date';
+import { normalizeDocket } from './docket';
+import type { Month } from './months';
 import { HYPHEN, parsePincite } from './pincite';
 import { applyFraming } from './render';
 import type { Segment } from './types';
@@ -53,6 +56,63 @@ export function assembleReportedCase(
 		{ text: assembleCaseName(input.name), emphasized: true },
 		{ text: `, ${input.volume} ${input.reporter} ${input.firstPage}` },
 		...pincite,
+		{ text: ` (${parenthetical})` },
+	];
+
+	return framePeriod(segments);
+}
+
+export type UnreportedCaseInput = {
+	name: CaseNameInput;
+	docket: string;
+	pincite?: string;
+	court?: string;
+	month: Month;
+	day: number;
+	year: number;
+} & (
+	{ availability: 'database'; databaseId: string } | { availability: 'slip' }
+);
+
+function unreportedTail(
+	input: UnreportedCaseInput,
+	pincite: string | undefined,
+): Segment[] {
+	switch (input.availability) {
+		case 'database':
+			return [
+				{ text: `, ${input.databaseId}` },
+				...(pincite === undefined ? [] : [{ text: `, at ${pincite}` }]),
+			];
+		case 'slip':
+			return pincite === undefined
+				? []
+				: [{ text: `, slip op. at ${pincite}` }];
+	}
+}
+
+// r[impl citation.unreported-long-form]
+// r[impl citation.unreported-pincite-form]
+export function assembleUnreportedCase(
+	input: UnreportedCaseInput,
+	{ spanSeparator = DEFAULT_SEPARATOR }: AssembleOptions = {},
+): Segment[] {
+	const date = assembleDate(input.month, input.day, input.year);
+	const parenthetical =
+		input.court === undefined ? date : `${input.court} ${date}`;
+
+	const pincite =
+		input.pincite === undefined
+			? undefined
+			: parsePincite(input.pincite, {
+					separator: spanSeparator,
+					starPages: input.availability === 'database',
+				});
+
+	const segments: Segment[] = [
+		{ text: assembleCaseName(input.name), emphasized: true },
+		{ text: `, ${normalizeDocket(input.docket)}` },
+		...unreportedTail(input, pincite),
 		{ text: ` (${parenthetical})` },
 	];
 
