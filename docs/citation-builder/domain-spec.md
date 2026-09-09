@@ -322,3 +322,23 @@ r[statute.publisher]
 > `17 U.S.C.A. § 107 (West 2015)`
 > `17 U.S.C.S. § 107 (LexisNexis 2016)`
 > — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+
+## Statute Popular Name
+
+r[statute.popular-name]
+
+> `Copyright Act of 1976, 17 U.S.C. §§ 101-1332 (2012)`
+> — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+
+## Statute Long Form
+
+r[citation.statute-long-form]
+
+> `17 U.S.C. § 107 (2012)`
+> — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+
+```
+[Popular Name, ][Title ]<Code> § <Section> (<Parenthetical>).
+```
+
+After-code title placement is unconfirmed; only before-code is supported.
