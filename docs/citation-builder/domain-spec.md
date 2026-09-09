@@ -270,3 +270,17 @@ r[citation.unreported-short-form]
 [Name?], [Database ID], at *[Pincite].
 [Name?], No. [Docket], slip op. at [Pincite].
 ```
+
+## Statute Section Prefix
+
+r[normalize.section]
+
+> `28 U.S.C. §§ 1350(a)(2)-(c)(2) (2018)`
+> — [Suffolk, Statutory Citation: Rule 12](https://lawguides.suffolk.edu/bluebook/statutes)
+
+| Input       | Output       |
+| ----------- | ------------ |
+| `1350`      | `§ 1350`     |
+| `§1350`     | `§ 1350`     |
+| `§ 1350`    | `§ 1350`     |
+| `§§1350-51` | `§§ 1350-51` |
