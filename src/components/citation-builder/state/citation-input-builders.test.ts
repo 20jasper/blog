@@ -319,3 +319,90 @@ describe('buildCitationInput: numeric fields reject non-digit input', () => {
 		);
 	});
 });
+
+describe('buildCitationInput: statute', () => {
+	it('official code omits publisher; main location omits supplement fields', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			title: '17',
+			code: 'U.S.C.',
+			section: '107',
+			year: '2012',
+		};
+		const display: DisplayState = {
+			...initialDisplayState(),
+			sourceType: 'statute',
+			mode: 'full',
+			codeType: 'official',
+			materialLocation: 'main',
+		};
+
+		const citation = buildCitationInput(fields, display);
+
+		expect(citation).toEqual({
+			sourceType: 'statute',
+			mode: 'full',
+			input: {
+				popularName: undefined,
+				title: '17',
+				code: 'U.S.C.',
+				section: '107',
+				publisher: undefined,
+				materialLocation: 'main',
+				year: 2012,
+			},
+		});
+	});
+
+	it('annotated code requires publisher; supplement-only omits year', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			code: 'U.S.C.A.',
+			section: '107',
+			publisher: 'West',
+			supplementDesignation: 'Supp. I',
+			supplementYear: '2014',
+		};
+		const display: DisplayState = {
+			...initialDisplayState(),
+			sourceType: 'statute',
+			mode: 'full',
+			codeType: 'annotated',
+			materialLocation: 'supplement',
+		};
+
+		const citation = buildCitationInput(fields, display);
+
+		expect(citation).toMatchObject({
+			input: {
+				publisher: 'West',
+				materialLocation: 'supplement',
+				supplementDesignation: 'Supp. I',
+				supplementYear: 2014,
+			},
+		});
+		expect(citation.input).not.toHaveProperty('year');
+	});
+
+	it('short form carries only title/code/section', () => {
+		const fields: CitationFields = {
+			...initialCitationFields(),
+			title: '17',
+			code: 'U.S.C.',
+			section: '107',
+		};
+		const display: DisplayState = {
+			...initialDisplayState(),
+			sourceType: 'statute',
+			mode: 'short',
+		};
+
+		const citation = buildCitationInput(fields, display);
+
+		expect(citation).toEqual({
+			sourceType: 'statute',
+			mode: 'short',
+			input: { title: '17', code: 'U.S.C.', section: '107' },
+		});
+	});
+});

@@ -82,3 +82,34 @@ describe('assemble: unreported', () => {
 		expect(plain).toBe('Id. at *3.');
 	});
 });
+
+describe('assemble: statute', () => {
+	it('dispatches full to assembleStatute', () => {
+		const citation: CitationInput = {
+			sourceType: 'statute',
+			mode: 'full',
+			input: {
+				code: 'U.S.C.',
+				section: '107',
+				materialLocation: 'main',
+				year: 2012,
+			},
+		};
+
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
+
+		expect(plain).toBe('U.S.C. § 107 (2012).');
+	});
+
+	it('dispatches short to assembleStatuteShortForm', () => {
+		const citation: CitationInput = {
+			sourceType: 'statute',
+			mode: 'short',
+			input: { code: 'U.S.C.', section: '107' },
+		};
+
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
+
+		expect(plain).toBe('U.S.C. § 107.');
+	});
+});

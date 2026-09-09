@@ -9,6 +9,12 @@ import {
 	type UnreportedCaseInput,
 	type UnreportedShortFormInput,
 } from '../domain/assemble';
+import {
+	assembleStatute,
+	assembleStatuteShortForm,
+	type StatuteInput,
+	type StatuteShortFormInput,
+} from '../domain/assemble-statute';
 import type { Segment } from '../domain/types';
 
 export type CitationInput =
@@ -19,10 +25,13 @@ export type CitationInput =
 			sourceType: 'unreported';
 			mode: 'short';
 			input: UnreportedShortFormInput;
-	  };
+	  }
+	| { sourceType: 'statute'; mode: 'full'; input: StatuteInput }
+	| { sourceType: 'statute'; mode: 'short'; input: StatuteShortFormInput };
 
 type Reported = Extract<CitationInput, { sourceType: 'reported' }>;
 type Unreported = Extract<CitationInput, { sourceType: 'unreported' }>;
+type Statute = Extract<CitationInput, { sourceType: 'statute' }>;
 
 function assembleReported(
 	citation: Reported,
@@ -48,6 +57,15 @@ function assembleUnreported(
 	}
 }
 
+function assembleStatuteCitation(citation: Statute): Segment[] {
+	switch (citation.mode) {
+		case 'full':
+			return assembleStatute(citation.input);
+		case 'short':
+			return assembleStatuteShortForm(citation.input);
+	}
+}
+
 export function assemble(
 	citation: CitationInput,
 	options: AssembleOptions = {},
@@ -57,5 +75,7 @@ export function assemble(
 			return assembleReported(citation, options);
 		case 'unreported':
 			return assembleUnreported(citation, options);
+		case 'statute':
+			return assembleStatuteCitation(citation);
 	}
 }
