@@ -20,6 +20,14 @@ export type CitationFields = {
 	databaseId: string;
 	month: Month;
 	day: string;
+
+	popularName: string;
+	title: string;
+	code: string;
+	section: string;
+	publisher: string;
+	supplementDesignation: string;
+	supplementYear: string;
 };
 
 export function initialCitationFields(): CitationFields {
@@ -39,6 +47,14 @@ export function initialCitationFields(): CitationFields {
 		databaseId: '',
 		month: 'Jan.',
 		day: '',
+
+		popularName: '',
+		title: '',
+		code: '',
+		section: '',
+		publisher: '',
+		supplementDesignation: '',
+		supplementYear: '',
 	};
 }
 

@@ -45,6 +45,13 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	databaseId: 'not-used',
 	month: 'not-used',
 	day: 'not-used',
+	popularName: 'not-used',
+	title: 'not-used',
+	code: 'not-used',
+	section: 'not-used',
+	publisher: 'not-used',
+	supplementDesignation: 'not-used',
+	supplementYear: 'not-used',
 };
 
 type NameFieldState = Pick<
@@ -122,6 +129,39 @@ function unreportedFieldState(
 	};
 }
 
+type StatuteShape = Extract<SourceShape, { sourceType: 'statute' }>;
+
+// r[impl statute.publisher]
+// r[impl statute.material-location]
+// r[impl statute.supplement-pairing]
+function statuteFieldState(
+	shape: StatuteShape,
+): Record<FieldId, FieldRequirement> {
+	switch (shape.mode) {
+		case 'full': {
+			const usesSupplement = shape.materialLocation !== 'main';
+			return {
+				...NOT_USED,
+				popularName: 'optional',
+				title: 'optional',
+				code: 'required',
+				section: 'required',
+				publisher: usedIf(shape.codeType === 'annotated', 'required'),
+				year: usedIf(shape.materialLocation !== 'supplement', 'required'),
+				supplementDesignation: usedIf(usesSupplement, 'required'),
+				supplementYear: usedIf(usesSupplement, 'required'),
+			};
+		}
+		case 'short':
+			return {
+				...NOT_USED,
+				title: 'optional',
+				code: 'required',
+				section: 'required',
+			};
+	}
+}
+
 export function selectFieldState(
 	selections: Selections,
 ): Record<FieldId, FieldRequirement> {
@@ -132,6 +172,6 @@ export function selectFieldState(
 		case 'unreported':
 			return unreportedFieldState(sourceShape, caseType);
 		case 'statute':
-			return NOT_USED;
+			return statuteFieldState(sourceShape);
 	}
 }

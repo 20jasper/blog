@@ -210,8 +210,8 @@ describe('selectFieldState: unreported', () => {
 	});
 });
 
-describe('selectFieldState: statute is not yet wired', () => {
-	it('marks every reported field not-used', () => {
+describe('selectFieldState: statute', () => {
+	it('marks every reported/unreported field not-used', () => {
 		const sourceShape: SourceShape = {
 			sourceType: 'statute',
 			mode: 'full',
@@ -222,5 +222,66 @@ describe('selectFieldState: statute is not yet wired', () => {
 
 		expect(state.party1).toBe('not-used');
 		expect(state.volume).toBe('not-used');
+		expect(state.docket).toBe('not-used');
+	});
+
+	// r[verify statute.publisher]
+	it.each(['official', 'annotated'] as const)(
+		'publisher required only when codeType is annotated (%s)',
+		(codeType) => {
+			const state = selectFieldState({
+				sourceShape: {
+					sourceType: 'statute',
+					mode: 'full',
+					codeType,
+					materialLocation: 'main',
+				},
+				caseType: 'v',
+			});
+
+			expect(state.publisher).toBe(
+				codeType === 'annotated' ? 'required' : 'not-used',
+			);
+		},
+	);
+
+	// r[verify statute.material-location]
+	// r[verify statute.supplement-pairing]
+	it.each([
+		['main', 'required', 'not-used'],
+		['both', 'required', 'required'],
+		['supplement', 'not-used', 'required'],
+	] as const)(
+		'materialLocation %s -> year %s, supplement fields %s',
+		(materialLocation, year, supplement) => {
+			const state = selectFieldState({
+				sourceShape: {
+					sourceType: 'statute',
+					mode: 'full',
+					codeType: 'official',
+					materialLocation,
+				},
+				caseType: 'v',
+			});
+
+			expect(state.year).toBe(year);
+			expect(state.supplementDesignation).toBe(supplement);
+			expect(state.supplementYear).toBe(supplement);
+		},
+	);
+
+	it('short form drops publisher/year/supplement/popularName, keeps title/code/section', () => {
+		const state = selectFieldState({
+			sourceShape: { sourceType: 'statute', mode: 'short' },
+			caseType: 'v',
+		});
+
+		expect(state.title).toBe('optional');
+		expect(state.code).toBe('required');
+		expect(state.section).toBe('required');
+		expect(state.publisher).toBe('not-used');
+		expect(state.year).toBe('not-used');
+		expect(state.supplementDesignation).toBe('not-used');
+		expect(state.popularName).toBe('not-used');
 	});
 });
