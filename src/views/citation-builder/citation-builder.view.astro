@@ -104,12 +104,17 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				reporter: reporterInput.value,
 				firstPage: firstPageInput.value,
 				year: yearInput.value,
+				docket: '',
+				databaseId: '',
+				month: 'Jan.',
+				day: '',
 			};
 		}
 
 		function readDisplayState(): DisplayState {
 			return {
 				sourceType: 'reported',
+				availability: 'database',
 				mode: currentMode(),
 				nameVariant: currentNameVariant(),
 				useId: idCheckbox.checked,

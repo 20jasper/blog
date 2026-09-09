@@ -1,3 +1,4 @@
+import type { Availability } from '../domain/availability';
 import type { DisplayState, Mode } from './display-state';
 import {
 	resolveFormShape,
@@ -7,7 +8,7 @@ import {
 
 export type SourceShape =
 	| ({ sourceType: 'reported' } & FormShape)
-	| ({ sourceType: 'unreported' } & FormShape)
+	| ({ sourceType: 'unreported'; availability: Availability } & FormShape)
 	| { sourceType: 'statute'; mode: Mode };
 
 export function resolveSourceShape(display: DisplayState): SourceShape {
@@ -15,7 +16,11 @@ export function resolveSourceShape(display: DisplayState): SourceShape {
 		case 'reported':
 			return { sourceType: 'reported', ...resolveFormShape(display) };
 		case 'unreported':
-			return { sourceType: 'unreported', ...resolveFormShape(display) };
+			return {
+				sourceType: 'unreported',
+				availability: display.availability,
+				...resolveFormShape(display),
+			};
 		case 'statute':
 			return { sourceType: 'statute', mode: display.mode };
 	}

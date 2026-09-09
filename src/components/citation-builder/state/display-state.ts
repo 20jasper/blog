@@ -1,4 +1,5 @@
 import { HYPHEN } from '../domain/pincite';
+import type { Availability } from '../domain/availability';
 import type { SpanSeparator } from '../domain/assemble';
 import type { SourceType } from './source-type';
 
@@ -22,6 +23,7 @@ export type DisplayState = {
 	mode: Mode;
 	nameVariant: NameVariant;
 	useId: boolean;
+	availability: Availability;
 	emphasis: Emphasis;
 	spanSeparator: SpanSeparator;
 };
@@ -32,6 +34,7 @@ export function initialDisplayState(): DisplayState {
 		mode: 'full',
 		nameVariant: 'full',
 		useId: false,
+		availability: 'database',
 		emphasis: 'italic',
 		spanSeparator: HYPHEN,
 	};

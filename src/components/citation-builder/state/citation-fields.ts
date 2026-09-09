@@ -1,4 +1,5 @@
 import type { CaseTypeId } from '../domain/case-types';
+import type { Month } from '../domain/months';
 import type { DisplayState } from './display-state';
 import type { Selections } from './field-state';
 import { resolveSourceShape } from './source-shape';
@@ -14,6 +15,11 @@ export type CitationFields = {
 	reporter: string;
 	firstPage: string;
 	year: string;
+
+	docket: string;
+	databaseId: string;
+	month: Month;
+	day: string;
 };
 
 export function initialCitationFields(): CitationFields {
@@ -28,6 +34,11 @@ export function initialCitationFields(): CitationFields {
 		reporter: '',
 		firstPage: '',
 		year: '',
+
+		docket: '',
+		databaseId: '',
+		month: 'Jan.',
+		day: '',
 	};
 }
 

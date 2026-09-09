@@ -41,7 +41,27 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	reporter: 'not-used',
 	firstPage: 'not-used',
 	year: 'not-used',
+	docket: 'not-used',
+	databaseId: 'not-used',
+	month: 'not-used',
+	day: 'not-used',
 };
+
+type NameFieldState = Pick<
+	Record<FieldId, FieldRequirement>,
+	'caseType' | 'party1' | 'party2'
+>;
+
+function nameFieldState(
+	usesName: boolean,
+	caseType: CaseTypeId,
+): NameFieldState {
+	return {
+		caseType: 'required',
+		party1: usedIf(usesName, 'required'),
+		party2: usedIf(usesName && hasSecondParty(caseType), 'required'),
+	};
+}
 
 function reportedFieldState(
 	formShape: FormShape,
@@ -52,9 +72,7 @@ function reportedFieldState(
 
 	return {
 		...NOT_USED,
-		caseType: 'required',
-		party1: usedIf(usesName, 'required'),
-		party2: usedIf(usesName && hasSecondParty(caseType), 'required'),
+		...nameFieldState(usesName, caseType),
 		// r[impl court.optional]
 		court: usedIf(isFull, 'optional'),
 		pincite: isFull ? 'optional' : 'required',
@@ -62,6 +80,33 @@ function reportedFieldState(
 		volume: usedIf(usesVolumeReporter, 'required'),
 		reporter: usedIf(usesVolumeReporter, 'required'),
 		firstPage: usedIf(isFull, 'required'),
+		year: usedIf(isFull, 'required'),
+	};
+}
+
+type UnreportedShape = Extract<SourceShape, { sourceType: 'unreported' }>;
+
+// r[impl unreported.availability]
+function unreportedFieldState(
+	shape: UnreportedShape,
+	caseType: CaseTypeId,
+): Record<FieldId, FieldRequirement> {
+	const isFull = shape.mode === 'full';
+	const isDatabase = shape.availability === 'database';
+	const { usesName } = usageFor(shape);
+
+	return {
+		...NOT_USED,
+		...nameFieldState(usesName, caseType),
+		court: usedIf(isFull, 'optional'),
+		pincite: isFull ? 'optional' : 'required',
+
+		// r[impl citation.unreported-long-form]
+		// r[impl citation.unreported-short-form]
+		docket: usedIf(isFull || !isDatabase, 'required'),
+		databaseId: usedIf(isDatabase, 'required'),
+		month: usedIf(isFull, 'required'),
+		day: usedIf(isFull, 'required'),
 		year: usedIf(isFull, 'required'),
 	};
 }
@@ -74,6 +119,7 @@ export function selectFieldState(
 		case 'reported':
 			return reportedFieldState(sourceShape, caseType);
 		case 'unreported':
+			return unreportedFieldState(sourceShape, caseType);
 		case 'statute':
 			return NOT_USED;
 	}

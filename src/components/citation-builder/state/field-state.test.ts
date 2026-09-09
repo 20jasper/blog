@@ -111,15 +111,94 @@ describe('selectFieldState: id. and nameVariant none drop the case name', () => 
 	});
 });
 
-describe('selectFieldState: unreported and statute are not yet wired', () => {
-	it.each(['unreported', 'statute'] as const)(
-		'marks every reported field not-used for sourceType %s',
-		(sourceType) => {
-			const sourceShape: SourceShape = { sourceType, mode: 'full' };
+// r[verify unreported.availability]
+describe('selectFieldState: unreported', () => {
+	it.each([
+		['database', 'required', 'required'],
+		['slip', 'required', 'not-used'],
+	] as const)(
+		'full form, availability %s -> docket %s, databaseId %s',
+		(availability, docket, databaseId) => {
+			const sourceShape: SourceShape = {
+				sourceType: 'unreported',
+				mode: 'full',
+				availability,
+			};
 			const state = selectFieldState({ sourceShape, caseType: 'v' });
 
-			expect(state.party1).toBe('not-used');
-			expect(state.volume).toBe('not-used');
+			expect(state.docket).toBe(docket);
+			expect(state.databaseId).toBe(databaseId);
 		},
 	);
+
+	it.each([
+		['database', 'not-used', 'required'],
+		['slip', 'required', 'not-used'],
+	] as const)(
+		'short form, availability %s -> docket %s, databaseId %s',
+		(availability, docket, databaseId) => {
+			const sourceShape: SourceShape = {
+				sourceType: 'unreported',
+				mode: 'short',
+				kind: 'none',
+				availability,
+			};
+			const state = selectFieldState({ sourceShape, caseType: 'v' });
+
+			expect(state.docket).toBe(docket);
+			expect(state.databaseId).toBe(databaseId);
+		},
+	);
+
+	it('requires month/day/year only for full, never for short', () => {
+		const full = selectFieldState({
+			sourceShape: {
+				sourceType: 'unreported',
+				mode: 'full',
+				availability: 'database',
+			},
+			caseType: 'v',
+		});
+		const short = selectFieldState({
+			sourceShape: {
+				sourceType: 'unreported',
+				mode: 'short',
+				kind: 'none',
+				availability: 'database',
+			},
+			caseType: 'v',
+		});
+
+		expect(full.month).toBe('required');
+		expect(full.day).toBe('required');
+		expect(full.year).toBe('required');
+		expect(short.month).toBe('not-used');
+		expect(short.day).toBe('not-used');
+		expect(short.year).toBe('not-used');
+	});
+
+	it('reuses reported-case name/pincite semantics unchanged', () => {
+		const state = selectFieldState({
+			sourceShape: {
+				sourceType: 'unreported',
+				mode: 'full',
+				availability: 'database',
+			},
+			caseType: 'v',
+		});
+
+		expect(state.party1).toBe('required');
+		expect(state.party2).toBe('required');
+		expect(state.pincite).toBe('optional');
+	});
+});
+
+describe('selectFieldState: statute is not yet wired', () => {
+	it('marks every reported field not-used', () => {
+		const sourceShape: SourceShape = { sourceType: 'statute', mode: 'full' };
+		const state = selectFieldState({ sourceShape, caseType: 'v' });
+
+		expect(state.party1).toBe('not-used');
+		expect(state.volume).toBe('not-used');
+	});
 });

@@ -15,3 +15,7 @@ export const MONTHS = [
 ] as const;
 
 export type Month = (typeof MONTHS)[number];
+
+export function isMonth(value: string): value is Month {
+	return (MONTHS as readonly string[]).includes(value);
+}
