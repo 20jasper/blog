@@ -1,4 +1,4 @@
-import type { CaseTypeId } from '../domain/case-types';
+import { hasSecondParty, type CaseTypeId } from '../domain/case-types';
 import type { CitationFields } from './citation-fields';
 import type { FormShape } from './form-shape';
 
@@ -40,7 +40,7 @@ export function selectFieldState(
 	return {
 		caseType: 'required',
 		party1: usedIf(usesName, 'required'),
-		party2: usedIf(usesName && caseType === 'v', 'required'),
+		party2: usedIf(usesName && hasSecondParty(caseType), 'required'),
 		// r[impl court.optional]
 		court: usedIf(isFull, 'optional'),
 		pincite: isFull ? 'optional' : 'required',

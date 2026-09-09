@@ -39,6 +39,10 @@ export function isCaseTypeId(value: string): value is CaseTypeId {
 	return CASE_TYPES.some((caseType) => caseType.id === value);
 }
 
+export function hasSecondParty(caseType: CaseTypeId): boolean {
+	return caseType === 'v';
+}
+
 // r[impl case-name.assembly]
 export function assembleCaseName(input: CaseNameInput): string {
 	const caseType = CASE_TYPE_BY_ID[input.caseType];
