@@ -24,3 +24,15 @@ export function assembleStatuteDate(input: StatuteDateInput): string {
 			return `${input.year} & ${input.supplementDesignation} ${input.supplementYear}`;
 	}
 }
+
+export type StatuteParentheticalInput = StatuteDateInput & {
+	publisher?: string;
+};
+
+// r[impl statute.publisher]
+export function assembleStatuteParenthetical(
+	input: StatuteParentheticalInput,
+): string {
+	const date = assembleStatuteDate(input);
+	return input.publisher === undefined ? date : `${input.publisher} ${date}`;
+}

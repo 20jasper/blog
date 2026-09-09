@@ -314,3 +314,11 @@ r[statute.supplement-pairing]
 > `17 U.S.C. § 107 (Supp. I 2014)`
 > `17 U.S.C. § 107 (2012 & Supp. I 2014)`
 > — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+
+## Statute Publisher
+
+r[statute.publisher]
+
+> `17 U.S.C.A. § 107 (West 2015)`
+> `17 U.S.C.S. § 107 (LexisNexis 2016)`
+> — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
