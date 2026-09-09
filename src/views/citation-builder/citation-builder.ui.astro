@@ -1,5 +1,6 @@
 ---
 import Button from '@components/button.astro';
+import { MONTHS } from '@components/citation-builder/domain/months';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
@@ -9,9 +10,19 @@ import type { Props as FieldSpec } from './components/field.astro';
 
 const FORM_ID = 'citation-builder-form';
 
+const SOURCE_TYPE_OPTIONS = [
+	{ value: 'reported', text: 'Reported case', checked: true },
+	{ value: 'unreported', text: 'Unreported case' },
+];
+
 const MODE_OPTIONS = [
 	{ value: 'full', text: 'Full citation', checked: true },
 	{ value: 'short', text: 'Short form' },
+];
+
+const AVAILABILITY_OPTIONS = [
+	{ value: 'database', text: 'In electronic database', checked: true },
+	{ value: 'slip', text: 'Slip opinion only' },
 ];
 
 const EMPHASIS_OPTIONS = [
@@ -72,6 +83,14 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 		label: 'Pincite',
 		hint: 'Page, range, or list, e.g. 214, 208-14, or 490, 495',
 	},
+	{
+		kind: 'text',
+		name: 'year',
+		label: 'Decision year',
+		hint: 'Year the case was decided',
+		inputmode: 'numeric',
+		pattern: '\\d+',
+	},
 ];
 
 const REPORTED_FIELDS: FieldSpec[] = [
@@ -93,11 +112,31 @@ const REPORTED_FIELDS: FieldSpec[] = [
 		label: 'First page',
 		hint: 'First page of the opinion in the reporter',
 	},
+];
+
+const UNREPORTED_FIELDS: FieldSpec[] = [
 	{
 		kind: 'text',
-		name: 'year',
-		label: 'Decision year',
-		hint: 'Year the case was decided',
+		name: 'docket',
+		label: 'Docket number',
+		hint: 'e.g. 05-1234 -- "No. " is added automatically',
+	},
+	{
+		kind: 'text',
+		name: 'databaseId',
+		label: 'Database identifier',
+		hint: 'e.g. 2005 WL 2709572',
+	},
+	{
+		kind: 'select',
+		name: 'month',
+		label: 'Month decided',
+		options: MONTHS.map((month) => ({ value: month, text: month })),
+	},
+	{
+		kind: 'text',
+		name: 'day',
+		label: 'Day decided',
 		inputmode: 'numeric',
 		pattern: '\\d+',
 	},
@@ -126,6 +165,11 @@ const REPORTED_FIELDS: FieldSpec[] = [
 >
 	<Fieldset legend="Citation form">
 		<FieldGrid>
+			<RadioGroup
+				label="Source type"
+				name="sourceType"
+				options={SOURCE_TYPE_OPTIONS}
+			/>
 			<RadioGroup
 				label="Mode"
 				name="mode"
@@ -162,6 +206,17 @@ const REPORTED_FIELDS: FieldSpec[] = [
 	<Fieldset legend="Reported case">
 		<FieldGrid>
 			{REPORTED_FIELDS.map((field) => <Field {...field} />)}
+		</FieldGrid>
+	</Fieldset>
+
+	<Fieldset legend="Unreported case">
+		<FieldGrid>
+			<RadioGroup
+				label="Availability"
+				name="availability"
+				options={AVAILABILITY_OPTIONS}
+			/>
+			{UNREPORTED_FIELDS.map((field) => <Field {...field} />)}
 		</FieldGrid>
 	</Fieldset>
 </form>

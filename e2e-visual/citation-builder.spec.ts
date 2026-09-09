@@ -308,3 +308,74 @@ test('Load example resets to the golden case', async ({ page }) => {
 		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
 	);
 });
+
+test('unreported case disables reported fields, enables docket/availability', async ({
+	page,
+}) => {
+	const { volume, reporter, firstPage, docket, databaseId } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+
+	await expect(volume).toBeDisabled();
+	await expect(reporter).toBeDisabled();
+	await expect(firstPage).toBeDisabled();
+	await expect(docket).toBeEnabled();
+	await expect(databaseId).toBeEnabled();
+});
+
+test('unreported case, database availability, renders the star-paged long form', async ({
+	page,
+}) => {
+	const {
+		party1,
+		party2,
+		court,
+		pincite,
+		docket,
+		databaseId,
+		month,
+		day,
+		year,
+		output,
+	} = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await party1.fill('Beaven');
+	await party2.fill('Justice');
+	await court.fill('');
+	await pincite.fill('');
+	await docket.fill('03-84-JBC');
+	await databaseId.fill('2007 WL 1032301');
+	await month.selectOption('Mar.');
+	await day.fill('30');
+	await year.fill('2007');
+
+	await expect(output).toHaveText(
+		'Beaven v. Justice, No. 03-84-JBC, 2007 WL 1032301 (Mar. 30, 2007).',
+	);
+});
+
+test('unreported case, slip availability, disables Database identifier', async ({
+	page,
+}) => {
+	const { databaseId } = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Slip opinion only' }).check();
+
+	await expect(databaseId).toBeDisabled();
+});
+
+test('switching back to reported re-enables Volume/Reporter/First page', async ({
+	page,
+}) => {
+	const { volume, reporter, firstPage } = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Reported case', exact: true }).check();
+
+	await expect(volume).toBeEnabled();
+	await expect(reporter).toBeEnabled();
+	await expect(firstPage).toBeEnabled();
+});

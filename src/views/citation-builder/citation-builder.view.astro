@@ -8,9 +8,17 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 	<CitationBuilderUi />
 	<script>
 		import {
+			isAvailability,
+			type Availability,
+		} from '@components/citation-builder/domain/availability';
+		import {
 			isCaseTypeId,
 			type CaseTypeId,
 		} from '@components/citation-builder/domain/case-types';
+		import {
+			isMonth,
+			type Month,
+		} from '@components/citation-builder/domain/months';
 		import {
 			EN_DASH,
 			HYPHEN,
@@ -21,6 +29,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			buildCitationInput,
 			deriveSelections,
 			isNameVariant,
+			isSourceType,
 			resolveShortFormKind,
 			selectFieldState,
 			type CitationFields,
@@ -29,6 +38,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			type FieldRequirement,
 			type Mode,
 			type NameVariant,
+			type SourceType,
 			type SpanSeparator,
 		} from '@components/citation-builder/state';
 		import { createClipboardController } from './clipboard';
@@ -60,11 +70,24 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			yearInput,
 			nameVariantSelect,
 			idCheckbox,
+			docketInput,
+			databaseIdInput,
+			monthSelect,
+			dayInput,
 		} = queryFormRefs(form);
 
 		function currentCaseType(): CaseTypeId {
 			const { value } = caseTypeSelect;
 			return isCaseTypeId(value) ? value : 'v';
+		}
+
+		function currentSourceType(): SourceType {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="sourceType"]:checked',
+			);
+			return checked !== null && isSourceType(checked.value)
+				? checked.value
+				: 'reported';
 		}
 
 		function currentMode(): Mode {
@@ -74,9 +97,23 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			return checked?.value === 'short' ? 'short' : 'full';
 		}
 
+		function currentAvailability(): Availability {
+			const checked = form.querySelector<HTMLInputElement>(
+				'input[name="availability"]:checked',
+			);
+			return checked !== null && isAvailability(checked.value)
+				? checked.value
+				: 'database';
+		}
+
 		function currentNameVariant(): NameVariant {
 			const { value } = nameVariantSelect;
 			return isNameVariant(value) ? value : 'full';
+		}
+
+		function currentMonth(): Month {
+			const { value } = monthSelect;
+			return isMonth(value) ? value : 'Jan.';
 		}
 
 		function currentEmphasis(): Emphasis {
@@ -104,17 +141,17 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				reporter: reporterInput.value,
 				firstPage: firstPageInput.value,
 				year: yearInput.value,
-				docket: '',
-				databaseId: '',
-				month: 'Jan.',
-				day: '',
+				docket: docketInput.value,
+				databaseId: databaseIdInput.value,
+				month: currentMonth(),
+				day: dayInput.value,
 			};
 		}
 
 		function readDisplayState(): DisplayState {
 			return {
-				sourceType: 'reported',
-				availability: 'database',
+				sourceType: currentSourceType(),
+				availability: currentAvailability(),
 				mode: currentMode(),
 				nameVariant: currentNameVariant(),
 				useId: idCheckbox.checked,
@@ -143,6 +180,14 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setRequired(input, requirement === 'required');
 		}
 
+		function setRadioGroupDisabled(name: string, disabled: boolean): void {
+			for (const input of form.querySelectorAll<HTMLInputElement>(
+				`input[name="${name}"]`,
+			)) {
+				input.disabled = disabled;
+			}
+		}
+
 		function updateFieldState(
 			fields: CitationFields,
 			display: DisplayState,
@@ -160,9 +205,17 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setFieldRequirement(reporterInput, fieldState.reporter);
 			setFieldRequirement(firstPageInput, fieldState.firstPage);
 			setFieldRequirement(yearInput, fieldState.year);
+			setFieldRequirement(docketInput, fieldState.docket);
+			setFieldRequirement(databaseIdInput, fieldState.databaseId);
+			setFieldRequirement(monthSelect, fieldState.month);
+			setFieldRequirement(dayInput, fieldState.day);
 
 			nameVariantSelect.disabled = shortFormKind !== 'name';
 			idCheckbox.disabled = shortFormKind === undefined;
+			setRadioGroupDisabled(
+				'availability',
+				display.sourceType !== 'unreported',
+			);
 		}
 
 		function fillInPlaceholder(): void {
@@ -206,6 +259,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}
 			caseTypeSelect.value = 'v';
 			nameVariantSelect.value = 'full';
+			monthSelect.value = 'Jan.';
 		}
 
 		function clearFields(): void {

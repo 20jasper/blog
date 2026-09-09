@@ -25,3 +25,5 @@ export type { FieldId, FieldRequirement, Selections } from './field-state';
 
 export { resolveShortFormKind } from './source-shape';
 export type { SourceShape } from './source-shape';
+
+export { isSourceType } from './source-type';

@@ -12,6 +12,10 @@ export function getCitationBuilderLocators(page: Page) {
 		firstPage: page.getByLabel('First page'),
 		year: page.getByLabel('Decision year'),
 		nameVariant: page.getByLabel('Name variant'),
+		docket: page.getByLabel('Docket number'),
+		databaseId: page.getByLabel('Database identifier'),
+		month: page.getByLabel('Month decided'),
+		day: page.getByLabel('Day decided'),
 		idCheckbox: page.getByRole('checkbox', {
 			name: /immediately follows one to the same source/u,
 		}),
