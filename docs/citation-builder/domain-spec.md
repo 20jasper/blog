@@ -236,3 +236,12 @@ r[normalize.date]
 > — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
 
 `[Month] [Day], [Year]`
+
+## Unreported Case Availability
+
+r[unreported.availability]
+
+> `2007 WL 1032301, at *3 (E.D. Ky. Mar. 30, 2007)`
+> — [UC Cincinnati, Commercial Databases](https://guides.libraries.uc.edu/c.php?g=222561&p=1472887)
+
+`database` | `slip`
