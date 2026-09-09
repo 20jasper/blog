@@ -156,12 +156,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
 			idCheckbox.disabled = !isShort;
-
-			if (isShort && idCheckbox.checked) {
-				setRequired(party1Input, false);
-				setRequired(volumeInput, false);
-				setRequired(reporterInput, false);
-			}
 		}
 
 		function fillInPlaceholder(): void {

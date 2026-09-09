@@ -6,11 +6,15 @@ import type { DisplayState } from './display-state';
 
 describe('deriveSelections', () => {
 	it.each([
-		[{ caseType: 'v' }, { mode: 'full' }, { mode: 'full', caseType: 'v' }],
+		[
+			{ caseType: 'v' },
+			{ mode: 'full' },
+			{ mode: 'full', caseType: 'v', nameVariant: 'full', useId: false },
+		],
 		[
 			{ caseType: 'in-re' },
 			{ mode: 'short' },
-			{ mode: 'short', caseType: 'in-re' },
+			{ mode: 'short', caseType: 'in-re', nameVariant: 'full', useId: false },
 		],
 	] as const)('%o + %o -> %o', (fieldOverrides, displayOverrides, expected) => {
 		const fields: CitationFields = {

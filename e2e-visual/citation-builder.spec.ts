@@ -134,16 +134,32 @@ test('Id. disables Name variant and renders Id. form', async ({ page }) => {
 test('Id. renders with only pincite filled, no volume/reporter/name needed', async ({
 	page,
 }) => {
-	const { volume, reporter, party1, idCheckbox, output } =
+	const { volume, reporter, party1, party2, idCheckbox, output } =
 		getCitationBuilderLocators(page);
 
 	await volume.fill('');
 	await reporter.fill('');
 	await party1.fill('');
+	await party2.fill('');
 	await page.getByRole('radio', { name: 'Short form' }).check();
 	await idCheckbox.check();
 
 	await expect(output).toContainText('Id.');
+	await expect(output).toContainText('214');
+});
+
+test('short form name variant none renders with party1/party2 empty', async ({
+	page,
+}) => {
+	const { party1, party2, nameVariant, output } =
+		getCitationBuilderLocators(page);
+
+	await party1.fill('');
+	await party2.fill('');
+	await page.getByRole('radio', { name: 'Short form' }).check();
+	await nameVariant.selectOption('none');
+
+	await expect(output).not.toContainText('Fill in the fields above');
 	await expect(output).toContainText('214');
 });
 

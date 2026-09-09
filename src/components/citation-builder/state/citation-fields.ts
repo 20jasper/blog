@@ -34,5 +34,10 @@ export function deriveSelections(
 	fields: CitationFields,
 	display: DisplayState,
 ): Selections {
-	return { mode: display.mode, caseType: fields.caseType };
+	return {
+		mode: display.mode,
+		caseType: fields.caseType,
+		nameVariant: display.nameVariant,
+		useId: display.useId,
+	};
 }
