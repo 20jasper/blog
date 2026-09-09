@@ -70,6 +70,19 @@ function nameFieldState(
 	};
 }
 
+type CourtPinciteFieldState = Pick<
+	Record<FieldId, FieldRequirement>,
+	'court' | 'pincite'
+>;
+
+// r[impl court.optional]
+function courtPinciteFieldState(isFull: boolean): CourtPinciteFieldState {
+	return {
+		court: usedIf(isFull, 'optional'),
+		pincite: isFull ? 'optional' : 'required',
+	};
+}
+
 function reportedFieldState(
 	formShape: FormShape,
 	caseType: CaseTypeId,
@@ -80,9 +93,7 @@ function reportedFieldState(
 	return {
 		...NOT_USED,
 		...nameFieldState(usesName, caseType),
-		// r[impl court.optional]
-		court: usedIf(isFull, 'optional'),
-		pincite: isFull ? 'optional' : 'required',
+		...courtPinciteFieldState(isFull),
 
 		volume: usedIf(usesVolumeReporter, 'required'),
 		reporter: usedIf(usesVolumeReporter, 'required'),
@@ -116,8 +127,7 @@ function unreportedFieldState(
 	return {
 		...NOT_USED,
 		...nameFieldState(usesName, caseType),
-		court: usedIf(isFull, 'optional'),
-		pincite: isFull ? 'optional' : 'required',
+		...courtPinciteFieldState(isFull),
 
 		// r[impl citation.unreported-long-form]
 		// r[impl citation.unreported-short-form]
