@@ -202,4 +202,25 @@ r[normalize.span-passthrough]
 > number."
 > — [Tarlton, Pages, Paragraphs, and Pincites](https://tarlton.law.utexas.edu/bluebook-legal-citation/pages-paragraphs-pincites)
 
-`1137 n.4` passes through verbatim, unvalidated.
+## Docket Number Prefix
+
+r[normalize.docket]
+
+> `United States v. Bennett, No. 05-CR-6050 CJS, 2005 WL 2709572`
+> — [Georgetown, Unpublished Cases](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
+
+Rule 10.8.1. Strip any prefix the user already typed (`No.`, `Case No.`,
+`Docket No.`, case-insensitive) before re-prepending `No. `, so
+re-editing a filled field never doubles it. The strip only fires when
+the prefix is followed by whitespace, end of string, or a digit — never
+another letter, since `North-123` and `Norfolk County 44` are real
+docket-adjacent strings that happen to start with "No" and must not be
+mangled into `No. rth-123`.
+
+| Input               | Output          |
+| ------------------- | --------------- |
+| `05-1234`           | `No. 05-1234`   |
+| `No. 05-1234`       | `No. 05-1234`   |
+| `No.05-1234`        | `No. 05-1234`   |
+| `Case No. 21-56789` | `No. 21-56789`  |
+| `North-123`         | `No. North-123` |
