@@ -20,6 +20,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			assemble,
 			buildCitationInput,
 			deriveSelections,
+			resolveShortFormKind,
 			selectFieldState,
 			type CitationFields,
 			type DisplayState,
@@ -143,7 +144,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			display: DisplayState,
 		): void {
 			const selections = deriveSelections(fields, display);
-			const { formShape } = selections;
+			const shortFormKind = resolveShortFormKind(selections.sourceShape);
 			const fieldState = selectFieldState(selections);
 
 			setFieldRequirement(caseTypeSelect, fieldState.caseType);
@@ -156,9 +157,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setFieldRequirement(firstPageInput, fieldState.firstPage);
 			setFieldRequirement(yearInput, fieldState.year);
 
-			nameVariantSelect.disabled =
-				formShape.mode !== 'short' || formShape.kind !== 'name';
-			idCheckbox.disabled = formShape.mode !== 'short';
+			nameVariantSelect.disabled = shortFormKind !== 'name';
+			idCheckbox.disabled = shortFormKind === undefined;
 		}
 
 		function fillInPlaceholder(): void {

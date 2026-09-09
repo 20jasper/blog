@@ -9,13 +9,21 @@ describe('deriveSelections', () => {
 		[
 			{ caseType: 'v' },
 			{ mode: 'full' },
-			{ formShape: { mode: 'full' }, caseType: 'v' },
+			{
+				sourceShape: { sourceType: 'reported', mode: 'full' },
+				caseType: 'v',
+			},
 		],
 		[
 			{ caseType: 'in-re' },
 			{ mode: 'short' },
 			{
-				formShape: { mode: 'short', kind: 'name', nameVariant: 'full' },
+				sourceShape: {
+					sourceType: 'reported',
+					mode: 'short',
+					kind: 'name',
+					nameVariant: 'full',
+				},
 				caseType: 'in-re',
 			},
 		],
