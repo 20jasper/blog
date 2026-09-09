@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { assembleStatute, type StatuteInput } from './assemble-statute';
+import {
+	assembleStatute,
+	assembleStatuteShortForm,
+	type StatuteInput,
+} from './assemble-statute';
 import { render } from './render';
 
 type MainStatute = Extract<StatuteInput, { materialLocation: 'main' }>;
@@ -80,5 +84,39 @@ describe('assembleStatute: publisher and supplement', () => {
 		};
 
 		expect(plainOf(supplementOnly)).toBe('17 U.S.C. § 107 (Supp. I 2014).');
+	});
+});
+
+// r[verify citation.statute-short-form]
+describe('assembleStatuteShortForm', () => {
+	it('matches the domain-spec.md 48 U.S.C. §§1411-12 worked example', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({ code: 'U.S.C.', section: '§§ 1411-12' }),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('U.S.C. §§ 1411-12.');
+	});
+
+	it('includes the title before the code when present', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({
+				title: '17',
+				code: 'U.S.C.',
+				section: '107',
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe('17 U.S.C. § 107.');
+	});
+
+	it('drops any parenthetical entirely -- no date, no publisher', () => {
+		const { plain } = render(
+			assembleStatuteShortForm({ code: 'U.S.C.', section: '107' }),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).not.toContain('(');
 	});
 });

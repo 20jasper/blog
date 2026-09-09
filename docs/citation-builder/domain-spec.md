@@ -342,3 +342,14 @@ r[citation.statute-long-form]
 ```
 
 After-code title placement is unconfirmed; only before-code is supported.
+
+## Statute Short Form
+
+r[citation.statute-short-form]
+
+> `48 U.S.C. §§1411-12`
+> — [Colorado CCS, Bluebook Citation](https://cccs.libguides.com/c.php?g=1318336&p=9697124)
+
+```
+[Title ]<Code> § <Section>.
+```

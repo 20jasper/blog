@@ -30,3 +30,25 @@ export function assembleStatute(input: StatuteInput): Segment[] {
 		terminalPeriod: true,
 	});
 }
+
+export type StatuteShortFormInput = {
+	title?: string;
+	code: string;
+	section: string;
+};
+
+// r[impl citation.statute-short-form]
+export function assembleStatuteShortForm(
+	input: StatuteShortFormInput,
+): Segment[] {
+	const title = input.title === undefined ? '' : `${input.title} `;
+
+	const segments: Segment[] = [
+		{ text: `${title}${input.code} ${normalizeSection(input.section)}` },
+	];
+
+	return applyFraming(segments, {
+		capitalizeFirst: true,
+		terminalPeriod: true,
+	});
+}
