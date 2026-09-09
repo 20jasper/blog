@@ -1,3 +1,4 @@
+import type { Availability } from './availability';
 import { assembleCaseName, type CaseNameInput } from './case-types';
 import { assembleDate } from './date';
 import { normalizeDocket } from './docket';
@@ -181,6 +182,75 @@ export function assembleReportedShortForm(
 					emphasized: true,
 				},
 				{ text: `, ${input.volume} ${input.reporter} at ${pincite}` },
+			]);
+	}
+}
+
+type UnreportedIdentifier =
+	| { availability: 'database'; databaseId: string }
+	| { availability: 'slip'; docket: string };
+
+function unreportedIdentifierText(input: UnreportedIdentifier): string {
+	switch (input.availability) {
+		case 'database':
+			return input.databaseId;
+		case 'slip':
+			return normalizeDocket(input.docket);
+	}
+}
+
+function unreportedAtText(availability: Availability, pincite: string): string {
+	switch (availability) {
+		case 'database':
+			return `at ${pincite}`;
+		case 'slip':
+			return `slip op. at ${pincite}`;
+	}
+}
+
+export type UnreportedShortFormInput =
+	| { nameVariant: 'id'; availability: Availability; pincite: string }
+	| ({ nameVariant: 'none'; pincite: string } & UnreportedIdentifier)
+	| ({
+			nameVariant: PartyChoice;
+			name: CaseNameInput;
+			pincite: string;
+	  } & UnreportedIdentifier);
+
+// r[impl citation.unreported-short-form]
+export function assembleUnreportedShortForm(
+	input: UnreportedShortFormInput,
+	{ spanSeparator = DEFAULT_SEPARATOR }: AssembleOptions = {},
+): Segment[] {
+	const pincite = parsePincite(input.pincite, {
+		separator: spanSeparator,
+		starPages: input.availability === 'database',
+	});
+
+	switch (input.nameVariant) {
+		// r[impl id.gating]
+		case 'id':
+			return framePeriod([
+				{ text: 'Id.', emphasized: true },
+				{ text: ` at ${pincite}` },
+			]);
+		case 'none':
+			return framePeriod([
+				{
+					text: `${unreportedIdentifierText(input)}, ${unreportedAtText(input.availability, pincite)}`,
+				},
+			]);
+		case 'full':
+		case 'party1':
+		case 'party2':
+			return framePeriod([
+				{
+					text: shortFormName(input.nameVariant, input.name),
+					emphasized: true,
+				},
+				{
+					text: `, ${unreportedIdentifierText(input)}, ${unreportedAtText(input.availability, pincite)}`,
+				},
 			]);
 	}
 }

@@ -258,3 +258,15 @@ r[citation.unreported-pincite-form]
 [Name], No. [Docket], [Database ID], at *[Pincite] ([Court] [Month] [Day], [Year]).
 [Name], No. [Docket], slip op. at [Pincite] ([Court] [Month] [Day], [Year]).
 ```
+
+## Unreported Short Form
+
+r[citation.unreported-short-form]
+
+> `Beaven, 2007 WL 1032301, at *3.`
+> — [UC Cincinnati, Commercial Databases](https://guides.libraries.uc.edu/c.php?g=222561&p=1472887)
+
+```
+[Name?], [Database ID], at *[Pincite].
+[Name?], No. [Docket], slip op. at [Pincite].
+```
