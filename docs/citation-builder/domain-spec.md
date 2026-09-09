@@ -209,10 +209,6 @@ r[normalize.docket]
 > `United States v. Bennett, No. 05-CR-6050 CJS, 2005 WL 2709572`
 > — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
 
-Rule 10.8.1. Strip any existing `No./Case No./Docket No.` prefix before
-re-prepending `No. ` (boundary: whitespace/end/digit only, never a
-letter — `North-123` must not become `No. rth-123`).
-
 | Input               | Output          |
 | ------------------- | --------------- |
 | `05-1234`           | `No. 05-1234`   |
@@ -225,12 +221,12 @@ letter — `North-123` must not become `No. rth-123`).
 
 r[date.month-list]
 
-> "date the case was decided, including month (Table 12), day, and
+> "Date the case was decided, including month (Table 12), day, and
 > year"
 > — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
 
 `Jan.` `Feb.` `Mar.` `Apr.` `May` `June` `July` `Aug.` `Sep.` `Oct.`
-`Nov.` `Dec.` — Sep. per the 22nd edition, not the 21st's `Sept.`.
+`Nov.` `Dec.`
 
 ## Date Assembly
 
