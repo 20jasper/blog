@@ -56,3 +56,9 @@ export function resolveShortFormKind(
 			return undefined;
 	}
 }
+
+// r[impl statute.code-type]
+// r[impl statute.material-location]
+export function hasStatuteFullFields(sourceShape: SourceShape): boolean {
+	return sourceShape.sourceType === 'statute' && sourceShape.mode === 'full';
+}

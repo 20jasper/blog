@@ -13,6 +13,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			buildCitationInput,
 			deriveSelections,
 			EN_DASH,
+			hasStatuteFullFields,
 			HYPHEN,
 			isAvailability,
 			isCaseTypeId,
@@ -254,10 +255,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			idCheckbox.disabled = shortFormKind === undefined;
 			setRadioGroupDisabled(
 				'availability',
-				display.sourceType !== 'unreported',
+				selections.sourceShape.sourceType !== 'unreported',
 			);
-			const isStatuteFull =
-				display.sourceType === 'statute' && display.mode === 'full';
+			const isStatuteFull = hasStatuteFullFields(selections.sourceShape);
 			setRadioGroupDisabled('codeType', !isStatuteFull);
 			setRadioGroupDisabled('materialLocation', !isStatuteFull);
 		}

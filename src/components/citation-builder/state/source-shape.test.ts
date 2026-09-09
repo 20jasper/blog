@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { initialDisplayState } from './display-state';
-import { resolveShortFormKind, resolveSourceShape } from './source-shape';
+import {
+	hasStatuteFullFields,
+	resolveShortFormKind,
+	resolveSourceShape,
+} from './source-shape';
 import type { DisplayState } from './display-state';
 
 describe('resolveSourceShape', () => {
@@ -63,5 +67,37 @@ describe('resolveShortFormKind', () => {
 		expect(
 			resolveShortFormKind({ sourceType: 'statute', mode: 'short' }),
 		).toBeUndefined();
+	});
+});
+
+describe('hasStatuteFullFields', () => {
+	it('is true only for statute full mode', () => {
+		expect(
+			hasStatuteFullFields({
+				sourceType: 'statute',
+				mode: 'full',
+				codeType: 'official',
+				materialLocation: 'main',
+			}),
+		).toBe(true);
+	});
+
+	it('is false for statute short mode', () => {
+		expect(hasStatuteFullFields({ sourceType: 'statute', mode: 'short' })).toBe(
+			false,
+		);
+	});
+
+	it('is false for reported and unreported', () => {
+		expect(hasStatuteFullFields({ sourceType: 'reported', mode: 'full' })).toBe(
+			false,
+		);
+		expect(
+			hasStatuteFullFields({
+				sourceType: 'unreported',
+				mode: 'full',
+				availability: 'database',
+			}),
+		).toBe(false);
 	});
 });
