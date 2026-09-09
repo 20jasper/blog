@@ -1,6 +1,13 @@
 ---
 import Button from '@components/button.astro';
-import { MONTHS } from '@components/citation-builder/domain/months';
+import {
+	AVAILABILITIES,
+	CODE_TYPES,
+	MATERIAL_LOCATIONS,
+	MODES,
+	MONTHS,
+	SOURCE_TYPES,
+} from '@components/citation-builder/state';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
@@ -10,32 +17,22 @@ import type { Props as FieldSpec } from './components/field.astro';
 
 const FORM_ID = 'citation-builder-form';
 
-const SOURCE_TYPE_OPTIONS = [
-	{ value: 'reported', text: 'Reported case', checked: true },
-	{ value: 'unreported', text: 'Unreported case' },
-	{ value: 'statute', text: 'Statute' },
-];
+// Marks the option matching defaultValue as the radio group's initial choice.
+function radioOptions<T extends { value: string; text: string }>(
+	items: readonly T[],
+	defaultValue: T['value'],
+) {
+	return items.map((item) => ({
+		...item,
+		checked: item.value === defaultValue,
+	}));
+}
 
-const MODE_OPTIONS = [
-	{ value: 'full', text: 'Full citation', checked: true },
-	{ value: 'short', text: 'Short form' },
-];
-
-const AVAILABILITY_OPTIONS = [
-	{ value: 'database', text: 'In electronic database', checked: true },
-	{ value: 'slip', text: 'Slip opinion only' },
-];
-
-const CODE_TYPE_OPTIONS = [
-	{ value: 'official', text: 'Official code', checked: true },
-	{ value: 'annotated', text: 'Annotated / unofficial code' },
-];
-
-const MATERIAL_LOCATION_OPTIONS = [
-	{ value: 'main', text: 'Main volume', checked: true },
-	{ value: 'both', text: 'Both' },
-	{ value: 'supplement', text: 'Supplement only' },
-];
+const SOURCE_TYPE_OPTIONS = radioOptions(SOURCE_TYPES, 'reported');
+const MODE_OPTIONS = radioOptions(MODES, 'full');
+const AVAILABILITY_OPTIONS = radioOptions(AVAILABILITIES, 'database');
+const CODE_TYPE_OPTIONS = radioOptions(CODE_TYPES, 'official');
+const MATERIAL_LOCATION_OPTIONS = radioOptions(MATERIAL_LOCATIONS, 'main');
 
 const EMPHASIS_OPTIONS = [
 	{ value: 'italic', text: 'Italic', checked: true },

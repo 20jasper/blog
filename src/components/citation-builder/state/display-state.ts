@@ -5,7 +5,12 @@ import type { CodeType } from '../domain/code-type';
 import type { MaterialLocation } from '../domain/material-location';
 import type { SourceType } from './source-type';
 
-export type Mode = 'full' | 'short';
+export const MODES = [
+	{ value: 'full', text: 'Full citation' },
+	{ value: 'short', text: 'Short form' },
+] as const;
+
+export type Mode = (typeof MODES)[number]['value'];
 // r[impl name-variant.options]
 export type NameVariant = 'full' | 'party1' | 'party2' | 'none';
 export type Emphasis = 'italic' | 'underline';

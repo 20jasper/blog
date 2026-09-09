@@ -1,6 +1,11 @@
 // r[impl unreported.availability]
-export type Availability = 'database' | 'slip';
+export const AVAILABILITIES = [
+	{ value: 'database', text: 'In electronic database' },
+	{ value: 'slip', text: 'Slip opinion only' },
+] as const;
+
+export type Availability = (typeof AVAILABILITIES)[number]['value'];
 
 export function isAvailability(value: string): value is Availability {
-	return value === 'database' || value === 'slip';
+	return AVAILABILITIES.some((availability) => availability.value === value);
 }
