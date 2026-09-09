@@ -6,6 +6,8 @@ export type { CitationFields } from './citation-fields';
 export { assemble } from './citation-input';
 export type { CitationInput } from './citation-input';
 
+export { emptyToUndefined } from './empty-to-undefined';
+
 export { buildCitationInput } from './citation-input-builders';
 
 export { initialDisplayState } from './display-state';

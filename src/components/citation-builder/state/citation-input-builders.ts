@@ -6,6 +6,7 @@ import type {
 import type { CitationFields } from './citation-fields';
 import type { CitationInput } from './citation-input';
 import type { DisplayState } from './display-state';
+import { emptyToUndefined } from './empty-to-undefined';
 
 // Number('') is 0, not NaN -- would bake a wrong number into the citation.
 function parseRequiredInt(value: string, field: string): number {
@@ -27,8 +28,8 @@ function reportedFullInput(fields: CitationFields): ReportedCaseInput {
 		volume: fields.volume,
 		reporter: fields.reporter,
 		firstPage: fields.firstPage,
-		pincite: fields.pincite === '' ? undefined : fields.pincite,
-		court: fields.court === '' ? undefined : fields.court,
+		pincite: emptyToUndefined(fields.pincite),
+		court: emptyToUndefined(fields.court),
 		year: parseRequiredInt(fields.year, 'year'),
 	};
 }
