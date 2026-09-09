@@ -141,9 +141,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			fields: CitationFields,
 			display: DisplayState,
 		): void {
-			const isShort = display.mode === 'short';
-
-			const fieldState = selectFieldState(deriveSelections(fields, display));
+			const selections = deriveSelections(fields, display);
+			const { formShape } = selections;
+			const fieldState = selectFieldState(selections);
 
 			setFieldRequirement(caseTypeSelect, fieldState.caseType);
 			setFieldRequirement(party1Input, fieldState.party1);
@@ -155,8 +155,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setFieldRequirement(firstPageInput, fieldState.firstPage);
 			setFieldRequirement(yearInput, fieldState.year);
 
-			nameVariantSelect.disabled = !isShort || idCheckbox.checked;
-			idCheckbox.disabled = !isShort;
+			nameVariantSelect.disabled =
+				formShape.mode !== 'short' || formShape.kind !== 'name';
+			idCheckbox.disabled = formShape.mode !== 'short';
 		}
 
 		function fillInPlaceholder(): void {
