@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { assembleCaseName } from './case-types';
+import { assembleCaseName, isCaseTypeId } from './case-types';
 
 const PARTY_1 = 'Dayton';
 const PARTY_2 = 'Stewart';
+
+describe('isCaseTypeId', () => {
+	it('rejects a value that is not a real case type id', () => {
+		expect(isCaseTypeId('versus')).toBe(false);
+	});
+});
 
 // r[verify case-name.assembly]
 describe('assembleCaseName', () => {
