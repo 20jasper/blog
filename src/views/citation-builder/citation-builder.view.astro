@@ -137,9 +137,10 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setRequired(input, requirement === 'required');
 		}
 
-		function updateFieldState(): void {
-			const fields = readCitationFields();
-			const display = readDisplayState();
+		function updateFieldState(
+			fields: CitationFields,
+			display: DisplayState,
+		): void {
 			const isShort = display.mode === 'short';
 
 			const fieldState = selectFieldState(deriveSelections(fields, display));
@@ -172,13 +173,11 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			clipboard.setCitation({ html, plain });
 		}
 
-		function updateOutput(): void {
+		function updateOutput(fields: CitationFields, display: DisplayState): void {
 			if (!form.checkValidity()) {
 				fillInPlaceholder();
 				return;
 			}
-			const fields = readCitationFields();
-			const display = readDisplayState();
 			const segments = assemble(buildCitationInput(fields, display), {
 				spanSeparator: display.spanSeparator,
 			});
@@ -186,8 +185,10 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		function refresh(): void {
-			updateFieldState();
-			updateOutput();
+			const fields = readCitationFields();
+			const display = readDisplayState();
+			updateFieldState(fields, display);
+			updateOutput(fields, display);
 		}
 
 		function resetToDefaults(): void {
@@ -221,7 +222,6 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		form.addEventListener('input', refresh);
-		form.addEventListener('change', refresh);
 		clearButton.addEventListener('click', clearFields);
 		loadExampleButton.addEventListener('click', loadExample);
 		form.addEventListener('submit', (event) => {
