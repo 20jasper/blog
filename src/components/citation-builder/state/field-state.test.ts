@@ -212,7 +212,12 @@ describe('selectFieldState: unreported', () => {
 
 describe('selectFieldState: statute is not yet wired', () => {
 	it('marks every reported field not-used', () => {
-		const sourceShape: SourceShape = { sourceType: 'statute', mode: 'full' };
+		const sourceShape: SourceShape = {
+			sourceType: 'statute',
+			mode: 'full',
+			codeType: 'official',
+			materialLocation: 'main',
+		};
 		const state = selectFieldState({ sourceShape, caseType: 'v' });
 
 		expect(state.party1).toBe('not-used');

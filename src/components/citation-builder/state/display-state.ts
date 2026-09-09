@@ -1,6 +1,8 @@
 import { HYPHEN } from '../domain/pincite';
 import type { Availability } from '../domain/availability';
 import type { SpanSeparator } from '../domain/assemble';
+import type { CodeType } from '../domain/code-type';
+import type { MaterialLocation } from '../domain/material-location';
 import type { SourceType } from './source-type';
 
 export type Mode = 'full' | 'short';
@@ -24,6 +26,8 @@ export type DisplayState = {
 	nameVariant: NameVariant;
 	useId: boolean;
 	availability: Availability;
+	codeType: CodeType;
+	materialLocation: MaterialLocation;
 	emphasis: Emphasis;
 	spanSeparator: SpanSeparator;
 };
@@ -35,6 +39,8 @@ export function initialDisplayState(): DisplayState {
 		nameVariant: 'full',
 		useId: false,
 		availability: 'database',
+		codeType: 'official',
+		materialLocation: 'main',
 		emphasis: 'italic',
 		spanSeparator: HYPHEN,
 	};
