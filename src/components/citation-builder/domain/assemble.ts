@@ -122,16 +122,16 @@ export function assembleUnreportedCase(
 
 export type PartyChoice = 'full' | 'party1' | 'party2';
 
-export type ReportedShortFormInput =
-	| { nameVariant: 'id'; pincite: string }
-	| { nameVariant: 'none'; volume: string; reporter: string; pincite: string }
+export type ReportedShortFormInput = { pincite: string } & (
+	| { nameVariant: 'id' }
+	| { nameVariant: 'none'; volume: string; reporter: string }
 	| {
 			nameVariant: PartyChoice;
 			name: CaseNameInput;
 			volume: string;
 			reporter: string;
-			pincite: string;
-	  };
+	  }
+);
 
 // r[impl case-name.short-form]
 // r[impl short-form.party-choice]
@@ -208,14 +208,11 @@ function unreportedAtText(availability: Availability, pincite: string): string {
 	}
 }
 
-export type UnreportedShortFormInput =
-	| { nameVariant: 'id'; availability: Availability; pincite: string }
-	| ({ nameVariant: 'none'; pincite: string } & UnreportedIdentifier)
-	| ({
-			nameVariant: PartyChoice;
-			name: CaseNameInput;
-			pincite: string;
-	  } & UnreportedIdentifier);
+export type UnreportedShortFormInput = { pincite: string } & (
+	| { nameVariant: 'id'; availability: Availability }
+	| ({ nameVariant: 'none' } & UnreportedIdentifier)
+	| ({ nameVariant: PartyChoice; name: CaseNameInput } & UnreportedIdentifier)
+);
 
 // r[impl citation.unreported-short-form]
 export function assembleUnreportedShortForm(
