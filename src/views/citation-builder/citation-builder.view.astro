@@ -20,6 +20,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			assemble,
 			buildCitationInput,
 			deriveSelections,
+			isNameVariant,
 			resolveShortFormKind,
 			selectFieldState,
 			type CitationFields,
@@ -75,9 +76,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function currentNameVariant(): NameVariant {
 			const { value } = nameVariantSelect;
-			return value === 'party1' || value === 'party2' || value === 'none'
-				? value
-				: 'full';
+			return isNameVariant(value) ? value : 'full';
 		}
 
 		function currentEmphasis(): Emphasis {

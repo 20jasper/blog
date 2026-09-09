@@ -8,6 +8,15 @@ export type NameVariant = 'full' | 'party1' | 'party2' | 'none';
 export type Emphasis = 'italic' | 'underline';
 export type { SpanSeparator, SourceType };
 
+export function isNameVariant(value: string): value is NameVariant {
+	return (
+		value === 'full' ||
+		value === 'party1' ||
+		value === 'party2' ||
+		value === 'none'
+	);
+}
+
 export type DisplayState = {
 	sourceType: SourceType;
 	mode: Mode;
