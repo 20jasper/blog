@@ -224,3 +224,19 @@ mangled into `No. rth-123`.
 | `No.05-1234`        | `No. 05-1234`   |
 | `Case No. 21-56789` | `No. 21-56789`  |
 | `North-123`         | `No. North-123` |
+
+## Month Abbreviations
+
+r[date.month-list]
+
+> `"Sept." in 21st edition is now "Sep." in the 22nd edition.`
+> — [UW Law, Bluebook 101: 22nd Edition Tables](https://lib.law.uw.edu/bluebook101/22nd_tables)
+
+Table 12. The date parenthetical's Month field offers exactly these
+twelve values and no others — several are not the obvious three-letter
+truncation, and September lost its extra letter in the 22nd edition:
+
+`Jan.` `Feb.` `Mar.` `Apr.` `May` `June` `July` `Aug.` `Sep.` `Oct.`
+`Nov.` `Dec.`
+
+A fixed select exists precisely so these cannot be entered wrong.
