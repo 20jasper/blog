@@ -4,6 +4,15 @@ import { assembleStatuteParenthetical } from './statute-date';
 import type { StatuteParentheticalInput } from './statute-date';
 import type { Segment } from './types';
 
+// r[impl statute.title]
+function titlePrefix(title: string | undefined): string {
+	return title === undefined ? '' : `${title} `;
+}
+
+function codeSection(code: string, section: string): string {
+	return `${code} ${normalizeSection(section)}`;
+}
+
 export type StatuteInput = {
 	popularName?: string;
 	title?: string;
@@ -12,16 +21,14 @@ export type StatuteInput = {
 } & StatuteParentheticalInput;
 
 // r[impl citation.statute-long-form]
-// r[impl statute.title]
 export function assembleStatute(input: StatuteInput): Segment[] {
 	const popularName =
 		input.popularName === undefined ? '' : `${input.popularName}, `;
-	const title = input.title === undefined ? '' : `${input.title} `;
 	const parenthetical = assembleStatuteParenthetical(input);
 
 	const segments: Segment[] = [
 		{
-			text: `${popularName}${title}${input.code} ${normalizeSection(input.section)} (${parenthetical})`,
+			text: `${popularName}${titlePrefix(input.title)}${codeSection(input.code, input.section)} (${parenthetical})`,
 		},
 	];
 
@@ -41,10 +48,10 @@ export type StatuteShortFormInput = {
 export function assembleStatuteShortForm(
 	input: StatuteShortFormInput,
 ): Segment[] {
-	const title = input.title === undefined ? '' : `${input.title} `;
-
 	const segments: Segment[] = [
-		{ text: `${title}${input.code} ${normalizeSection(input.section)}` },
+		{
+			text: `${titlePrefix(input.title)}${codeSection(input.code, input.section)}`,
+		},
 	];
 
 	return applyFraming(segments, {
