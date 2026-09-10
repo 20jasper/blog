@@ -27,6 +27,26 @@ function weightOfAuthoritySuffix(
 	return weightOfAuthority === undefined ? '' : ` (${weightOfAuthority})`;
 }
 
+export type CaseHistoryInput = {
+	historyPhrase?: string;
+	historyCitation?: string;
+};
+
+// r[impl case-history.phrase-italicized]
+function caseHistorySegments(input: CaseHistoryInput): Segment[] {
+	if (
+		input.historyPhrase === undefined ||
+		input.historyCitation === undefined
+	) {
+		return [];
+	}
+	return [
+		{ text: ', ' },
+		{ text: input.historyPhrase, emphasized: true },
+		{ text: ` ${input.historyCitation}` },
+	];
+}
+
 export type ReportedCaseInput = {
 	name: CaseNameInput;
 	volume: string;
@@ -37,7 +57,7 @@ export type ReportedCaseInput = {
 	court?: string;
 	year: number;
 	weightOfAuthority?: string;
-};
+} & CaseHistoryInput;
 
 export type AssembleOptions = { spanSeparator?: SpanSeparator };
 
@@ -68,6 +88,7 @@ export function assembleReportedCase(
 		{
 			text: ` (${parenthetical})${weightOfAuthoritySuffix(input.weightOfAuthority)}`,
 		},
+		...caseHistorySegments(input),
 	];
 
 	return framePeriod(segments);
@@ -82,12 +103,13 @@ export type UnreportedCaseInput = {
 	day: number;
 	year: number;
 	weightOfAuthority?: string;
-} & (
-	| { availability: 'database'; databaseId: string }
-	| { availability: 'slip' }
-	// r[impl unreported.online-only]
-	| { availability: 'online'; url: string }
-);
+} & CaseHistoryInput &
+	(
+		| { availability: 'database'; databaseId: string }
+		| { availability: 'slip' }
+		// r[impl unreported.online-only]
+		| { availability: 'online'; url: string }
+	);
 
 function unreportedTail(
 	input: UnreportedCaseInput,
@@ -133,6 +155,7 @@ export function assembleUnreportedCase(
 			text: ` (${parenthetical})${weightOfAuthoritySuffix(input.weightOfAuthority)}`,
 		},
 		...(input.availability === 'online' ? [{ text: `, ${input.url}` }] : []),
+		...caseHistorySegments(input),
 	];
 
 	return framePeriod(segments);

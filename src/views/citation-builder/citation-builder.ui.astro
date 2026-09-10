@@ -1,14 +1,15 @@
 ---
 import Button from '@components/button.astro';
-import { CODE_ABBREVIATIONS } from '@components/citation-builder/domain/code-abbreviations';
-import { COURT_ABBREVIATIONS } from '@components/citation-builder/domain/court-abbreviations';
-import { REPORTER_ABBREVIATIONS } from '@components/citation-builder/domain/reporter-abbreviations';
 import {
 	AVAILABILITIES,
+	CODE_ABBREVIATIONS,
 	CODE_TYPES,
+	COURT_ABBREVIATIONS,
+	HISTORY_PHRASES,
 	MATERIAL_LOCATIONS,
 	MODES,
 	MONTHS,
+	REPORTER_ABBREVIATIONS,
 	SIGNALS,
 	SOURCE_TYPES,
 } from '@components/citation-builder/state';
@@ -119,6 +120,25 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 		name: 'weightOfAuthority',
 		label: 'Weight of authority parenthetical',
 		hint: 'e.g. Marshall, J., dissenting -- optional, no parens needed',
+	},
+	{
+		kind: 'select',
+		name: 'historyPhrase',
+		label: 'Case history phrase',
+		hint: 'Prior/subsequent history introductory phrase -- optional',
+		options: [
+			{ value: '', text: 'None' },
+			...HISTORY_PHRASES.map((phrase) => ({
+				value: phrase.value,
+				text: phrase.text,
+			})),
+		],
+	},
+	{
+		kind: 'text',
+		name: 'historyCitation',
+		label: 'Case history citation',
+		hint: 'The prior/subsequent case name or citation -- optional',
 	},
 ];
 

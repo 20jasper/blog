@@ -76,6 +76,43 @@ parentheticals (Rule 13.2, explaining what a case holds) and stacking
 multiple weight-of-authority parentheticals in one citation are out of
 scope; type them all into the one field if needed.
 
+## Case History
+
+r[case-history.phrases]
+
+> "When citing a case, include the prior or subsequent history of the
+> case, subject to several exceptions. Refer to Table T14 for how to
+> abbreviate explanatory phrases when introducing case history."
+> — [Indigo Book, Rule 14.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.1)
+
+> "Always use the following explanatory phrases when applicable and
+> italicize them:"
+> — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
+
+`aff’d,` `aff’g` `cert. denied,` `cert. granted,` `rev’d,` `rev’d on
+other grounds,` -- these six are always used when applicable. The full
+Table T14 list (`acq.`, `amended by`, `sub nom.`, `vacated,`, etc.) is
+offered too, not just the mandatory six.
+
+r[case-history.phrase-italicized]
+
+<!-- prettier-ignore -->
+> `Energy & Env't Legal Inst. v. Epel, 43 F. Supp. 3d 1171 (D. Colo.
+> 2014), aff’d, 793 F.3d 1169 (10th Cir.), cert. denied, 136 S. Ct. 595
+> (2015).`
+> — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
+
+Phrase (italicized) + free-text citation/case-name, appended after
+everything else (weight of authority, URL). Only the phrase is
+italicized, not the surrounding comma or citation. Table T14's own
+punctuation already encodes whether a phrase takes a citation (trailing
+comma, e.g. `aff’d,`) or a case name as direct object (no comma, e.g.
+`aff’g`); the free-text field covers both. Requires both a phrase and
+a citation to render -- either alone is a no-op. Stacking multiple
+history phrases (as in the worked example above) and Rule 14.3's `sub
+nom.` new-case-name exception are out of scope; the full list includes
+`sub nom.` as a phrase, but doesn't special-case its usage.
+
 ## Short-Form Party Choice
 
 r[short-form.party-choice]

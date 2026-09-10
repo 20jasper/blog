@@ -49,3 +49,9 @@ export { hasStatuteFullFields, resolveShortFormKind } from './source-shape';
 export type { SourceShape } from './source-shape';
 
 export { isSourceType, SOURCE_TYPES } from './source-type';
+
+export { HISTORY_PHRASES, isHistoryPhrase } from '../domain/case-history';
+export type { HistoryPhrase } from '../domain/case-history';
+export { CODE_ABBREVIATIONS } from '../domain/code-abbreviations';
+export { COURT_ABBREVIATIONS } from '../domain/court-abbreviations';
+export { REPORTER_ABBREVIATIONS } from '../domain/reporter-abbreviations';

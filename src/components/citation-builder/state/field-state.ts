@@ -38,6 +38,8 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	court: 'not-used',
 	pincite: 'not-used',
 	weightOfAuthority: 'not-used',
+	historyPhrase: 'not-used',
+	historyCitation: 'not-used',
 	volume: 'not-used',
 	reporter: 'not-used',
 	firstPage: 'not-used',
@@ -75,16 +77,23 @@ function nameFieldState(
 
 type CourtPinciteFieldState = Pick<
 	Record<FieldId, FieldRequirement>,
-	'court' | 'pincite' | 'weightOfAuthority'
+	| 'court'
+	| 'pincite'
+	| 'weightOfAuthority'
+	| 'historyPhrase'
+	| 'historyCitation'
 >;
 
 // r[impl court.optional]
 // r[impl weight-of-authority.parenthetical]
+// r[impl case-history.phrase-italicized]
 function courtPinciteFieldState(isFull: boolean): CourtPinciteFieldState {
 	return {
 		court: usedIf(isFull, 'optional'),
 		pincite: isFull ? 'optional' : 'required',
 		weightOfAuthority: usedIf(isFull, 'optional'),
+		historyPhrase: usedIf(isFull, 'optional'),
+		historyCitation: usedIf(isFull, 'optional'),
 	};
 }
 

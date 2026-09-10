@@ -37,6 +37,21 @@ test('weight of authority parenthetical appends after the date parenthetical', a
 	);
 });
 
+test('case history phrase appends after everything, italicized', async ({
+	page,
+}) => {
+	const { historyPhrase, historyCitation, output } =
+		getCitationBuilderLocators(page);
+
+	await historyPhrase.selectOption('aff’d,');
+	await historyCitation.fill('793 F.3d 1169 (10th Cir.)');
+
+	await expect(output).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021), aff’d, 793 F.3d 1169 (10th Cir.).',
+	);
+	await expect(output.locator('i').last()).toHaveText('aff’d,');
+});
+
 test('editing a field updates the output live', async ({ page }) => {
 	const { pincite, output } = getCitationBuilderLocators(page);
 

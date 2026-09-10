@@ -28,6 +28,8 @@ function unreportedFullInput(
 		day: parseRequiredInt(fields.day, 'day'),
 		year: parseRequiredInt(fields.year, 'year'),
 		weightOfAuthority: emptyToUndefined(fields.weightOfAuthority),
+		historyPhrase: emptyToUndefined(fields.historyPhrase),
+		historyCitation: emptyToUndefined(fields.historyCitation),
 	};
 	switch (shape.availability) {
 		case 'database':

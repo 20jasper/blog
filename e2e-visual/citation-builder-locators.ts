@@ -8,6 +8,8 @@ export function getCitationBuilderLocators(page: Page) {
 		court: page.getByLabel('Court'),
 		pincite: page.getByLabel('Pincite'),
 		weightOfAuthority: page.getByLabel('Weight of authority parenthetical'),
+		historyPhrase: page.getByLabel('Case history phrase'),
+		historyCitation: page.getByLabel('Case history citation'),
 		volume: page.getByRole('textbox', { name: 'Volume' }),
 		reporter: page.getByLabel('Reporter'),
 		firstPage: page.getByLabel('First page'),

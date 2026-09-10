@@ -11,6 +11,8 @@ export type CitationFields = {
 	court: string;
 	pincite: string;
 	weightOfAuthority: string;
+	historyPhrase: string;
+	historyCitation: string;
 
 	volume: string;
 	reporter: string;
@@ -41,6 +43,8 @@ export function initialCitationFields(): CitationFields {
 		court: '',
 		pincite: '',
 		weightOfAuthority: '',
+		historyPhrase: '',
+		historyCitation: '',
 
 		volume: '',
 		reporter: '',

@@ -22,6 +22,8 @@ export function queryFormRefs(form: HTMLFormElement) {
 		courtInput: field<HTMLInputElement>(form, 'court'),
 		pinciteInput: field<HTMLInputElement>(form, 'pincite'),
 		weightOfAuthorityInput: field<HTMLInputElement>(form, 'weightOfAuthority'),
+		historyPhraseSelect: field<HTMLSelectElement>(form, 'historyPhrase'),
+		historyCitationInput: field<HTMLInputElement>(form, 'historyCitation'),
 		volumeInput: field<HTMLInputElement>(form, 'volume'),
 		reporterInput: field<HTMLInputElement>(form, 'reporter'),
 		firstPageInput: field<HTMLInputElement>(form, 'firstPage'),

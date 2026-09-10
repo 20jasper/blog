@@ -19,35 +19,73 @@ function reportedCase(
 
 // r[verify weight-of-authority.parenthetical]
 describe('assembleReportedCase: weight of authority parenthetical', () => {
-	it('matches the Indigo Book Rule 13.1 "Marshall, J., dissenting" example', () => {
+	it('appends after the date parenthetical', () => {
 		const { plain } = render(
-			assembleReportedCase({
-				name: {
-					caseType: 'v',
-					party1: 'Ward',
-					party2: 'Rock Against Racism',
-				},
-				volume: '491',
-				reporter: 'U.S.',
-				firstPage: '781',
-				pincite: undefined,
-				court: undefined,
-				year: 1989,
-				weightOfAuthority: 'Marshall, J., dissenting',
-			}),
+			assembleReportedCase(
+				reportedCase({ weightOfAuthority: 'Marshall, J., dissenting' }),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toContain('(Ohio Ct. App. 2021) (Marshall, J., dissenting)');
+	});
+
+	it('is a no-op when absent', () => {
+		const { plain } = render(assembleReportedCase(reportedCase()), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).not.toContain('J.,');
+	});
+});
+
+// r[verify case-history.phrase-italicized]
+describe('assembleReportedCase: case history', () => {
+	it('matches the Indigo Book Rule 14.2 "aff’d" example', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({
+					name: {
+						caseType: 'v',
+						party1: "Energy & Env't Legal Inst.",
+						party2: 'Epel',
+					},
+					volume: '43',
+					reporter: 'F. Supp. 3d',
+					firstPage: '1171',
+					pincite: undefined,
+					court: 'D. Colo.',
+					year: 2014,
+					historyPhrase: 'aff’d,',
+					historyCitation: '793 F.3d 1169 (10th Cir.)',
+				}),
+			),
 			{ emphasis: 'italic' },
 		);
 
 		expect(plain).toBe(
-			'Ward v. Rock Against Racism, 491 U.S. 781 (1989) (Marshall, J., dissenting).',
+			"Energy & Env't Legal Inst. v. Epel, 43 F. Supp. 3d 1171 (D. Colo. 2014), aff’d, 793 F.3d 1169 (10th Cir.).",
 		);
 	});
 
-	it('is a no-op when absent', () => {
-		expect(
-			render(assembleReportedCase(reportedCase()), { emphasis: 'italic' })
-				.plain,
-		).not.toContain('J.,');
+	it('is a no-op when only the phrase is set, no citation', () => {
+		const { plain } = render(
+			assembleReportedCase(reportedCase({ historyPhrase: 'aff’d,' })),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).not.toContain('aff’d');
+	});
+
+	it('is a no-op when only the citation is set, no phrase', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({ historyCitation: '793 F.3d 1169 (10th Cir.)' }),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).not.toContain('793 F.3d');
 	});
 });
 
