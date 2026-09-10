@@ -200,6 +200,7 @@ const STATUTE_FIELDS: FieldSpec[] = [
 
 <div class="mb-4 flex flex-wrap items-end gap-3">
 	<Button
+		id="load-example-button"
 		type="button"
 		class="!bg-background-secondary/60 hover:!bg-background-secondary"
 	>
@@ -306,12 +307,14 @@ const STATUTE_FIELDS: FieldSpec[] = [
 	></output>
 	<div class="mt-3 flex flex-wrap gap-3">
 		<Button
+			id="clear-button"
 			type="button"
 			class="!bg-background hover:!bg-background/80"
 		>
 			Clear
 		</Button>
 		<Button
+			id="copy-button"
 			type="submit"
 			form={FORM_ID}
 			class="!bg-background hover:!bg-background/80"

@@ -4,6 +4,16 @@ function field<T extends Element>(form: HTMLFormElement, name: string): T {
 	return form.elements.namedItem(name) as T;
 }
 
+export function queryButtonRefs() {
+	return {
+		loadExampleButton: document.querySelector<HTMLButtonElement>(
+			'#load-example-button',
+		)!,
+		clearButton: document.querySelector<HTMLButtonElement>('#clear-button')!,
+		copyButton: document.querySelector<HTMLButtonElement>('#copy-button')!,
+	};
+}
+
 export function queryFormRefs(form: HTMLFormElement) {
 	return {
 		caseTypeSelect: field<HTMLSelectElement>(form, 'caseType'),

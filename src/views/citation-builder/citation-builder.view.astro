@@ -42,19 +42,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			type SpanSeparator,
 		} from '@components/citation-builder/state';
 		import { createClipboardController } from './clipboard';
-		import { queryFormRefs } from './dom-refs';
+		import { queryButtonRefs, queryFormRefs } from './dom-refs';
 		import { REPORTED_EXAMPLE } from './examples';
 
 		const form = document.querySelector<HTMLFormElement>('form')!;
 		const output = document.querySelector('output')!;
-		const buttons = Array.from(document.querySelectorAll('button'));
-		const clearButton = buttons.find((b) => b.textContent?.trim() === 'Clear')!;
-		const loadExampleButton = buttons.find(
-			(b) => b.textContent?.trim() === 'Load example',
-		)!;
-		const copyButton = buttons.find((b) =>
-			b.textContent?.trim().startsWith('Copy'),
-		)!;
+		const { loadExampleButton, clearButton, copyButton } = queryButtonRefs();
 
 		const clipboard = createClipboardController(copyButton, output);
 
