@@ -74,8 +74,25 @@ r[case-name.assembly]
 > — [Colorado CCS, Bluebook Citation](https://cccs.libguides.com/c.php?g=1318336&p=9697124)
 
 `Party1 v. Party2`, `In re Party1`, or `Ex parte Party1` depending on
-case type (Rule 10.2.1). Party names are typed in already abbreviated
-(Rule 10.2 abbreviation itself isn't automated).
+case type (Rule 10.2.1).
+
+## Case Name Word Abbreviation
+
+r[case-name.word-abbreviation]
+
+> "Citation sentences must additionally abbreviate the words in Rule
+> 10.2.2 and Table 6."
+> — [Suffolk, Bluebook Guide for Law Students](https://lawguides.suffolk.edu/bluebook/cases)
+
+Sourced from [freelawproject/reporters-db](https://github.com/freelawproject/reporters-db)'s
+`case_name_abbreviations.json`.
+
+Not implemented:
+
+> "Use T10 to abbreviate states, countries, and other geographical
+> units, unless the geographical unit is the entire name of the party
+> (e.g., United States)."
+> — [Suffolk, Bluebook Guide for Law Students](https://lawguides.suffolk.edu/bluebook/cases)
 
 ## Short-Form Case Name
 
