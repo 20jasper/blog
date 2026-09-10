@@ -21,10 +21,19 @@ function framePeriod(segments: Segment[]): Segment[] {
 }
 
 // r[impl weight-of-authority.parenthetical]
+// r[impl weight-of-authority.stacking]
 function weightOfAuthoritySuffix(
 	weightOfAuthority: string | undefined,
 ): string {
-	return weightOfAuthority === undefined ? '' : ` (${weightOfAuthority})`;
+	if (weightOfAuthority === undefined) {
+		return '';
+	}
+	return weightOfAuthority
+		.split(';')
+		.map((entry) => entry.trim())
+		.filter((entry) => entry !== '')
+		.map((entry) => ` (${entry})`)
+		.join('');
 }
 
 export type CaseHistoryInput = {

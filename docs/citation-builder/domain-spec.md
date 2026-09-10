@@ -68,6 +68,14 @@ r[weight-of-authority.parenthetical]
 > dissenting).`
 > — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
 
+r[weight-of-authority.stacking]
+
+<!-- prettier-ignore -->
+> `Dep’t of Revenue v. James B. Beam Distilling Co., 377 U.S. 341, 349
+> (1964) (7–2 decision) (Black, J., dissenting) (disagreeing with
+> Justice Goldberg as to the relative merits of bourbon and scotch).`
+> — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
+
 ## Case History
 
 r[case-history.phrases]
@@ -88,6 +96,15 @@ r[case-history.sub-nom]
 > (“under the name of”)."
 > — [Indigo Book, Rule 14.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.3)
 
+r[case-history.sub-nom-exception]
+
+<!-- prettier-ignore -->
+> "Exception: Do not provide the new case name if either the parties’
+> names are merely reversed or if the subsequent history is simply a
+> denial of certiorari or rehearing."
+> — [Indigo Book, Rule 14.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.3)
+
+r[case-history.stacking]
 r[case-history.phrase-italicized]
 
 <!-- prettier-ignore -->
@@ -275,6 +292,25 @@ r[signal.options]
 
 > "There are four basic categories of signals:"
 > — [Indigo Book, Rule 4.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.2)
+
+r[signal.comparison]
+
+<!-- prettier-ignore -->
+> "(7) Compare <citation to source(s), separated with “and” if
+> multiple> with <citation to source(s), separated with “and” if
+> multiple>"
+> — [Indigo Book, Rule 4.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.2)
+
+r[signal.multi-authority-ordering]
+
+<!-- prettier-ignore -->
+> "When more than one authority is used in the same citation, they
+> should be ordered first according to hierarchy of introductory
+> signals (see table above), and then within each signal by strength
+> of authority using a semicolon in between each one (see Rule 10
+> below: Order of Authorities Within Each Signal / Strength of
+> Authority)."
+> — [Indigo Book, Rule 4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.3)
 
 r[signal.typeface]
 

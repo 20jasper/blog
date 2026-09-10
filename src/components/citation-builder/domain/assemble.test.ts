@@ -39,6 +39,24 @@ describe('assembleReportedCase: weight of authority parenthetical', () => {
 	});
 });
 
+// r[verify weight-of-authority.stacking]
+describe('assembleReportedCase: weight of authority stacking', () => {
+	it('stacks semicolon-separated entries as separate parentheticals, per the Indigo Book Rule 13.1 Beam Distilling example', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({
+					weightOfAuthority: '7–2 decision; Black, J., dissenting',
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toContain(
+			'(Ohio Ct. App. 2021) (7–2 decision) (Black, J., dissenting)',
+		);
+	});
+});
+
 // r[verify case-history.phrase-italicized]
 describe('assembleReportedCase: case history', () => {
 	it('matches the Indigo Book Rule 14.2 "aff’d" example', () => {
