@@ -224,12 +224,36 @@ export function createFormState(form: HTMLFormElement) {
 		}
 	}
 
+	function setRadio(name: string, value: string): void {
+		const input = form.querySelector<HTMLInputElement>(
+			`input[name="${name}"][value="${value}"]`,
+		);
+		if (input !== null) {
+			input.checked = true;
+		}
+	}
+
+	function setDisplay(display: {
+		sourceType?: SourceType;
+		availability?: Availability;
+		codeType?: CodeType;
+		materialLocation?: MaterialLocation;
+		mode?: Mode;
+	}): void {
+		for (const [name, value] of Object.entries(display)) {
+			if (value !== undefined) {
+				setRadio(name, value);
+			}
+		}
+	}
+
 	return {
 		readFields,
 		readDisplay,
 		updateFieldState,
 		resetToDefaults,
 		setFields,
+		setDisplay,
 	};
 }
 

@@ -13,6 +13,8 @@ import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
+import SelectField from './components/select-field.astro';
+import { EXAMPLES } from './examples';
 import type { Props as FieldSpec } from './components/field.astro';
 
 const FORM_ID = 'citation-builder-form';
@@ -33,6 +35,11 @@ const MODE_OPTIONS = radioOptions(MODES, 'full');
 const AVAILABILITY_OPTIONS = radioOptions(AVAILABILITIES, 'database');
 const CODE_TYPE_OPTIONS = radioOptions(CODE_TYPES, 'official');
 const MATERIAL_LOCATION_OPTIONS = radioOptions(MATERIAL_LOCATIONS, 'main');
+
+const EXAMPLE_OPTIONS = EXAMPLES.map((example) => ({
+	value: example.sourceType,
+	text: example.label,
+}));
 
 const EMPHASIS_OPTIONS = [
 	{ value: 'italic', text: 'Italic', checked: true },
@@ -199,6 +206,11 @@ const STATUTE_FIELDS: FieldSpec[] = [
 ---
 
 <div class="mb-4 flex flex-wrap items-end gap-3">
+	<SelectField
+		name="example"
+		label="Example"
+		options={EXAMPLE_OPTIONS}
+	/>
 	<Button
 		id="load-example-button"
 		type="button"

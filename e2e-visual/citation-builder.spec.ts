@@ -309,6 +309,27 @@ test('Load example resets to the golden case', async ({ page }) => {
 	);
 });
 
+for (const [example, sourceTypeLabel, outputFragment] of [
+	['reported', 'Reported case', 'Dayton v. Stewart'],
+	['unreported', 'Unreported case', 'State v. Lucko'],
+	['statute', 'Statute', 'Ohio Rev. Code Ann.'],
+] as const) {
+	test(`the example select loads the ${example} golden case`, async ({
+		page,
+	}) => {
+		const { exampleSelect, loadExampleButton, output } =
+			getCitationBuilderLocators(page);
+
+		await exampleSelect.selectOption(example);
+		await loadExampleButton.click();
+
+		await expect(
+			page.getByRole('radio', { name: sourceTypeLabel, exact: true }),
+		).toBeChecked();
+		await expect(output).toContainText(outputFragment);
+	});
+}
+
 test('unreported case disables reported fields, enables docket/availability', async ({
 	page,
 }) => {
