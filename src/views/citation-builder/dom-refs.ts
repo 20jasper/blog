@@ -31,6 +31,14 @@ export function queryFormRefs(form: HTMLFormElement) {
 		nameVariantSelect: field<HTMLSelectElement>(form, 'nameVariant'),
 		signalSelect: field<HTMLSelectElement>(form, 'signal'),
 		idCheckbox: field<HTMLInputElement>(form, 'id'),
+		materialLocationMainCheckbox: field<HTMLInputElement>(
+			form,
+			'materialLocationMain',
+		),
+		materialLocationSupplementCheckbox: field<HTMLInputElement>(
+			form,
+			'materialLocationSupplement',
+		),
 		docketInput: field<HTMLInputElement>(form, 'docket'),
 		databaseIdInput: field<HTMLInputElement>(form, 'databaseId'),
 		urlInput: field<HTMLInputElement>(form, 'url'),

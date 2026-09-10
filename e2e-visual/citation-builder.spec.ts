@@ -574,7 +574,8 @@ test('statute, supplement-only material location, omits base year', async ({
 		getCitationBuilderLocators(page);
 
 	await page.getByRole('radio', { name: 'Statute' }).check();
-	await page.getByRole('radio', { name: 'Supplement only' }).check();
+	await page.getByRole('checkbox', { name: 'Main volume' }).uncheck();
+	await page.getByRole('checkbox', { name: 'Supplement' }).check();
 	await code.fill('U.S.C.');
 	await section.fill('107');
 	await supplementDesignation.fill('Supp. I');

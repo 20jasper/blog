@@ -1,24 +1,21 @@
 ---
 import ChoiceGroup from './choice-group.astro';
 import Choice from './choice.astro';
-import type { Option } from './option';
 
 export type Props = {
 	label: string;
-	name: string;
-	options: (Option & { checked?: boolean })[];
+	options: { name: string; text: string; checked?: boolean }[];
 };
 
-const { label, name, options } = Astro.props;
+const { label, options } = Astro.props;
 ---
 
 <ChoiceGroup label={label}>
 	{
 		options.map((option) => (
 			<Choice
-				type="radio"
-				name={name}
-				value={option.value}
+				type="checkbox"
+				name={option.name}
 				checked={option.checked}
 			>
 				{option.text}

@@ -1,0 +1,16 @@
+---
+// Shared fieldset/legend shell for a group of Choice controls
+// (radio or checkbox) -- RadioGroup and CheckboxGroup both render into it.
+export type Props = {
+	label: string;
+};
+
+const { label } = Astro.props;
+---
+
+<fieldset class="m-0 flex w-full flex-col gap-1 border-0 p-0">
+	<legend class="text-foreground p-0 text-base font-semibold">{label}</legend>
+	<div class="flex flex-col gap-2">
+		<slot />
+	</div>
+</fieldset>
