@@ -209,13 +209,19 @@ r[normalize.docket]
 > `United States v. Bennett, No. 05-CR-6050 CJS, 2005 WL 2709572`
 > — [Georgetown, Unpublished Opinions](https://guides.ll.georgetown.edu/c.php?g=261289&p=2339386)
 
-| Input               | Output          |
-| ------------------- | --------------- |
-| `05-1234`           | `No. 05-1234`   |
-| `No. 05-1234`       | `No. 05-1234`   |
-| `No.05-1234`        | `No. 05-1234`   |
-| `Case No. 21-56789` | `No. 21-56789`  |
-| `North-123`         | `No. North-123` |
+> "Docket / Case number - as it appears on court documents or follow
+> local court rules"
+> — [Cincinnati, Bluebook Citation 101 (Rule 10.8.1)](https://guides.libraries.uc.edu/c.php?g=222561&p=1472891)
+
+| Input                 | Output                |
+| --------------------- | --------------------- |
+| `05-1234`             | `No. 05-1234`         |
+| `No. 05-1234`         | `No. 05-1234`         |
+| `No.05-1234`          | `No. 05-1234`         |
+| `Case No. 21-56789`   | `Case No. 21-56789`   |
+| `Docket No. 21-56789` | `Docket No. 21-56789` |
+| `Civ. A. No. 1234`    | `Civ. A. No. 1234`    |
+| `North-123`           | `No. North-123`       |
 
 ## Month Abbreviations
 
