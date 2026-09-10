@@ -21,6 +21,7 @@ export function queryFormRefs(form: HTMLFormElement) {
 		party2Input: field<HTMLInputElement>(form, 'party2'),
 		courtInput: field<HTMLInputElement>(form, 'court'),
 		pinciteInput: field<HTMLInputElement>(form, 'pincite'),
+		weightOfAuthorityInput: field<HTMLInputElement>(form, 'weightOfAuthority'),
 		volumeInput: field<HTMLInputElement>(form, 'volume'),
 		reporterInput: field<HTMLInputElement>(form, 'reporter'),
 		firstPageInput: field<HTMLInputElement>(form, 'firstPage'),

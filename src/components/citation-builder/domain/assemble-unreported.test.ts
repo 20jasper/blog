@@ -128,6 +128,20 @@ describe('assembleUnreportedCase: online-only availability', () => {
 	});
 });
 
+// r[verify weight-of-authority.parenthetical]
+describe('assembleUnreportedCase: weight of authority parenthetical', () => {
+	it('appends after the date parenthetical', () => {
+		const { plain } = render(
+			assembleUnreportedCase(slipCase({ weightOfAuthority: 'per curiam' })),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			'Chatlas v. Allstate Ins. Co., No. 1-07-2937, slip op. at 2 (Ill. App. Ct. 1st Dist. June 30, 2008) (per curiam).',
+		);
+	});
+});
+
 // r[verify normalize.docket]
 describe('assembleUnreportedCase: docket normalization', () => {
 	it('does not double the "No." prefix if the user already typed one', () => {

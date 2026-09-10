@@ -17,6 +17,40 @@ function reportedCase(
 	};
 }
 
+// r[verify weight-of-authority.parenthetical]
+describe('assembleReportedCase: weight of authority parenthetical', () => {
+	it('matches the Indigo Book Rule 13.1 "Marshall, J., dissenting" example', () => {
+		const { plain } = render(
+			assembleReportedCase({
+				name: {
+					caseType: 'v',
+					party1: 'Ward',
+					party2: 'Rock Against Racism',
+				},
+				volume: '491',
+				reporter: 'U.S.',
+				firstPage: '781',
+				pincite: undefined,
+				court: undefined,
+				year: 1989,
+				weightOfAuthority: 'Marshall, J., dissenting',
+			}),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			'Ward v. Rock Against Racism, 491 U.S. 781 (1989) (Marshall, J., dissenting).',
+		);
+	});
+
+	it('is a no-op when absent', () => {
+		expect(
+			render(assembleReportedCase(reportedCase()), { emphasis: 'italic' })
+				.plain,
+		).not.toContain('J.,');
+	});
+});
+
 // r[verify citation.reported-long-form]
 describe('assembleReportedCase: golden case', () => {
 	it('matches the domain-spec.md §5.4 golden case exactly', () => {

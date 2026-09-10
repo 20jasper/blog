@@ -10,6 +10,7 @@ export type CitationFields = {
 	party2: string;
 	court: string;
 	pincite: string;
+	weightOfAuthority: string;
 
 	volume: string;
 	reporter: string;
@@ -39,6 +40,7 @@ export function initialCitationFields(): CitationFields {
 		party2: '',
 		court: '',
 		pincite: '',
+		weightOfAuthority: '',
 
 		volume: '',
 		reporter: '',

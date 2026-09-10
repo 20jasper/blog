@@ -7,6 +7,7 @@ export function getCitationBuilderLocators(page: Page) {
 		party2: page.getByLabel('Party 2'),
 		court: page.getByLabel('Court'),
 		pincite: page.getByLabel('Pincite'),
+		weightOfAuthority: page.getByLabel('Weight of authority parenthetical'),
 		volume: page.getByRole('textbox', { name: 'Volume' }),
 		reporter: page.getByLabel('Reporter'),
 		firstPage: page.getByLabel('First page'),

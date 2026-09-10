@@ -21,6 +21,7 @@ function reportedFullInput(fields: CitationFields): ReportedCaseInput {
 		pincite: emptyToUndefined(fields.pincite),
 		court: emptyToUndefined(fields.court),
 		year: parseRequiredInt(fields.year, 'year'),
+		weightOfAuthority: emptyToUndefined(fields.weightOfAuthority),
 	};
 }
 

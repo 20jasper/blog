@@ -37,6 +37,7 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	party2: 'not-used',
 	court: 'not-used',
 	pincite: 'not-used',
+	weightOfAuthority: 'not-used',
 	volume: 'not-used',
 	reporter: 'not-used',
 	firstPage: 'not-used',
@@ -74,14 +75,16 @@ function nameFieldState(
 
 type CourtPinciteFieldState = Pick<
 	Record<FieldId, FieldRequirement>,
-	'court' | 'pincite'
+	'court' | 'pincite' | 'weightOfAuthority'
 >;
 
 // r[impl court.optional]
+// r[impl weight-of-authority.parenthetical]
 function courtPinciteFieldState(isFull: boolean): CourtPinciteFieldState {
 	return {
 		court: usedIf(isFull, 'optional'),
 		pincite: isFull ? 'optional' : 'required',
+		weightOfAuthority: usedIf(isFull, 'optional'),
 	};
 }
 

@@ -25,6 +25,18 @@ test('signal prefixes the citation, italicized', async ({ page }) => {
 	await expect(output.locator('i').first()).toHaveText('See');
 });
 
+test('weight of authority parenthetical appends after the date parenthetical', async ({
+	page,
+}) => {
+	const { weightOfAuthority, output } = getCitationBuilderLocators(page);
+
+	await weightOfAuthority.fill('Marshall, J., dissenting');
+
+	await expect(output).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021) (Marshall, J., dissenting).',
+	);
+});
+
 test('editing a field updates the output live', async ({ page }) => {
 	const { pincite, output } = getCitationBuilderLocators(page);
 

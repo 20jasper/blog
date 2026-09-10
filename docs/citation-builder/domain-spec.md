@@ -53,6 +53,29 @@ The Federal Reporter format does have one ("Name of the court
 carries it: `Universal City Studios, Inc. v. Corley, 273 F.3d 429 (2d
 Cir. 2001)`. Blank Court renders the year alone.
 
+## Weight of Authority Parenthetical
+
+r[weight-of-authority.parenthetical]
+
+> "To highlight information regarding the weight of the cited
+> authority (e.g., for concurring and dissenting opinions), insert an
+> additional parenthetical after the date parenthetical. Remember to
+> separate the parentheticals with a space."
+> — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
+
+<!-- prettier-ignore -->
+> `Ward v. Rock Against Racism, 491 U.S. 781 (1989) (Marshall, J.,
+> dissenting).`
+> — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
+
+Free text, wrapped in parens and appended after the date parenthetical
+(and before any trailing URL, for online-only unreported cases).
+Applies to reported and unreported cases, full form only -- not
+statutes, which have no concept of weight of authority. Explanatory
+parentheticals (Rule 13.2, explaining what a case holds) and stacking
+multiple weight-of-authority parentheticals in one citation are out of
+scope; type them all into the one field if needed.
+
 ## Short-Form Party Choice
 
 r[short-form.party-choice]

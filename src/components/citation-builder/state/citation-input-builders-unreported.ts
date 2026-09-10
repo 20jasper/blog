@@ -27,6 +27,7 @@ function unreportedFullInput(
 		month: fields.month,
 		day: parseRequiredInt(fields.day, 'day'),
 		year: parseRequiredInt(fields.year, 'year'),
+		weightOfAuthority: emptyToUndefined(fields.weightOfAuthority),
 	};
 	switch (shape.availability) {
 		case 'database':
