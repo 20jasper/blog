@@ -43,6 +43,7 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	year: 'not-used',
 	docket: 'not-used',
 	databaseId: 'not-used',
+	url: 'not-used',
 	month: 'not-used',
 	day: 'not-used',
 	popularName: 'not-used',
@@ -133,6 +134,8 @@ function unreportedFieldState(
 		// r[impl citation.unreported-short-form]
 		docket: usedIf(usesIdentifierFields && (isFull || !isDatabase), 'required'),
 		databaseId: usedIf(usesIdentifierFields && isDatabase, 'required'),
+		// r[impl unreported.online-only]
+		url: usedIf(isFull && shape.availability === 'online', 'required'),
 		month: usedIf(isFull, 'required'),
 		day: usedIf(isFull, 'required'),
 		year: usedIf(isFull, 'required'),

@@ -37,6 +37,8 @@ function unreportedFullInput(
 			};
 		case 'slip':
 			return { ...base, availability: 'slip' };
+		case 'online':
+			return { ...base, availability: 'online', url: fields.url };
 	}
 }
 
@@ -45,12 +47,13 @@ function unreportedIdentifier(
 	availability: Availability,
 ):
 	| { availability: 'database'; databaseId: string }
-	| { availability: 'slip'; docket: string } {
+	| { availability: 'slip' | 'online'; docket: string } {
 	switch (availability) {
 		case 'database':
 			return { availability: 'database', databaseId: fields.databaseId };
 		case 'slip':
-			return { availability: 'slip', docket: fields.docket };
+		case 'online':
+			return { availability, docket: fields.docket };
 	}
 }
 

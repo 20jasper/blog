@@ -14,6 +14,7 @@ export function getCitationBuilderLocators(page: Page) {
 		nameVariant: page.getByLabel('Name variant'),
 		docket: page.getByLabel('Docket number'),
 		databaseId: page.getByLabel('Database identifier'),
+		url: page.getByLabel('Opinion URL'),
 		month: page.getByLabel('Month decided'),
 		day: page.getByLabel('Day decided'),
 		popularName: page.getByLabel('Popular name'),

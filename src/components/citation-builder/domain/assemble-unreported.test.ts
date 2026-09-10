@@ -4,6 +4,7 @@ import { render } from './render';
 
 type SlipInput = Extract<UnreportedCaseInput, { availability: 'slip' }>;
 type DatabaseInput = Extract<UnreportedCaseInput, { availability: 'database' }>;
+type OnlineInput = Extract<UnreportedCaseInput, { availability: 'online' }>;
 
 function slipCase(overrides: Partial<SlipInput> = {}): SlipInput {
 	return {
@@ -80,6 +81,49 @@ describe('assembleUnreportedCase: slip availability', () => {
 
 		expect(plain).toBe(
 			'Chatlas v. Allstate Ins. Co., No. 1-07-2937 (Ill. App. Ct. 1st Dist. June 30, 2008).',
+		);
+	});
+});
+
+function onlineCase(overrides: Partial<OnlineInput> = {}): OnlineInput {
+	return {
+		name: {
+			caseType: 'v',
+			party1: "Macy's Inc.",
+			party2: 'Martha Stewart Living Omnimedia, Inc.',
+		},
+		docket: '1728',
+		availability: 'online',
+		url: 'http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm',
+		pincite: '1',
+		court: 'N.Y. App. Div.',
+		month: 'Feb.',
+		day: 26,
+		year: 2015,
+		...overrides,
+	};
+}
+
+// r[verify unreported.online-only]
+describe('assembleUnreportedCase: online-only availability', () => {
+	it('matches the domain-spec.md Online-Only Availability worked example', () => {
+		const { plain } = render(assembleUnreportedCase(onlineCase()), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).toBe(
+			"Macy's Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728, slip op. at 1 (N.Y. App. Div. Feb. 26, 2015), http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.",
+		);
+	});
+
+	it('omits the pincite segment entirely when absent, but keeps the URL', () => {
+		const { plain } = render(
+			assembleUnreportedCase(onlineCase({ pincite: undefined })),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			"Macy's Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728 (N.Y. App. Div. Feb. 26, 2015), http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.",
 		);
 	});
 });

@@ -72,7 +72,10 @@ export type UnreportedCaseInput = {
 	day: number;
 	year: number;
 } & (
-	{ availability: 'database'; databaseId: string } | { availability: 'slip' }
+	| { availability: 'database'; databaseId: string }
+	| { availability: 'slip' }
+	// r[impl unreported.online-only]
+	| { availability: 'online'; url: string }
 );
 
 function unreportedTail(
@@ -86,6 +89,7 @@ function unreportedTail(
 				...(pincite === undefined ? [] : [{ text: `, at ${pincite}` }]),
 			];
 		case 'slip':
+		case 'online':
 			return pincite === undefined
 				? []
 				: [{ text: `, slip op. at ${pincite}` }];
@@ -115,6 +119,7 @@ export function assembleUnreportedCase(
 		{ text: `, ${normalizeDocket(input.docket)}` },
 		...unreportedTail(input, pincite),
 		{ text: ` (${parenthetical})` },
+		...(input.availability === 'online' ? [{ text: `, ${input.url}` }] : []),
 	];
 
 	return framePeriod(segments);
@@ -188,13 +193,14 @@ export function assembleReportedShortForm(
 
 type UnreportedIdentifier =
 	| { availability: 'database'; databaseId: string }
-	| { availability: 'slip'; docket: string };
+	| { availability: 'slip' | 'online'; docket: string };
 
 function unreportedIdentifierText(input: UnreportedIdentifier): string {
 	switch (input.availability) {
 		case 'database':
 			return input.databaseId;
 		case 'slip':
+		case 'online':
 			return normalizeDocket(input.docket);
 	}
 }
@@ -204,6 +210,7 @@ function unreportedAtText(availability: Availability, pincite: string): string {
 		case 'database':
 			return `at ${pincite}`;
 		case 'slip':
+		case 'online':
 			return `slip op. at ${pincite}`;
 	}
 }

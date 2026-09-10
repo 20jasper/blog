@@ -267,7 +267,7 @@ r[unreported.availability]
 > `2007 WL 1032301, at *3 (E.D. Ky. Mar. 30, 2007)`
 > — [UC Cincinnati, Commercial Databases](https://guides.libraries.uc.edu/c.php?g=222561&p=1472887)
 
-`database` | `slip`
+`database` | `slip` | `online`
 
 ## Unreported Long Form
 
@@ -281,6 +281,23 @@ r[citation.unreported-pincite-form]
 [Name], No. [Docket], [Database ID], at *[Pincite] ([Court] [Month] [Day], [Year]).
 [Name], No. [Docket], slip op. at [Pincite] ([Court] [Month] [Day], [Year]).
 ```
+
+## Online-Only Availability
+
+r[unreported.online-only]
+
+> "Opinions only available online, but not in an electronic database:
+> Some cases, particularly ones that are pending, may be accessed only
+> through a court’s website. If so, include the URL."
+> — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
+
+> `Macy’s Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728, slip
+op. at 1 (N.Y. App. Div. Feb. 26, 2015),
+http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.`
+> — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
+
+Same as `slip` (docket + `slip op. at` pincite), with the URL appended
+after the date parenthetical, separated by a comma.
 
 ## Unreported Short Form
 

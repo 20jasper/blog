@@ -18,6 +18,7 @@ export type CitationFields = {
 
 	docket: string;
 	databaseId: string;
+	url: string;
 	month: Month;
 	day: string;
 
@@ -45,6 +46,7 @@ export function initialCitationFields(): CitationFields {
 
 		docket: '',
 		databaseId: '',
+		url: '',
 		month: 'Jan.',
 		day: '',
 

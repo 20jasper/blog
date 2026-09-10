@@ -29,6 +29,7 @@ export function queryFormRefs(form: HTMLFormElement) {
 		idCheckbox: field<HTMLInputElement>(form, 'id'),
 		docketInput: field<HTMLInputElement>(form, 'docket'),
 		databaseIdInput: field<HTMLInputElement>(form, 'databaseId'),
+		urlInput: field<HTMLInputElement>(form, 'url'),
 		monthSelect: field<HTMLSelectElement>(form, 'month'),
 		dayInput: field<HTMLInputElement>(form, 'day'),
 		popularNameInput: field<HTMLInputElement>(form, 'popularName'),
