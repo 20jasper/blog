@@ -212,24 +212,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			};
 		}
 
-		function setRequired(
-			input: HTMLInputElement | HTMLSelectElement,
-			required: boolean,
-		): void {
-			input.required = required;
-			const marker =
-				input.labels?.[0]?.querySelector<HTMLElement>('.required-marker');
-			if (marker) {
-				marker.hidden = !required;
-			}
-		}
-
 		function setFieldRequirement(
 			input: HTMLInputElement | HTMLSelectElement,
 			requirement: FieldRequirement,
 		): void {
 			input.disabled = requirement === 'not-used';
-			setRequired(input, requirement === 'required');
+			input.required = requirement === 'required';
 		}
 
 		function setRadioGroupDisabled(name: string, disabled: boolean): void {

@@ -9,14 +9,13 @@ export type Props = {
 const { for: forId, label, hint } = Astro.props;
 ---
 
-<div class="flex w-full flex-col gap-1">
+<div class="field-row flex w-full flex-col gap-1">
 	<label
 		for={forId}
 		class="text-foreground text-base font-semibold"
 		>{label}<span
 			class="required-marker text-accent"
 			aria-hidden="true"
-			hidden
 		>
 			{' '}*</span
 		></label
@@ -33,3 +32,12 @@ const { for: forId, label, hint } = Astro.props;
 	</p>
 	<slot />
 </div>
+
+<style>
+	.required-marker {
+		display: none;
+	}
+	.field-row:has(:is(input, select):required) .required-marker {
+		display: inline;
+	}
+</style>
