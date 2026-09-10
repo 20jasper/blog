@@ -9,6 +9,7 @@ import {
 	MATERIAL_LOCATIONS,
 	MODES,
 	MONTHS,
+	SIGNALS,
 	SOURCE_TYPES,
 } from '@components/citation-builder/state';
 import Choice from './components/choice.astro';
@@ -58,6 +59,16 @@ const CITATION_FORM_FIELDS: FieldSpec[] = [
 			{ value: 'party2', text: 'Party 2' },
 			{ value: 'none', text: 'No name' },
 		],
+	},
+	{
+		kind: 'select',
+		name: 'signal',
+		label: 'Signal',
+		hint: 'Introductory signal, if any',
+		options: SIGNALS.map((signal) => ({
+			value: signal.value,
+			text: signal.text,
+		})),
 	},
 ];
 

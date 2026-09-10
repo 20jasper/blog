@@ -11,6 +11,7 @@ import {
 	isMaterialLocation,
 	isMonth,
 	isNameVariant,
+	isSignal,
 	isSourceType,
 	resolveShortFormKind,
 	selectFieldState,
@@ -25,6 +26,7 @@ import {
 	type Mode,
 	type Month,
 	type NameVariant,
+	type Signal,
 	type SourceType,
 	type SpanSeparator,
 } from '@components/citation-builder/state';
@@ -40,7 +42,13 @@ function setFieldRequirement(
 
 export function createFormState(form: HTMLFormElement) {
 	const refs = queryFormRefs(form);
-	const { caseTypeSelect, monthSelect, nameVariantSelect, idCheckbox } = refs;
+	const {
+		caseTypeSelect,
+		monthSelect,
+		nameVariantSelect,
+		signalSelect,
+		idCheckbox,
+	} = refs;
 
 	// Every CitationFields key needs an entry -- a missing one is a type
 	// error, not a field that silently never gets required/disabled.
@@ -134,6 +142,11 @@ export function createFormState(form: HTMLFormElement) {
 		return checked?.value === 'en-dash' ? EN_DASH : HYPHEN;
 	}
 
+	function currentSignal(): Signal {
+		const { value } = signalSelect;
+		return isSignal(value) ? value : 'none';
+	}
+
 	function readFields(): CitationFields {
 		return {
 			caseType: currentCaseType(),
@@ -172,6 +185,7 @@ export function createFormState(form: HTMLFormElement) {
 			useId: idCheckbox.checked,
 			emphasis: currentEmphasis(),
 			spanSeparator: currentSpanSeparator(),
+			signal: currentSignal(),
 		};
 	}
 
@@ -219,6 +233,7 @@ export function createFormState(form: HTMLFormElement) {
 		caseTypeSelect.value = defaultFields.caseType;
 		monthSelect.value = defaultFields.month;
 		nameVariantSelect.value = defaultDisplay.nameVariant;
+		signalSelect.value = defaultDisplay.signal;
 	}
 
 	function setFields(values: Partial<Record<FieldId, string>>): void {

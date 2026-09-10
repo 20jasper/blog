@@ -26,6 +26,7 @@ export function queryFormRefs(form: HTMLFormElement) {
 		firstPageInput: field<HTMLInputElement>(form, 'firstPage'),
 		yearInput: field<HTMLInputElement>(form, 'year'),
 		nameVariantSelect: field<HTMLSelectElement>(form, 'nameVariant'),
+		signalSelect: field<HTMLSelectElement>(form, 'signal'),
 		idCheckbox: field<HTMLInputElement>(form, 'id'),
 		docketInput: field<HTMLInputElement>(form, 'docket'),
 		databaseIdInput: field<HTMLInputElement>(form, 'databaseId'),

@@ -12,6 +12,7 @@ export function getCitationBuilderLocators(page: Page) {
 		firstPage: page.getByLabel('First page'),
 		year: page.getByLabel('Decision year'),
 		nameVariant: page.getByLabel('Name variant'),
+		signal: page.getByLabel('Signal'),
 		docket: page.getByLabel('Docket number'),
 		databaseId: page.getByLabel('Database identifier'),
 		url: page.getByLabel('Opinion URL'),

@@ -14,6 +14,17 @@ test('starts prefilled with a working example', async ({ page }) => {
 	);
 });
 
+test('signal prefixes the citation, italicized', async ({ page }) => {
+	const { signal, output } = getCitationBuilderLocators(page);
+
+	await signal.selectOption('see');
+
+	await expect(output).toHaveText(
+		'See Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+	);
+	await expect(output.locator('i').first()).toHaveText('See');
+});
+
 test('editing a field updates the output live', async ({ page }) => {
 	const { pincite, output } = getCitationBuilderLocators(page);
 

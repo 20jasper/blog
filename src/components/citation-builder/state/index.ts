@@ -2,6 +2,8 @@
 
 export { AVAILABILITIES, isAvailability } from '../domain/availability';
 export type { Availability } from '../domain/availability';
+export { SIGNALS, isSignal } from '../domain/signal';
+export type { Signal } from '../domain/signal';
 
 export { isCaseTypeId } from '../domain/case-types';
 export type { CaseTypeId } from '../domain/case-types';

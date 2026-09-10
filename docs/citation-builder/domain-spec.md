@@ -219,6 +219,40 @@ r[normalize.span-passthrough]
 > number."
 > — [Tarlton, Pages, Paragraphs, and Pincites](https://tarlton.law.utexas.edu/bluebook-legal-citation/pages-paragraphs-pincites)
 
+## Signal
+
+r[signal.prefix]
+
+> "A signal illustrates the relationship between the author’s
+> assertion and the source cited for that assertion. The signal begins
+> the citation sentence or clause."
+> — [Indigo Book, Rule 4.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.1)
+
+r[signal.options]
+
+> "There are four basic categories of signals:"
+> — [Indigo Book, Rule 4.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.2)
+
+| Category                            | Signals                                                    |
+| ----------------------------------- | ---------------------------------------------------------- |
+| Signals for Supporting Authority    | `[No signal]`, `E.g.,`, `Accord`, `See`, `See Also`, `Cf.` |
+| Signals for Contradictory Authority | `Contra`, `But see`, `But cf.`                             |
+| Signals for Background Material     | `See generally`                                            |
+
+`Compare ... with ...` (Signals for Comparison) is out of scope --
+it cites two sources, and this tool assembles one citation at a time.
+Multi-authority ordering (Rule 4.3) is likewise out of scope.
+
+Rendered as `See also`, not the table's `See Also`: the signal is
+only ever sentence-initial here (Rule 4.1), so only its first word is
+capitalized.
+
+r[signal.typeface]
+
+> "Only the following items should be italicized: ... Introductory
+> signals (e.g., see, cf. and accord)"
+> — [Indigo Book, Rule 2.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R2.1)
+
 ## Docket Number Prefix
 
 r[normalize.docket]
