@@ -1,6 +1,16 @@
-import rawAbbreviations from './party-name-abbreviations.generated.json' with { type: 'json' };
+import rawAbbreviations from '@vendor/reporters-db/reporters_db/data/case_name_abbreviations.json' with { type: 'json' };
 
-const PARTY_NAME_ABBREVIATIONS: Record<string, string> = rawAbbreviations;
+const abbreviations: Record<string, string[]> = rawAbbreviations;
+
+const byWord = new Map<string, string>();
+for (const [abbreviation, words] of Object.entries(abbreviations)) {
+	for (const word of words) {
+		const key = word.toLowerCase();
+		if (!byWord.has(key)) {
+			byWord.set(key, abbreviation);
+		}
+	}
+}
 
 function splitTrailingPunctuation(word: string): {
 	core: string;
@@ -19,7 +29,7 @@ export function abbreviatePartyName(name: string): string {
 		.split(' ')
 		.map((word) => {
 			const { core, trailing } = splitTrailingPunctuation(word);
-			const abbreviation = PARTY_NAME_ABBREVIATIONS[core.toLowerCase()];
+			const abbreviation = byWord.get(core.toLowerCase());
 			return abbreviation === undefined ? word : abbreviation + trailing;
 		})
 		.join(' ');

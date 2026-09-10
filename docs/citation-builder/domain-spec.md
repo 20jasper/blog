@@ -84,13 +84,8 @@ r[case-name.word-abbreviation]
 > 10.2.2 and Table 6."
 > — [Suffolk, Bluebook Guide for Law Students](https://lawguides.suffolk.edu/bluebook/cases)
 
-Table 6 words in party names (e.g. `Corporation` -> `Corp.`) are
-abbreviated automatically, generated from
-[The Indigo Book](https://law.resource.org/pub/us/code/blue/IndigoBook.html)'s
-Table T11 (CC0), the primary open source, merged with
-[freelawproject/reporters-db](https://github.com/freelawproject/reporters-db)'s
-`case_name_abbreviations.json` for bare-word forms T11's bracket
-notation doesn't spell out (e.g. `West` alongside `Western`).
+Sourced from [freelawproject/reporters-db](https://github.com/freelawproject/reporters-db)'s
+`case_name_abbreviations.json`.
 
 Not implemented:
 
@@ -98,11 +93,6 @@ Not implemented:
 > units, unless the geographical unit is the entire name of the party
 > (e.g., United States)."
 > — [Suffolk, Bluebook Guide for Law Students](https://lawguides.suffolk.edu/bluebook/cases)
-
-Matching is exact-word only (no plural/derived-form inflection); some
-plurals are their own listed word (`Brothers` -> `Bros.`), but neither
-source lists every plural Table 6 has (e.g. `Corporations` -> `Corps.`
-is a real Bluebook abbreviation missing from both).
 
 ## Short-Form Case Name
 

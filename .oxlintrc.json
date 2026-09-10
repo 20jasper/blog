@@ -2,7 +2,6 @@
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
 	"ignorePatterns": [
 		"vendor/**",
-		"scripts/**",
 		"src/components/citation-builder/domain/*-abbreviations.ts"
 	],
 	"plugins": ["typescript", "unicorn", "oxc", "import", "promise", "node"],
