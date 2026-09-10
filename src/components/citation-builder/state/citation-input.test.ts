@@ -113,3 +113,35 @@ describe('assemble: statute', () => {
 		expect(plain).toBe('U.S.C. § 107.');
 	});
 });
+
+// r[verify signal.prefix]
+describe('assemble: signal', () => {
+	const citation: CitationInput = {
+		sourceType: 'statute',
+		mode: 'short',
+		input: { code: 'U.S.C.', section: '107' },
+	};
+
+	it('prepends the signal text with a trailing space, italicized', () => {
+		const { plain, html } = render(assemble(citation, { signal: 'see' }), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).toBe('See U.S.C. § 107.');
+		expect(html).toContain('<i>See </i>');
+	});
+
+	it('is a no-op for "none"', () => {
+		const { plain } = render(assemble(citation, { signal: 'none' }), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).toBe('U.S.C. § 107.');
+	});
+
+	it('is a no-op when signal is omitted entirely', () => {
+		const { plain } = render(assemble(citation), { emphasis: 'italic' });
+
+		expect(plain).toBe('U.S.C. § 107.');
+	});
+});

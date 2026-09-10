@@ -11,6 +11,7 @@ import {
 	isMaterialLocation,
 	isMonth,
 	isNameVariant,
+	isSignal,
 	isSourceType,
 	resolveShortFormKind,
 	selectFieldState,
@@ -25,6 +26,7 @@ import {
 	type Mode,
 	type Month,
 	type NameVariant,
+	type Signal,
 	type SourceType,
 	type SpanSeparator,
 } from '@components/citation-builder/state';
@@ -40,7 +42,13 @@ function setFieldRequirement(
 
 export function createFormState(form: HTMLFormElement) {
 	const refs = queryFormRefs(form);
-	const { caseTypeSelect, monthSelect, nameVariantSelect, idCheckbox } = refs;
+	const {
+		caseTypeSelect,
+		monthSelect,
+		nameVariantSelect,
+		signalSelect,
+		idCheckbox,
+	} = refs;
 
 	// Every CitationFields key needs an entry -- a missing one is a type
 	// error, not a field that silently never gets required/disabled.
@@ -50,15 +58,20 @@ export function createFormState(form: HTMLFormElement) {
 		party2: refs.party2Input,
 		court: refs.courtInput,
 		pincite: refs.pinciteInput,
+		weightOfAuthority: refs.weightOfAuthorityInput,
+		historyPhrase: refs.historyPhraseSelect,
+		historyCitation: refs.historyCitationInput,
 		volume: refs.volumeInput,
 		reporter: refs.reporterInput,
 		firstPage: refs.firstPageInput,
 		year: refs.yearInput,
 		docket: refs.docketInput,
 		databaseId: refs.databaseIdInput,
+		url: refs.urlInput,
 		month: monthSelect,
 		day: refs.dayInput,
 		popularName: refs.popularNameInput,
+		originalSection: refs.originalSectionInput,
 		title: refs.titleInput,
 		code: refs.codeInput,
 		section: refs.sectionInput,
@@ -132,6 +145,11 @@ export function createFormState(form: HTMLFormElement) {
 		return checked?.value === 'en-dash' ? EN_DASH : HYPHEN;
 	}
 
+	function currentSignal(): Signal {
+		const { value } = signalSelect;
+		return isSignal(value) ? value : 'none';
+	}
+
 	function readFields(): CitationFields {
 		return {
 			caseType: currentCaseType(),
@@ -139,15 +157,20 @@ export function createFormState(form: HTMLFormElement) {
 			party2: refs.party2Input.value,
 			court: refs.courtInput.value,
 			pincite: refs.pinciteInput.value,
+			weightOfAuthority: refs.weightOfAuthorityInput.value,
+			historyPhrase: refs.historyPhraseSelect.value,
+			historyCitation: refs.historyCitationInput.value,
 			volume: refs.volumeInput.value,
 			reporter: refs.reporterInput.value,
 			firstPage: refs.firstPageInput.value,
 			year: refs.yearInput.value,
 			docket: refs.docketInput.value,
 			databaseId: refs.databaseIdInput.value,
+			url: refs.urlInput.value,
 			month: currentMonth(),
 			day: refs.dayInput.value,
 			popularName: refs.popularNameInput.value,
+			originalSection: refs.originalSectionInput.value,
 			title: refs.titleInput.value,
 			code: refs.codeInput.value,
 			section: refs.sectionInput.value,
@@ -168,6 +191,7 @@ export function createFormState(form: HTMLFormElement) {
 			useId: idCheckbox.checked,
 			emphasis: currentEmphasis(),
 			spanSeparator: currentSpanSeparator(),
+			signal: currentSignal(),
 		};
 	}
 
@@ -215,6 +239,7 @@ export function createFormState(form: HTMLFormElement) {
 		caseTypeSelect.value = defaultFields.caseType;
 		monthSelect.value = defaultFields.month;
 		nameVariantSelect.value = defaultDisplay.nameVariant;
+		signalSelect.value = defaultDisplay.signal;
 	}
 
 	function setFields(values: Partial<Record<FieldId, string>>): void {

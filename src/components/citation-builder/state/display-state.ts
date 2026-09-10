@@ -3,6 +3,7 @@ import type { Availability } from '../domain/availability';
 import type { SpanSeparator } from '../domain/assemble';
 import type { CodeType } from '../domain/code-type';
 import type { MaterialLocation } from '../domain/material-location';
+import type { Signal } from '../domain/signal';
 import type { SourceType } from './source-type';
 
 export const MODES = [
@@ -35,6 +36,7 @@ export type DisplayState = {
 	materialLocation: MaterialLocation;
 	emphasis: Emphasis;
 	spanSeparator: SpanSeparator;
+	signal: Signal;
 };
 
 export function initialDisplayState(): DisplayState {
@@ -48,5 +50,6 @@ export function initialDisplayState(): DisplayState {
 		materialLocation: 'main',
 		emphasis: 'italic',
 		spanSeparator: HYPHEN,
+		signal: 'none',
 	};
 }

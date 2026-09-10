@@ -53,6 +53,66 @@ The Federal Reporter format does have one ("Name of the court
 carries it: `Universal City Studios, Inc. v. Corley, 273 F.3d 429 (2d
 Cir. 2001)`. Blank Court renders the year alone.
 
+## Weight of Authority Parenthetical
+
+r[weight-of-authority.parenthetical]
+
+> "To highlight information regarding the weight of the cited
+> authority (e.g., for concurring and dissenting opinions), insert an
+> additional parenthetical after the date parenthetical. Remember to
+> separate the parentheticals with a space."
+> — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
+
+<!-- prettier-ignore -->
+> `Ward v. Rock Against Racism, 491 U.S. 781 (1989) (Marshall, J.,
+> dissenting).`
+> — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
+
+r[weight-of-authority.stacking]
+
+<!-- prettier-ignore -->
+> `Dep’t of Revenue v. James B. Beam Distilling Co., 377 U.S. 341, 349
+> (1964) (7–2 decision) (Black, J., dissenting) (disagreeing with
+> Justice Goldberg as to the relative merits of bourbon and scotch).`
+> — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
+
+## Case History
+
+r[case-history.phrases]
+
+> "When citing a case, include the prior or subsequent history of the
+> case, subject to several exceptions. Refer to Table T14 for how to
+> abbreviate explanatory phrases when introducing case history."
+> — [Indigo Book, Rule 14.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.1)
+
+> "Always use the following explanatory phrases when applicable and
+> italicize them:"
+> — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
+
+r[case-history.sub-nom]
+
+> "When the case has a different name in the subsequent history,
+> provide the new case name after the italicized phrase “sub nom.”
+> (“under the name of”)."
+> — [Indigo Book, Rule 14.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.3)
+
+r[case-history.sub-nom-exception]
+
+<!-- prettier-ignore -->
+> "Exception: Do not provide the new case name if either the parties’
+> names are merely reversed or if the subsequent history is simply a
+> denial of certiorari or rehearing."
+> — [Indigo Book, Rule 14.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.3)
+
+r[case-history.stacking]
+r[case-history.phrase-italicized]
+
+<!-- prettier-ignore -->
+> `Energy & Env't Legal Inst. v. Epel, 43 F. Supp. 3d 1171 (D. Colo.
+> 2014), aff’d, 793 F.3d 1169 (10th Cir.), cert. denied, 136 S. Ct. 595
+> (2015).`
+> — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
+
 ## Short-Form Party Choice
 
 r[short-form.party-choice]
@@ -219,6 +279,45 @@ r[normalize.span-passthrough]
 > number."
 > — [Tarlton, Pages, Paragraphs, and Pincites](https://tarlton.law.utexas.edu/bluebook-legal-citation/pages-paragraphs-pincites)
 
+## Signal
+
+r[signal.prefix]
+
+> "A signal illustrates the relationship between the author’s
+> assertion and the source cited for that assertion. The signal begins
+> the citation sentence or clause."
+> — [Indigo Book, Rule 4.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.1)
+
+r[signal.options]
+
+> "There are four basic categories of signals:"
+> — [Indigo Book, Rule 4.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.2)
+
+r[signal.comparison]
+
+<!-- prettier-ignore -->
+> "(7) Compare <citation to source(s), separated with “and” if
+> multiple> with <citation to source(s), separated with “and” if
+> multiple>"
+> — [Indigo Book, Rule 4.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.2)
+
+r[signal.multi-authority-ordering]
+
+<!-- prettier-ignore -->
+> "When more than one authority is used in the same citation, they
+> should be ordered first according to hierarchy of introductory
+> signals (see table above), and then within each signal by strength
+> of authority using a semicolon in between each one (see Rule 10
+> below: Order of Authorities Within Each Signal / Strength of
+> Authority)."
+> — [Indigo Book, Rule 4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.3)
+
+r[signal.typeface]
+
+> "Only the following items should be italicized: ... Introductory
+> signals (e.g., see, cf. and accord)"
+> — [Indigo Book, Rule 2.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R2.1)
+
 ## Docket Number Prefix
 
 r[normalize.docket]
@@ -267,7 +366,7 @@ r[unreported.availability]
 > `2007 WL 1032301, at *3 (E.D. Ky. Mar. 30, 2007)`
 > — [UC Cincinnati, Commercial Databases](https://guides.libraries.uc.edu/c.php?g=222561&p=1472887)
 
-`database` | `slip`
+`database` | `slip` | `online`
 
 ## Unreported Long Form
 
@@ -281,6 +380,21 @@ r[citation.unreported-pincite-form]
 [Name], No. [Docket], [Database ID], at *[Pincite] ([Court] [Month] [Day], [Year]).
 [Name], No. [Docket], slip op. at [Pincite] ([Court] [Month] [Day], [Year]).
 ```
+
+## Online-Only Availability
+
+r[unreported.online-only]
+
+> "Opinions only available online, but not in an electronic database:
+> Some cases, particularly ones that are pending, may be accessed only
+> through a court’s website. If so, include the URL."
+> — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
+
+<!-- prettier-ignore -->
+> `Macy’s Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728,
+> slip op. at 1 (N.Y. App. Div. Feb. 26, 2015),
+> http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.`
+> — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
 
 ## Unreported Short Form
 
@@ -352,6 +466,21 @@ r[statute.popular-name]
 
 > `Copyright Act of 1976, 17 U.S.C. §§ 101-1332 (2012)`
 > — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
+
+## Statute Original Section Number
+
+r[statute.original-section]
+
+> "Include the original section number of the provision after the
+> statute name. “Original section number” refers to the section in the
+> original act, whereas “section number” refers to the equivalent
+> section as codified in the code."
+> — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
+
+<!-- prettier-ignore -->
+> `Drug Price Competition and Patent Term Restoration Act § 202,
+> 17 U.S.C. § 271(e) (2012).`
+> — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
 
 ## Statute Long Form
 

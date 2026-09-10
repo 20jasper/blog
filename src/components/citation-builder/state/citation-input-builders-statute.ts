@@ -51,6 +51,7 @@ function statuteFullInput(
 ): StatuteInput {
 	return {
 		popularName: emptyToUndefined(fields.popularName),
+		originalSection: emptyToUndefined(fields.originalSection),
 		title: emptyToUndefined(fields.title),
 		code: fields.code,
 		section: fields.section,

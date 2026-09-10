@@ -1,14 +1,16 @@
 ---
 import Button from '@components/button.astro';
-import { CODE_ABBREVIATIONS } from '@components/citation-builder/domain/code-abbreviations';
-import { COURT_ABBREVIATIONS } from '@components/citation-builder/domain/court-abbreviations';
-import { REPORTER_ABBREVIATIONS } from '@components/citation-builder/domain/reporter-abbreviations';
 import {
 	AVAILABILITIES,
+	CODE_ABBREVIATIONS,
 	CODE_TYPES,
+	COURT_ABBREVIATIONS,
+	HISTORY_PHRASES,
 	MATERIAL_LOCATIONS,
 	MODES,
 	MONTHS,
+	REPORTER_ABBREVIATIONS,
+	SIGNALS,
 	SOURCE_TYPES,
 } from '@components/citation-builder/state';
 import Choice from './components/choice.astro';
@@ -59,6 +61,15 @@ const CITATION_FORM_FIELDS: FieldSpec[] = [
 			{ value: 'none', text: 'No name' },
 		],
 	},
+	{
+		kind: 'select',
+		name: 'signal',
+		label: 'Introductory signal',
+		options: SIGNALS.map((signal) => ({
+			value: signal.value,
+			text: signal.text,
+		})),
+	},
 ];
 
 const CASE_IDENTITY_FIELDS: FieldSpec[] = [
@@ -99,9 +110,32 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 		kind: 'text',
 		name: 'year',
 		label: 'Decision year',
-		hint: 'Year the case was decided',
 		inputmode: 'numeric',
 		pattern: '\\d+',
+	},
+	{
+		kind: 'text',
+		name: 'weightOfAuthority',
+		label: 'Weight of authority parenthetical',
+		hint: 'e.g. Marshall, J., dissenting -- no parens needed; separate multiple with ;',
+	},
+	{
+		kind: 'select',
+		name: 'historyPhrase',
+		label: 'Prior/subsequent history phrase',
+		options: [
+			{ value: '', text: 'None' },
+			...HISTORY_PHRASES.map((phrase) => ({
+				value: phrase.value,
+				text: phrase.text,
+			})),
+		],
+	},
+	{
+		kind: 'text',
+		name: 'historyCitation',
+		label: 'Prior/subsequent history citation',
+		hint: 'Case name or citation',
 	},
 ];
 
@@ -110,7 +144,6 @@ const REPORTED_FIELDS: FieldSpec[] = [
 		kind: 'text',
 		name: 'volume',
 		label: 'Volume',
-		hint: 'Reporter volume number',
 	},
 	{
 		kind: 'text',
@@ -141,6 +174,12 @@ const UNREPORTED_FIELDS: FieldSpec[] = [
 		hint: 'e.g. 2005 WL 2709572',
 	},
 	{
+		kind: 'text',
+		name: 'url',
+		label: 'Opinion URL',
+		hint: 'Court website URL -- only for opinions with no database or reporter',
+	},
+	{
 		kind: 'select',
 		name: 'month',
 		label: 'Month decided',
@@ -160,13 +199,19 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		kind: 'text',
 		name: 'popularName',
 		label: 'Popular name',
-		hint: 'e.g. Consumer Credit Code -- optional',
+		hint: 'e.g. Consumer Credit Code',
+	},
+	{
+		kind: 'text',
+		name: 'originalSection',
+		label: 'Original section number',
+		hint: 'Section in the original act, not the code -- needs a popular name',
 	},
 	{
 		kind: 'text',
 		name: 'title',
 		label: 'Title',
-		hint: 'e.g. 17 -- optional, precedes the code, no comma',
+		hint: 'e.g. 17 -- precedes the code, no comma',
 	},
 	{
 		kind: 'text',

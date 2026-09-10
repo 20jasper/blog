@@ -2,6 +2,7 @@
 export const AVAILABILITIES = [
 	{ value: 'database', text: 'In electronic database' },
 	{ value: 'slip', text: 'Slip opinion only' },
+	{ value: 'online', text: 'Website only (no database)' },
 ] as const;
 
 export type Availability = (typeof AVAILABILITIES)[number]['value'];

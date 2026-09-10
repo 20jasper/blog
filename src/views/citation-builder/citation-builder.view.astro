@@ -50,6 +50,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			}
 			const segments = assemble(buildCitationInput(fields, display), {
 				spanSeparator: display.spanSeparator,
+				signal: display.signal,
 			});
 			setCitationOutput(segments, display.emphasis);
 		}

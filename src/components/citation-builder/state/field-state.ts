@@ -37,15 +37,20 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	party2: 'not-used',
 	court: 'not-used',
 	pincite: 'not-used',
+	weightOfAuthority: 'not-used',
+	historyPhrase: 'not-used',
+	historyCitation: 'not-used',
 	volume: 'not-used',
 	reporter: 'not-used',
 	firstPage: 'not-used',
 	year: 'not-used',
 	docket: 'not-used',
 	databaseId: 'not-used',
+	url: 'not-used',
 	month: 'not-used',
 	day: 'not-used',
 	popularName: 'not-used',
+	originalSection: 'not-used',
 	title: 'not-used',
 	code: 'not-used',
 	section: 'not-used',
@@ -72,14 +77,23 @@ function nameFieldState(
 
 type CourtPinciteFieldState = Pick<
 	Record<FieldId, FieldRequirement>,
-	'court' | 'pincite'
+	| 'court'
+	| 'pincite'
+	| 'weightOfAuthority'
+	| 'historyPhrase'
+	| 'historyCitation'
 >;
 
 // r[impl court.optional]
+// r[impl weight-of-authority.parenthetical]
+// r[impl case-history.phrase-italicized]
 function courtPinciteFieldState(isFull: boolean): CourtPinciteFieldState {
 	return {
 		court: usedIf(isFull, 'optional'),
 		pincite: isFull ? 'optional' : 'required',
+		weightOfAuthority: usedIf(isFull, 'optional'),
+		historyPhrase: usedIf(isFull, 'optional'),
+		historyCitation: usedIf(isFull, 'optional'),
 	};
 }
 
@@ -133,6 +147,8 @@ function unreportedFieldState(
 		// r[impl citation.unreported-short-form]
 		docket: usedIf(usesIdentifierFields && (isFull || !isDatabase), 'required'),
 		databaseId: usedIf(usesIdentifierFields && isDatabase, 'required'),
+		// r[impl unreported.online-only]
+		url: usedIf(isFull && shape.availability === 'online', 'required'),
 		month: usedIf(isFull, 'required'),
 		day: usedIf(isFull, 'required'),
 		year: usedIf(isFull, 'required'),
@@ -153,6 +169,8 @@ function statuteFieldState(
 			return {
 				...NOT_USED,
 				popularName: 'optional',
+				// r[impl statute.original-section]
+				originalSection: 'optional',
 				title: 'optional',
 				code: 'required',
 				section: 'required',

@@ -15,15 +15,33 @@ function codeSection(code: string, section: string): string {
 
 export type StatuteInput = {
 	popularName?: string;
+	originalSection?: string;
 	title?: string;
 	code: string;
 	section: string;
 } & StatuteParentheticalInput;
 
+// r[impl statute.original-section]
+function popularNamePrefix(
+	popularName: string | undefined,
+	originalSection: string | undefined,
+): string {
+	if (popularName === undefined) {
+		return '';
+	}
+	const section =
+		originalSection === undefined
+			? ''
+			: ` ${normalizeSection(originalSection)}`;
+	return `${popularName}${section}, `;
+}
+
 // r[impl citation.statute-long-form]
 export function assembleStatute(input: StatuteInput): Segment[] {
-	const popularName =
-		input.popularName === undefined ? '' : `${input.popularName}, `;
+	const popularName = popularNamePrefix(
+		input.popularName,
+		input.originalSection,
+	);
 	const parenthetical = assembleStatuteParenthetical(input);
 
 	const segments: Segment[] = [

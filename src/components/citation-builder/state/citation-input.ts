@@ -15,6 +15,7 @@ import {
 	type StatuteInput,
 	type StatuteShortFormInput,
 } from '../domain/assemble-statute';
+import { signalText, type Signal } from '../domain/signal';
 import type { Segment } from '../domain/types';
 
 export type CitationInput =
@@ -66,16 +67,31 @@ function assembleStatuteCitation(citation: Statute): Segment[] {
 	}
 }
 
+// r[impl signal.prefix]
+function withSignal(
+	segments: Segment[],
+	signal: Signal | undefined,
+): Segment[] {
+	const text = signal === undefined ? undefined : signalText(signal);
+	return text === undefined
+		? segments
+		: [{ text: `${text} `, emphasized: true }, ...segments];
+}
+
 export function assemble(
 	citation: CitationInput,
-	options: AssembleOptions = {},
+	options: AssembleOptions & { signal?: Signal } = {},
 ): Segment[] {
-	switch (citation.sourceType) {
-		case 'reported':
-			return assembleReported(citation, options);
-		case 'unreported':
-			return assembleUnreported(citation, options);
-		case 'statute':
-			return assembleStatuteCitation(citation);
-	}
+	const segments = (() => {
+		switch (citation.sourceType) {
+			case 'reported':
+				return assembleReported(citation, options);
+			case 'unreported':
+				return assembleUnreported(citation, options);
+			case 'statute':
+				return assembleStatuteCitation(citation);
+		}
+	})();
+
+	return withSignal(segments, options.signal);
 }

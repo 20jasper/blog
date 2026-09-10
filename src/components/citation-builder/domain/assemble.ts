@@ -20,6 +20,42 @@ function framePeriod(segments: Segment[]): Segment[] {
 	});
 }
 
+// r[impl weight-of-authority.parenthetical]
+// r[impl weight-of-authority.stacking]
+function weightOfAuthoritySuffix(
+	weightOfAuthority: string | undefined,
+): string {
+	if (weightOfAuthority === undefined) {
+		return '';
+	}
+	return weightOfAuthority
+		.split(';')
+		.map((entry) => entry.trim())
+		.filter((entry) => entry !== '')
+		.map((entry) => ` (${entry})`)
+		.join('');
+}
+
+export type CaseHistoryInput = {
+	historyPhrase?: string;
+	historyCitation?: string;
+};
+
+// r[impl case-history.phrase-italicized]
+function caseHistorySegments(input: CaseHistoryInput): Segment[] {
+	if (
+		input.historyPhrase === undefined ||
+		input.historyCitation === undefined
+	) {
+		return [];
+	}
+	return [
+		{ text: ', ' },
+		{ text: input.historyPhrase, emphasized: true },
+		{ text: ` ${input.historyCitation}` },
+	];
+}
+
 export type ReportedCaseInput = {
 	name: CaseNameInput;
 	volume: string;
@@ -29,7 +65,8 @@ export type ReportedCaseInput = {
 	// r[impl court.optional]
 	court?: string;
 	year: number;
-};
+	weightOfAuthority?: string;
+} & CaseHistoryInput;
 
 export type AssembleOptions = { spanSeparator?: SpanSeparator };
 
@@ -57,7 +94,10 @@ export function assembleReportedCase(
 		{ text: assembleCaseName(input.name), emphasized: true },
 		{ text: `, ${input.volume} ${input.reporter} ${input.firstPage}` },
 		...pincite,
-		{ text: ` (${parenthetical})` },
+		{
+			text: ` (${parenthetical})${weightOfAuthoritySuffix(input.weightOfAuthority)}`,
+		},
+		...caseHistorySegments(input),
 	];
 
 	return framePeriod(segments);
@@ -71,9 +111,14 @@ export type UnreportedCaseInput = {
 	month: Month;
 	day: number;
 	year: number;
-} & (
-	{ availability: 'database'; databaseId: string } | { availability: 'slip' }
-);
+	weightOfAuthority?: string;
+} & CaseHistoryInput &
+	(
+		| { availability: 'database'; databaseId: string }
+		| { availability: 'slip' }
+		// r[impl unreported.online-only]
+		| { availability: 'online'; url: string }
+	);
 
 function unreportedTail(
 	input: UnreportedCaseInput,
@@ -86,6 +131,7 @@ function unreportedTail(
 				...(pincite === undefined ? [] : [{ text: `, at ${pincite}` }]),
 			];
 		case 'slip':
+		case 'online':
 			return pincite === undefined
 				? []
 				: [{ text: `, slip op. at ${pincite}` }];
@@ -114,7 +160,11 @@ export function assembleUnreportedCase(
 		{ text: assembleCaseName(input.name), emphasized: true },
 		{ text: `, ${normalizeDocket(input.docket)}` },
 		...unreportedTail(input, pincite),
-		{ text: ` (${parenthetical})` },
+		{
+			text: ` (${parenthetical})${weightOfAuthoritySuffix(input.weightOfAuthority)}`,
+		},
+		...(input.availability === 'online' ? [{ text: `, ${input.url}` }] : []),
+		...caseHistorySegments(input),
 	];
 
 	return framePeriod(segments);
@@ -188,13 +238,14 @@ export function assembleReportedShortForm(
 
 type UnreportedIdentifier =
 	| { availability: 'database'; databaseId: string }
-	| { availability: 'slip'; docket: string };
+	| { availability: 'slip' | 'online'; docket: string };
 
 function unreportedIdentifierText(input: UnreportedIdentifier): string {
 	switch (input.availability) {
 		case 'database':
 			return input.databaseId;
 		case 'slip':
+		case 'online':
 			return normalizeDocket(input.docket);
 	}
 }
@@ -204,6 +255,7 @@ function unreportedAtText(availability: Availability, pincite: string): string {
 		case 'database':
 			return `at ${pincite}`;
 		case 'slip':
+		case 'online':
 			return `slip op. at ${pincite}`;
 	}
 }

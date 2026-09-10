@@ -10,6 +10,9 @@ export type CitationFields = {
 	party2: string;
 	court: string;
 	pincite: string;
+	weightOfAuthority: string;
+	historyPhrase: string;
+	historyCitation: string;
 
 	volume: string;
 	reporter: string;
@@ -18,10 +21,12 @@ export type CitationFields = {
 
 	docket: string;
 	databaseId: string;
+	url: string;
 	month: Month;
 	day: string;
 
 	popularName: string;
+	originalSection: string;
 	title: string;
 	code: string;
 	section: string;
@@ -37,6 +42,9 @@ export function initialCitationFields(): CitationFields {
 		party2: '',
 		court: '',
 		pincite: '',
+		weightOfAuthority: '',
+		historyPhrase: '',
+		historyCitation: '',
 
 		volume: '',
 		reporter: '',
@@ -45,10 +53,12 @@ export function initialCitationFields(): CitationFields {
 
 		docket: '',
 		databaseId: '',
+		url: '',
 		month: 'Jan.',
 		day: '',
 
 		popularName: '',
+		originalSection: '',
 		title: '',
 		code: '',
 		section: '',

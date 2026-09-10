@@ -17,6 +17,96 @@ function reportedCase(
 	};
 }
 
+// r[verify weight-of-authority.parenthetical]
+describe('assembleReportedCase: weight of authority parenthetical', () => {
+	it('appends after the date parenthetical', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({ weightOfAuthority: 'Marshall, J., dissenting' }),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toContain('(Ohio Ct. App. 2021) (Marshall, J., dissenting)');
+	});
+
+	it('is a no-op when absent', () => {
+		const { plain } = render(assembleReportedCase(reportedCase()), {
+			emphasis: 'italic',
+		});
+
+		expect(plain).not.toContain('J.,');
+	});
+});
+
+// r[verify weight-of-authority.stacking]
+describe('assembleReportedCase: weight of authority stacking', () => {
+	it('stacks semicolon-separated entries as separate parentheticals, per the Indigo Book Rule 13.1 Beam Distilling example', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({
+					weightOfAuthority: '7–2 decision; Black, J., dissenting',
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toContain(
+			'(Ohio Ct. App. 2021) (7–2 decision) (Black, J., dissenting)',
+		);
+	});
+});
+
+// r[verify case-history.phrase-italicized]
+describe('assembleReportedCase: case history', () => {
+	it('matches the Indigo Book Rule 14.2 "aff’d" example', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({
+					name: {
+						caseType: 'v',
+						party1: "Energy & Env't Legal Inst.",
+						party2: 'Epel',
+					},
+					volume: '43',
+					reporter: 'F. Supp. 3d',
+					firstPage: '1171',
+					pincite: undefined,
+					court: 'D. Colo.',
+					year: 2014,
+					historyPhrase: 'aff’d,',
+					historyCitation: '793 F.3d 1169 (10th Cir.)',
+				}),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).toBe(
+			"Energy & Env't Legal Inst. v. Epel, 43 F. Supp. 3d 1171 (D. Colo. 2014), aff’d, 793 F.3d 1169 (10th Cir.).",
+		);
+	});
+
+	it('is a no-op when only the phrase is set, no citation', () => {
+		const { plain } = render(
+			assembleReportedCase(reportedCase({ historyPhrase: 'aff’d,' })),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).not.toContain('aff’d');
+	});
+
+	it('is a no-op when only the citation is set, no phrase', () => {
+		const { plain } = render(
+			assembleReportedCase(
+				reportedCase({ historyCitation: '793 F.3d 1169 (10th Cir.)' }),
+			),
+			{ emphasis: 'italic' },
+		);
+
+		expect(plain).not.toContain('793 F.3d');
+	});
+});
+
 // r[verify citation.reported-long-form]
 describe('assembleReportedCase: golden case', () => {
 	it('matches the domain-spec.md §5.4 golden case exactly', () => {

@@ -14,6 +14,44 @@ test('starts prefilled with a working example', async ({ page }) => {
 	);
 });
 
+test('signal prefixes the citation, italicized', async ({ page }) => {
+	const { signal, output } = getCitationBuilderLocators(page);
+
+	await signal.selectOption('see');
+
+	await expect(output).toHaveText(
+		'See Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021).',
+	);
+	await expect(output.locator('i').first()).toHaveText('See');
+});
+
+test('weight of authority parenthetical appends after the date parenthetical', async ({
+	page,
+}) => {
+	const { weightOfAuthority, output } = getCitationBuilderLocators(page);
+
+	await weightOfAuthority.fill('Marshall, J., dissenting');
+
+	await expect(output).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021) (Marshall, J., dissenting).',
+	);
+});
+
+test('case history phrase appends after everything, italicized', async ({
+	page,
+}) => {
+	const { historyPhrase, historyCitation, output } =
+		getCitationBuilderLocators(page);
+
+	await historyPhrase.selectOption('aff’d,');
+	await historyCitation.fill('793 F.3d 1169 (10th Cir.)');
+
+	await expect(output).toHaveText(
+		'Dayton v. Stewart, 179 N.E.3d 208, 214 (Ohio Ct. App. 2021), aff’d, 793 F.3d 1169 (10th Cir.).',
+	);
+	await expect(output.locator('i').last()).toHaveText('aff’d,');
+});
+
 test('editing a field updates the output live', async ({ page }) => {
 	const { pincite, output } = getCitationBuilderLocators(page);
 
@@ -400,6 +438,55 @@ test('unreported case, short form, slip availability renders docket + slip op.',
 	await expect(output).toHaveText('No. 1-07-2937, slip op. at 2.');
 });
 
+test('unreported case, online-only availability renders docket + slip op. + URL', async ({
+	page,
+}) => {
+	const {
+		party1,
+		party2,
+		court,
+		docket,
+		pincite,
+		month,
+		day,
+		year,
+		url,
+		output,
+	} = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+	await page.getByRole('radio', { name: 'Website only (no database)' }).check();
+	await party1.fill("Macy's Inc.");
+	await party2.fill('Martha Stewart Living Omnimedia, Inc.');
+	await court.fill('');
+	await docket.fill('1728');
+	await pincite.fill('1');
+	await month.selectOption('Feb.');
+	await day.fill('26');
+	await year.fill('2015');
+	await url.fill(
+		'http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm',
+	);
+
+	await expect(output).toHaveText(
+		"Macy's Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728, slip op. at 1 (Feb. 26, 2015), http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.",
+	);
+});
+
+test('unreported case online-only availability requires the URL field', async ({
+	page,
+}) => {
+	const { url } = getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Unreported case' }).check();
+
+	await expect(url).toBeDisabled();
+
+	await page.getByRole('radio', { name: 'Website only (no database)' }).check();
+
+	await expect(url).toBeEnabled();
+});
+
 test('switching back to reported re-enables Volume/Reporter/First page', async ({
 	page,
 }) => {
@@ -439,6 +526,26 @@ test('statute, official code, main volume renders the 17 U.S.C. § 107 worked ex
 	await year.fill('2012');
 
 	await expect(output).toHaveText('U.S.C. § 107 (2012).');
+});
+
+test('statute, original section number renders after the popular name', async ({
+	page,
+}) => {
+	const { popularName, originalSection, code, section, year, output } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+	await popularName.fill(
+		'Drug Price Competition and Patent Term Restoration Act',
+	);
+	await originalSection.fill('202');
+	await code.fill('U.S.C.');
+	await section.fill('271(e)');
+	await year.fill('2012');
+
+	await expect(output).toHaveText(
+		'Drug Price Competition and Patent Term Restoration Act § 202, U.S.C. § 271(e) (2012).',
+	);
 });
 
 test('statute, annotated code, requires and renders Publisher', async ({
