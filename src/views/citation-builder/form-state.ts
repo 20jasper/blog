@@ -240,20 +240,10 @@ export function createFormState(form: HTMLFormElement) {
 		materialLocation?: MaterialLocation;
 		mode?: Mode;
 	}): void {
-		if (display.sourceType !== undefined) {
-			setRadio('sourceType', display.sourceType);
-		}
-		if (display.availability !== undefined) {
-			setRadio('availability', display.availability);
-		}
-		if (display.codeType !== undefined) {
-			setRadio('codeType', display.codeType);
-		}
-		if (display.materialLocation !== undefined) {
-			setRadio('materialLocation', display.materialLocation);
-		}
-		if (display.mode !== undefined) {
-			setRadio('mode', display.mode);
+		for (const [name, value] of Object.entries(display)) {
+			if (value !== undefined) {
+				setRadio(name, value);
+			}
 		}
 	}
 

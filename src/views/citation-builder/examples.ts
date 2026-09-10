@@ -4,8 +4,6 @@ import type {
 	SourceType,
 } from '@components/citation-builder/state';
 
-// Golden cases verified against domain-spec.md §5, offered as an Example
-// picker so a visitor sees a real citation for each source type.
 export type Example = {
 	label: string;
 	sourceType: SourceType;
