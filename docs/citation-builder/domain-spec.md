@@ -90,9 +90,21 @@ r[case-history.phrases]
 > — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
 
 `aff’d,` `aff’g` `cert. denied,` `cert. granted,` `rev’d,` `rev’d on
-other grounds,` -- these six are always used when applicable. The full
-Table T14 list (`acq.`, `amended by`, `sub nom.`, `vacated,`, etc.) is
-offered too, not just the mandatory six.
+other grounds,`
+
+Full Table T14 list offered too (40 entries). Two corrected for an
+apparent source typo (`cert,`/`juris,` -> `cert.`/`juris.`, matching
+Rule 14.2's own prose).
+
+r[case-history.sub-nom]
+
+> "When the case has a different name in the subsequent history,
+> provide the new case name after the italicized phrase “sub nom.”
+> (“under the name of”)."
+> — [Indigo Book, Rule 14.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.3)
+
+`sub nom.` isn't in Table T14 -- it's Rule 14.3's own phrase, added
+to the same selectable list since it's part of the same feature.
 
 r[case-history.phrase-italicized]
 
@@ -109,9 +121,10 @@ punctuation already encodes whether a phrase takes a citation (trailing
 comma, e.g. `aff’d,`) or a case name as direct object (no comma, e.g.
 `aff’g`); the free-text field covers both. Requires both a phrase and
 a citation to render -- either alone is a no-op. Stacking multiple
-history phrases (as in the worked example above) and Rule 14.3's `sub
-nom.` new-case-name exception are out of scope; the full list includes
-`sub nom.` as a phrase, but doesn't special-case its usage.
+history phrases (as in the worked example above) is out of scope;
+`sub nom.` is selectable but not otherwise special-cased (Rule 14.3
+also permits omitting the new case name in some cases, not
+implemented).
 
 ## Short-Form Party Choice
 

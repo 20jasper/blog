@@ -1,4 +1,5 @@
 // r[impl case-history.phrases]
+// r[impl case-history.sub-nom]
 export const HISTORY_PHRASES = [
 	{ value: 'acq.', text: 'acq.' },
 	{ value: 'acq. in result', text: 'acq. in result' },
