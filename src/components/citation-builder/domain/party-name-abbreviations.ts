@@ -23,13 +23,46 @@ function splitTrailingPunctuation(word: string): {
 	return { core: word.slice(0, end), trailing: word.slice(end) };
 }
 
+function singularCandidates(word: string): string[] {
+	const lower = word.toLowerCase();
+	const candidates: string[] = [];
+	if (lower.endsWith('ies') && lower.length > 3) {
+		candidates.push(`${lower.slice(0, -3)}y`);
+	}
+	if (lower.endsWith('s') && lower.length > 1) {
+		candidates.push(lower.slice(0, -1));
+	}
+	return candidates;
+}
+
+// r[impl case-name.plural-abbreviation]
+function pluralizeAbbreviation(abbreviation: string): string {
+	return abbreviation.endsWith('.')
+		? `${abbreviation.slice(0, -1)}s.`
+		: `${abbreviation}s`;
+}
+
+function abbreviateWord(core: string): string | undefined {
+	const direct = byWord.get(core.toLowerCase());
+	if (direct !== undefined) {
+		return direct;
+	}
+	for (const candidate of singularCandidates(core)) {
+		const singularAbbreviation = byWord.get(candidate);
+		if (singularAbbreviation !== undefined) {
+			return pluralizeAbbreviation(singularAbbreviation);
+		}
+	}
+	return undefined;
+}
+
 // r[impl case-name.word-abbreviation]
 export function abbreviatePartyName(name: string): string {
 	return name
 		.split(' ')
 		.map((word) => {
 			const { core, trailing } = splitTrailingPunctuation(word);
-			const abbreviation = byWord.get(core.toLowerCase());
+			const abbreviation = abbreviateWord(core);
 			return abbreviation === undefined ? word : abbreviation + trailing;
 		})
 		.join(' ');

@@ -11,8 +11,18 @@ describe('abbreviatePartyName', () => {
 		['Dayton', 'Dayton'],
 		['CORPORATION', 'Corp.'],
 		['Corporation Smith', 'Corp. Smith'],
-		['Corporations', 'Corporations'],
 		['Incorporation', 'Incorporation'],
+	])('%s -> %s', (raw, expected) => {
+		expect(abbreviatePartyName(raw)).toBe(expected);
+	});
+
+	// r[verify case-name.plural-abbreviation]
+	it.each([
+		['Corporations', 'Corps.'],
+		['National Associations', "Nat'l Ass'ns"],
+		['Departments', "Dep'ts"],
+		['Universities', 'Univs.'],
+		['Corporations,', 'Corps.,'],
 	])('%s -> %s', (raw, expected) => {
 		expect(abbreviatePartyName(raw)).toBe(expected);
 	});
