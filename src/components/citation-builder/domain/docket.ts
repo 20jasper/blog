@@ -1,6 +1,11 @@
-const DOCKET_PREFIX = /^(?:case\s+no\.?|docket\s+no\.?|no\.?)(?=\s|$|\d)\s*/iu;
+const DOCKET_PREFIX = /^(?<prefix>(?:[a-z]+\.?\s+)*no)\.?(?=\s|$|\d)\s*/iu;
 
 // r[impl normalize.docket]
 export function normalizeDocket(raw: string): string {
-	return `No. ${raw.replace(DOCKET_PREFIX, '')}`;
+	const match = DOCKET_PREFIX.exec(raw);
+	if (match?.groups === undefined) {
+		return `No. ${raw}`;
+	}
+	const rest = raw.slice(match[0].length);
+	return `${match.groups.prefix}. ${rest}`;
 }

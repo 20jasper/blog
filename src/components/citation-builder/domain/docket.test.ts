@@ -8,8 +8,9 @@ describe('normalizeDocket', () => {
 		['05-1234', 'No. 05-1234'],
 		['No. 05-1234', 'No. 05-1234'],
 		['No.05-1234', 'No. 05-1234'],
-		['Case No. 21-56789', 'No. 21-56789'],
-		['Docket No. 21-56789', 'No. 21-56789'],
+		['Case No. 21-56789', 'Case No. 21-56789'],
+		['Docket No. 21-56789', 'Docket No. 21-56789'],
+		['Civ. A. No. 1234', 'Civ. A. No. 1234'],
 		['North-123', 'No. North-123'],
 		['Norfolk County 44', 'No. Norfolk County 44'],
 	])('%s -> %s', (raw, expected) => {
