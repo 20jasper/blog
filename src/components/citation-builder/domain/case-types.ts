@@ -1,3 +1,5 @@
+import { abbreviatePartyName } from './party-name-abbreviations';
+
 export type CaseTypeId = 'v' | 'in-re' | 'ex-parte';
 
 export type CaseNameInput =
@@ -48,9 +50,12 @@ export function assembleCaseName(input: CaseNameInput): string {
 	const caseType = CASE_TYPE_BY_ID[input.caseType];
 	switch (input.caseType) {
 		case 'v':
-			return caseType.template(input.party1, input.party2);
+			return caseType.template(
+				abbreviatePartyName(input.party1),
+				abbreviatePartyName(input.party2),
+			);
 		case 'in-re':
 		case 'ex-parte':
-			return caseType.template(input.party1);
+			return caseType.template(abbreviatePartyName(input.party1));
 	}
 }
