@@ -7,242 +7,27 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
 	<CitationBuilderUi />
 	<script>
-		import { render } from '@components/citation-builder/domain/render';
 		import {
 			assemble,
 			buildCitationInput,
-			deriveSelections,
-			EN_DASH,
-			hasStatuteFullFields,
-			HYPHEN,
-			initialCitationFields,
-			initialDisplayState,
-			isAvailability,
-			isCaseTypeId,
-			isCodeType,
-			isMaterialLocation,
-			isMonth,
-			isNameVariant,
-			isSourceType,
-			resolveShortFormKind,
-			selectFieldState,
-			type Availability,
-			type CaseTypeId,
-			type CitationFields,
-			type CodeType,
-			type DisplayState,
-			type Emphasis,
-			type FieldId,
-			type FieldRequirement,
-			type MaterialLocation,
-			type Mode,
-			type Month,
-			type NameVariant,
-			type SourceType,
-			type SpanSeparator,
 		} from '@components/citation-builder/state';
+		import { render } from '@components/citation-builder/domain/render';
 		import { createClipboardController } from './clipboard';
-		import { queryButtonRefs, queryFormRefs } from './dom-refs';
+		import { queryButtonRefs } from './dom-refs';
 		import { REPORTED_EXAMPLE } from './examples';
+		import { createFormState } from './form-state';
+		import type {
+			CitationFields,
+			DisplayState,
+			Emphasis,
+		} from '@components/citation-builder/state';
 
 		const form = document.querySelector<HTMLFormElement>('form')!;
 		const output = document.querySelector('output')!;
 		const { loadExampleButton, clearButton, copyButton } = queryButtonRefs();
 
 		const clipboard = createClipboardController(copyButton, output);
-
-		const {
-			caseTypeSelect,
-			party1Input,
-			party2Input,
-			courtInput,
-			pinciteInput,
-			volumeInput,
-			reporterInput,
-			firstPageInput,
-			yearInput,
-			nameVariantSelect,
-			idCheckbox,
-			docketInput,
-			databaseIdInput,
-			monthSelect,
-			dayInput,
-			popularNameInput,
-			titleInput,
-			codeInput,
-			sectionInput,
-			publisherInput,
-			supplementDesignationInput,
-			supplementYearInput,
-		} = queryFormRefs(form);
-
-		// Every CitationFields key needs an entry -- a missing one is a type
-		// error, not a field that silently never gets required/disabled.
-		const fieldRefs: Record<FieldId, HTMLInputElement | HTMLSelectElement> = {
-			caseType: caseTypeSelect,
-			party1: party1Input,
-			party2: party2Input,
-			court: courtInput,
-			pincite: pinciteInput,
-			volume: volumeInput,
-			reporter: reporterInput,
-			firstPage: firstPageInput,
-			year: yearInput,
-			docket: docketInput,
-			databaseId: databaseIdInput,
-			month: monthSelect,
-			day: dayInput,
-			popularName: popularNameInput,
-			title: titleInput,
-			code: codeInput,
-			section: sectionInput,
-			publisher: publisherInput,
-			supplementDesignation: supplementDesignationInput,
-			supplementYear: supplementYearInput,
-		};
-
-		function currentCaseType(): CaseTypeId {
-			const { value } = caseTypeSelect;
-			return isCaseTypeId(value) ? value : 'v';
-		}
-
-		function checkedRadioValue<T extends string>(
-			name: string,
-			isValid: (value: string) => value is T,
-			fallback: T,
-		): T {
-			const checked = form.querySelector<HTMLInputElement>(
-				`input[name="${name}"]:checked`,
-			);
-			return checked !== null && isValid(checked.value)
-				? checked.value
-				: fallback;
-		}
-
-		function currentSourceType(): SourceType {
-			return checkedRadioValue('sourceType', isSourceType, 'reported');
-		}
-
-		function currentMode(): Mode {
-			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="mode"]:checked',
-			);
-			return checked?.value === 'short' ? 'short' : 'full';
-		}
-
-		function currentAvailability(): Availability {
-			return checkedRadioValue('availability', isAvailability, 'database');
-		}
-
-		function currentCodeType(): CodeType {
-			return checkedRadioValue('codeType', isCodeType, 'official');
-		}
-
-		function currentMaterialLocation(): MaterialLocation {
-			return checkedRadioValue('materialLocation', isMaterialLocation, 'main');
-		}
-
-		function currentNameVariant(): NameVariant {
-			const { value } = nameVariantSelect;
-			return isNameVariant(value) ? value : 'full';
-		}
-
-		function currentMonth(): Month {
-			const { value } = monthSelect;
-			return isMonth(value) ? value : 'Jan.';
-		}
-
-		function currentEmphasis(): Emphasis {
-			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="emphasis"]:checked',
-			);
-			return checked?.value === 'underline' ? 'underline' : 'italic';
-		}
-
-		function currentSpanSeparator(): SpanSeparator {
-			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="spanSeparator"]:checked',
-			);
-			return checked?.value === 'en-dash' ? EN_DASH : HYPHEN;
-		}
-
-		function readCitationFields(): CitationFields {
-			return {
-				caseType: currentCaseType(),
-				party1: party1Input.value,
-				party2: party2Input.value,
-				court: courtInput.value,
-				pincite: pinciteInput.value,
-				volume: volumeInput.value,
-				reporter: reporterInput.value,
-				firstPage: firstPageInput.value,
-				year: yearInput.value,
-				docket: docketInput.value,
-				databaseId: databaseIdInput.value,
-				month: currentMonth(),
-				day: dayInput.value,
-				popularName: popularNameInput.value,
-				title: titleInput.value,
-				code: codeInput.value,
-				section: sectionInput.value,
-				publisher: publisherInput.value,
-				supplementDesignation: supplementDesignationInput.value,
-				supplementYear: supplementYearInput.value,
-			};
-		}
-
-		function readDisplayState(): DisplayState {
-			return {
-				sourceType: currentSourceType(),
-				availability: currentAvailability(),
-				codeType: currentCodeType(),
-				materialLocation: currentMaterialLocation(),
-				mode: currentMode(),
-				nameVariant: currentNameVariant(),
-				useId: idCheckbox.checked,
-				emphasis: currentEmphasis(),
-				spanSeparator: currentSpanSeparator(),
-			};
-		}
-
-		function setFieldRequirement(
-			input: HTMLInputElement | HTMLSelectElement,
-			requirement: FieldRequirement,
-		): void {
-			input.disabled = requirement === 'not-used';
-			input.required = requirement === 'required';
-		}
-
-		function setRadioGroupDisabled(name: string, disabled: boolean): void {
-			for (const input of form.querySelectorAll<HTMLInputElement>(
-				`input[name="${name}"]`,
-			)) {
-				input.disabled = disabled;
-			}
-		}
-
-		function updateFieldState(
-			fields: CitationFields,
-			display: DisplayState,
-		): void {
-			const selections = deriveSelections(fields, display);
-			const shortFormKind = resolveShortFormKind(selections.sourceShape);
-			const fieldState = selectFieldState(selections);
-
-			for (const id of Object.keys(fieldRefs) as FieldId[]) {
-				setFieldRequirement(fieldRefs[id], fieldState[id]);
-			}
-
-			nameVariantSelect.disabled = shortFormKind !== 'name';
-			idCheckbox.disabled = shortFormKind === undefined;
-			setRadioGroupDisabled(
-				'availability',
-				selections.sourceShape.sourceType !== 'unreported',
-			);
-			const isStatuteFull = hasStatuteFullFields(selections.sourceShape);
-			setRadioGroupDisabled('codeType', !isStatuteFull);
-			setRadioGroupDisabled('materialLocation', !isStatuteFull);
-		}
+		const formState = createFormState(form);
 
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
@@ -270,39 +55,20 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		function refresh(): void {
-			const fields = readCitationFields();
-			const display = readDisplayState();
-			updateFieldState(fields, display);
+			const fields = formState.readFields();
+			const display = formState.readDisplay();
+			formState.updateFieldState(fields, display);
 			updateOutput(fields, display);
 		}
 
-		function resetToDefaults(): void {
-			form.reset();
-			for (const input of form.querySelectorAll<HTMLInputElement>(
-				'input:not([type="radio"]):not([type="checkbox"])',
-			)) {
-				input.value = '';
-			}
-			const defaultFields = initialCitationFields();
-			const defaultDisplay = initialDisplayState();
-			caseTypeSelect.value = defaultFields.caseType;
-			monthSelect.value = defaultFields.month;
-			nameVariantSelect.value = defaultDisplay.nameVariant;
-		}
-
 		function clearFields(): void {
-			resetToDefaults();
+			formState.resetToDefaults();
 			refresh();
 		}
 
 		function loadExample(): void {
-			resetToDefaults();
-			for (const [id, value] of Object.entries(REPORTED_EXAMPLE) as [
-				FieldId,
-				string,
-			][]) {
-				fieldRefs[id].value = value;
-			}
+			formState.resetToDefaults();
+			formState.setFields(REPORTED_EXAMPLE);
 			refresh();
 		}
 
