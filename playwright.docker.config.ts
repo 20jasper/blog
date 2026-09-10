@@ -1,5 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
+if (process.env.RUNNING_IN_VISUAL_DOCKER !== 'true') {
+	throw new Error(
+		'Fonts and OS rendering differ outside Docker, producing wrong baselines. Run: pnpm run test:visual:docker',
+	);
+}
+
 export default defineConfig({
 	testDir: './e2e-visual',
 	webServer: {

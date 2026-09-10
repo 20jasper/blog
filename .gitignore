@@ -23,3 +23,5 @@ pnpm-debug.log*
 .netlify
 test-results/
 playwright-report/
+.vitest/
+coverage/

@@ -1,0 +1,43 @@
+---
+import FieldRow from './field-row.astro';
+import { FIELD_CONTROL_CLASS } from './field-control-class';
+
+export type Props = {
+	name: string;
+	label: string;
+	hint?: string;
+	options: { value: string; text: string }[];
+};
+
+const { name, label, hint, options } = Astro.props;
+const id = name;
+---
+
+<FieldRow
+	for={id}
+	label={label}
+	hint={hint}
+>
+	<div class="relative">
+		{
+			/* Disabled styling matches text-field.astro's <input> -- see its comment. */
+		}
+		<select
+			id={id}
+			name={name}
+			aria-describedby={hint === undefined ? undefined : `${id}-hint`}
+			class={`${FIELD_CONTROL_CLASS} appearance-none pr-8`}
+		>
+			{
+				options.map((option) => (
+					<option value={option.value}>{option.text}</option>
+				))
+			}
+		</select>
+		<span
+			class="text-foreground-secondary pointer-events-none absolute inset-y-0 right-3 flex items-center"
+			aria-hidden="true"
+			>▾</span
+		>
+	</div>
+</FieldRow>

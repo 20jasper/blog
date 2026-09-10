@@ -1,0 +1,19 @@
+---
+export type Props = {
+	legend: string;
+	visibleFor?: string;
+};
+
+const { legend, visibleFor } = Astro.props;
+---
+
+<fieldset
+	class="w-full max-w-full border-0 p-0"
+	data-visible-for={visibleFor}
+>
+	<legend
+		class="border-foreground-secondary/30 text-foreground mb-3 w-full border-b p-0 pb-2 text-lg font-semibold"
+		>{legend}</legend
+	>
+	<slot />
+</fieldset>

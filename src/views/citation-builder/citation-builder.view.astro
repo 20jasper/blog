@@ -1,0 +1,85 @@
+---
+import PageLayout from '@layouts/page-layout.astro';
+import CitationBuilderUi from './citation-builder.ui.astro';
+---
+
+<PageLayout title="Bluebook 22 Citation Generator">
+	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
+	<CitationBuilderUi />
+	<script>
+		import {
+			assemble,
+			buildCitationInput,
+		} from '@components/citation-builder/state';
+		import { render } from '@components/citation-builder/domain/render';
+		import { createClipboardController } from './clipboard';
+		import { queryButtonRefs } from './dom-refs';
+		import { REPORTED_EXAMPLE } from './examples';
+		import { createFormState } from './form-state';
+		import type {
+			CitationFields,
+			DisplayState,
+			Emphasis,
+		} from '@components/citation-builder/state';
+
+		const form = document.querySelector<HTMLFormElement>('form')!;
+		const output = document.querySelector('output')!;
+		const { loadExampleButton, clearButton, copyButton } = queryButtonRefs();
+
+		const clipboard = createClipboardController(copyButton, output);
+		const formState = createFormState(form);
+
+		function fillInPlaceholder(): void {
+			output.textContent = 'Fill in the fields above to generate a citation.';
+			clipboard.setCitation(undefined);
+		}
+
+		function setCitationOutput(
+			segments: Parameters<typeof render>[0],
+			emphasis: Emphasis,
+		): void {
+			const { html, plain } = render(segments, { emphasis });
+			output.innerHTML = html;
+			clipboard.setCitation({ html, plain });
+		}
+
+		function updateOutput(fields: CitationFields, display: DisplayState): void {
+			if (!form.checkValidity()) {
+				fillInPlaceholder();
+				return;
+			}
+			const segments = assemble(buildCitationInput(fields, display), {
+				spanSeparator: display.spanSeparator,
+			});
+			setCitationOutput(segments, display.emphasis);
+		}
+
+		function refresh(): void {
+			const fields = formState.readFields();
+			const display = formState.readDisplay();
+			formState.updateFieldState(fields, display);
+			updateOutput(fields, display);
+		}
+
+		function clearFields(): void {
+			formState.resetToDefaults();
+			refresh();
+		}
+
+		function loadExample(): void {
+			formState.resetToDefaults();
+			formState.setFields(REPORTED_EXAMPLE);
+			refresh();
+		}
+
+		form.addEventListener('input', refresh);
+		clearButton.addEventListener('click', clearFields);
+		loadExampleButton.addEventListener('click', loadExample);
+		form.addEventListener('submit', (event) => {
+			event.preventDefault();
+			void clipboard.copy();
+		});
+
+		loadExample();
+	</script>
+</PageLayout>

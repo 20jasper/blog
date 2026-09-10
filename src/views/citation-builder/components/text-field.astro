@@ -1,0 +1,36 @@
+---
+import FieldRow from './field-row.astro';
+import { FIELD_CONTROL_CLASS } from './field-control-class';
+
+export type Props = {
+	name: string;
+	label: string;
+	hint?: string;
+	inputmode?: 'numeric';
+	// Native validation, unlike inputmode -- rejects non-numeric before
+	// it reaches Number() in citation-input-builders.ts.
+	pattern?: string;
+};
+
+const { name, label, hint, inputmode, pattern } = Astro.props;
+const id = name;
+---
+
+<FieldRow
+	for={id}
+	label={label}
+	hint={hint}
+>
+	{
+		/* Dashed, not just dimmed, when disabled -- color alone read as active in testing. */
+	}
+	<input
+		id={id}
+		name={name}
+		type="text"
+		inputmode={inputmode}
+		pattern={pattern}
+		aria-describedby={hint === undefined ? undefined : `${id}-hint`}
+		class={FIELD_CONTROL_CLASS}
+	/>
+</FieldRow>
