@@ -68,14 +68,6 @@ r[weight-of-authority.parenthetical]
 > dissenting).`
 > — [Indigo Book, Rule 13.1](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R13.1)
 
-Free text, wrapped in parens and appended after the date parenthetical
-(and before any trailing URL, for online-only unreported cases).
-Applies to reported and unreported cases, full form only -- not
-statutes, which have no concept of weight of authority. Explanatory
-parentheticals (Rule 13.2, explaining what a case holds) and stacking
-multiple weight-of-authority parentheticals in one citation are out of
-scope; type them all into the one field if needed.
-
 ## Case History
 
 r[case-history.phrases]
@@ -89,22 +81,12 @@ r[case-history.phrases]
 > italicize them:"
 > — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
 
-`aff’d,` `aff’g` `cert. denied,` `cert. granted,` `rev’d,` `rev’d on
-other grounds,`
-
-Full Table T14 list offered too (40 entries). Two corrected for an
-apparent source typo (`cert,`/`juris,` -> `cert.`/`juris.`, matching
-Rule 14.2's own prose).
-
 r[case-history.sub-nom]
 
 > "When the case has a different name in the subsequent history,
 > provide the new case name after the italicized phrase “sub nom.”
 > (“under the name of”)."
 > — [Indigo Book, Rule 14.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.3)
-
-`sub nom.` isn't in Table T14 -- it's Rule 14.3's own phrase, added
-to the same selectable list since it's part of the same feature.
 
 r[case-history.phrase-italicized]
 
@@ -113,18 +95,6 @@ r[case-history.phrase-italicized]
 > 2014), aff’d, 793 F.3d 1169 (10th Cir.), cert. denied, 136 S. Ct. 595
 > (2015).`
 > — [Indigo Book, Rule 14.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R14.2)
-
-Phrase (italicized) + free-text citation/case-name, appended after
-everything else (weight of authority, URL). Only the phrase is
-italicized, not the surrounding comma or citation. Table T14's own
-punctuation already encodes whether a phrase takes a citation (trailing
-comma, e.g. `aff’d,`) or a case name as direct object (no comma, e.g.
-`aff’g`); the free-text field covers both. Requires both a phrase and
-a citation to render -- either alone is a no-op. Stacking multiple
-history phrases (as in the worked example above) is out of scope;
-`sub nom.` is selectable but not otherwise special-cased (Rule 14.3
-also permits omitting the new case name in some cases, not
-implemented).
 
 ## Short-Form Party Choice
 
@@ -306,20 +276,6 @@ r[signal.options]
 > "There are four basic categories of signals:"
 > — [Indigo Book, Rule 4.2](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R4.2)
 
-| Category                            | Signals                                                    |
-| ----------------------------------- | ---------------------------------------------------------- |
-| Signals for Supporting Authority    | `[No signal]`, `E.g.,`, `Accord`, `See`, `See Also`, `Cf.` |
-| Signals for Contradictory Authority | `Contra`, `But see`, `But cf.`                             |
-| Signals for Background Material     | `See generally`                                            |
-
-`Compare ... with ...` (Signals for Comparison) is out of scope --
-it cites two sources, and this tool assembles one citation at a time.
-Multi-authority ordering (Rule 4.3) is likewise out of scope.
-
-Rendered as `See also`, not the table's `See Also`: the signal is
-only ever sentence-initial here (Rule 4.1), so only its first word is
-capitalized.
-
 r[signal.typeface]
 
 > "Only the following items should be italicized: ... Introductory
@@ -403,9 +359,6 @@ r[unreported.online-only]
 > slip op. at 1 (N.Y. App. Div. Feb. 26, 2015),
 > http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.`
 > — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
-
-Same as `slip` (docket + `slip op. at` pincite), with the URL appended
-after the date parenthetical, separated by a comma.
 
 ## Unreported Short Form
 
@@ -492,8 +445,6 @@ r[statute.original-section]
 > `Drug Price Competition and Patent Term Restoration Act § 202,
 > 17 U.S.C. § 271(e) (2012).`
 > — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
-
-Meaningless without a popular name; a no-op if one isn't given.
 
 ## Statute Long Form
 
