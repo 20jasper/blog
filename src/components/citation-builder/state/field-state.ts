@@ -47,6 +47,7 @@ const NOT_USED: Record<FieldId, FieldRequirement> = {
 	month: 'not-used',
 	day: 'not-used',
 	popularName: 'not-used',
+	originalSection: 'not-used',
 	title: 'not-used',
 	code: 'not-used',
 	section: 'not-used',
@@ -156,6 +157,8 @@ function statuteFieldState(
 			return {
 				...NOT_USED,
 				popularName: 'optional',
+				// r[impl statute.original-section]
+				originalSection: 'optional',
 				title: 'optional',
 				code: 'required',
 				section: 'required',

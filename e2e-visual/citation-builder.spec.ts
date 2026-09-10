@@ -490,6 +490,26 @@ test('statute, official code, main volume renders the 17 U.S.C. § 107 worked ex
 	await expect(output).toHaveText('U.S.C. § 107 (2012).');
 });
 
+test('statute, original section number renders after the popular name', async ({
+	page,
+}) => {
+	const { popularName, originalSection, code, section, year, output } =
+		getCitationBuilderLocators(page);
+
+	await page.getByRole('radio', { name: 'Statute' }).check();
+	await popularName.fill(
+		'Drug Price Competition and Patent Term Restoration Act',
+	);
+	await originalSection.fill('202');
+	await code.fill('U.S.C.');
+	await section.fill('271(e)');
+	await year.fill('2012');
+
+	await expect(output).toHaveText(
+		'Drug Price Competition and Patent Term Restoration Act § 202, U.S.C. § 271(e) (2012).',
+	);
+});
+
 test('statute, annotated code, requires and renders Publisher', async ({
 	page,
 }) => {

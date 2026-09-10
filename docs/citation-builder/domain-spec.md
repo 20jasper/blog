@@ -370,6 +370,22 @@ r[statute.popular-name]
 > `Copyright Act of 1976, 17 U.S.C. §§ 101-1332 (2012)`
 > — [Georgetown, Federal Statutes](https://guides.ll.georgetown.edu/c.php?g=261289&p=2383798)
 
+## Statute Original Section Number
+
+r[statute.original-section]
+
+> "Include the original section number of the provision after the
+> statute name. “Original section number” refers to the section in the
+> original act, whereas “section number” refers to the equivalent
+> section as codified in the code."
+> — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
+
+> `Drug Price Competition and Patent Term Restoration Act § 202, 17
+U.S.C. § 271(e) (2012).`
+> — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
+
+Meaningless without a popular name; a no-op if one isn't given.
+
 ## Statute Long Form
 
 r[citation.statute-long-form]

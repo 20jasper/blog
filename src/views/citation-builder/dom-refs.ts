@@ -33,6 +33,7 @@ export function queryFormRefs(form: HTMLFormElement) {
 		monthSelect: field<HTMLSelectElement>(form, 'month'),
 		dayInput: field<HTMLInputElement>(form, 'day'),
 		popularNameInput: field<HTMLInputElement>(form, 'popularName'),
+		originalSectionInput: field<HTMLInputElement>(form, 'originalSection'),
 		titleInput: field<HTMLInputElement>(form, 'title'),
 		codeInput: field<HTMLInputElement>(form, 'code'),
 		sectionInput: field<HTMLInputElement>(form, 'section'),

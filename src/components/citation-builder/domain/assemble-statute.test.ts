@@ -66,6 +66,37 @@ describe('assembleStatute: popular name', () => {
 	});
 });
 
+// r[verify statute.original-section]
+describe('assembleStatute: original section number', () => {
+	it('matches the Indigo Book Rule 16.1.4 worked example', () => {
+		expect(
+			plainOf(
+				statute({
+					popularName: 'Drug Price Competition and Patent Term Restoration Act',
+					originalSection: '202',
+					title: undefined,
+					code: 'U.S.C.',
+					section: '271(e)',
+				}),
+			),
+		).toBe(
+			'Drug Price Competition and Patent Term Restoration Act § 202, U.S.C. § 271(e) (2012).',
+		);
+	});
+
+	it('omits the original section entirely when absent, keeping the popular name', () => {
+		expect(plainOf(statute({ popularName: 'Copyright Act of 1976' }))).toBe(
+			'Copyright Act of 1976, 17 U.S.C. § 107 (2012).',
+		);
+	});
+
+	it('is a no-op when the popular name itself is absent', () => {
+		expect(plainOf(statute({ originalSection: '202' }))).toBe(
+			'17 U.S.C. § 107 (2012).',
+		);
+	});
+});
+
 describe('assembleStatute: publisher and supplement', () => {
 	it('renders an annotated code with a publisher', () => {
 		expect(

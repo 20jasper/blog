@@ -23,6 +23,7 @@ export type CitationFields = {
 	day: string;
 
 	popularName: string;
+	originalSection: string;
 	title: string;
 	code: string;
 	section: string;
@@ -51,6 +52,7 @@ export function initialCitationFields(): CitationFields {
 		day: '',
 
 		popularName: '',
+		originalSection: '',
 		title: '',
 		code: '',
 		section: '',
