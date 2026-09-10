@@ -1,4 +1,4 @@
-import courts from '../../../../vendor/courts-db/courts_db/data/courts.json' with { type: 'json' };
+import courts from '@vendor/courts-db/courts_db/data/courts.json' with { type: 'json' };
 
 export const COURT_ABBREVIATIONS = courts
 	.filter((court) => court.citation_string !== '')

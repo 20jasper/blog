@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         id: pnpm-install
@@ -41,6 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true
       - name: Build image and compare screenshots against committed baselines
         run: docker compose run --rm visual-tests
       - name: Upload failure artifacts
