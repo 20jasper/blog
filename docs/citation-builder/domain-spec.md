@@ -154,6 +154,14 @@ Not implemented:
 > (e.g., United States)."
 > — [Suffolk, Bluebook Guide for Law Students](https://lawguides.suffolk.edu/bluebook/cases)
 
+## Plural Abbreviation
+
+r[case-name.plural-abbreviation]
+
+> "Unless otherwise indicated, plurals are formed by adding the letter
+> “s”."
+> — [Mitchell Hamline, Bluebook Citation (Kirwin), Table T6](https://mitchellhamline.edu/wp-content/uploads/sites/6/2015/11/Bluebook-Citation.pdf)
+
 ## Short-Form Case Name
 
 r[case-name.short-form]
