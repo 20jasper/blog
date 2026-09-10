@@ -1,19 +1,20 @@
 ---
 import FieldRow from './field-row.astro';
 import { FIELD_CONTROL_CLASS } from './field-control-class';
+import type { Option } from './option';
 
 export type Props = {
 	name: string;
 	label: string;
 	hint?: string;
 	inputmode?: 'numeric';
-	// Native validation, unlike inputmode -- rejects non-numeric before
-	// it reaches Number() in citation-input-builders.ts.
 	pattern?: string;
+	datalist?: readonly Option[];
 };
 
-const { name, label, hint, inputmode, pattern } = Astro.props;
+const { name, label, hint, inputmode, pattern, datalist } = Astro.props;
 const id = name;
+const datalistId = datalist === undefined ? undefined : `${id}-datalist`;
 ---
 
 <FieldRow
@@ -21,16 +22,23 @@ const id = name;
 	label={label}
 	hint={hint}
 >
-	{
-		/* Dashed, not just dimmed, when disabled -- color alone read as active in testing. */
-	}
 	<input
 		id={id}
 		name={name}
 		type="text"
 		inputmode={inputmode}
 		pattern={pattern}
+		list={datalistId}
 		aria-describedby={hint === undefined ? undefined : `${id}-hint`}
 		class={FIELD_CONTROL_CLASS}
 	/>
+	{
+		datalist !== undefined && (
+			<datalist id={datalistId}>
+				{datalist.map((option) => (
+					<option value={option.value}>{option.text}</option>
+				))}
+			</datalist>
+		)
+	}
 </FieldRow>

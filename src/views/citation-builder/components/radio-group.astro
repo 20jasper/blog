@@ -1,11 +1,11 @@
 ---
 import Choice from './choice.astro';
+import type { Option } from './option';
 
-// The repeated "labeled column of radios" shape, as a data array.
 export type Props = {
 	label: string;
 	name: string;
-	options: { value: string; text: string; checked?: boolean }[];
+	options: (Option & { checked?: boolean })[];
 };
 
 const { label, name, options } = Astro.props;

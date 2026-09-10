@@ -1,5 +1,6 @@
 ---
 import Button from '@components/button.astro';
+import { COURT_ABBREVIATIONS } from '@components/citation-builder/domain/court-abbreviations';
 import {
 	AVAILABILITIES,
 	CODE_TYPES,
@@ -17,7 +18,6 @@ import type { Props as FieldSpec } from './components/field.astro';
 
 const FORM_ID = 'citation-builder-form';
 
-// Marks the option matching defaultValue as the radio group's initial choice.
 function radioOptions<T extends { value: string; text: string }>(
 	items: readonly T[],
 	defaultValue: T['value'],
@@ -85,6 +85,7 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 		name: 'court',
 		label: 'Court (abbreviated)',
 		hint: 'e.g., Ohio Ct. App., 2d Cir.',
+		datalist: COURT_ABBREVIATIONS,
 	},
 	{
 		kind: 'text',

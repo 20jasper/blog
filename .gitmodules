@@ -1,0 +1,3 @@
+[submodule "vendor/courts-db"]
+	path = vendor/courts-db
+	url = https://github.com/freelawproject/courts-db.git

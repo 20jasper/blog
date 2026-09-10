@@ -1,12 +1,13 @@
 ---
 import FieldRow from './field-row.astro';
 import { FIELD_CONTROL_CLASS } from './field-control-class';
+import type { Option } from './option';
 
 export type Props = {
 	name: string;
 	label: string;
 	hint?: string;
-	options: { value: string; text: string }[];
+	options: Option[];
 };
 
 const { name, label, hint, options } = Astro.props;
@@ -19,9 +20,6 @@ const id = name;
 	hint={hint}
 >
 	<div class="relative">
-		{
-			/* Disabled styling matches text-field.astro's <input> -- see its comment. */
-		}
 		<select
 			id={id}
 			name={name}

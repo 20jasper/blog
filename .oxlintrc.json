@@ -1,5 +1,9 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"ignorePatterns": [
+		"vendor/**",
+		"src/components/citation-builder/domain/court-abbreviations.ts"
+	],
 	"plugins": ["typescript", "unicorn", "oxc", "import", "promise", "node"],
 	"categories": {
 		"correctness": "warn",
