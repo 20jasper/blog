@@ -30,6 +30,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			type CodeType,
 			type DisplayState,
 			type Emphasis,
+			type FieldId,
 			type FieldRequirement,
 			type MaterialLocation,
 			type Mode,
@@ -80,18 +81,51 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			supplementYearInput,
 		} = queryFormRefs(form);
 
+		// Every CitationFields key needs an entry -- a missing one is a type
+		// error, not a field that silently never gets required/disabled.
+		const fieldRefs: Record<FieldId, HTMLInputElement | HTMLSelectElement> = {
+			caseType: caseTypeSelect,
+			party1: party1Input,
+			party2: party2Input,
+			court: courtInput,
+			pincite: pinciteInput,
+			volume: volumeInput,
+			reporter: reporterInput,
+			firstPage: firstPageInput,
+			year: yearInput,
+			docket: docketInput,
+			databaseId: databaseIdInput,
+			month: monthSelect,
+			day: dayInput,
+			popularName: popularNameInput,
+			title: titleInput,
+			code: codeInput,
+			section: sectionInput,
+			publisher: publisherInput,
+			supplementDesignation: supplementDesignationInput,
+			supplementYear: supplementYearInput,
+		};
+
 		function currentCaseType(): CaseTypeId {
 			const { value } = caseTypeSelect;
 			return isCaseTypeId(value) ? value : 'v';
 		}
 
-		function currentSourceType(): SourceType {
+		function checkedRadioValue<T extends string>(
+			name: string,
+			isValid: (value: string) => value is T,
+			fallback: T,
+		): T {
 			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="sourceType"]:checked',
+				`input[name="${name}"]:checked`,
 			);
-			return checked !== null && isSourceType(checked.value)
+			return checked !== null && isValid(checked.value)
 				? checked.value
-				: 'reported';
+				: fallback;
+		}
+
+		function currentSourceType(): SourceType {
+			return checkedRadioValue('sourceType', isSourceType, 'reported');
 		}
 
 		function currentMode(): Mode {
@@ -102,30 +136,15 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		function currentAvailability(): Availability {
-			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="availability"]:checked',
-			);
-			return checked !== null && isAvailability(checked.value)
-				? checked.value
-				: 'database';
+			return checkedRadioValue('availability', isAvailability, 'database');
 		}
 
 		function currentCodeType(): CodeType {
-			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="codeType"]:checked',
-			);
-			return checked !== null && isCodeType(checked.value)
-				? checked.value
-				: 'official';
+			return checkedRadioValue('codeType', isCodeType, 'official');
 		}
 
 		function currentMaterialLocation(): MaterialLocation {
-			const checked = form.querySelector<HTMLInputElement>(
-				'input[name="materialLocation"]:checked',
-			);
-			return checked !== null && isMaterialLocation(checked.value)
-				? checked.value
-				: 'main';
+			return checkedRadioValue('materialLocation', isMaterialLocation, 'main');
 		}
 
 		function currentNameVariant(): NameVariant {
@@ -227,29 +246,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			const shortFormKind = resolveShortFormKind(selections.sourceShape);
 			const fieldState = selectFieldState(selections);
 
-			setFieldRequirement(caseTypeSelect, fieldState.caseType);
-			setFieldRequirement(party1Input, fieldState.party1);
-			setFieldRequirement(party2Input, fieldState.party2);
-			setFieldRequirement(courtInput, fieldState.court);
-			setFieldRequirement(pinciteInput, fieldState.pincite);
-			setFieldRequirement(volumeInput, fieldState.volume);
-			setFieldRequirement(reporterInput, fieldState.reporter);
-			setFieldRequirement(firstPageInput, fieldState.firstPage);
-			setFieldRequirement(yearInput, fieldState.year);
-			setFieldRequirement(docketInput, fieldState.docket);
-			setFieldRequirement(databaseIdInput, fieldState.databaseId);
-			setFieldRequirement(monthSelect, fieldState.month);
-			setFieldRequirement(dayInput, fieldState.day);
-			setFieldRequirement(popularNameInput, fieldState.popularName);
-			setFieldRequirement(titleInput, fieldState.title);
-			setFieldRequirement(codeInput, fieldState.code);
-			setFieldRequirement(sectionInput, fieldState.section);
-			setFieldRequirement(publisherInput, fieldState.publisher);
-			setFieldRequirement(
-				supplementDesignationInput,
-				fieldState.supplementDesignation,
-			);
-			setFieldRequirement(supplementYearInput, fieldState.supplementYear);
+			for (const id of Object.keys(fieldRefs) as FieldId[]) {
+				setFieldRequirement(fieldRefs[id], fieldState[id]);
+			}
 
 			nameVariantSelect.disabled = shortFormKind !== 'name';
 			idCheckbox.disabled = shortFormKind === undefined;
