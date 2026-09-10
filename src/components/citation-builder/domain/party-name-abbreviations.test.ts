@@ -10,6 +10,9 @@ describe('abbreviatePartyName', () => {
 		['Smith Brothers, Inc.', 'Smith Bros., Inc.'],
 		['Dayton', 'Dayton'],
 		['CORPORATION', 'Corp.'],
+		['Corporation Smith', 'Corp. Smith'],
+		['Corporations', 'Corporations'],
+		['Incorporation', 'Incorporation'],
 	])('%s -> %s', (raw, expected) => {
 		expect(abbreviatePartyName(raw)).toBe(expected);
 	});
