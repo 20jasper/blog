@@ -304,15 +304,12 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		function loadExample(): void {
 			resetToDefaults();
-			caseTypeSelect.value = REPORTED_EXAMPLE.caseType;
-			party1Input.value = REPORTED_EXAMPLE.party1;
-			party2Input.value = REPORTED_EXAMPLE.party2;
-			courtInput.value = REPORTED_EXAMPLE.court;
-			volumeInput.value = REPORTED_EXAMPLE.volume;
-			reporterInput.value = REPORTED_EXAMPLE.reporter;
-			firstPageInput.value = REPORTED_EXAMPLE.firstPage;
-			pinciteInput.value = REPORTED_EXAMPLE.pincite;
-			yearInput.value = REPORTED_EXAMPLE.year;
+			for (const [id, value] of Object.entries(REPORTED_EXAMPLE) as [
+				FieldId,
+				string,
+			][]) {
+				fieldRefs[id].value = value;
+			}
 			refresh();
 		}
 
