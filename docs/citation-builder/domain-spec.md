@@ -291,9 +291,10 @@ r[unreported.online-only]
 > through a court’s website. If so, include the URL."
 > — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
 
-> `Macy’s Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728, slip
-op. at 1 (N.Y. App. Div. Feb. 26, 2015),
-http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.`
+<!-- prettier-ignore -->
+> `Macy’s Inc. v. Martha Stewart Living Omnimedia, Inc., No. 1728,
+> slip op. at 1 (N.Y. App. Div. Feb. 26, 2015),
+> http://www.nycourts.gov/reporter/3dseries/2015/2015_01728.htm.`
 > — [Indigo Book, Rule 12.4.3](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R12.4.3)
 
 Same as `slip` (docket + `slip op. at` pincite), with the URL appended
@@ -380,8 +381,9 @@ r[statute.original-section]
 > section as codified in the code."
 > — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
 
-> `Drug Price Competition and Patent Term Restoration Act § 202, 17
-U.S.C. § 271(e) (2012).`
+<!-- prettier-ignore -->
+> `Drug Price Competition and Patent Term Restoration Act § 202,
+> 17 U.S.C. § 271(e) (2012).`
 > — [Indigo Book, Rule 16.1.4](https://law.resource.org/pub/us/code/blue/IndigoBook.html#R16.1.4)
 
 Meaningless without a popular name; a no-op if one isn't given.
