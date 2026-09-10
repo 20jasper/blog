@@ -224,12 +224,46 @@ export function createFormState(form: HTMLFormElement) {
 		}
 	}
 
+	function setRadio(name: string, value: string): void {
+		const input = form.querySelector<HTMLInputElement>(
+			`input[name="${name}"][value="${value}"]`,
+		);
+		if (input !== null) {
+			input.checked = true;
+		}
+	}
+
+	function setDisplay(display: {
+		sourceType?: SourceType;
+		availability?: Availability;
+		codeType?: CodeType;
+		materialLocation?: MaterialLocation;
+		mode?: Mode;
+	}): void {
+		if (display.sourceType !== undefined) {
+			setRadio('sourceType', display.sourceType);
+		}
+		if (display.availability !== undefined) {
+			setRadio('availability', display.availability);
+		}
+		if (display.codeType !== undefined) {
+			setRadio('codeType', display.codeType);
+		}
+		if (display.materialLocation !== undefined) {
+			setRadio('materialLocation', display.materialLocation);
+		}
+		if (display.mode !== undefined) {
+			setRadio('mode', display.mode);
+		}
+	}
+
 	return {
 		readFields,
 		readDisplay,
 		updateFieldState,
 		resetToDefaults,
 		setFields,
+		setDisplay,
 	};
 }
 

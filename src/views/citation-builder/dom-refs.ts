@@ -11,6 +11,7 @@ export function queryButtonRefs() {
 		)!,
 		clearButton: document.querySelector<HTMLButtonElement>('#clear-button')!,
 		copyButton: document.querySelector<HTMLButtonElement>('#copy-button')!,
+		exampleSelect: document.querySelector<HTMLSelectElement>('#example')!,
 	};
 }
 
