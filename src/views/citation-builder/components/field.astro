@@ -1,6 +1,7 @@
 ---
 import SelectField from './select-field.astro';
 import TextField from './text-field.astro';
+import type { Option } from './option';
 
 type BaseFieldSpec = {
 	name: string;
@@ -12,12 +13,12 @@ export type Props =
 	| (BaseFieldSpec & {
 			kind: 'text';
 			inputmode?: 'numeric';
-			// Native validation, unlike inputmode -- rejects before Number().
 			pattern?: string;
+			datalist?: readonly Option[];
 	  })
 	| (BaseFieldSpec & {
 			kind: 'select';
-			options: { value: string; text: string }[];
+			options: Option[];
 	  });
 
 const spec = Astro.props;
