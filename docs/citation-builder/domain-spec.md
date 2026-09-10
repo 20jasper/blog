@@ -96,6 +96,12 @@ Not implemented:
 > (e.g., United States)."
 > — [Suffolk, Bluebook Guide for Law Students](https://lawguides.suffolk.edu/bluebook/cases)
 
+Matching is exact-word only (no plural/derived-form inflection); some
+plurals are their own listed word (`Brothers` -> `Bros.`), but the
+vendored dataset doesn't list every plural Table 6 has (e.g.
+`Corporations` -> `Corps.` is a real Bluebook abbreviation missing from
+`case_name_abbreviations.json`).
+
 ## Short-Form Case Name
 
 r[case-name.short-form]
