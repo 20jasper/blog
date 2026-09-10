@@ -14,8 +14,8 @@
 		"lint:links": "remark 'src/content/blog/**/*.md' --quiet --frail && remark 'src/content/blog/**/*.mdx' --quiet --frail --use remark-mdx",
 		"lint": "astro check && oxlint --type-aware --deny-warnings . && pnpm run lint:links",
 		"test": "vitest run --coverage",
-		"test:visual:docker": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
-		"test:visual:docker:update": "HOST_UID=$(id -u) HOST_GID=$(id -g) PLAYWRIGHT_ARGS=--update-snapshots docker compose run --rm visual-tests"
+		"test:e2e": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
+		"test:e2e:update": "PLAYWRIGHT_ARGS=--update-snapshots pnpm run test:e2e"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.10",

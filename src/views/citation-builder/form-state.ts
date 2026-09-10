@@ -8,7 +8,6 @@ import {
 	isAvailability,
 	isCaseTypeId,
 	isCodeType,
-	isMaterialLocation,
 	isMonth,
 	isNameVariant,
 	isSignal,
@@ -48,6 +47,8 @@ export function createFormState(form: HTMLFormElement) {
 		nameVariantSelect,
 		signalSelect,
 		idCheckbox,
+		materialLocationMainCheckbox,
+		materialLocationSupplementCheckbox,
 	} = refs;
 
 	// Every CitationFields key needs an entry -- a missing one is a type
@@ -118,7 +119,12 @@ export function createFormState(form: HTMLFormElement) {
 	}
 
 	function currentMaterialLocation(): MaterialLocation {
-		return checkedRadioValue('materialLocation', isMaterialLocation, 'main');
+		const main = materialLocationMainCheckbox.checked;
+		const supplement = materialLocationSupplementCheckbox.checked;
+		if (main && supplement) {
+			return 'both';
+		}
+		return supplement ? 'supplement' : 'main';
 	}
 
 	function currentNameVariant(): NameVariant {
@@ -224,7 +230,8 @@ export function createFormState(form: HTMLFormElement) {
 		);
 		const isStatuteFull = hasStatuteFullFields(selections.sourceShape);
 		setRadioGroupDisabled('codeType', !isStatuteFull);
-		setRadioGroupDisabled('materialLocation', !isStatuteFull);
+		materialLocationMainCheckbox.disabled = !isStatuteFull;
+		materialLocationSupplementCheckbox.disabled = !isStatuteFull;
 	}
 
 	function resetToDefaults(): void {
