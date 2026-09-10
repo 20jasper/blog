@@ -167,6 +167,34 @@ describe('selectFieldState: unreported', () => {
 		},
 	);
 
+	// r[verify unreported.online-only]
+	it.each([
+		['database', 'not-used'],
+		['slip', 'not-used'],
+		['online', 'required'],
+	] as const)('full form, availability %s -> url %s', (availability, url) => {
+		const sourceShape: SourceShape = {
+			sourceType: 'unreported',
+			mode: 'full',
+			availability,
+		};
+		const state = selectFieldState({ sourceShape, caseType: 'v' });
+
+		expect(state.url).toBe(url);
+	});
+
+	it('short form never uses the url field, regardless of availability', () => {
+		const sourceShape: SourceShape = {
+			sourceType: 'unreported',
+			mode: 'short',
+			kind: 'none',
+			availability: 'online',
+		};
+		const state = selectFieldState({ sourceShape, caseType: 'v' });
+
+		expect(state.url).toBe('not-used');
+	});
+
 	it('requires month/day/year only for full, never for short', () => {
 		const full = selectFieldState({
 			sourceShape: {
