@@ -75,7 +75,11 @@ test.describe('accessibility and layout (every page)', () => {
 				await expectNoHorizontalScroll(page);
 			});
 
-			test('has no axe violations', async ({ page }) => {
+			test('has no axe violations', async ({ page, browserName }) => {
+				test.skip(
+					browserName !== 'chromium' && process.env.FULL_AXE_SCAN !== 'true',
+					'axe scan restricted to chromium by default -- set FULL_AXE_SCAN=true to run on every browser',
+				);
 				await expectNoAxeViolations(page);
 			});
 		});

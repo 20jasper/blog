@@ -15,7 +15,8 @@
 		"lint": "astro check && oxlint --type-aware --deny-warnings . && pnpm run lint:links",
 		"test": "vitest run --coverage",
 		"test:e2e": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
-		"test:e2e:update": "PLAYWRIGHT_ARGS=--update-snapshots pnpm run test:e2e"
+		"test:e2e:update": "PLAYWRIGHT_ARGS=--update-snapshots pnpm run test:e2e",
+		"test:e2e:full-axe": "FULL_AXE_SCAN=true pnpm run test:e2e"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.10",
