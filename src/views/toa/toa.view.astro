@@ -48,15 +48,18 @@ import SavedCitationsUi from './toa.ui.astro';
 				const editLink =
 					item.querySelector<HTMLAnchorElement>('.toa-item-edit')!;
 				editLink.href = `/tools/citation-builder?edit=${citation.id}`;
+				editLink.setAttribute('aria-label', `Edit ${citation.label}`);
 
 				const copyButton =
 					item.querySelector<HTMLButtonElement>('.toa-item-copy')!;
+				copyButton.setAttribute('aria-label', `Copy ${citation.label}`);
 				copyButton.addEventListener('click', () => {
 					void copyToClipboard(copyButton, citation.label);
 				});
 
 				const deleteButton =
 					item.querySelector<HTMLButtonElement>('.toa-item-delete')!;
+				deleteButton.setAttribute('aria-label', `Delete ${citation.label}`);
 				deleteButton.addEventListener('click', () => {
 					if (!confirm(`Delete "${citation.label}"?`)) {
 						return;
