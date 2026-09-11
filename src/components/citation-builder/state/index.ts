@@ -50,6 +50,17 @@ export type { SourceShape } from './source-shape';
 
 export { isSourceType, SOURCE_TYPES } from './source-type';
 
+export { loadPersistedState, savePersistedState } from './persisted-state';
+export type { PersistedState } from './persisted-state';
+
+export {
+	findSavedCitation,
+	loadSavedCitations,
+	saveCitation,
+	updateSavedCitation,
+} from './saved-citations';
+export type { SavedCitation } from './saved-citations';
+
 export { HISTORY_PHRASES, isHistoryPhrase } from '../domain/case-history';
 export type { HistoryPhrase } from '../domain/case-history';
 export { CODE_ABBREVIATIONS } from '../domain/code-abbreviations';

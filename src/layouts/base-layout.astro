@@ -9,9 +9,10 @@ type Props = {
 	description?: string;
 	math?: boolean;
 	noindex?: boolean;
+	navLinks?: { href: string; text: string }[];
 };
 
-const { math, title, description, noindex } = Astro.props;
+const { math, title, description, noindex, navLinks } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,10 +27,16 @@ const { math, title, description, noindex } = Astro.props;
 	<body
 		class="bg-background text-foreground flex min-h-screen flex-col px-4 font-sans text-xl"
 	>
-		<Header border="bottom" />
+		<Header
+			border="bottom"
+			links={navLinks}
+		/>
 		<slot />
 		<div class="mt-auto">
-			<Header border="top" />
+			<Header
+				border="top"
+				links={navLinks}
+			/>
 			<footer class="p-4">
 				<nav
 					aria-label="webring"

@@ -6,8 +6,12 @@ type Props = HTMLAttributes<'a'> & { border: 'top' | 'bottom' };
 const { href, class: className, border, ...props } = Astro.props;
 
 const { pathname } = Astro.url;
+const normalizedPathname =
+	pathname.length > 1 && pathname.endsWith('/')
+		? pathname.slice(0, -1)
+		: pathname;
 const subpath = pathname.match(/[^/]+/gu);
-const isActive = href === pathname || href === `/${subpath?.[0]}`;
+const isActive = href === normalizedPathname || href === `/${subpath?.[0]}`;
 ---
 
 <a

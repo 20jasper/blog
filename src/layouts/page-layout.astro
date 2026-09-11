@@ -5,14 +5,20 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '@src/consts';
 type Props = {
 	title?: string;
 	description?: string;
+	navLinks?: { href: string; text: string }[];
 };
 
-const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	navLinks,
+} = Astro.props;
 ---
 
 <BaseLayout
 	title={title}
 	description={description}
+	navLinks={navLinks}
 >
 	<main class="mx-auto my-4 max-w-prose text-xl">
 		<slot />

@@ -1,21 +1,32 @@
 ---
 import PageLayout from '@layouts/page-layout.astro';
 import CitationBuilderUi from './citation-builder.ui.astro';
+import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 ---
 
-<PageLayout title="Bluebook 22 Citation Generator">
+<PageLayout
+	title="Bluebook 22 Citation Generator"
+	navLinks={CITATION_BUILDER_NAV_LINKS}
+>
 	<h1 class="my-5 text-3xl font-bold">Bluebook 22 Citation Generator</h1>
 	<CitationBuilderUi />
 	<script>
 		import {
 			assemble,
 			buildCitationInput,
+			findSavedCitation,
+			saveCitation,
+			updateSavedCitation,
 		} from '@components/citation-builder/state';
 		import { render } from '@components/citation-builder/domain/render';
 		import { createClipboardController } from './clipboard';
 		import { queryButtonRefs } from './dom-refs';
 		import { EXAMPLES, REPORTED_EXAMPLE } from './examples';
 		import { createFormState } from './form-state';
+		import {
+			loadPersistedState,
+			savePersistedState,
+		} from '@components/citation-builder/state';
 		import type {
 			CitationFields,
 			DisplayState,
@@ -30,8 +41,13 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		const clipboard = createClipboardController(copyButton, output);
 		const formState = createFormState(form);
 
+		let lastRendered: { html: string; plain: string } | undefined;
+		let trackedCitationId: string | null = null;
+		let suppressAutoSave = false;
+
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
+			lastRendered = undefined;
 			clipboard.setCitation(undefined);
 		}
 
@@ -41,6 +57,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		): void {
 			const { html, plain } = render(segments, { emphasis });
 			output.innerHTML = html;
+			lastRendered = { html, plain };
 			clipboard.setCitation({ html, plain });
 		}
 
@@ -56,15 +73,39 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			setCitationOutput(segments, display.emphasis);
 		}
 
+		function autoSaveCitation(
+			fields: CitationFields,
+			display: DisplayState,
+		): void {
+			if (lastRendered === undefined || suppressAutoSave) {
+				return;
+			}
+			const label = lastRendered.plain;
+
+			const updated =
+				trackedCitationId === null
+					? undefined
+					: updateSavedCitation(trackedCitationId, fields, display, label);
+			const citation = updated ?? saveCitation(fields, display, label);
+
+			if (trackedCitationId !== citation.id) {
+				trackedCitationId = citation.id;
+				history.replaceState(null, '', `?edit=${citation.id}`);
+			}
+		}
+
 		function refresh(): void {
 			const fields = formState.readFields();
 			const display = formState.readDisplay();
 			formState.updateFieldState(fields, display);
 			updateOutput(fields, display);
+			savePersistedState(fields, display);
+			autoSaveCitation(fields, display);
 		}
 
 		function clearFields(): void {
 			formState.resetToDefaults();
+			trackedCitationId = null;
 			refresh();
 		}
 
@@ -75,11 +116,42 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 				) ?? REPORTED_EXAMPLE;
 			formState.resetToDefaults();
 			formState.setDisplay({
+				...formState.readDisplay(),
 				sourceType: example.sourceType,
-				codeType: example.codeType,
+				...(example.codeType === undefined
+					? {}
+					: { codeType: example.codeType }),
 			});
 			formState.setFields(example.fields);
+			trackedCitationId = null;
+			suppressAutoSave = true;
 			refresh();
+			suppressAutoSave = false;
+		}
+
+		function loadSavedOrExample(): void {
+			const saved = loadPersistedState();
+			if (saved === null) {
+				loadExample();
+				return;
+			}
+			formState.resetToDefaults();
+			formState.setFields(saved.fields);
+			formState.setDisplay(saved.display);
+			refresh();
+		}
+
+		function loadForEditing(id: string): boolean {
+			const citation = findSavedCitation(id);
+			if (citation === undefined) {
+				return false;
+			}
+			formState.resetToDefaults();
+			formState.setFields(citation.fields);
+			formState.setDisplay(citation.display);
+			trackedCitationId = id;
+			refresh();
+			return true;
 		}
 
 		form.addEventListener('input', refresh);
@@ -90,6 +162,9 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			void clipboard.copy();
 		});
 
-		loadExample();
+		const editId = new URLSearchParams(location.search).get('edit');
+		if (editId === null || !loadForEditing(editId)) {
+			loadSavedOrExample();
+		}
 	</script>
 </PageLayout>
