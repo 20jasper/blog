@@ -105,3 +105,7 @@ export function updateSavedCitation(
 	writeRawList(rawList.with(index, updated));
 	return updated;
 }
+
+export function deleteSavedCitation(id: string): void {
+	writeRawList(readRawList().filter((entry) => !hasId(entry, id)));
+}

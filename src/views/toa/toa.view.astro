@@ -11,7 +11,10 @@ import SavedCitationsUi from './toa.ui.astro';
 	<h1 class="my-5 text-3xl font-bold">Saved Citations</h1>
 	<SavedCitationsUi />
 	<script>
-		import { loadSavedCitations } from '@components/citation-builder/state';
+		import {
+			deleteSavedCitation,
+			loadSavedCitations,
+		} from '@components/citation-builder/state';
 
 		const list = document.querySelector<HTMLOListElement>('#toa-list')!;
 		const empty = document.querySelector<HTMLElement>('#toa-empty')!;
@@ -50,6 +53,16 @@ import SavedCitationsUi from './toa.ui.astro';
 					item.querySelector<HTMLButtonElement>('.toa-item-copy')!;
 				copyButton.addEventListener('click', () => {
 					void copyToClipboard(copyButton, citation.label);
+				});
+
+				const deleteButton =
+					item.querySelector<HTMLButtonElement>('.toa-item-delete')!;
+				deleteButton.addEventListener('click', () => {
+					if (!confirm(`Delete "${citation.label}"?`)) {
+						return;
+					}
+					deleteSavedCitation(citation.id);
+					render();
 				});
 
 				fragment.append(item);

@@ -54,6 +54,7 @@ export { loadPersistedState, savePersistedState } from './persisted-state';
 export type { PersistedState } from './persisted-state';
 
 export {
+	deleteSavedCitation,
 	findSavedCitation,
 	loadSavedCitations,
 	saveCitation,

@@ -8,21 +8,28 @@ const STORAGE_KEY = 'citation-builder:v1';
 const persistedStateSchema = z.object({
 	fields: citationFieldsSchema,
 	display: displayStateSchema,
+	citationId: z.nullable(z.string()),
 });
 
 export type PersistedState = {
 	fields: CitationFields;
 	display: DisplayState;
+	citationId: string | null;
 };
 
 export function savePersistedState(
 	fields: CitationFields,
 	display: DisplayState,
+	citationId: string | null,
 ) {
 	try {
 		localStorage.setItem(
 			STORAGE_KEY,
-			JSON.stringify({ fields, display } satisfies PersistedState),
+			JSON.stringify({
+				fields,
+				display,
+				citationId,
+			} satisfies PersistedState),
 		);
 	} catch {
 		// storage full or blocked (private mode) — persistence is best-effort

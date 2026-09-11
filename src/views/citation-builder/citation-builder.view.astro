@@ -99,8 +99,8 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			const display = formState.readDisplay();
 			formState.updateFieldState(fields, display);
 			updateOutput(fields, display);
-			savePersistedState(fields, display);
 			autoSaveCitation(fields, display);
+			savePersistedState(fields, display, trackedCitationId);
 		}
 
 		function clearFields(): void {
@@ -138,6 +138,10 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			formState.resetToDefaults();
 			formState.setFields(saved.fields);
 			formState.setDisplay(saved.display);
+			trackedCitationId = saved.citationId;
+			if (trackedCitationId !== null) {
+				history.replaceState(null, '', `?edit=${trackedCitationId}`);
+			}
 			refresh();
 		}
 

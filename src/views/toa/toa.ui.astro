@@ -6,7 +6,11 @@ import Button from '@components/button.astro';
 	id="toa-empty"
 	class="text-foreground-secondary"
 >
-	No saved citations yet.
+	No saved citations yet. <a
+		href="/tools/citation-builder"
+		class="text-accent underline"
+		>Build one</a
+	> to get started.
 </p>
 
 <ol
@@ -28,6 +32,13 @@ import Button from '@components/button.astro';
 				class="toa-item-copy"
 			>
 				Copy
+			</Button>
+			<Button
+				type="button"
+				variant="flat"
+				class="toa-item-delete"
+			>
+				Delete
 			</Button>
 		</span>
 	</li>

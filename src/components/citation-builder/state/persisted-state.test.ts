@@ -40,13 +40,26 @@ describe('loadPersistedState', () => {
 		expect(loadPersistedState()).toBeNull();
 	});
 
-	it('round-trips a saved fields/display pair', () => {
+	it('round-trips a saved fields/display/citationId triple', () => {
 		const fields = { ...initialCitationFields(), party1: 'Beaven' };
 		const display = { ...initialDisplayState(), signal: 'see' } as const;
 
-		savePersistedState(fields, display);
+		savePersistedState(fields, display, 'citation-1');
 
-		expect(loadPersistedState()).toEqual({ fields, display });
+		expect(loadPersistedState()).toEqual({
+			fields,
+			display,
+			citationId: 'citation-1',
+		});
+	});
+
+	it('round-trips a null citationId', () => {
+		const fields = initialCitationFields();
+		const display = initialDisplayState();
+
+		savePersistedState(fields, display, null);
+
+		expect(loadPersistedState()?.citationId).toBeNull();
 	});
 
 	it('returns null for malformed JSON', () => {

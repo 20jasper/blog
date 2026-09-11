@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { initialCitationFields } from './citation-fields';
 import { initialDisplayState } from './display-state';
 import {
+	deleteSavedCitation,
 	findSavedCitation,
 	loadSavedCitations,
 	saveCitation,
@@ -154,5 +155,26 @@ describe('findSavedCitation', () => {
 
 	it('returns undefined for an unknown id', () => {
 		expect(findSavedCitation('missing')).toBeUndefined();
+	});
+});
+
+describe('deleteSavedCitation', () => {
+	it('removes only the targeted id', () => {
+		const first = saveCitation(FIELDS, DISPLAY, 'first');
+		saveCitation(FIELDS, DISPLAY, 'second');
+
+		deleteSavedCitation(first.id);
+
+		const remaining = loadSavedCitations();
+		expect(remaining).toHaveLength(1);
+		expect(remaining[0]?.label).toBe('second');
+	});
+
+	it('is a no-op for an unknown id', () => {
+		saveCitation(FIELDS, DISPLAY, 'first');
+
+		deleteSavedCitation('missing');
+
+		expect(loadSavedCitations()).toHaveLength(1);
 	});
 });
