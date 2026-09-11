@@ -16,6 +16,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		import { queryButtonRefs } from './dom-refs';
 		import { EXAMPLES, REPORTED_EXAMPLE } from './examples';
 		import { createFormState } from './form-state';
+		import { setupFilteredDatalists } from './filtered-datalist';
 		import type {
 			CitationFields,
 			DisplayState,
@@ -82,6 +83,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 			refresh();
 		}
 
+		setupFilteredDatalists(form);
 		form.addEventListener('input', refresh);
 		clearButton.addEventListener('click', clearFields);
 		loadExampleButton.addEventListener('click', loadExample);

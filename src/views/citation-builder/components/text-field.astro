@@ -29,16 +29,21 @@ const datalistId = datalist === undefined ? undefined : `${id}-datalist`;
 		inputmode={inputmode}
 		pattern={pattern}
 		list={datalistId}
+		data-datalist-source={datalistId}
 		aria-describedby={hint === undefined ? undefined : `${id}-hint`}
 		class={FIELD_CONTROL_CLASS}
 	/>
 	{
 		datalist !== undefined && (
-			<datalist id={datalistId}>
-				{datalist.map((option) => (
-					<option value={option.value}>{option.text}</option>
-				))}
-			</datalist>
+			<Fragment>
+				<datalist id={datalistId} />
+				<script
+					is:inline
+					type="application/json"
+					id={`${datalistId}-source`}
+					set:html={JSON.stringify(datalist)}
+				/>
+			</Fragment>
 		)
 	}
 </FieldRow>
