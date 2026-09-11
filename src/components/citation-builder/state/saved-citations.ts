@@ -38,7 +38,7 @@ function writeRawList(list: unknown[]): void {
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 	} catch {
-		// storage full or blocked (private mode) — persistence is best-effort
+		// storage full or blocked (private mode)
 	}
 }
 

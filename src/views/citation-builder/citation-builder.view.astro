@@ -54,9 +54,7 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			saveButton.textContent =
 				trackedCitationId === null ? 'Save citation' : 'Update saved citation';
 			saveStatus.textContent =
-				trackedCitationId === null
-					? 'Not saved yet.'
-					: 'Saved — editing this one.';
+				trackedCitationId === null ? 'Not saved yet.' : 'Saved.';
 		}
 
 		function fillInPlaceholder(): void {

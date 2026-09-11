@@ -32,7 +32,7 @@ export function savePersistedState(
 			} satisfies PersistedState),
 		);
 	} catch {
-		// storage full or blocked (private mode) — persistence is best-effort
+		// storage full or blocked (private mode)
 	}
 }
 
