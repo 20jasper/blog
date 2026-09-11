@@ -41,7 +41,6 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			clearButton,
 			copyButton,
 			saveButton,
-			saveStatus,
 		} = queryButtonRefs();
 
 		const clipboard = createClipboardController(copyButton, output);
@@ -49,58 +48,6 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 
 		let lastRendered: { html: string; plain: string } | undefined;
 		let trackedCitationId: string | null = null;
-
-		function shallowEqual(
-			a: Record<string, unknown>,
-			b: Record<string, unknown>,
-		): boolean {
-			const aKeys = Object.keys(a);
-			return (
-				aKeys.length === Object.keys(b).length &&
-				aKeys.every((key) => a[key] === b[key])
-			);
-		}
-
-		function matchesSavedCitation(
-			fields: CitationFields,
-			display: DisplayState,
-		): boolean {
-			if (trackedCitationId === null) {
-				return false;
-			}
-			const stored = findSavedCitation(trackedCitationId);
-			return (
-				stored !== undefined &&
-				shallowEqual(stored.fields, fields) &&
-				shallowEqual(stored.display, display)
-			);
-		}
-
-		function setSaveStatus(
-			fields: CitationFields,
-			display: DisplayState,
-		): void {
-			saveButton.textContent =
-				trackedCitationId === null ? 'Save citation' : 'Update saved citation';
-
-			// Stays clickable even when invalid -- clicking it while invalid
-			// calls reportValidity(), which surfaces the browser's own native
-			// "fill out this field" prompts. A silently-disabled button gives
-			// no feedback about what's missing.
-			if (lastRendered === undefined) {
-				saveButton.disabled = false;
-				saveStatus.textContent = 'Fill in required fields to save.';
-				return;
-			}
-			if (matchesSavedCitation(fields, display)) {
-				saveButton.disabled = true;
-				saveStatus.textContent = 'Saved.';
-				return;
-			}
-			saveButton.disabled = false;
-			saveStatus.textContent =
-				trackedCitationId === null ? 'Not saved yet.' : 'Unsaved changes.';
-		}
 
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
@@ -136,12 +83,10 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			formState.updateFieldState(fields, display);
 			updateOutput(fields, display);
 			savePersistedState(fields, display, trackedCitationId);
-			setSaveStatus(fields, display);
 		}
 
 		function saveCurrentCitation(): void {
 			if (lastRendered === undefined) {
-				form.reportValidity();
 				return;
 			}
 			const fields = formState.readFields();
@@ -212,18 +157,15 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 		form.addEventListener('input', refresh);
 		clearButton.addEventListener('click', clearFields);
 		loadExampleButton.addEventListener('click', loadExample);
-		saveButton.addEventListener('click', saveCurrentCitation);
 		form.addEventListener('submit', (event) => {
 			event.preventDefault();
-			void clipboard.copy();
+			if (event.submitter === saveButton) {
+				saveCurrentCitation();
+			} else {
+				void clipboard.copy();
+			}
 		});
 
-		// A reload must never discard unsaved edits: if the URL is asking to
-		// edit the exact same citation the draft already tracks, the draft
-		// (which may be ahead of what's actually saved) wins over a clean
-		// re-fetch of the saved record. Only fetch the clean saved record
-		// when the URL points at a citation the current draft doesn't match
-		// (e.g. navigating here via an Edit link for a different citation).
 		const editId = new URLSearchParams(location.search).get('edit');
 		const saved = loadPersistedState();
 		if (saved !== null && saved.citationId === editId) {

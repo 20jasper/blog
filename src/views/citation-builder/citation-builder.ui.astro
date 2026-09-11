@@ -254,6 +254,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 ];
 ---
 
+<h2 class="text-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
+	Build
+</h2>
 <div class="mb-4 flex flex-wrap items-end gap-3">
 	<SelectField
 		name="example"
@@ -357,13 +360,11 @@ const STATUTE_FIELDS: FieldSpec[] = [
 </form>
 
 <div
-	role="region"
-	aria-label="Citation result"
 	class="border-foreground-secondary/30 bg-background-secondary sticky bottom-0 mt-6 rounded-2xl border px-4 py-3"
 >
-	<p class="text-foreground text-xs font-semibold tracking-wide uppercase">
-		Citation
-	</p>
+	<h2 class="text-foreground text-xs font-semibold tracking-wide uppercase">
+		Result
+	</h2>
 	<output
 		for={FORM_ID}
 		class="mt-1 block max-h-24 w-full max-w-full overflow-y-auto text-lg break-words"
@@ -386,17 +387,11 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		</Button>
 		<Button
 			id="save-button"
-			type="button"
+			type="submit"
+			form={FORM_ID}
 			variant="flat"
-			aria-describedby="save-status"
 		>
-			Save citation
+			Save
 		</Button>
 	</div>
-	<p
-		id="save-status"
-		aria-live="polite"
-		class="text-foreground mt-2 text-sm"
-	>
-	</p>
 </div>

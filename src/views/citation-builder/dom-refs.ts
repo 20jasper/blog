@@ -13,7 +13,6 @@ export function queryButtonRefs() {
 		clearButton: document.querySelector<HTMLButtonElement>('#clear-button')!,
 		copyButton: document.querySelector<HTMLButtonElement>('#copy-button')!,
 		saveButton: document.querySelector<HTMLButtonElement>('#save-button')!,
-		saveStatus: document.querySelector<HTMLElement>('#save-status')!,
 	};
 }
 

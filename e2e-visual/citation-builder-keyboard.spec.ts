@@ -81,7 +81,7 @@ test.describe('citation builder keyboard navigation', () => {
 		await pincite.fill('214');
 		await court.fill('Ohio Ct. App.');
 		await year.fill('2021');
-		await page.getByRole('button', { name: 'Save citation' }).click();
+		await page.getByRole('button', { name: 'Save' }).click();
 		await page.waitForURL('**/tools/citations');
 
 		// Edit/Copy/Delete aren't given element ids, so identify them by their

@@ -35,9 +35,7 @@ export function getCitationBuilderLocators(page: Page) {
 		output: page.getByRole('status'),
 		clearButton: page.getByRole('button', { name: 'Clear' }),
 		copyButton: page.getByRole('button', { name: /^Copy/u }),
-		saveButton: page.getByRole('button', {
-			name: /^(Save citation|Update saved citation)$/u,
-		}),
+		saveButton: page.getByRole('button', { name: 'Save' }),
 		loadExampleButton: page.getByRole('button', { name: 'Load example' }),
 	};
 }
