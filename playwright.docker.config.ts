@@ -8,6 +8,7 @@ if (process.env.RUNNING_IN_VISUAL_DOCKER !== 'true') {
 
 export default defineConfig({
 	testDir: './e2e-visual',
+	workers: '100%',
 	webServer: {
 		command: 'pnpm exec astro preview --port 4323 --host 0.0.0.0',
 		url: 'http://localhost:4323/blog',

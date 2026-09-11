@@ -41,6 +41,8 @@ jobs:
   visual-regression:
     name: visual regression (docker)
     runs-on: ubuntu-latest
+    env:
+      FULL_AXE_SCAN: true
     steps:
       - uses: actions/checkout@v7
         with:
