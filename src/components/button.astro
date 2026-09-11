@@ -1,15 +1,30 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'button'>;
-const { class: _class, type = 'button', ...rest } = Astro.props;
+type Variant = 'default' | 'muted' | 'flat';
+
+type Props = HTMLAttributes<'button'> & { variant?: Variant };
+
+const VARIANT_CLASS: Record<Variant, string> = {
+	default: 'bg-background-secondary hover:bg-background-secondary/80',
+	muted: 'bg-background-secondary/60 hover:bg-background-secondary',
+	flat: 'bg-background hover:bg-background/80',
+};
+
+const {
+	class: _class,
+	type = 'button',
+	variant = 'default',
+	...rest
+} = Astro.props;
 ---
 
 <button
 	type={type}
 	{...rest}
 	class:list={[
-		'bg-background-secondary text-foreground hover:bg-background-secondary/80 hover:text-accent rounded-md px-4 py-2 font-medium',
+		VARIANT_CLASS[variant],
+		'text-foreground hover:text-accent rounded-md px-4 py-2 font-medium',
 		'transition-colors duration-200 ease-in',
 		'disabled:pointer-events-none disabled:opacity-50',
 
