@@ -1,31 +1,18 @@
-import * as z from 'zod/mini';
+import { array, object, string } from 'zod/mini';
 import type { Option } from './components/option';
 
-const MAX_RESULTS = 25;
-const DEBOUNCE_MS = 120;
+export const MAX_RESULTS = 25;
+export const DEBOUNCE_MS = 120;
+export const TAG_NAME = 'filtered-datalist';
 
-const optionsSchema = z.array(
-	z.object({ value: z.string(), text: z.string() }),
-);
+const optionsSchema = array(object({ value: string(), text: string() }));
 
-function debounce(fn: () => void, delayMs: number): () => void {
+export function debounce(fn: () => void, delayMs: number): () => void {
 	let timeoutId: ReturnType<typeof setTimeout> | undefined;
 	return () => {
 		clearTimeout(timeoutId);
 		timeoutId = setTimeout(fn, delayMs);
 	};
-}
-
-function readOptions(datalistId: string): Option[] {
-	const source = document.querySelector(
-		`#${CSS.escape(`${datalistId}-source`)}`,
-	);
-	if (source?.textContent === null || source?.textContent === undefined) {
-		return [];
-	}
-	const parsed: unknown = JSON.parse(source.textContent);
-	const result = optionsSchema.safeParse(parsed);
-	return result.success ? result.data : [];
 }
 
 function matches(option: Option, query: string): boolean {
@@ -35,41 +22,61 @@ function matches(option: Option, query: string): boolean {
 	);
 }
 
-export function setupFilteredDatalists(form: HTMLFormElement): void {
-	const inputs = form.querySelectorAll<HTMLInputElement>(
-		'input[data-datalist-source]',
-	);
-	for (const input of inputs) {
-		const datalistId = input.dataset.datalistSource;
-		const datalistEl = document.querySelector(
-			`#${CSS.escape(datalistId ?? '')}`,
-		);
-		if (
-			datalistId === undefined ||
-			!(datalistEl instanceof HTMLDataListElement)
-		) {
-			continue;
-		}
-		const options = readOptions(datalistId);
-
-		const render = debounce(() => {
-			const query = input.value.trim().toLowerCase();
-			const results =
-				query === ''
-					? []
-					: options
-							.filter((option) => matches(option, query))
-							.slice(0, MAX_RESULTS);
-			datalistEl.replaceChildren(
-				...results.map((option) => {
-					const el = document.createElement('option');
-					el.value = option.value;
-					el.textContent = option.text;
-					return el;
-				}),
-			);
-		}, DEBOUNCE_MS);
-
-		input.addEventListener('input', render);
+export function filterOptions(
+	options: Option[],
+	query: string,
+	maxResults: number,
+): Option[] {
+	const trimmed = query.trim().toLowerCase();
+	if (trimmed === '') {
+		return [];
 	}
+	return options
+		.filter((option) => matches(option, trimmed))
+		.slice(0, maxResults);
+}
+
+export function parseOptions(json: string): Option[] {
+	const parsed: unknown = JSON.parse(json);
+	const result = optionsSchema.safeParse(parsed);
+	return result.success ? result.data : [];
+}
+
+export function defineFilteredDatalist(): void {
+	if (customElements.get(TAG_NAME) !== undefined) {
+		return;
+	}
+
+	class FilteredDatalistElement extends HTMLElement {
+		connectedCallback(): void {
+			const input = this.querySelector('input');
+			const datalist = this.querySelector('datalist');
+			const source = this.querySelector('script[type="application/json"]');
+			if (
+				input === null ||
+				datalist === null ||
+				source === null ||
+				source.textContent === null
+			) {
+				return;
+			}
+			const options = parseOptions(source.textContent);
+
+			const render = debounce(() => {
+				const results = filterOptions(options, input.value, MAX_RESULTS);
+				datalist.replaceChildren(
+					...results.map((option) => {
+						const el = document.createElement('option');
+						el.value = option.value;
+						el.textContent = option.text;
+						return el;
+					}),
+				);
+			}, DEBOUNCE_MS);
+
+			input.addEventListener('input', render);
+		}
+	}
+
+	customElements.define(TAG_NAME, FilteredDatalistElement);
 }

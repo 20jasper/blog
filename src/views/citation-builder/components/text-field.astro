@@ -1,5 +1,6 @@
 ---
 import FieldRow from './field-row.astro';
+import FilteredDatalist from './filtered-datalist.astro';
 import { FIELD_CONTROL_CLASS } from './field-control-class';
 import type { Option } from './option';
 
@@ -14,7 +15,8 @@ export type Props = {
 
 const { name, label, hint, inputmode, pattern, datalist } = Astro.props;
 const id = name;
-const datalistId = datalist === undefined ? undefined : `${id}-datalist`;
+const datalistId = `${id}-datalist`;
+const describedBy = hint === undefined ? undefined : `${id}-hint`;
 ---
 
 <FieldRow
@@ -22,28 +24,33 @@ const datalistId = datalist === undefined ? undefined : `${id}-datalist`;
 	label={label}
 	hint={hint}
 >
-	<input
-		id={id}
-		name={name}
-		type="text"
-		inputmode={inputmode}
-		pattern={pattern}
-		list={datalistId}
-		data-datalist-source={datalistId}
-		aria-describedby={hint === undefined ? undefined : `${id}-hint`}
-		class={FIELD_CONTROL_CLASS}
-	/>
 	{
-		datalist !== undefined && (
-			<Fragment>
-				<datalist id={datalistId} />
-				<script
-					is:inline
-					type="application/json"
-					id={`${datalistId}-source`}
-					set:html={JSON.stringify(datalist)}
+		datalist === undefined ? (
+			<input
+				id={id}
+				name={name}
+				type="text"
+				inputmode={inputmode}
+				pattern={pattern}
+				aria-describedby={describedBy}
+				class={FIELD_CONTROL_CLASS}
+			/>
+		) : (
+			<FilteredDatalist
+				id={datalistId}
+				options={datalist}
+			>
+				<input
+					id={id}
+					name={name}
+					type="text"
+					inputmode={inputmode}
+					pattern={pattern}
+					list={datalistId}
+					aria-describedby={describedBy}
+					class={FIELD_CONTROL_CLASS}
 				/>
-			</Fragment>
+			</FilteredDatalist>
 		)
 	}
 </FieldRow>
