@@ -35,15 +35,29 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 
 		const form = document.querySelector<HTMLFormElement>('form')!;
 		const output = document.querySelector('output')!;
-		const { loadExampleButton, exampleSelect, clearButton, copyButton } =
-			queryButtonRefs();
+		const {
+			loadExampleButton,
+			exampleSelect,
+			clearButton,
+			copyButton,
+			saveButton,
+			saveStatus,
+		} = queryButtonRefs();
 
 		const clipboard = createClipboardController(copyButton, output);
 		const formState = createFormState(form);
 
 		let lastRendered: { html: string; plain: string } | undefined;
 		let trackedCitationId: string | null = null;
-		let suppressAutoSave = false;
+
+		function setSaveStatus(): void {
+			saveButton.textContent =
+				trackedCitationId === null ? 'Save citation' : 'Update saved citation';
+			saveStatus.textContent =
+				trackedCitationId === null
+					? 'Not saved yet.'
+					: 'Saved — editing this one.';
+		}
 
 		function fillInPlaceholder(): void {
 			output.textContent = 'Fill in the fields above to generate a citation.';
@@ -73,13 +87,21 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			setCitationOutput(segments, display.emphasis);
 		}
 
-		function autoSaveCitation(
-			fields: CitationFields,
-			display: DisplayState,
-		): void {
-			if (lastRendered === undefined || suppressAutoSave) {
+		function refresh(): void {
+			const fields = formState.readFields();
+			const display = formState.readDisplay();
+			formState.updateFieldState(fields, display);
+			updateOutput(fields, display);
+			savePersistedState(fields, display, trackedCitationId);
+			setSaveStatus();
+		}
+
+		function saveCurrentCitation(): void {
+			if (lastRendered === undefined) {
 				return;
 			}
+			const fields = formState.readFields();
+			const display = formState.readDisplay();
 			const label = lastRendered.plain;
 
 			const updated =
@@ -88,19 +110,11 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 					: updateSavedCitation(trackedCitationId, fields, display, label);
 			const citation = updated ?? saveCitation(fields, display, label);
 
-			if (trackedCitationId !== citation.id) {
-				trackedCitationId = citation.id;
-				history.replaceState(null, '', `?edit=${citation.id}`);
-			}
-		}
-
-		function refresh(): void {
-			const fields = formState.readFields();
-			const display = formState.readDisplay();
-			formState.updateFieldState(fields, display);
-			updateOutput(fields, display);
-			autoSaveCitation(fields, display);
+			trackedCitationId = citation.id;
+			history.replaceState(null, '', `?edit=${citation.id}`);
 			savePersistedState(fields, display, trackedCitationId);
+			saveButton.textContent = 'Update saved citation';
+			saveStatus.textContent = 'Saved.';
 		}
 
 		function clearFields(): void {
@@ -124,17 +138,12 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			});
 			formState.setFields(example.fields);
 			trackedCitationId = null;
-			suppressAutoSave = true;
 			refresh();
-			suppressAutoSave = false;
 		}
 
-		function loadSavedOrExample(): void {
-			const saved = loadPersistedState();
-			if (saved === null) {
-				loadExample();
-				return;
-			}
+		function restoreDraft(
+			saved: NonNullable<ReturnType<typeof loadPersistedState>>,
+		): void {
 			formState.resetToDefaults();
 			formState.setFields(saved.fields);
 			formState.setDisplay(saved.display);
@@ -161,14 +170,24 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 		form.addEventListener('input', refresh);
 		clearButton.addEventListener('click', clearFields);
 		loadExampleButton.addEventListener('click', loadExample);
+		saveButton.addEventListener('click', saveCurrentCitation);
 		form.addEventListener('submit', (event) => {
 			event.preventDefault();
 			void clipboard.copy();
 		});
 
+		// A reload must never discard unsaved edits: if the URL is asking to
+		// edit the exact same citation the draft already tracks, the draft
+		// (which may be ahead of what's actually saved) wins over a clean
+		// re-fetch of the saved record. Only fetch the clean saved record
+		// when the URL points at a citation the current draft doesn't match
+		// (e.g. navigating here via an Edit link for a different citation).
 		const editId = new URLSearchParams(location.search).get('edit');
-		if (editId === null || !loadForEditing(editId)) {
-			loadSavedOrExample();
+		const saved = loadPersistedState();
+		if (saved !== null && saved.citationId === editId) {
+			restoreDraft(saved);
+		} else if (editId === null || !loadForEditing(editId)) {
+			loadExample();
 		}
 	</script>
 </PageLayout>

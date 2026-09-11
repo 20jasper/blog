@@ -384,12 +384,18 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		>
 			Copy
 		</Button>
+		<Button
+			id="save-button"
+			type="button"
+			variant="flat"
+		>
+			Save citation
+		</Button>
 	</div>
-	<p class="text-foreground-secondary mt-2 text-sm">
-		Saved automatically — <a
-			href="/tools/citation-builder/toa"
-			class="text-accent underline"
-			>view all in Citations</a
-		>.
+	<p
+		id="save-status"
+		aria-live="polite"
+		class="text-foreground-secondary mt-2 text-sm"
+	>
 	</p>
 </div>
