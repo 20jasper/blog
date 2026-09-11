@@ -1,0 +1,26 @@
+---
+import type { Option } from './option';
+
+export type Props = {
+	id: string;
+	options: readonly Option[];
+};
+
+const { id, options } = Astro.props;
+---
+
+<filtered-datalist>
+	<slot />
+	<datalist id={id}></datalist>
+	<script
+		is:inline
+		type="application/json"
+		set:html={JSON.stringify(options)}
+	/>
+</filtered-datalist>
+
+<script>
+	import { defineFilteredDatalist } from '../filtered-datalist';
+
+	defineFilteredDatalist();
+</script>
