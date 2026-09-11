@@ -16,9 +16,9 @@ import CheckboxGroup from './components/checkbox-group.astro';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
-import { FIELD_CONTROL_CLASS } from './components/field-control-class';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
+import SelectField from './components/select-field.astro';
 import type { Props as FieldSpec } from './components/field.astro';
 import { EXAMPLES } from './examples';
 
@@ -36,6 +36,11 @@ function radioOptions<T extends { value: string; text: string }>(
 
 const SOURCE_TYPE_OPTIONS = radioOptions(SOURCE_TYPES, 'reported');
 const MODE_OPTIONS = radioOptions(MODES, 'full');
+
+const EXAMPLE_OPTIONS = EXAMPLES.map((example) => ({
+	value: example.sourceType,
+	text: example.label,
+}));
 const AVAILABILITY_OPTIONS = radioOptions(AVAILABILITIES, 'database');
 const CODE_TYPE_OPTIONS = radioOptions(CODE_TYPES, 'official');
 
@@ -250,16 +255,11 @@ const STATUTE_FIELDS: FieldSpec[] = [
 ---
 
 <div class="mb-4 flex flex-wrap items-end gap-3">
-	<select
-		id="example-select"
-		class={FIELD_CONTROL_CLASS}
-	>
-		{
-			EXAMPLES.map((example) => (
-				<option value={example.label}>{example.label}</option>
-			))
-		}
-	</select>
+	<SelectField
+		name="example"
+		label="Example"
+		options={EXAMPLE_OPTIONS}
+	/>
 	<Button
 		id="load-example-button"
 		type="button"

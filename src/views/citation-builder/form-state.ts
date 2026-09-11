@@ -265,27 +265,18 @@ export function createFormState(form: HTMLFormElement) {
 		}
 	}
 
-	function setDisplay(display: DisplayState): void {
-		const radioGroupValues: Record<string, string> = {
-			sourceType: display.sourceType,
-			mode: display.mode,
-			availability: display.availability,
-			codeType: display.codeType,
-			emphasis: display.emphasis,
-			spanSeparator: display.spanSeparator === EN_DASH ? 'en-dash' : 'hyphen',
-		};
-		for (const [name, value] of Object.entries(radioGroupValues)) {
-			setRadioGroupValue(name, value);
+	function setDisplay(display: {
+		sourceType?: SourceType;
+		availability?: Availability;
+		codeType?: CodeType;
+		materialLocation?: MaterialLocation;
+		mode?: Mode;
+	}): void {
+		for (const [name, value] of Object.entries(display)) {
+			if (value !== undefined) {
+				setRadioGroupValue(name, value);
+			}
 		}
-		nameVariantSelect.value = display.nameVariant;
-		signalSelect.value = display.signal;
-		idCheckbox.checked = display.useId;
-		materialLocationMainCheckbox.checked =
-			display.materialLocation === 'main' ||
-			display.materialLocation === 'both';
-		materialLocationSupplementCheckbox.checked =
-			display.materialLocation === 'supplement' ||
-			display.materialLocation === 'both';
 	}
 
 	return {
