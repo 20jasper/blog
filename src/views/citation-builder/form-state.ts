@@ -256,12 +256,43 @@ export function createFormState(form: HTMLFormElement) {
 		}
 	}
 
+	function setRadioGroupValue(name: string, value: string): void {
+		const input = form.querySelector<HTMLInputElement>(
+			`input[name="${name}"][value="${value}"]`,
+		);
+		if (input !== null) {
+			input.checked = true;
+		}
+	}
+
+	function setDisplay(display: DisplayState): void {
+		setRadioGroupValue('sourceType', display.sourceType);
+		setRadioGroupValue('mode', display.mode);
+		setRadioGroupValue('availability', display.availability);
+		setRadioGroupValue('codeType', display.codeType);
+		setRadioGroupValue('emphasis', display.emphasis);
+		setRadioGroupValue(
+			'spanSeparator',
+			display.spanSeparator === EN_DASH ? 'en-dash' : 'hyphen',
+		);
+		nameVariantSelect.value = display.nameVariant;
+		signalSelect.value = display.signal;
+		idCheckbox.checked = display.useId;
+		materialLocationMainCheckbox.checked =
+			display.materialLocation === 'main' ||
+			display.materialLocation === 'both';
+		materialLocationSupplementCheckbox.checked =
+			display.materialLocation === 'supplement' ||
+			display.materialLocation === 'both';
+	}
+
 	return {
 		readFields,
 		readDisplay,
 		updateFieldState,
 		resetToDefaults,
 		setFields,
+		setDisplay,
 	};
 }
 

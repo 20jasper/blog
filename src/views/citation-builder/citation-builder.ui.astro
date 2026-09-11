@@ -16,9 +16,11 @@ import CheckboxGroup from './components/checkbox-group.astro';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
+import { FIELD_CONTROL_CLASS } from './components/field-control-class';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
 import type { Props as FieldSpec } from './components/field.astro';
+import { EXAMPLES } from './examples';
 
 const FORM_ID = 'citation-builder-form';
 
@@ -248,6 +250,16 @@ const STATUTE_FIELDS: FieldSpec[] = [
 ---
 
 <div class="mb-4 flex flex-wrap items-end gap-3">
+	<select
+		id="example-select"
+		class={FIELD_CONTROL_CLASS}
+	>
+		{
+			EXAMPLES.map((example) => (
+				<option value={example.label}>{example.label}</option>
+			))
+		}
+	</select>
 	<Button
 		id="load-example-button"
 		type="button"
