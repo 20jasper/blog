@@ -4,7 +4,7 @@ import { getCitationBuilderLocators } from './citation-builder-locators';
 import { expectNoHorizontalScroll, zoomTo } from './zoom';
 
 test.beforeEach(async ({ page }) => {
-	await page.goto('/tools/citation-builder');
+	await page.goto('/tools/citations/builder');
 });
 
 test.describe('citation builder accessibility', () => {

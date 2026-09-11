@@ -155,9 +155,8 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			const citation = updated ?? saveCitation(fields, display, label);
 
 			trackedCitationId = citation.id;
-			history.replaceState(null, '', `?edit=${citation.id}`);
 			savePersistedState(fields, display, trackedCitationId);
-			setSaveStatus(fields, display);
+			location.href = '/tools/citations';
 		}
 
 		function clearFields(): void {
