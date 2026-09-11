@@ -14,7 +14,7 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		import { render } from '@components/citation-builder/domain/render';
 		import { createClipboardController } from './clipboard';
 		import { queryButtonRefs } from './dom-refs';
-		import { REPORTED_EXAMPLE } from './examples';
+		import { EXAMPLES, REPORTED_EXAMPLE } from './examples';
 		import { createFormState } from './form-state';
 		import type {
 			CitationFields,
@@ -24,7 +24,8 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 
 		const form = document.querySelector<HTMLFormElement>('form')!;
 		const output = document.querySelector('output')!;
-		const { loadExampleButton, clearButton, copyButton } = queryButtonRefs();
+		const { loadExampleButton, exampleSelect, clearButton, copyButton } =
+			queryButtonRefs();
 
 		const clipboard = createClipboardController(copyButton, output);
 		const formState = createFormState(form);
@@ -68,8 +69,16 @@ import CitationBuilderUi from './citation-builder.ui.astro';
 		}
 
 		function loadExample(): void {
+			const example =
+				EXAMPLES.find(
+					(candidate) => candidate.sourceType === exampleSelect.value,
+				) ?? REPORTED_EXAMPLE;
 			formState.resetToDefaults();
-			formState.setFields(REPORTED_EXAMPLE);
+			formState.setDisplay({
+				sourceType: example.sourceType,
+				codeType: example.codeType,
+			});
+			formState.setFields(example.fields);
 			refresh();
 		}
 

@@ -9,6 +9,7 @@ export function queryButtonRefs() {
 		loadExampleButton: document.querySelector<HTMLButtonElement>(
 			'#load-example-button',
 		)!,
+		exampleSelect: document.querySelector<HTMLSelectElement>('#example')!,
 		clearButton: document.querySelector<HTMLButtonElement>('#clear-button')!,
 		copyButton: document.querySelector<HTMLButtonElement>('#copy-button')!,
 	};
