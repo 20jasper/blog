@@ -6,6 +6,8 @@ import type { MaterialLocation } from '../domain/material-location';
 import type { Signal } from '../domain/signal';
 import type { SourceType } from './source-type';
 
+export { EN_DASH, HYPHEN };
+
 export const MODES = [
 	{ value: 'full', text: 'Full citation' },
 	{ value: 'short', text: 'Short form' },

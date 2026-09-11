@@ -23,6 +23,7 @@
 		"max-lines": "off",
 		"max-lines-per-function": "off",
 		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+		"import/max-dependencies": "off",
 		"unicorn/filename-case": "warn",
 		"unicorn/prefer-global-this": "warn",
 		"typescript/consistent-type-definitions": ["warn", "type"],

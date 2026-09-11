@@ -1,40 +1,70 @@
 import * as z from 'zod/mini';
-import { isCaseTypeId } from '../domain/case-types';
+import { CASE_TYPES } from '../domain/case-types';
 import type { CaseTypeId } from '../domain/case-types';
-import { isMonth } from '../domain/months';
-import type { Month } from '../domain/months';
-import { isAvailability } from '../domain/availability';
+import { MONTHS } from '../domain/months';
+import { AVAILABILITIES } from '../domain/availability';
 import type { Availability } from '../domain/availability';
-import { isCodeType } from '../domain/code-type';
+import { CODE_TYPES } from '../domain/code-type';
 import type { CodeType } from '../domain/code-type';
-import { isMaterialLocation } from '../domain/material-location';
+import { MATERIAL_LOCATIONS } from '../domain/material-location';
 import type { MaterialLocation } from '../domain/material-location';
-import { isSignal } from '../domain/signal';
+import { SIGNALS } from '../domain/signal';
 import type { Signal } from '../domain/signal';
 import type { CitationFields } from './citation-fields';
-import {
-	isEmphasis,
-	isMode,
-	isNameVariant,
-	isSpanSeparator,
-} from './display-state';
+import { EN_DASH, HYPHEN, MODES } from './display-state';
 import type {
 	DisplayState,
 	Emphasis,
 	Mode,
 	NameVariant,
 } from './display-state';
-import { isSourceType } from './source-type';
+import { SOURCE_TYPES } from './source-type';
 import type { SourceType } from './source-type';
 
-// Wraps an existing `is*` type guard as a zod schema so option lists stay
-// defined once, in the domain/state modules that already own them.
-function guarded<T extends string>(isT: (value: string) => value is T) {
-	return z.custom<T>((value) => typeof value === 'string' && isT(value));
-}
+// oxlint-disable-next-line no-unsafe-type-assertion
+const CASE_TYPE_IDS = CASE_TYPES.map((caseType) => caseType.id) as [
+	CaseTypeId,
+	...CaseTypeId[],
+];
+// oxlint-disable-next-line no-unsafe-type-assertion
+const AVAILABILITY_VALUES = AVAILABILITIES.map((a) => a.value) as [
+	Availability,
+	...Availability[],
+];
+// oxlint-disable-next-line no-unsafe-type-assertion
+const CODE_TYPE_VALUES = CODE_TYPES.map((c) => c.value) as [
+	CodeType,
+	...CodeType[],
+];
+// oxlint-disable-next-line no-unsafe-type-assertion
+const MATERIAL_LOCATION_VALUES = MATERIAL_LOCATIONS.map((m) => m.value) as [
+	MaterialLocation,
+	...MaterialLocation[],
+];
+// oxlint-disable-next-line no-unsafe-type-assertion
+const SIGNAL_VALUES = SIGNALS.map((s) => s.value) as [Signal, ...Signal[]];
+// oxlint-disable-next-line no-unsafe-type-assertion
+const MODE_VALUES = MODES.map((m) => m.value) as [Mode, ...Mode[]];
+// oxlint-disable-next-line no-unsafe-type-assertion
+const SOURCE_TYPE_VALUES = SOURCE_TYPES.map((s) => s.value) as [
+	SourceType,
+	...SourceType[],
+];
+
+const NAME_VARIANTS: [NameVariant, ...NameVariant[]] = [
+	'full',
+	'party1',
+	'party2',
+	'none',
+];
+const EMPHASES: [Emphasis, ...Emphasis[]] = ['italic', 'underline'];
+const SPAN_SEPARATORS: [
+	DisplayState['spanSeparator'],
+	...DisplayState['spanSeparator'][],
+] = [HYPHEN, EN_DASH];
 
 export const citationFieldsSchema = z.object({
-	caseType: guarded<CaseTypeId>(isCaseTypeId),
+	caseType: z.enum(CASE_TYPE_IDS),
 	party1: z.string(),
 	party2: z.string(),
 	court: z.string(),
@@ -49,7 +79,7 @@ export const citationFieldsSchema = z.object({
 	docket: z.string(),
 	databaseId: z.string(),
 	url: z.string(),
-	month: guarded<Month>(isMonth),
+	month: z.enum(MONTHS),
 	day: z.string(),
 	popularName: z.string(),
 	originalSection: z.string(),
@@ -62,14 +92,14 @@ export const citationFieldsSchema = z.object({
 }) satisfies z.ZodMiniType<CitationFields>;
 
 export const displayStateSchema = z.object({
-	sourceType: guarded<SourceType>(isSourceType),
-	mode: guarded<Mode>(isMode),
-	nameVariant: guarded<NameVariant>(isNameVariant),
+	sourceType: z.enum(SOURCE_TYPE_VALUES),
+	mode: z.enum(MODE_VALUES),
+	nameVariant: z.enum(NAME_VARIANTS),
 	useId: z.boolean(),
-	availability: guarded<Availability>(isAvailability),
-	codeType: guarded<CodeType>(isCodeType),
-	materialLocation: guarded<MaterialLocation>(isMaterialLocation),
-	emphasis: guarded<Emphasis>(isEmphasis),
-	spanSeparator: guarded<DisplayState['spanSeparator']>(isSpanSeparator),
-	signal: guarded<Signal>(isSignal),
+	availability: z.enum(AVAILABILITY_VALUES),
+	codeType: z.enum(CODE_TYPE_VALUES),
+	materialLocation: z.enum(MATERIAL_LOCATION_VALUES),
+	emphasis: z.enum(EMPHASES),
+	spanSeparator: z.enum(SPAN_SEPARATORS),
+	signal: z.enum(SIGNAL_VALUES),
 }) satisfies z.ZodMiniType<DisplayState>;
