@@ -1,12 +1,35 @@
 // oxlint-disable no-await-in-loop -- simulating sequential Tab presses is
 // inherently sequential: each press must land before the next is sent.
 import { expect, test } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { getCitationBuilderLocators } from './citation-builder-locators';
+import { getToaLocators } from './toa-locators';
+
+async function isFocused(locator: Locator): Promise<boolean> {
+	const handle = await locator.elementHandle();
+	return (
+		handle !== null && handle.evaluate((el) => el === document.activeElement)
+	);
+}
+
+async function tabUntilFocused(
+	page: Page,
+	locator: Locator,
+	maxPresses: number,
+): Promise<boolean> {
+	for (let i = 0; i < maxPresses; i++) {
+		await page.keyboard.press('Tab');
+		if (await isFocused(locator)) {
+			return true;
+		}
+	}
+	return false;
+}
 
 type FocusSnapshot = { id: string; outlineStyle: string } | null;
 
 async function tabUntil(
-	page: import('@playwright/test').Page,
+	page: Page,
 	predicate: (snapshot: NonNullable<FocusSnapshot>) => boolean,
 	seen: Set<string>,
 	maxPresses: number,
@@ -84,30 +107,18 @@ test.describe('citation builder keyboard navigation', () => {
 		await page.getByRole('button', { name: 'Save' }).click();
 		await page.waitForURL('**/tools/citations');
 
-		// Edit/Copy/Delete aren't given element ids, so identify them by their
-		// aria-label prefix instead of the id-based helper used above.
-		let reachedEdit = false;
-		let reachedCopy = false;
-		let reachedDelete = false;
-		for (let i = 0; i < 40; i++) {
-			await page.keyboard.press('Tab');
-			const name = await page.evaluate(
-				() => document.activeElement?.getAttribute('aria-label') ?? '',
-			);
-			if (name.startsWith('Edit ')) {
-				reachedEdit = true;
-			}
-			if (name.startsWith('Copy ')) {
-				reachedCopy = true;
-			}
-			if (name.startsWith('Delete ')) {
-				reachedDelete = true;
-				break;
-			}
-		}
-
-		expect(reachedEdit, 'Tab should reach the Edit link').toBe(true);
-		expect(reachedCopy, 'Tab should reach the Copy button').toBe(true);
-		expect(reachedDelete, 'Tab should reach the Delete button').toBe(true);
+		const { editLink, copyButton, deleteButton } = getToaLocators(page);
+		expect(
+			await tabUntilFocused(page, editLink, 40),
+			'Tab should reach the Edit link',
+		).toBe(true);
+		expect(
+			await tabUntilFocused(page, copyButton, 40),
+			'Tab should reach the Copy button',
+		).toBe(true);
+		expect(
+			await tabUntilFocused(page, deleteButton, 40),
+			'Tab should reach the Delete button',
+		).toBe(true);
 	});
 });
