@@ -1,40 +1,36 @@
 ---
 import NavLink from './nav-link.astro';
 
+export const DEFAULT_NAV_LINKS = [
+	{ href: '/blog', text: 'Blog' },
+	{ href: '/reading-list', text: 'Reading List' },
+	{ href: '/cool-stuff', text: 'Cool Stuff' },
+];
+
 type Props = {
 	border: 'top' | 'bottom';
+	links?: { href: string; text: string }[];
 };
 
-const { border } = Astro.props;
+const { border, links = DEFAULT_NAV_LINKS } = Astro.props;
 const label =
 	border === 'bottom' ? 'site navigation' : 'site navigation (footer)';
 ---
 
 <nav aria-label={label}>
 	<ul class="mx-auto flex justify-center">
-		<li class="px-2 py-4">
-			<NavLink
-				class="px-2 py-4"
-				href="/blog"
-				border={border}
-				>Blog</NavLink
-			>
-		</li>
-		<li class="px-2 py-4">
-			<NavLink
-				class="px-2 py-4"
-				href="/reading-list"
-				border={border}
-				>Reading List</NavLink
-			>
-		</li>
-		<li class="px-2 py-4">
-			<NavLink
-				class="px-2 py-4"
-				href="/cool-stuff"
-				border={border}
-				>Cool Stuff</NavLink
-			>
-		</li>
+		{
+			links.map((link) => (
+				<li class="px-2 py-4">
+					<NavLink
+						class="px-2 py-4"
+						href={link.href}
+						border={border}
+					>
+						{link.text}
+					</NavLink>
+				</li>
+			))
+		}
 	</ul>
 </nav>

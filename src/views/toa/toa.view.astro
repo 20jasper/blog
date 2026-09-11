@@ -1,0 +1,78 @@
+---
+import PageLayout from '@layouts/page-layout.astro';
+import { CITATION_BUILDER_NAV_LINKS } from '@src/views/citation-builder/nav-links';
+import SavedCitationsUi from './toa.ui.astro';
+---
+
+<PageLayout
+	title="Saved Citations"
+	navLinks={CITATION_BUILDER_NAV_LINKS}
+>
+	<h1 class="my-5 text-3xl font-bold">Saved Citations</h1>
+	<SavedCitationsUi />
+	<script>
+		import {
+			deleteSavedCitation,
+			loadSavedCitations,
+		} from '@components/citation-builder/state';
+
+		const list = document.querySelector<HTMLOListElement>('#toa-list')!;
+		const empty = document.querySelector<HTMLElement>('#toa-empty')!;
+		const itemTemplate =
+			document.querySelector<HTMLTemplateElement>('#toa-item-template')!;
+
+		async function copyToClipboard(
+			button: HTMLButtonElement,
+			text: string,
+		): Promise<void> {
+			await navigator.clipboard.writeText(text);
+			const original = button.textContent;
+			button.textContent = 'Copied!';
+			setTimeout(() => {
+				button.textContent = original;
+			}, 2000);
+		}
+
+		function render(): void {
+			const citations = loadSavedCitations();
+
+			empty.hidden = citations.length > 0;
+
+			const fragment = document.createDocumentFragment();
+			for (const citation of citations) {
+				const item = itemTemplate.content.cloneNode(true) as DocumentFragment;
+
+				const label = item.querySelector<HTMLElement>('.toa-item-label')!;
+				label.textContent = citation.label;
+
+				const editLink =
+					item.querySelector<HTMLAnchorElement>('.toa-item-edit')!;
+				editLink.href = `/tools/citations/builder?edit=${citation.id}`;
+				editLink.setAttribute('aria-label', `Edit ${citation.label}`);
+
+				const copyButton =
+					item.querySelector<HTMLButtonElement>('.toa-item-copy')!;
+				copyButton.setAttribute('aria-label', `Copy ${citation.label}`);
+				copyButton.addEventListener('click', () => {
+					void copyToClipboard(copyButton, citation.label);
+				});
+
+				const deleteButton =
+					item.querySelector<HTMLButtonElement>('.toa-item-delete')!;
+				deleteButton.setAttribute('aria-label', `Delete ${citation.label}`);
+				deleteButton.addEventListener('click', () => {
+					if (!confirm(`Delete "${citation.label}"?`)) {
+						return;
+					}
+					deleteSavedCitation(citation.id);
+					render();
+				});
+
+				fragment.append(item);
+			}
+			list.replaceChildren(fragment);
+		}
+
+		render();
+	</script>
+</PageLayout>

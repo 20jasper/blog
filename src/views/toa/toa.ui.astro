@@ -1,0 +1,45 @@
+---
+import Button from '@components/button.astro';
+---
+
+<p
+	id="toa-empty"
+	class="text-foreground-secondary"
+>
+	No saved citations yet. <a
+		href="/tools/citations/builder"
+		class="text-accent underline"
+		>Build one</a
+	> to get started.
+</p>
+
+<ol
+	id="toa-list"
+	class="flex flex-col gap-3"
+>
+</ol>
+
+<template id="toa-item-template">
+	<li
+		class="border-foreground-secondary/30 bg-background-secondary flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3"
+	>
+		<span class="toa-item-label"></span>
+		<span class="flex items-center gap-2">
+			<a class="toa-item-edit text-accent underline">Edit</a>
+			<Button
+				type="button"
+				variant="flat"
+				class="toa-item-copy"
+			>
+				Copy
+			</Button>
+			<Button
+				type="button"
+				variant="flat"
+				class="toa-item-delete"
+			>
+				Delete
+			</Button>
+		</span>
+	</li>
+</template>
