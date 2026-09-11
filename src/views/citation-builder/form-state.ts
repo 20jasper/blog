@@ -266,15 +266,20 @@ export function createFormState(form: HTMLFormElement) {
 	}
 
 	function setDisplay(display: DisplayState): void {
-		setRadioGroupValue('sourceType', display.sourceType);
-		setRadioGroupValue('mode', display.mode);
-		setRadioGroupValue('availability', display.availability);
-		setRadioGroupValue('codeType', display.codeType);
-		setRadioGroupValue('emphasis', display.emphasis);
-		setRadioGroupValue(
-			'spanSeparator',
-			display.spanSeparator === EN_DASH ? 'en-dash' : 'hyphen',
-		);
+		const radioGroupValues: [name: string, value: string][] = [
+			['sourceType', display.sourceType],
+			['mode', display.mode],
+			['availability', display.availability],
+			['codeType', display.codeType],
+			['emphasis', display.emphasis],
+			[
+				'spanSeparator',
+				display.spanSeparator === EN_DASH ? 'en-dash' : 'hyphen',
+			],
+		];
+		for (const [name, value] of radioGroupValues) {
+			setRadioGroupValue(name, value);
+		}
 		nameVariantSelect.value = display.nameVariant;
 		signalSelect.value = display.signal;
 		idCheckbox.checked = display.useId;
