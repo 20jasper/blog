@@ -9,6 +9,7 @@ if (process.env.RUNNING_IN_VISUAL_DOCKER !== 'true') {
 export default defineConfig({
 	testDir: './e2e-visual',
 	workers: '100%',
+	retries: process.env.GITHUB_ACTIONS === 'true' ? 2 : 0,
 	webServer: {
 		command: 'pnpm exec astro preview --port 4323 --host 0.0.0.0',
 		url: 'http://localhost:4323/blog',
@@ -19,6 +20,8 @@ export default defineConfig({
 	},
 	use: {
 		baseURL: 'http://localhost:4323',
+		screenshot: 'only-on-failure',
+		trace: 'retain-on-failure',
 	},
 	expect: {
 		timeout: 15_000,
