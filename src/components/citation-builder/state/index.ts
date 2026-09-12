@@ -52,6 +52,12 @@ export { isSourceType, SOURCE_TYPES } from './source-type';
 
 export { HISTORY_PHRASES, isHistoryPhrase } from '../domain/case-history';
 export type { HistoryPhrase } from '../domain/case-history';
-export { CODE_ABBREVIATIONS } from '../domain/code-abbreviations';
-export { COURT_ABBREVIATIONS } from '../domain/court-abbreviations';
-export { REPORTER_ABBREVIATIONS } from '../domain/reporter-abbreviations';
+
+// CODE_ABBREVIATIONS/COURT_ABBREVIATIONS/REPORTER_ABBREVIATIONS are
+// intentionally not re-exported here -- they're large (the underlying
+// vendor JSON is megabytes) and only ever needed at build time by
+// citation-builder.ui.astro. Re-exporting them from this barrel would pull
+// them into the citation-builder client bundle too, since bundlers don't
+// tree-shake this module's other computed exports out of a chunk that
+// imports anything from it. Import them directly from their own domain
+// files instead.
