@@ -1,4 +1,3 @@
-// oxlint-disable no-await-in-loop -- beasties.process() reuses one instance's cache across calls
 import { globSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -26,12 +25,14 @@ export default function inlineCriticalCss(): AstroIntegration {
 				});
 				const htmlFiles = globSync('**/*.html', { cwd: outDir });
 
-				for (const file of htmlFiles) {
-					const filePath = join(outDir, file);
-					const html = await readFile(filePath, 'utf8');
-					const inlined = await beasties.process(html);
-					await writeFile(filePath, inlined);
-				}
+				await Promise.all(
+					htmlFiles.map(async (file) => {
+						const filePath = join(outDir, file);
+						const html = await readFile(filePath, 'utf8');
+						const inlined = await beasties.process(html);
+						await writeFile(filePath, inlined);
+					}),
+				);
 			},
 		},
 	};
