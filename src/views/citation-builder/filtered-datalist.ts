@@ -1,4 +1,4 @@
-import { array, object, string } from 'zod/mini';
+import { array, object, safeParse, string } from 'valibot';
 import type { Option } from './components/option';
 
 export const MAX_RESULTS = 25;
@@ -38,8 +38,8 @@ export function filterOptions(
 
 export function parseOptions(json: string): Option[] {
 	const parsed: unknown = JSON.parse(json);
-	const result = optionsSchema.safeParse(parsed);
-	return result.success ? result.data : [];
+	const result = safeParse(optionsSchema, parsed);
+	return result.success ? result.output : [];
 }
 
 export function defineFilteredDatalist(): void {
