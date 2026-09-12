@@ -2,16 +2,16 @@
 import Button from '@components/button.astro';
 import {
 	AVAILABILITIES,
-	CODE_ABBREVIATIONS,
 	CODE_TYPES,
-	COURT_ABBREVIATIONS,
 	HISTORY_PHRASES,
 	MODES,
 	MONTHS,
-	REPORTER_ABBREVIATIONS,
 	SIGNALS,
 	SOURCE_TYPES,
 } from '@components/citation-builder/state';
+import { CODE_ABBREVIATIONS } from '@components/citation-builder/domain/code-abbreviations';
+import { COURT_ABBREVIATIONS } from '@components/citation-builder/domain/court-abbreviations';
+import { REPORTER_ABBREVIATIONS } from '@components/citation-builder/domain/reporter-abbreviations';
 import CheckboxGroup from './components/checkbox-group.astro';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';

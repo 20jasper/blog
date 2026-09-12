@@ -23,6 +23,8 @@
 		"max-lines": "off",
 		"max-lines-per-function": "off",
 		"import/no-namespace": "warn",
+		"import/max-dependencies": "off",
+		"oxc/no-barrel-file": "warn",
 		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
 		"unicorn/filename-case": "warn",
 		"unicorn/prefer-global-this": "warn",
