@@ -293,7 +293,7 @@ const STATUTE_FIELDS: FieldSpec[] = [
 				options={MODE_OPTIONS}
 			/>
 			{CITATION_FORM_FIELDS.map((field) => <Field {...field} />)}
-			<div class="flex w-full flex-col gap-1">
+			<div class="field-row flex w-full flex-col gap-1">
 				<Choice
 					type="checkbox"
 					name="id"
@@ -320,13 +320,19 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		</FieldGrid>
 	</Fieldset>
 
-	<Fieldset legend="Reported case">
+	<Fieldset
+		legend="Reported case"
+		visibleFor="reported"
+	>
 		<FieldGrid>
 			{REPORTED_FIELDS.map((field) => <Field {...field} />)}
 		</FieldGrid>
 	</Fieldset>
 
-	<Fieldset legend="Unreported case">
+	<Fieldset
+		legend="Unreported case"
+		visibleFor="unreported"
+	>
 		<FieldGrid>
 			<RadioGroup
 				label="Availability"
@@ -337,7 +343,10 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		</FieldGrid>
 	</Fieldset>
 
-	<Fieldset legend="Statute">
+	<Fieldset
+		legend="Statute"
+		visibleFor="statute"
+	>
 		<FieldGrid>
 			<RadioGroup
 				label="Code type"
