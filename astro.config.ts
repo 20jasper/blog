@@ -1,9 +1,9 @@
 // oxlint-disable import/max-dependencies -- config files naturally accumulate one import per integration/plugin
 import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import inline from '@playform/inline';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@tailwindcss/vite';
+import inlineCriticalCss from './inline-critical-css';
 import syntaxTheme from './orange-theme';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -103,7 +103,7 @@ export default defineConfig({
 		sitemap({
 			filter: (page) => !page.includes('/test-fixtures/'),
 		}),
-		inline({ Beasties: { pruneSource: false } }),
+		inlineCriticalCss(),
 	],
 	vite: { plugins: [tailwind()] },
 });

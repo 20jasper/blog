@@ -4,7 +4,9 @@ test('body is styled correctly even if the stylesheet is slow to arrive', async 
 	page,
 }) => {
 	await page.route('**/*.css', async (route) => {
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		await new Promise<void>((resolve) => {
+			setTimeout(resolve, 2000);
+		});
 		await route.continue();
 	});
 
