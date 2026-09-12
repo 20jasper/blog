@@ -12,18 +12,13 @@ const oversized = readdirSync(ASTRO_DIR)
 if (oversized.length > 0) {
 	for (const { file, bytes } of oversized) {
 		console.error(
-			`${file}: ${(bytes / 1024).toFixed(1)} KB exceeds the ${MAX_BYTES / 1024} KB client bundle budget`,
+			`${file}: ${(bytes / 1024).toFixed(1)} KB > ${MAX_BYTES / 1024} KB budget`,
 		);
 	}
 	console.error(
-		'\nA client-shipped JS chunk grew past the budget. If this is legitimate ' +
-			'new functionality, raise MAX_BYTES in check-bundle-size.mjs deliberately ' +
-			'-- if not, something (often a shared barrel re-exporting build-time-only ' +
-			'data alongside client code) is pulling in more than it should.',
+		'\nLegit growth? Raise MAX_BYTES deliberately. Otherwise: check for a barrel re-exporting build-time-only data into client code.',
 	);
 	process.exit(1);
 }
 
-console.log(
-	`Bundle size check passed (all client JS chunks under ${MAX_BYTES / 1024} KB).`,
-);
+console.log(`Bundle size OK (< ${MAX_BYTES / 1024} KB per chunk).`);
