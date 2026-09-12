@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import Beasties from 'beasties';
 import type { AstroIntegration } from 'astro';
 
-// oxlint-disable-next-line no-default-export
 export default function inlineCriticalCss(): AstroIntegration {
 	return {
 		name: 'inline-critical-css',
