@@ -1,24 +1,20 @@
-// r[impl signal.options]
-export const SIGNALS = [
-	{ value: 'none', text: 'No signal' },
-	{ value: 'e.g.,', text: 'E.g.,' },
-	{ value: 'accord', text: 'Accord' },
-	{ value: 'see', text: 'See' },
-	{ value: 'see also', text: 'See also' },
-	{ value: 'cf.', text: 'Cf.' },
-	{ value: 'contra', text: 'Contra' },
-	{ value: 'but see', text: 'But see' },
-	{ value: 'but cf.', text: 'But cf.' },
-	{ value: 'see generally', text: 'See generally' },
+export const SIGNAL_VALUES = [
+	'none',
+	'e.g.,',
+	'accord',
+	'see',
+	'see also',
+	'cf.',
+	'contra',
+	'but see',
+	'but cf.',
+	'see generally',
 ] as const;
 
-export type Signal = (typeof SIGNALS)[number]['value'];
+export type Signal = (typeof SIGNAL_VALUES)[number];
 
-export function isSignal(value: string): value is Signal {
-	return SIGNALS.some((signal) => signal.value === value);
-}
-
-const SIGNAL_TEXT: Record<Exclude<Signal, 'none'>, string> = {
+const SIGNAL_TEXT: Record<Signal, string> = {
+	none: 'No signal',
 	'e.g.,': 'E.g.,',
 	accord: 'Accord',
 	see: 'See',
@@ -29,6 +25,16 @@ const SIGNAL_TEXT: Record<Exclude<Signal, 'none'>, string> = {
 	'but cf.': 'But cf.',
 	'see generally': 'See generally',
 };
+
+// r[impl signal.options]
+export const SIGNALS = SIGNAL_VALUES.map((value) => ({
+	value,
+	text: SIGNAL_TEXT[value],
+}));
+
+export function isSignal(value: string): value is Signal {
+	return SIGNAL_VALUES.some((signal) => signal === value);
+}
 
 // r[impl signal.typeface]
 export function signalText(signal: Signal): string | undefined {

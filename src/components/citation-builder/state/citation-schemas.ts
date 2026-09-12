@@ -1,40 +1,29 @@
-import { boolean, custom, type GenericSchema, object, string } from 'valibot';
-import { isCaseTypeId } from '../domain/case-types';
-import type { CaseTypeId } from '../domain/case-types';
-import { isMonth } from '../domain/months';
-import type { Month } from '../domain/months';
-import { isAvailability } from '../domain/availability';
-import type { Availability } from '../domain/availability';
-import { isCodeType } from '../domain/code-type';
-import type { CodeType } from '../domain/code-type';
-import { isMaterialLocation } from '../domain/material-location';
-import type { MaterialLocation } from '../domain/material-location';
-import { isSignal } from '../domain/signal';
-import type { Signal } from '../domain/signal';
+import { boolean, type GenericSchema, object, picklist, string } from 'valibot';
+import { CASE_TYPE_IDS } from '../domain/case-types';
+import { MONTHS } from '../domain/months';
+import { AVAILABILITY_VALUES } from '../domain/availability';
+import { CODE_TYPE_VALUES } from '../domain/code-type';
+import { MATERIAL_LOCATION_VALUES } from '../domain/material-location';
+import { SIGNAL_VALUES } from '../domain/signal';
 import type { CitationFields } from './citation-fields';
-import {
-	isEmphasis,
-	isMode,
-	isNameVariant,
-	isSpanSeparator,
-} from './display-state';
-import type {
-	DisplayState,
-	Emphasis,
-	Mode,
-	NameVariant,
-} from './display-state';
-import { isSourceType } from './source-type';
-import type { SourceType } from './source-type';
+import { EN_DASH, HYPHEN, MODE_VALUES } from './display-state';
+import type { DisplayState, Emphasis, NameVariant } from './display-state';
+import { SOURCE_TYPE_VALUES } from './source-type';
 
-// Wraps an existing `is*` type guard as a valibot schema so option lists stay
-// defined once, in the domain/state modules that already own them.
-function guarded<T extends string>(isT: (value: string) => value is T) {
-	return custom<T>((value) => typeof value === 'string' && isT(value));
-}
+const NAME_VARIANTS: [NameVariant, ...NameVariant[]] = [
+	'full',
+	'party1',
+	'party2',
+	'none',
+];
+const EMPHASES: [Emphasis, ...Emphasis[]] = ['italic', 'underline'];
+const SPAN_SEPARATORS: [
+	DisplayState['spanSeparator'],
+	...DisplayState['spanSeparator'][],
+] = [HYPHEN, EN_DASH];
 
 export const citationFieldsSchema = object({
-	caseType: guarded<CaseTypeId>(isCaseTypeId),
+	caseType: picklist(CASE_TYPE_IDS),
 	party1: string(),
 	party2: string(),
 	court: string(),
@@ -49,7 +38,7 @@ export const citationFieldsSchema = object({
 	docket: string(),
 	databaseId: string(),
 	url: string(),
-	month: guarded<Month>(isMonth),
+	month: picklist(MONTHS),
 	day: string(),
 	popularName: string(),
 	originalSection: string(),
@@ -62,14 +51,14 @@ export const citationFieldsSchema = object({
 }) satisfies GenericSchema<unknown, CitationFields>;
 
 export const displayStateSchema = object({
-	sourceType: guarded<SourceType>(isSourceType),
-	mode: guarded<Mode>(isMode),
-	nameVariant: guarded<NameVariant>(isNameVariant),
+	sourceType: picklist(SOURCE_TYPE_VALUES),
+	mode: picklist(MODE_VALUES),
+	nameVariant: picklist(NAME_VARIANTS),
 	useId: boolean(),
-	availability: guarded<Availability>(isAvailability),
-	codeType: guarded<CodeType>(isCodeType),
-	materialLocation: guarded<MaterialLocation>(isMaterialLocation),
-	emphasis: guarded<Emphasis>(isEmphasis),
-	spanSeparator: guarded<DisplayState['spanSeparator']>(isSpanSeparator),
-	signal: guarded<Signal>(isSignal),
+	availability: picklist(AVAILABILITY_VALUES),
+	codeType: picklist(CODE_TYPE_VALUES),
+	materialLocation: picklist(MATERIAL_LOCATION_VALUES),
+	emphasis: picklist(EMPHASES),
+	spanSeparator: picklist(SPAN_SEPARATORS),
+	signal: picklist(SIGNAL_VALUES),
 }) satisfies GenericSchema<unknown, DisplayState>;
