@@ -1,14 +1,14 @@
-import * as z from 'zod/mini';
+import { nullable, object, parse, string } from 'valibot';
 import type { CitationFields } from './citation-fields';
 import { citationFieldsSchema, displayStateSchema } from './citation-schemas';
 import type { DisplayState } from './display-state';
 
 const STORAGE_KEY = 'citation-builder:v1';
 
-const persistedStateSchema = z.object({
+const persistedStateSchema = object({
 	fields: citationFieldsSchema,
 	display: displayStateSchema,
-	citationId: z.nullable(z.string()),
+	citationId: nullable(string()),
 });
 
 export type PersistedState = {
@@ -42,9 +42,9 @@ export function loadPersistedState(): PersistedState | null {
 		if (raw === null) {
 			return null;
 		}
-		const result = persistedStateSchema.safeParse(JSON.parse(raw));
-		return result.success ? result.data : null;
-	} catch {
+		return parse(persistedStateSchema, JSON.parse(raw));
+	} catch (error) {
+		console.warn('Discarding corrupted citation-builder draft:', error);
 		return null;
 	}
 }

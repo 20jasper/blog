@@ -1,4 +1,4 @@
-import * as z from 'zod/mini';
+import { boolean, custom, type GenericSchema, object, string } from 'valibot';
 import { isCaseTypeId } from '../domain/case-types';
 import type { CaseTypeId } from '../domain/case-types';
 import { isMonth } from '../domain/months';
@@ -27,49 +27,49 @@ import type {
 import { isSourceType } from './source-type';
 import type { SourceType } from './source-type';
 
-// Wraps an existing `is*` type guard as a zod schema so option lists stay
+// Wraps an existing `is*` type guard as a valibot schema so option lists stay
 // defined once, in the domain/state modules that already own them.
 function guarded<T extends string>(isT: (value: string) => value is T) {
-	return z.custom<T>((value) => typeof value === 'string' && isT(value));
+	return custom<T>((value) => typeof value === 'string' && isT(value));
 }
 
-export const citationFieldsSchema = z.object({
+export const citationFieldsSchema = object({
 	caseType: guarded<CaseTypeId>(isCaseTypeId),
-	party1: z.string(),
-	party2: z.string(),
-	court: z.string(),
-	pincite: z.string(),
-	weightOfAuthority: z.string(),
-	historyPhrase: z.string(),
-	historyCitation: z.string(),
-	volume: z.string(),
-	reporter: z.string(),
-	firstPage: z.string(),
-	year: z.string(),
-	docket: z.string(),
-	databaseId: z.string(),
-	url: z.string(),
+	party1: string(),
+	party2: string(),
+	court: string(),
+	pincite: string(),
+	weightOfAuthority: string(),
+	historyPhrase: string(),
+	historyCitation: string(),
+	volume: string(),
+	reporter: string(),
+	firstPage: string(),
+	year: string(),
+	docket: string(),
+	databaseId: string(),
+	url: string(),
 	month: guarded<Month>(isMonth),
-	day: z.string(),
-	popularName: z.string(),
-	originalSection: z.string(),
-	title: z.string(),
-	code: z.string(),
-	section: z.string(),
-	publisher: z.string(),
-	supplementDesignation: z.string(),
-	supplementYear: z.string(),
-}) satisfies z.ZodMiniType<CitationFields>;
+	day: string(),
+	popularName: string(),
+	originalSection: string(),
+	title: string(),
+	code: string(),
+	section: string(),
+	publisher: string(),
+	supplementDesignation: string(),
+	supplementYear: string(),
+}) satisfies GenericSchema<unknown, CitationFields>;
 
-export const displayStateSchema = z.object({
+export const displayStateSchema = object({
 	sourceType: guarded<SourceType>(isSourceType),
 	mode: guarded<Mode>(isMode),
 	nameVariant: guarded<NameVariant>(isNameVariant),
-	useId: z.boolean(),
+	useId: boolean(),
 	availability: guarded<Availability>(isAvailability),
 	codeType: guarded<CodeType>(isCodeType),
 	materialLocation: guarded<MaterialLocation>(isMaterialLocation),
 	emphasis: guarded<Emphasis>(isEmphasis),
 	spanSeparator: guarded<DisplayState['spanSeparator']>(isSpanSeparator),
 	signal: guarded<Signal>(isSignal),
-}) satisfies z.ZodMiniType<DisplayState>;
+}) satisfies GenericSchema<unknown, DisplayState>;

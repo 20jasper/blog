@@ -1,14 +1,16 @@
-import * as z from 'zod/mini';
+import { array, object, safeParse, string, unknown } from 'valibot';
 import type { CitationFields } from './citation-fields';
 import { citationFieldsSchema, displayStateSchema } from './citation-schemas';
 import type { DisplayState } from './display-state';
 
 const STORAGE_KEY = 'citation-builder:saved-citations:v1';
 
-const savedCitationSchema = z.object({
-	id: z.string(),
-	savedAt: z.string(),
-	label: z.string(),
+const rawListSchema = array(unknown());
+
+const savedCitationSchema = object({
+	id: string(),
+	savedAt: string(),
+	label: string(),
 	fields: citationFieldsSchema,
 	display: displayStateSchema,
 });
@@ -27,9 +29,10 @@ function readRawList(): unknown[] {
 		if (raw === null) {
 			return [];
 		}
-		const parsed: unknown = JSON.parse(raw);
-		return Array.isArray(parsed) ? parsed : [];
-	} catch {
+		const result = safeParse(rawListSchema, JSON.parse(raw));
+		return result.success ? result.output : [];
+	} catch (error) {
+		console.warn('Discarding corrupted saved-citations list:', error);
 		return [];
 	}
 }
@@ -42,22 +45,26 @@ function writeRawList(list: unknown[]): void {
 	}
 }
 
+const entryIdSchema = object({ id: string() });
+
 function hasId(entry: unknown, id: string): boolean {
-	return (
-		typeof entry === 'object' &&
-		entry !== null &&
-		'id' in entry &&
-		entry.id === id
-	);
+	const result = safeParse(entryIdSchema, entry);
+	return result.success && result.output.id === id;
 }
 
 // A single corrupted entry (e.g. from a future schema change) must not
 // erase the rest of the user's saved list, unlike the single-slot autosave.
 export function loadSavedCitations(): SavedCitation[] {
-	return readRawList()
-		.map((entry) => savedCitationSchema.safeParse(entry))
+	const results = readRawList().map((entry) =>
+		safeParse(savedCitationSchema, entry),
+	);
+	const dropped = results.filter((result) => !result.success).length;
+	if (dropped > 0) {
+		console.warn(`Discarding ${dropped} corrupted saved citation(s)`);
+	}
+	return results
 		.filter((result) => result.success)
-		.map((result) => result.data)
+		.map((result) => result.output)
 		.toSorted((a, b) => b.savedAt.localeCompare(a.savedAt));
 }
 
@@ -92,12 +99,13 @@ export function updateSavedCitation(
 	if (index === -1) {
 		return undefined;
 	}
-	const parsed = savedCitationSchema.safeParse(rawList[index]);
+	const parsed = safeParse(savedCitationSchema, rawList[index]);
 	if (!parsed.success) {
+		console.warn(`Discarding corrupted saved citation ${id}:`, parsed.issues);
 		return undefined;
 	}
 	const updated: SavedCitation = {
-		...parsed.data,
+		...parsed.output,
 		fields,
 		display,
 		label,
