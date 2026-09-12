@@ -1,6 +1,8 @@
 import { abbreviatePartyName } from './party-name-abbreviations';
 
-export type CaseTypeId = 'v' | 'in-re' | 'ex-parte';
+export const CASE_TYPE_IDS = ['v', 'in-re', 'ex-parte'] as const;
+
+export type CaseTypeId = (typeof CASE_TYPE_IDS)[number];
 
 export type CaseNameInput =
 	| { caseType: 'v'; party1: string; party2: string }

@@ -6,12 +6,21 @@ import type { MaterialLocation } from '../domain/material-location';
 import type { Signal } from '../domain/signal';
 import type { SourceType } from './source-type';
 
-export const MODES = [
-	{ value: 'full', text: 'Full citation' },
-	{ value: 'short', text: 'Short form' },
-] as const;
+export { EN_DASH, HYPHEN };
 
-export type Mode = (typeof MODES)[number]['value'];
+export const MODE_VALUES = ['full', 'short'] as const;
+
+export type Mode = (typeof MODE_VALUES)[number];
+
+const MODE_TEXT: Record<Mode, string> = {
+	full: 'Full citation',
+	short: 'Short form',
+};
+
+export const MODES = MODE_VALUES.map((value) => ({
+	value,
+	text: MODE_TEXT[value],
+}));
 // r[impl name-variant.options]
 export type NameVariant = 'full' | 'party1' | 'party2' | 'none';
 export type Emphasis = 'italic' | 'underline';
