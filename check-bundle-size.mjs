@@ -2,7 +2,7 @@ import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ASTRO_DIR = 'dist/_astro';
-const MAX_BYTES = 100 * 1024;
+const MAX_BYTES = 35 * 1024;
 
 const oversized = readdirSync(ASTRO_DIR)
 	.filter((file) => file.endsWith('.js'))
