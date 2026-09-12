@@ -15,9 +15,6 @@ if (oversized.length > 0) {
 			`${file}: ${(bytes / 1024).toFixed(1)} KB > ${MAX_BYTES / 1024} KB budget`,
 		);
 	}
-	console.error(
-		'\nLegit growth? Raise MAX_BYTES deliberately. Otherwise: check for a barrel re-exporting build-time-only data into client code.',
-	);
 	process.exit(1);
 }
 
