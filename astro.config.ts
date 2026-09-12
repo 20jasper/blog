@@ -3,6 +3,7 @@ import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@tailwindcss/vite';
+import inlineCriticalCss from './inline-critical-css';
 import syntaxTheme from './orange-theme';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -102,6 +103,7 @@ export default defineConfig({
 		sitemap({
 			filter: (page) => !page.includes('/test-fixtures/'),
 		}),
+		inlineCriticalCss(),
 	],
 	vite: { plugins: [tailwind()] },
 });
