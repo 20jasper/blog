@@ -257,8 +257,8 @@ export const booksStarted: Book[] = [
 		rating: 4.5,
 	},
 	{
-		title: "Developer's Guide to AI",
-		author: 'Danny Thompson',
+		title: "The Developer's Guide to AI",
+		author: 'Jacob Orshalick, Jerry M. Reghunadh, and Danny Thompson',
 		readDate: { start: new Date('2026-9-24'), end: null },
 		rating: null,
 	},
