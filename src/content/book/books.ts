@@ -287,6 +287,10 @@ const toRead: UnreadBook[] = [
 		title: 'The Art of Application Performance Testing, 2nd Edition',
 		author: 'Ian Molyneaux',
 	},
+	{
+		title: 'Refactoring English',
+		author: 'Michael Lynch',
+	},
 ];
 
 export const booksToRead: Book[] = toRead.map((x) => ({
