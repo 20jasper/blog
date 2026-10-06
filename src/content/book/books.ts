@@ -253,8 +253,14 @@ export const booksStarted: Book[] = [
 	{
 		title: 'PostgreSQL Mistakes and How to Avoid Them',
 		author: 'Jimmy Angelakos',
-		readDate: { start: new Date('2026-9-2'), end: null },
+		readDate: { start: new Date('2026-9-2'), end: new Date('2026-9-24') },
 		rating: 4.5,
+	},
+	{
+		title: "The Developer's Guide to AI",
+		author: 'Jacob Orshalick, Jerry M. Reghunadh, and Danny Thompson',
+		readDate: { start: new Date('2026-9-24'), end: null },
+		rating: null,
 	},
 ].toSorted(Order.combine(byDateDesc('end'), byDateDesc('start')));
 
@@ -280,6 +286,10 @@ const toRead: UnreadBook[] = [
 	{
 		title: 'The Art of Application Performance Testing, 2nd Edition',
 		author: 'Ian Molyneaux',
+	},
+	{
+		title: 'Refactoring English',
+		author: 'Michael Lynch',
 	},
 ];
 

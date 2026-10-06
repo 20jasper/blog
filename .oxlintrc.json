@@ -30,11 +30,17 @@
 		"unicorn/prefer-global-this": "warn",
 		"typescript/consistent-type-definitions": ["warn", "type"],
 		"typescript/switch-exhaustiveness-check": "warn",
+		"typescript/no-unnecessary-condition": "warn",
 		"typescript/prefer-readonly-parameter-types": "off",
 		"typescript/triple-slash-reference": "off",
 		"typescript/consistent-return": "off",
 		"no-useless-return": "off",
-		"oxc/no-map-spread": "off"
+		"oxc/no-map-spread": "off",
+		"typescript/consistent-type-imports": "warn",
+		"typescript/no-explicit-any": "warn",
+		"typescript/prefer-optional-chain": "warn",
+		"typescript/prefer-readonly": "warn",
+		"no-param-reassign": "warn"
 	},
 	"env": {
 		"builtin": true

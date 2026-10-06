@@ -21,7 +21,7 @@ import type { Element, Root } from 'hast';
 function rehypeWrapDisplayMath() {
 	return (tree: Root) => {
 		visit(tree, 'element', (node, index, parent) => {
-			const classNames = node.properties?.className;
+			const classNames = node.properties.className;
 			const isDisplayMath =
 				Array.isArray(classNames) && classNames.includes('math-display');
 			if (!isDisplayMath || !parent || index === undefined) return;
