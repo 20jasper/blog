@@ -48,17 +48,15 @@ const images: PetImage[] = [
 ];
 ---
 
-{
-	images.map(({ src, caption, loading }) => (
-		<figure class="py-2">
-			<Image
-				src={src}
-				alt=""
-				loading={loading ?? 'lazy'}
-			/>
-			<figcaption>
-				<p>{caption}</p>
-			</figcaption>
-		</figure>
-	))
-}
+{images.map(({ src, caption, loading }) => (
+	<figure class="py-2">
+		<Image
+			src={src}
+			alt=""
+			loading={loading ?? 'lazy'}
+		/>
+		<figcaption>
+			<p>{caption}</p>
+		</figcaption>
+	</figure>
+))}

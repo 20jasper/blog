@@ -24,33 +24,31 @@ const describedBy = hint === undefined ? undefined : `${id}-hint`;
 	label={label}
 	hint={hint}
 >
-	{
-		datalist === undefined ? (
+	{datalist === undefined ? (
+		<input
+			id={id}
+			name={name}
+			type="text"
+			inputmode={inputmode}
+			pattern={pattern}
+			aria-describedby={describedBy}
+			class={FIELD_CONTROL_CLASS}
+		/>
+	) : (
+		<FilteredDatalist
+			id={datalistId}
+			options={datalist}
+		>
 			<input
 				id={id}
 				name={name}
 				type="text"
 				inputmode={inputmode}
 				pattern={pattern}
+				list={datalistId}
 				aria-describedby={describedBy}
 				class={FIELD_CONTROL_CLASS}
 			/>
-		) : (
-			<FilteredDatalist
-				id={datalistId}
-				options={datalist}
-			>
-				<input
-					id={id}
-					name={name}
-					type="text"
-					inputmode={inputmode}
-					pattern={pattern}
-					list={datalistId}
-					aria-describedby={describedBy}
-					class={FIELD_CONTROL_CLASS}
-				/>
-			</FilteredDatalist>
-		)
-	}
+		</FilteredDatalist>
+	)}
 </FieldRow>

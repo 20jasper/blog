@@ -13,17 +13,18 @@ const { for: forId, label, hint } = Astro.props;
 	<label
 		for={forId}
 		class="text-foreground text-base font-semibold"
-		>{label}<span
+	>
+		{label}
+		<span
 			class="required-marker text-accent"
 			aria-hidden="true"
 		>
-			{' '}*</span
-		></label
-	>
-	{
-		/* sm:min-h-4 reserves the hint's height only in the 2-column grid,
-		so a hint-less row stays aligned with its row-mate. */
-	}
+			{' '}
+			*
+		</span>
+	</label>
+	{/* sm:min-h-4 reserves the hint's height only in the 2-column grid,
+		so a hint-less row stays aligned with its row-mate. */}
 	<p
 		id={`${forId}-hint`}
 		class="text-foreground-secondary text-xs sm:min-h-4"
