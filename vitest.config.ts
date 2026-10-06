@@ -1,9 +1,10 @@
 /// <reference types="vitest/config" />
 import { playwright } from '@vitest/browser-playwright';
 import { getViteConfig } from 'astro/config';
-import { renderAstro } from './test/render-astro';
+import { astroComponentStubs, renderAstro } from './test/astro-renderer';
 
 export default getViteConfig({
+	plugins: [astroComponentStubs()],
 	resolve: {
 		tsconfigPaths: true,
 	},
@@ -26,8 +27,6 @@ export default getViteConfig({
 				},
 			},
 			{
-				// Real-browser tests for code that needs a DOM and layout (mounting
-				// a chart, focus, tooltips) without booting the whole site.
 				extends: true,
 				test: {
 					name: 'browser',
