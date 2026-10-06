@@ -1,0 +1,99 @@
+---
+import ScaleToggle from './scale-toggle.astro';
+import DataTable from './data-table.astro';
+import RefLineLegend from './ref-line-legend.astro';
+import ChartFrame from './chart-frame.astro';
+import ChartHeading from './chart-heading.astro';
+import { REF_LINE_STYLES } from './theme';
+import { formatThresholdHours } from './data';
+import type { ThresholdChart } from './data';
+import type { ThresholdConfig } from './chart-config';
+
+type Props = { chart: ThresholdChart };
+const {
+	id,
+	title,
+	alt,
+	data,
+	total,
+	tooltipVerb,
+	unitNoun,
+	xColumnLabel,
+	yColumnLabel,
+	valueColumnLabel,
+	refLines,
+} = Astro.props.chart;
+
+// One source for the chart's pixel height -- otherwise the CSS box (below)
+// and the mountChart() option (in the script) would be two literals that
+// have to be kept in sync by hand.
+const CHART_HEIGHT = 340;
+
+const config: ThresholdConfig = {
+	title,
+	alt,
+	data,
+	total,
+	tooltipVerb,
+	xColumnLabel,
+	yColumnLabel,
+	refLines,
+	height: CHART_HEIGHT,
+};
+
+const legendItems = refLines.map((rl, i) => ({
+	label: rl.label,
+	...REF_LINE_STYLES[i % REF_LINE_STYLES.length]!,
+}));
+---
+
+<ChartFrame
+	id={id}
+	config={config}
+	height={CHART_HEIGHT}
+	class="threshold-chart"
+	caption={alt}
+>
+	<Fragment slot="header">
+		<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+			<ChartHeading
+				title={title}
+				subtitle={`n = ${total.toLocaleString()} ${unitNoun}`}
+			/>
+			<ScaleToggle chartId={id} />
+		</div>
+	</Fragment>
+	<RefLineLegend items={legendItems} />
+</ChartFrame>
+<DataTable
+	columns={[
+		{ label: xColumnLabel },
+		{ label: valueColumnLabel },
+		{ label: 'n' },
+	]}
+	rows={data.map((d) => [
+		formatThresholdHours(d.hours),
+		`${d.percentRemoved}%`,
+		d.count.toLocaleString(),
+	])}
+/>
+
+<script>
+	import { parse } from 'valibot';
+	import { BASE_FONT_PX } from './chart-utils';
+	import { thresholdConfigSchema } from './chart-config';
+	import { mountThresholdChart } from './mount-threshold-chart';
+
+	// `.threshold-chart` is scoped to this component's own containers; other
+	// chart components share `.chart-surface` as a styling class, so a
+	// document-wide query on that would try to mount this parser onto them.
+	document
+		.querySelectorAll<HTMLElement>('.threshold-chart')
+		.forEach((container) => {
+			const config = parse(
+				thresholdConfigSchema,
+				JSON.parse(container.dataset.chartConfig ?? 'null'),
+			);
+			mountThresholdChart(container, config, BASE_FONT_PX);
+		});
+</script>

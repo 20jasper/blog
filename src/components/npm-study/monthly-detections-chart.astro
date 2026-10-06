@@ -1,0 +1,84 @@
+---
+import DataTable from './data-table.astro';
+import ChartFrame from './chart-frame.astro';
+import RefLineLegend from './ref-line-legend.astro';
+import ChartHeading from './chart-heading.astro';
+import { MONTHLY_DETECTIONS_CHART } from './data';
+import { buildMonthlyChartData } from './monthly-detections';
+import type { MonthlyConfig } from './chart-config';
+
+const legendItems = [
+	{ label: 'detections', color: 'var(--color-chart-primary)' },
+	{
+		label: 'linear trend',
+		color: 'var(--color-chart-tertiary)',
+		dash: '2 5',
+	},
+];
+
+const { id, title, caption, rows } = MONTHLY_DETECTIONS_CHART;
+
+const CHART_HEIGHT = 300;
+
+const data = buildMonthlyChartData(rows);
+const { total } = data;
+const config: MonthlyConfig = { ...data, title, height: CHART_HEIGHT };
+
+const tableRows = rows.map((d) => [
+	d.m,
+	d.other.toLocaleString(),
+	d.backfill.toLocaleString(),
+	d.tea.toLocaleString(),
+]);
+---
+
+<ChartFrame
+	id={id}
+	config={config}
+	height={CHART_HEIGHT}
+	caption={caption}
+>
+	<Fragment slot="header">
+		<ChartHeading
+			title={title}
+			subtitle={`n = ${total.toLocaleString()} detections`}
+		/>
+	</Fragment>
+	<RefLineLegend items={legendItems} />
+</ChartFrame>
+
+<DataTable
+	columns={[
+		{ label: 'month' },
+		{ label: 'other' },
+		{ label: 'backfill' },
+		{ label: 'tea.xyz' },
+	]}
+	rows={tableRows}
+/>
+
+<script>
+	import { mountChart } from '@tanstack/charts';
+	import { parse } from 'valibot';
+	import { BASE_FONT_PX } from './chart-utils';
+	import { monthlyConfigSchema } from './chart-config';
+	import { buildMonthlyDefinition } from './monthly-definition';
+
+	document
+		.querySelectorAll<HTMLElement>('#chart-monthly-detections')
+		.forEach((container) => {
+			const config = parse(
+				monthlyConfigSchema,
+				JSON.parse(container.dataset.chartConfig ?? 'null'),
+			);
+			mountChart(container, {
+				height: config.height,
+				initialWidth: 640,
+				// Names the whole chart, not just its x-axis. No ariaDescription
+				// needed -- the visible <figcaption> above already describes the
+				// figure as a whole.
+				ariaLabel: config.title,
+				definition: buildMonthlyDefinition(config, BASE_FONT_PX),
+			});
+		});
+</script>

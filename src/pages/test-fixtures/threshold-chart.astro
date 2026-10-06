@@ -1,0 +1,17 @@
+---
+// Test fixture only -- excluded from the sitemap in astro.config.ts.
+import TestFixtureLayout from '@layouts/test-fixture-layout.astro';
+import ThresholdCurveChart from '@components/npm-study/threshold-curve-chart.astro';
+import MonthlyDetectionsChart from '@components/npm-study/monthly-detections-chart.astro';
+import { PUBLISH_TO_YANK_CHART } from '@components/npm-study/data';
+---
+
+<TestFixtureLayout
+	frontmatter={{
+		title: 'chart test fixture',
+		description: 'Both npm-study charts on one page, for e2e tests',
+	}}
+>
+	<ThresholdCurveChart chart={PUBLISH_TO_YANK_CHART} />
+	<MonthlyDetectionsChart />
+</TestFixtureLayout>

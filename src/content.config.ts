@@ -13,6 +13,7 @@ export const blogTags = [
 	'go',
 	'traffic design',
 	'math',
+	'security',
 ] as const;
 
 const blogTagSchema = z.enum(blogTags);

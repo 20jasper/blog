@@ -1,0 +1,12 @@
+---
+// The title + "n = ..." subtitle line is identical markup in both chart
+// components -- only the strings differ -- so it's pulled out here rather
+// than copy-pasted.
+type Props = { title: string; subtitle: string };
+const { title, subtitle } = Astro.props;
+---
+
+<div>
+	<p class="text-foreground-secondary font-mono text-base">{title}</p>
+	<p class="text-foreground-secondary mt-0.5 font-mono text-sm">{subtitle}</p>
+</div>

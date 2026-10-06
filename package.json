@@ -16,7 +16,8 @@
 		"test": "vitest run --coverage",
 		"test:e2e": "HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm visual-tests",
 		"test:e2e:update": "PLAYWRIGHT_ARGS=--update-snapshots pnpm run test:e2e",
-		"test:e2e:full-axe": "FULL_AXE_SCAN=true pnpm run test:e2e"
+		"test:e2e:full-axe": "FULL_AXE_SCAN=true pnpm run test:e2e",
+		"test:e2e:local": "playwright test"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.10",
@@ -26,7 +27,9 @@
 		"@netlify/edge-functions": "^4.0.0",
 		"@tailwindcss/typography": "^0.5.20",
 		"@tailwindcss/vite": "^4.3.3",
+		"@tanstack/charts": "^1.0.0",
 		"astro": "^7.3.1",
+		"d3-scale": "^4.0.2",
 		"effect": "^3.22.1",
 		"katex": "0.18.7",
 		"rehype-autolink-headings": "^7.1.0",
@@ -43,6 +46,7 @@
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
 		"@playwright/test": "^1.62.1",
+		"@types/d3-scale": "^4.0.9",
 		"@types/hast": "^3.0.5",
 		"@vitest/browser-playwright": "^5.0.0",
 		"@vitest/coverage-v8": "^5.0.0",

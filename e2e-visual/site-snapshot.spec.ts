@@ -34,6 +34,7 @@ const CURATED_ROUTES = [
 	'/blog/we-should-replace-fifa-with-a-bunch-of-roundabouts',
 	'/blog/it-takes-26-yottabytes-of-ram-to-typecheck-a-union-of-safe-integers',
 	'/blog/committing-to-learning-go-in-2026',
+	'/blog/npm-min-release-age-detection-lag',
 ];
 
 const DIST_DIR = join(import.meta.dirname, '..', 'dist');

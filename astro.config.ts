@@ -101,9 +101,21 @@ export default defineConfig({
 	integrations: [
 		mdx(),
 		sitemap({
+			// e2e test fixtures only, never real content
 			filter: (page) => !page.includes('/test-fixtures/'),
 		}),
 		inlineCriticalCss(),
 	],
-	vite: { plugins: [tailwind()] },
+	vite: {
+		plugins: [tailwind()],
+		build: {
+			rolldownOptions: {
+				output: {
+					advancedChunks: {
+						groups: [{ name: 'charts', test: /@tanstack[\\/]charts/u }],
+					},
+				},
+			},
+		},
+	},
 });

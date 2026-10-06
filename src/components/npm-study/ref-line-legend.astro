@@ -1,0 +1,29 @@
+---
+type Props = { items: { label: string; color: string; dash?: string }[] };
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+	<ul class="text-foreground-secondary mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-sm">
+		{items.map((item) => (
+			<li class="flex items-center gap-1.5">
+				<svg
+					width="20"
+					height="8"
+					aria-hidden="true"
+				>
+					<line
+						x1="0"
+						y1="4"
+						x2="20"
+						y2="4"
+						stroke={item.color}
+						stroke-width="3"
+						stroke-dasharray={item.dash}
+					/>
+				</svg>
+				<span>{item.label}</span>
+			</li>
+		))}
+	</ul>
+)}
