@@ -30,7 +30,7 @@ export function astroComponentStubs(): Plugin {
 		name: 'astro-component-stubs',
 		enforce: 'post',
 		transform(_code, id, options) {
-			if (!id.endsWith('.astro') || options?.ssr) {
+			if (!id.endsWith('.astro') || options?.ssr === true) {
 				return null;
 			}
 			return `export default { astroFile: ${JSON.stringify(id)} };`;

@@ -39,7 +39,8 @@ export async function render(component: object, options: RenderOptions = {}) {
 	}
 	const html = await commands.renderAstro(component.astroFile, options);
 
-	const container = document.body.appendChild(document.createElement('div'));
+	const container = document.createElement('div');
+	document.body.append(container);
 	mounted.add(container);
 
 	const template = document.createElement('template');
@@ -54,7 +55,7 @@ export async function render(component: object, options: RenderOptions = {}) {
 		},
 	);
 	container.append(template.content, ...scripts);
-	await Promise.all(scripts.map(loaded));
+	await Promise.all(scripts.map((script) => loaded(script)));
 
 	return {
 		element: () => container,
