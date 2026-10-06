@@ -1,7 +1,9 @@
+/// <reference types="vitest/config" />
 import { playwright } from '@vitest/browser-playwright';
-import { defineConfig } from 'vitest/config';
+import { getViteConfig } from 'astro/config';
+import { renderAstro } from './test/render-astro';
 
-export default defineConfig({
+export default getViteConfig({
 	resolve: {
 		tsconfigPaths: true,
 	},
@@ -34,6 +36,7 @@ export default defineConfig({
 						enabled: true,
 						headless: true,
 						provider: playwright(),
+						commands: { renderAstro },
 						instances: [{ browser: 'chromium' }],
 					},
 				},

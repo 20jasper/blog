@@ -1,43 +1,36 @@
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
-import {
-	defineFilteredDatalist,
-	MAX_RESULTS,
-	TAG_NAME,
-} from './filtered-datalist';
+import { mountAstro } from '../../../test/mount-astro';
+import { MAX_RESULTS } from './filtered-datalist';
 import type { Option } from './components/option';
 
-// The same markup filtered-datalist.astro renders around a field's input.
-function mount(options: Option[]) {
-	document.body.innerHTML = `
-		<${TAG_NAME}>
-			<input aria-label="court" list="courts" />
-			<datalist id="courts"></datalist>
-			<script type="application/json">${JSON.stringify(options)}</script>
-		</${TAG_NAME}>`;
+async function mountField(options: Option[]) {
+	await mountAstro(
+		'/src/views/citation-builder/components/filtered-datalist.astro',
+		{
+			props: { id: 'courts', options },
+			slots: { default: '<input aria-label="court" list="courts" />' },
+		},
+	);
 	const input = document.querySelector('input')!;
 	const datalist = document.querySelector('datalist')!;
 	const shown = () => [...datalist.options].map((option) => option.textContent);
 	return { input, shown };
 }
 
-describe('filtered-datalist element', () => {
-	beforeAll(() => {
-		defineFilteredDatalist();
-	});
-
+describe('filtered-datalist component', () => {
 	afterEach(() => {
 		document.body.innerHTML = '';
 	});
 
-	it('lists nothing until something is typed', () => {
-		const { shown } = mount([{ value: 'a', text: 'Alpha' }]);
+	it('lists nothing until something is typed', async () => {
+		const { shown } = await mountField([{ value: 'a', text: 'Alpha' }]);
 
 		expect(shown()).toEqual([]);
 	});
 
 	it('shows only options matching what was typed, by value or text, ignoring case', async () => {
-		const { input, shown } = mount([
+		const { input, shown } = await mountField([
 			{ value: 'D. Mass.', text: 'District of Massachusetts' },
 			{ value: 'D. Me.', text: 'District of Maine' },
 			{ value: '1st Cir.', text: 'First Circuit' },
@@ -51,7 +44,7 @@ describe('filtered-datalist element', () => {
 	});
 
 	it('narrows the list as more is typed', async () => {
-		const { input, shown } = mount([
+		const { input, shown } = await mountField([
 			{ value: 'D. Mass.', text: 'District of Massachusetts' },
 			{ value: 'D. Me.', text: 'District of Maine' },
 		]);
@@ -66,16 +59,10 @@ describe('filtered-datalist element', () => {
 			value: `court-${i}`,
 			text: `Court ${i}`,
 		}));
-		const { input, shown } = mount(many);
+		const { input, shown } = await mountField(many);
 
 		await userEvent.type(input, 'court');
 
 		await expect.poll(() => shown().length).toBe(MAX_RESULTS);
-	});
-
-	it('can be defined twice without throwing', () => {
-		expect(() => {
-			defineFilteredDatalist();
-		}).not.toThrow();
 	});
 });
