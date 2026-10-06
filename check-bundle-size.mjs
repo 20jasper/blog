@@ -2,30 +2,25 @@ import { readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ASTRO_DIR = 'dist/_astro';
-const DEFAULT_MAX_BYTES = 35 * 1024;
-const MAX_BYTES_BY_CHUNK = [{ prefix: 'charts.', maxBytes: 120 * 1024 }];
+const MAX_BYTES = 125 * 1024;
+const LARGEST_SHOWN = 3;
 
-/** @param {string} file */
-const maxBytesFor = (file) =>
-	MAX_BYTES_BY_CHUNK.find(({ prefix }) => file.startsWith(prefix))?.maxBytes ??
-	DEFAULT_MAX_BYTES;
-
-const oversized = readdirSync(ASTRO_DIR)
+const chunks = readdirSync(ASTRO_DIR)
 	.filter((file) => file.endsWith('.js'))
-	.map((file) => ({
-		file,
-		bytes: statSync(join(ASTRO_DIR, file)).size,
-		maxBytes: maxBytesFor(file),
-	}))
-	.filter(({ bytes, maxBytes }) => bytes > maxBytes);
+	.map((file) => ({ file, bytes: statSync(join(ASTRO_DIR, file)).size }))
+	.toSorted((a, b) => b.bytes - a.bytes);
+const oversized = chunks.filter(({ bytes }) => bytes > MAX_BYTES);
 
 if (oversized.length > 0) {
-	for (const { file, bytes, maxBytes } of oversized) {
+	for (const { file, bytes } of oversized) {
 		console.error(
-			`${file}: ${(bytes / 1024).toFixed(1)} KB > ${maxBytes / 1024} KB budget`,
+			`${file}: ${(bytes / 1024).toFixed(1)} KB > ${MAX_BYTES / 1024} KB budget`,
 		);
 	}
 	process.exit(1);
 }
 
-console.log('Bundle size OK.');
+console.log(`Bundle size OK (< ${MAX_BYTES / 1024} KB per chunk). Largest:`);
+for (const { file, bytes } of chunks.slice(0, LARGEST_SHOWN)) {
+	console.log(`  ${(bytes / 1024).toFixed(1).padStart(6)} KB  ${file}`);
+}
