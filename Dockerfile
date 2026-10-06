@@ -7,9 +7,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_26.x | bash - \
 
 ENV PNPM_HOME=/root/.local/share/pnpm
 ENV PATH=$PNPM_HOME/bin:$PATH
-RUN SHELL=/bin/bash npx --yes get-pnpm@0.0.5 12
+COPY package.json ./
+RUN SHELL=/bin/bash PNPM_VERSION="$(node -p "require('./package.json').packageManager.split('@')[1]")" npx --yes get-pnpm@0.0.5
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
