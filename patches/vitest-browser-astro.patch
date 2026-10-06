@@ -1,0 +1,13 @@
+diff --git a/dist/pure-_SXXE71i.js b/dist/pure-_SXXE71i.js
+index 10a1f7a6dacb743ba5f101bc3392d30095a322c3..744b0c8fbcb18cd23f32b15d409e867cf738f57b 100644
+--- a/dist/pure-_SXXE71i.js
++++ b/dist/pure-_SXXE71i.js
+@@ -11,7 +11,7 @@ const mountedContainers = /* @__PURE__ */ new Set();
+ function setHTMLWithScripts(container, html) {
+ 	const temp = document.createElement("div");
+ 	temp.innerHTML = html;
+-	const scriptElements = Array.from(temp.querySelectorAll("script"));
++	const scriptElements = Array.from(temp.querySelectorAll('script:not([type]), script[type="module"], script[type="text/javascript"]'));
+ 	const scriptData = scriptElements.map((script) => ({
+ 		src: script.getAttribute("src"),
+ 		type: script.getAttribute("type"),

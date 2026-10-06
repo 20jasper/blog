@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
-import { render } from '../../../test/render';
+import { render } from 'vitest-browser-astro';
 import FilteredDatalist from './components/filtered-datalist.astro';
 import { MAX_RESULTS } from './filtered-datalist';
 import type { Option } from './components/option';

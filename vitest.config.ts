@@ -1,10 +1,10 @@
 /// <reference types="vitest/config" />
 import { playwright } from '@vitest/browser-playwright';
 import { getViteConfig } from 'astro/config';
-import { astroComponentStubs, renderAstro } from './test/astro-renderer';
+import { astroRenderer } from 'vitest-browser-astro/plugin';
 
 export default getViteConfig({
-	plugins: [astroComponentStubs()],
+	plugins: [astroRenderer()],
 	resolve: {
 		tsconfigPaths: true,
 	},
@@ -35,7 +35,6 @@ export default getViteConfig({
 						enabled: true,
 						headless: true,
 						provider: playwright(),
-						commands: { renderAstro },
 						instances: [{ browser: 'chromium' }],
 					},
 				},

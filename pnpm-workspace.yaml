@@ -3,3 +3,10 @@ allowBuilds:
   esbuild: true
   lefthook: true
   sharp: true
+patchedDependencies:
+  vitest-browser-astro: patches/vitest-browser-astro.patch
+peerDependencyRules:
+  allowedVersions:
+    vitest-browser-astro>astro: '7'
+    vitest-browser-astro>vite: '8'
+    vitest-browser-astro>vitest: '5'
