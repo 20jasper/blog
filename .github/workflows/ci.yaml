@@ -31,6 +31,8 @@ jobs:
         run: pnpm i
       - name: Check formatting
         run: pnpm run format:check
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
       - name: Unit tests
         run: pnpm run test
       - name: Lint
