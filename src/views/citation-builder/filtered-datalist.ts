@@ -52,12 +52,7 @@ export function defineFilteredDatalist(): void {
 			const input = this.querySelector('input');
 			const datalist = this.querySelector('datalist');
 			const source = this.querySelector('script[type="application/json"]');
-			if (
-				input === null ||
-				datalist === null ||
-				source === null ||
-				source.textContent === null
-			) {
+			if (input === null || datalist === null || source === null) {
 				return;
 			}
 			const options = parseOptions(source.textContent);

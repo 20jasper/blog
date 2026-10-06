@@ -297,9 +297,7 @@ export function createFormState(form: HTMLFormElement) {
 		mode?: Mode;
 	}): void {
 		for (const [name, value] of Object.entries(display)) {
-			if (value !== undefined) {
-				setRadioGroupValue(name, value);
-			}
+			setRadioGroupValue(name, value);
 		}
 	}
 
