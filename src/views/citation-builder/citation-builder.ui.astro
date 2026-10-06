@@ -2,16 +2,16 @@
 import Button from '@components/button.astro';
 import {
 	AVAILABILITIES,
-	CODE_ABBREVIATIONS,
 	CODE_TYPES,
-	COURT_ABBREVIATIONS,
 	HISTORY_PHRASES,
 	MODES,
 	MONTHS,
-	REPORTER_ABBREVIATIONS,
 	SIGNALS,
 	SOURCE_TYPES,
 } from '@components/citation-builder/state';
+import { CODE_ABBREVIATIONS } from '@components/citation-builder/domain/code-abbreviations';
+import { COURT_ABBREVIATIONS } from '@components/citation-builder/domain/court-abbreviations';
+import { REPORTER_ABBREVIATIONS } from '@components/citation-builder/domain/reporter-abbreviations';
 import CheckboxGroup from './components/checkbox-group.astro';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
@@ -273,8 +273,10 @@ const STATUTE_FIELDS: FieldSpec[] = [
 	<span
 		class="text-accent"
 		aria-hidden="true"
-		>*</span
-	> required
+	>
+		*
+	</span>{' '}
+	required
 </p>
 <form
 	id={FORM_ID}
@@ -292,7 +294,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 				name="mode"
 				options={MODE_OPTIONS}
 			/>
-			{CITATION_FORM_FIELDS.map((field) => <Field {...field} />)}
+			{CITATION_FORM_FIELDS.map((field) => (
+				<Field {...field} />
+			))}
 			<div class="field-row flex w-full flex-col gap-1">
 				<Choice
 					type="checkbox"
@@ -316,7 +320,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 
 	<Fieldset legend="Case identity">
 		<FieldGrid>
-			{CASE_IDENTITY_FIELDS.map((field) => <Field {...field} />)}
+			{CASE_IDENTITY_FIELDS.map((field) => (
+				<Field {...field} />
+			))}
 		</FieldGrid>
 	</Fieldset>
 
@@ -325,7 +331,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		visibleFor="reported"
 	>
 		<FieldGrid>
-			{REPORTED_FIELDS.map((field) => <Field {...field} />)}
+			{REPORTED_FIELDS.map((field) => (
+				<Field {...field} />
+			))}
 		</FieldGrid>
 	</Fieldset>
 
@@ -339,7 +347,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 				name="availability"
 				options={AVAILABILITY_OPTIONS}
 			/>
-			{UNREPORTED_FIELDS.map((field) => <Field {...field} />)}
+			{UNREPORTED_FIELDS.map((field) => (
+				<Field {...field} />
+			))}
 		</FieldGrid>
 	</Fieldset>
 
@@ -360,7 +370,9 @@ const STATUTE_FIELDS: FieldSpec[] = [
 					{ name: 'materialLocationSupplement', text: 'Supplement' },
 				]}
 			/>
-			{STATUTE_FIELDS.map((field) => <Field {...field} />)}
+			{STATUTE_FIELDS.map((field) => (
+				<Field {...field} />
+			))}
 		</FieldGrid>
 	</Fieldset>
 </form>

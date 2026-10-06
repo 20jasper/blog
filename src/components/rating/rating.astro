@@ -16,19 +16,15 @@ const unfilled = Math.max(0, MAX - filled);
 		class="flex"
 		aria-hidden="true"
 	>
-		{
-			Array.from({ length: filled }, () => (
-				<li>
-					<Star className="w-3 fill-foreground" />
-				</li>
-			))
-		}
-		{
-			Array.from({ length: unfilled }, () => (
-				<li>
-					<Star className="w-3 fill-background-secondary" />
-				</li>
-			))
-		}
+		{Array.from({ length: filled }, () => (
+			<li>
+				<Star className="w-3 fill-foreground" />
+			</li>
+		))}
+		{Array.from({ length: unfilled }, () => (
+			<li>
+				<Star className="w-3 fill-background-secondary" />
+			</li>
+		))}
 	</ul>
 </div>

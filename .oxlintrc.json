@@ -23,6 +23,8 @@
 		"max-lines": "off",
 		"max-lines-per-function": "off",
 		"import/no-namespace": "warn",
+		"import/max-dependencies": "off",
+		"oxc/no-barrel-file": "warn",
 		"import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
 		"unicorn/filename-case": "warn",
 		"unicorn/prefer-global-this": "warn",
@@ -33,7 +35,12 @@
 		"typescript/triple-slash-reference": "off",
 		"typescript/consistent-return": "off",
 		"no-useless-return": "off",
-		"oxc/no-map-spread": "off"
+		"oxc/no-map-spread": "off",
+		"typescript/consistent-type-imports": "warn",
+		"typescript/no-explicit-any": "warn",
+		"typescript/prefer-optional-chain": "warn",
+		"typescript/prefer-readonly": "warn",
+		"no-param-reassign": "warn"
 	},
 	"env": {
 		"builtin": true

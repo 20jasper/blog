@@ -23,9 +23,7 @@ const { math, title, description, noindex } = Astro.props;
 		noindex={noindex}
 	/>
 
-	<body
-		class="bg-background text-foreground flex min-h-screen flex-col px-4 font-sans text-xl"
-	>
+	<body class="bg-background text-foreground flex min-h-screen flex-col px-4 font-sans text-xl">
 		<Header border="bottom" />
 		<slot />
 		<div class="mt-auto">
@@ -35,24 +33,26 @@ const { math, title, description, noindex } = Astro.props;
 					aria-label="webring"
 					class="gap-2 pb-4 text-center"
 				>
-					<a href="https://webring.jacobasper.com/prev/20jasper"
-						><span aria-hidden="true">←</span>Previous</a
-					>
+					<a href="https://webring.jacobasper.com/prev/20jasper">
+						<span aria-hidden="true">←</span>Previous
+					</a>
 					<a
 						class="px-2"
 						href="https://webring.jacobasper.com/"
-						>Really Cool Blogger Web Ring</a
 					>
-					<a href="https://webring.jacobasper.com/next/20jasper"
-						>Next<span aria-hidden="true">→</span></a
-					>
+						Really Cool Blogger Web Ring
+					</a>
+					<a href="https://webring.jacobasper.com/next/20jasper">
+						Next<span aria-hidden="true">→</span>
+					</a>
 				</nav>
 				<p class="text-foreground-secondary text-center text-sm">
 					&copy; {new Date().getFullYear()}
-					{NAME}. &copy; 2020 VSCode Orange Theme <a
-						href="https://marketplace.visualstudio.com/items?itemName=Rax.vscode-orange-theme"
-						>Rax Team</a
-					>. All rights reserved.
+					{NAME}. &copy; 2020 VSCode Orange Theme{' '}
+					<a href="https://marketplace.visualstudio.com/items?itemName=Rax.vscode-orange-theme">
+						Rax Team
+					</a>
+					. All rights reserved.
 				</p>
 			</footer>
 		</div>

@@ -18,8 +18,9 @@ const HATER_MESSAGES = [
 		<a
 			href="https://legacy.jacobasper.com/"
 			target="_blank"
-			>Check out my first website</a
 		>
+			Check out my first website
+		</a>
 	</section>
 	<section class="py-4">
 		<h2 class="mb-4 text-2xl font-semibold">Follow me on my Socials</h2>
@@ -27,18 +28,14 @@ const HATER_MESSAGES = [
 	</section>
 	<section class="py-4">
 		<h2 class="mb-4 text-2xl font-semibold">Reviews</h2>
-		<ul
-			class="text-foreground prose prose-blockquote:text-foreground prose-blockquote:border-foreground"
-		>
-			{
-				HATER_MESSAGES.map((message) => (
-					<li>
-						<blockquote>
-							<p>{message}</p>
-						</blockquote>
-					</li>
-				))
-			}
+		<ul class="text-foreground prose prose-blockquote:text-foreground prose-blockquote:border-foreground">
+			{HATER_MESSAGES.map((message) => (
+				<li>
+					<blockquote>
+						<p>{message}</p>
+					</blockquote>
+				</li>
+			))}
 		</ul>
 	</section>
 	<section class="py-4">

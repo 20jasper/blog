@@ -13,16 +13,14 @@ const { label, name, options } = Astro.props;
 ---
 
 <ChoiceGroup label={label}>
-	{
-		options.map((option) => (
-			<Choice
-				type="radio"
-				name={name}
-				value={option.value}
-				checked={option.checked}
-			>
-				{option.text}
-			</Choice>
-		))
-	}
+	{options.map((option) => (
+		<Choice
+			type="radio"
+			name={name}
+			value={option.value}
+			checked={option.checked}
+		>
+			{option.text}
+		</Choice>
+	))}
 </ChoiceGroup>
