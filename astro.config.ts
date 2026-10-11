@@ -3,6 +3,7 @@ import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@tailwindcss/vite';
+import inlineCriticalCss from './inline-critical-css';
 import syntaxTheme from './orange-theme';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -20,7 +21,7 @@ import type { Element, Root } from 'hast';
 function rehypeWrapDisplayMath() {
 	return (tree: Root) => {
 		visit(tree, 'element', (node, index, parent) => {
-			const classNames = node.properties?.className;
+			const classNames = node.properties.className;
 			const isDisplayMath =
 				Array.isArray(classNames) && classNames.includes('math-display');
 			if (!isDisplayMath || !parent || index === undefined) return;
@@ -102,6 +103,7 @@ export default defineConfig({
 		sitemap({
 			filter: (page) => !page.includes('/test-fixtures/'),
 		}),
+		inlineCriticalCss(),
 	],
 	vite: { plugins: [tailwind()] },
 });

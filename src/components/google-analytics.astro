@@ -11,7 +11,10 @@ const { id } = Astro.props;
 	async
 	src=`https://www.googletagmanager.com/gtag/js?id=${id}`
 ></script>
-<script is:inline define:vars={{ id }}>
+<script
+	is:inline
+	define:vars={{ id }}
+>
 	globalThis.dataLayer ||= [];
 	function gtag(...args) {
 		dataLayer.push(args);

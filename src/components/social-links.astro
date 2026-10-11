@@ -24,16 +24,14 @@ const data: Link[] = [
 ---
 
 <ul>
-	{
-		data.map((link) => (
-			<li class="py-1">
-				<a
-					href={link.href}
-					target="_blank"
-				>
-					{link.text}
-				</a>
-			</li>
-		))
-	}
+	{data.map((link) => (
+		<li class="py-1">
+			<a
+				href={link.href}
+				target="_blank"
+			>
+				{link.text}
+			</a>
+		</li>
+	))}
 </ul>

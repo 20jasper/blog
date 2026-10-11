@@ -50,7 +50,9 @@ const { description, question, index, totalQuestions, options } = Astro.props;
 		<div id="quiz-mount"></div>
 		<template id="question-template">
 			<div id="question-container">
-				<h2 id="question">question {index + 1} of {totalQuestions}</h2>
+				<h2 id="question">
+					question {index + 1} of {totalQuestions}
+				</h2>
 				<Code
 					id="question-code"
 					code={question.json}
@@ -61,14 +63,13 @@ const { description, question, index, totalQuestions, options } = Astro.props;
 					id="explanation-container"
 				>
 					<p id="valid-or-not"></p>
-					<p id="explanation">
-						{question.explanation}
-					</p>
+					<p id="explanation">{question.explanation}</p>
 					<p
 						id="citation"
 						class="mt-2"
 					>
-						Read More: <a
+						Read More:{' '}
+						<a
 							id="citation-link"
 							href="#"
 							target="_blank"
@@ -81,19 +82,18 @@ const { description, question, index, totalQuestions, options } = Astro.props;
 						id="options"
 						class="not-prose flex list-none gap-2 whitespace-nowrap"
 					>
-						{
-							options.map((opt) => (
-								<li>
-									<Button id={opt}>{opt}</Button>
-								</li>
-							))
-						}
+						{options.map((opt) => (
+							<li>
+								<Button id={opt}>{opt}</Button>
+							</li>
+						))}
 					</ul>
 					<Button
 						id="next"
 						class="mx-auto hidden"
-						>Next</Button
 					>
+						Next
+					</Button>
 				</div>
 			</div>
 		</template>
@@ -102,20 +102,20 @@ const { description, question, index, totalQuestions, options } = Astro.props;
 				<blockquote id="final-score"></blockquote>
 				<h2>Shout outs</h2>
 				<p>
-					Shout out to Nicolas Seriot for their great article <a
-						href="https://seriot.ch/software/parsing_json.html"
-						>Parsing JSON is a Minefield</a
-					>. I learned most of these fun facts from their conformance test suite
-					and article while writing my own JSON parser, <a
-						href="https://github.com/20jasper/JJPWRGEM">JJPWRGEM</a
-					>! Give their article a read for a more technical dive into what this
-					quiz provides
+					Shout out to Nicolas Seriot for their great article{' '}
+					<a href="https://seriot.ch/software/parsing_json.html">
+						Parsing JSON is a Minefield
+					</a>
+					. I learned most of these fun facts from their conformance test suite
+					and article while writing my own JSON parser,{' '}
+					<a href="https://github.com/20jasper/JJPWRGEM">JJPWRGEM</a>! Give
+					their article a read for a more technical dive into what this quiz
+					provides
 				</p>
 				<p>
-					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration. Check
-					out <a href="https://e-mail.wtf">e-mail.wtf</a> and <a
-						href="https://jsdate.wtf/">jsdate.wtf</a
-					> if you liked this quiz!
+					Shout out to <a href="https://samwho.dev/">samwho</a> for inspiration.
+					Check out <a href="https://e-mail.wtf">e-mail.wtf</a> and{' '}
+					<a href="https://jsdate.wtf/">jsdate.wtf</a> if you liked this quiz!
 				</p>
 				<h2>Play testing scores</h2>
 				<p>
@@ -136,9 +136,8 @@ const { description, question, index, totalQuestions, options } = Astro.props;
 				</p>
 				<p>
 					I thought everyone would get like 35 right, but apparently building a
-					JSON parser will color your experience. <a
-						href="https://xkcd.com/2501/">Relevant XKCD</a
-					>
+					JSON parser will color your experience.{' '}
+					<a href="https://xkcd.com/2501/">Relevant XKCD</a>
 				</p>
 			</div>
 		</template>

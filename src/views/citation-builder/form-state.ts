@@ -31,12 +31,21 @@ import {
 } from '@components/citation-builder/state';
 import { queryFormRefs } from './dom-refs';
 
+function setRowHidden(control: Element, hidden: boolean): void {
+	const row = control.closest<HTMLElement>('.field-row, fieldset.choice-group');
+	if (row !== null) {
+		row.hidden = hidden;
+	}
+}
+
 function setFieldRequirement(
 	input: HTMLInputElement | HTMLSelectElement,
 	requirement: FieldRequirement,
 ): void {
-	input.disabled = requirement === 'not-used';
+	const notUsed = requirement === 'not-used';
+	input.disabled = notUsed;
 	input.required = requirement === 'required';
+	setRowHidden(input, notUsed);
 }
 
 export function createFormState(form: HTMLFormElement) {
@@ -206,6 +215,16 @@ export function createFormState(form: HTMLFormElement) {
 			`input[name="${name}"]`,
 		)) {
 			input.disabled = disabled;
+			setRowHidden(input, disabled);
+		}
+	}
+
+	function setSectionsVisible(sourceType: SourceType): void {
+		for (const section of form.querySelectorAll<HTMLElement>(
+			'[data-visible-for]',
+		)) {
+			const visibleFor = section.dataset.visibleFor?.split(',') ?? [];
+			section.hidden = !visibleFor.includes(sourceType);
 		}
 	}
 
@@ -222,8 +241,12 @@ export function createFormState(form: HTMLFormElement) {
 			setFieldRequirement(fieldRefs[id], fieldState[id]);
 		}
 
+		setSectionsVisible(selections.sourceShape.sourceType);
+
 		nameVariantSelect.disabled = shortFormKind !== 'name';
+		setRowHidden(nameVariantSelect, shortFormKind !== 'name');
 		idCheckbox.disabled = shortFormKind === undefined;
+		setRowHidden(idCheckbox, shortFormKind === undefined);
 		setRadioGroupDisabled(
 			'availability',
 			selections.sourceShape.sourceType !== 'unreported',
@@ -232,6 +255,7 @@ export function createFormState(form: HTMLFormElement) {
 		setRadioGroupDisabled('codeType', !isStatuteFull);
 		materialLocationMainCheckbox.disabled = !isStatuteFull;
 		materialLocationSupplementCheckbox.disabled = !isStatuteFull;
+		setRowHidden(materialLocationMainCheckbox, !isStatuteFull);
 	}
 
 	function resetToDefaults(): void {

@@ -13,16 +13,14 @@ const { posts } = Astro.props;
 ---
 
 <ul class="flex flex-col gap-6">
-	{
-		posts.map((post) => (
-			<li>
-				<BlogEntry
-					slug={post.id}
-					title={post.data.title}
-					date={post.data.pubDate}
-					tags={post.data.tags}
-				/>
-			</li>
-		))
-	}
+	{posts.map((post) => (
+		<li>
+			<BlogEntry
+				slug={post.id}
+				title={post.data.title}
+				date={post.data.pubDate}
+				tags={post.data.tags}
+			/>
+		</li>
+	))}
 </ul>

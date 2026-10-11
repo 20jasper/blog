@@ -5,11 +5,8 @@ import type { Locator, Page } from '@playwright/test';
 import { getCitationBuilderLocators } from './citation-builder-locators';
 import { getToaLocators } from './toa-locators';
 
-async function isFocused(locator: Locator): Promise<boolean> {
-	const handle = await locator.elementHandle();
-	return (
-		handle !== null && handle.evaluate((el) => el === document.activeElement)
-	);
+function isFocused(locator: Locator): Promise<boolean> {
+	return locator.evaluate((el) => el === document.activeElement);
 }
 
 async function tabUntilFocused(
