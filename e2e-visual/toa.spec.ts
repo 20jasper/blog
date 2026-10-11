@@ -110,9 +110,11 @@ test('a saved citation fits on screen with its form picker and notes', async ({
 
 	const { copyButton, editLink, deleteButton } = getToaLocators(page);
 	const picker = page.getByRole('combobox', { name: /^Form to copy for /u });
-	for (const control of [picker, copyButton, editLink, deleteButton]) {
-		await expect(control).toBeInViewport();
-	}
+	await Promise.all(
+		[picker, copyButton, editLink, deleteButton].map((control) =>
+			expect(control).toBeInViewport(),
+		),
+	);
 	await expectNoHorizontalScroll(page);
 	await expect(page).toHaveScreenshot('saved-list.png', {
 		fullPage: true,
