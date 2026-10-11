@@ -18,6 +18,7 @@ export function queryButtonRefs() {
 
 export function queryFormRefs(form: HTMLFormElement) {
 	return {
+		notesInput: field<HTMLTextAreaElement>(form, 'notes'),
 		caseTypeSelect: field<HTMLSelectElement>(form, 'caseType'),
 		party1Input: field<HTMLInputElement>(form, 'party1'),
 		party2Input: field<HTMLInputElement>(form, 'party2'),

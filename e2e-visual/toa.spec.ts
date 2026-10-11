@@ -60,3 +60,20 @@ test('using Load Example while editing a saved citation still updates it, not du
 
 	await expect(editLink).toHaveCount(1);
 });
+
+test('saved notes show in the list and comes back when editing', async ({
+	page,
+}) => {
+	const notes = 'The statute is unambiguous.';
+	await page.goto('/tools/citations/builder');
+	const { notes: notesInput, saveButton } = getCitationBuilderLocators(page);
+	await notesInput.fill(notes);
+	await saveButton.click();
+	await page.waitForURL('**/tools/citations');
+
+	await expect(page.getByText(notes)).toBeVisible();
+
+	await getToaLocators(page).editLink.click();
+	await page.waitForURL('**/tools/citations/builder?edit=*');
+	await expect(notesInput).toHaveValue(notes);
+});

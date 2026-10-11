@@ -1,4 +1,4 @@
-import { nullable, object, parse, string } from 'valibot';
+import { nullable, object, optional, parse, string } from 'valibot';
 import type { CitationFields } from './citation-fields';
 import { citationFieldsSchema, displayStateSchema } from './citation-schemas';
 import type { DisplayState } from './display-state';
@@ -9,18 +9,22 @@ const persistedStateSchema = object({
 	fields: citationFieldsSchema,
 	display: displayStateSchema,
 	citationId: nullable(string()),
+	// Drafts saved before notes existed have no notes.
+	notes: optional(string(), ''),
 });
 
 export type PersistedState = {
 	fields: CitationFields;
 	display: DisplayState;
 	citationId: string | null;
+	notes: string;
 };
 
 export function savePersistedState(
 	fields: CitationFields,
 	display: DisplayState,
 	citationId: string | null,
+	notes = '',
 ) {
 	try {
 		localStorage.setItem(
@@ -29,6 +33,7 @@ export function savePersistedState(
 				fields,
 				display,
 				citationId,
+				notes,
 			} satisfies PersistedState),
 		);
 	} catch {

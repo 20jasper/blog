@@ -82,7 +82,12 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			const display = formState.readDisplay();
 			formState.updateFieldState(fields, display);
 			updateOutput(fields, display);
-			savePersistedState(fields, display, trackedCitationId);
+			savePersistedState(
+				fields,
+				display,
+				trackedCitationId,
+				formState.readNotes(),
+			);
 		}
 
 		function saveCurrentCitation(): void {
@@ -92,15 +97,22 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			const fields = formState.readFields();
 			const display = formState.readDisplay();
 			const label = lastRendered.plain;
+			const notes = formState.readNotes();
 
 			const updated =
 				trackedCitationId === null
 					? undefined
-					: updateSavedCitation(trackedCitationId, fields, display, label);
-			const citation = updated ?? saveCitation(fields, display, label);
+					: updateSavedCitation(
+							trackedCitationId,
+							fields,
+							display,
+							label,
+							notes,
+						);
+			const citation = updated ?? saveCitation(fields, display, label, notes);
 
 			trackedCitationId = citation.id;
-			savePersistedState(fields, display, trackedCitationId);
+			savePersistedState(fields, display, trackedCitationId, notes);
 			location.href = '/tools/citations';
 		}
 
@@ -133,6 +145,7 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			formState.resetToDefaults();
 			formState.setFields(saved.fields);
 			formState.setDisplay(saved.display);
+			formState.setNotes(saved.notes);
 			trackedCitationId = saved.citationId;
 			if (trackedCitationId !== null) {
 				history.replaceState(null, '', `?edit=${trackedCitationId}`);
@@ -148,6 +161,7 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			formState.resetToDefaults();
 			formState.setFields(citation.fields);
 			formState.setDisplay(citation.display);
+			formState.setNotes(citation.notes);
 			trackedCitationId = id;
 			refresh();
 			return true;

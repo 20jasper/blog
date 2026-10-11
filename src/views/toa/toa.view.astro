@@ -45,6 +45,10 @@ import SavedCitationsUi from './toa.ui.astro';
 				const label = item.querySelector<HTMLElement>('.toa-item-label')!;
 				label.textContent = citation.label;
 
+				const notes = item.querySelector<HTMLElement>('.toa-item-notes')!;
+				notes.textContent = citation.notes;
+				notes.hidden = citation.notes === '';
+
 				const editLink =
 					item.querySelector<HTMLAnchorElement>('.toa-item-edit')!;
 				editLink.href = `/tools/citations/builder?edit=${citation.id}`;
