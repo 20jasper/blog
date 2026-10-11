@@ -1,5 +1,6 @@
 ---
 import Button from '@components/button.astro';
+import { FIELD_CONTROL_CLASS } from '@src/views/citation-builder/components/field-control-class';
 ---
 
 <p
@@ -16,6 +17,13 @@ import Button from '@components/button.astro';
 	to get started.
 </p>
 
+<p
+	id="toa-forms-help"
+	class="text-foreground-secondary mb-3 text-sm"
+>
+	Disabled selections mean some fields are missing for this type.
+</p>
+
 <ol
 	id="toa-list"
 	class="flex flex-col gap-3"
@@ -28,6 +36,10 @@ import Button from '@components/button.astro';
 			<p class="toa-item-notes text-foreground-secondary text-base whitespace-pre-wrap"></p>
 		</div>
 		<span class="flex items-center gap-2">
+			<select
+				class={`toa-item-form ${FIELD_CONTROL_CLASS} w-auto`}
+				aria-describedby="toa-forms-help"
+			></select>
 			<a class="toa-item-edit text-accent underline">Edit</a>
 			<Button
 				type="button"

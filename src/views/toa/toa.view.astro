@@ -12,20 +12,36 @@ import SavedCitationsUi from './toa.ui.astro';
 	<SavedCitationsUi />
 	<script>
 		import {
+			citationForms,
+			currentFormId,
 			deleteSavedCitation,
 			loadSavedCitations,
+			renderCitation,
 		} from '@components/citation-builder/state';
+		import { writeCitationToClipboard } from '../citation-builder/clipboard';
+		import type { SavedCitation } from '@components/citation-builder/state';
 
 		const list = document.querySelector<HTMLOListElement>('#toa-list')!;
 		const empty = document.querySelector<HTMLElement>('#toa-empty')!;
 		const itemTemplate =
 			document.querySelector<HTMLTemplateElement>('#toa-item-template')!;
 
-		async function copyToClipboard(
+		const help = document.querySelector<HTMLElement>('#toa-forms-help')!;
+
+		async function copyForm(
 			button: HTMLButtonElement,
-			text: string,
+			citation: SavedCitation,
+			formId: string,
 		): Promise<void> {
-			await navigator.clipboard.writeText(text);
+			const form = citationForms(citation.fields, citation.display).find(
+				(candidate) => candidate.id === formId,
+			);
+			if (form === undefined || !form.valid) {
+				return;
+			}
+			await writeCitationToClipboard(
+				renderCitation(citation.fields, form.display),
+			);
 			const original = button.textContent;
 			button.textContent = 'Copied!';
 			setTimeout(() => {
@@ -33,10 +49,24 @@ import SavedCitationsUi from './toa.ui.astro';
 			}, 2000);
 		}
 
+		function fillFormSelect(
+			select: HTMLSelectElement,
+			citation: SavedCitation,
+		): void {
+			select.setAttribute('aria-label', `Form to copy for ${citation.label}`);
+			for (const form of citationForms(citation.fields, citation.display)) {
+				const option = new Option(form.label, form.id);
+				option.disabled = !form.valid;
+				select.append(option);
+			}
+			select.value = currentFormId(citation.display);
+		}
+
 		function render(): void {
 			const citations = loadSavedCitations();
 
 			empty.hidden = citations.length > 0;
+			help.hidden = citations.length === 0;
 
 			const fragment = document.createDocumentFragment();
 			for (const citation of citations) {
@@ -57,8 +87,11 @@ import SavedCitationsUi from './toa.ui.astro';
 				const copyButton =
 					item.querySelector<HTMLButtonElement>('.toa-item-copy')!;
 				copyButton.setAttribute('aria-label', `Copy ${citation.label}`);
+				const formSelect =
+					item.querySelector<HTMLSelectElement>('.toa-item-form')!;
+				fillFormSelect(formSelect, citation);
 				copyButton.addEventListener('click', () => {
-					void copyToClipboard(copyButton, citation.label);
+					void copyForm(copyButton, citation, formSelect.value);
 				});
 
 				const deleteButton =

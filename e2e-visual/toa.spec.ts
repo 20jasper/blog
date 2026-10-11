@@ -77,3 +77,22 @@ test('saved notes show in the list and comes back when editing', async ({
 	await page.waitForURL('**/tools/citations/builder?edit=*');
 	await expect(notesInput).toHaveValue(notes);
 });
+
+test('the form picker disables forms the saved fields cannot fill', async ({
+	page,
+}) => {
+	await page.goto('/tools/citations/builder');
+	await getCitationBuilderLocators(page).pincite.fill('');
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForURL('**/tools/citations');
+
+	const picker = page.getByRole('combobox', { name: /^Form to copy for /u });
+	await expect(picker).toHaveValue('full');
+	await expect(
+		picker.getByRole('option', { name: 'Full citation' }),
+	).toBeEnabled();
+	await expect(picker.getByRole('option', { name: 'Id.' })).toBeDisabled();
+	await expect(
+		page.getByText('Disabled selections mean some fields are missing'),
+	).toBeVisible();
+});

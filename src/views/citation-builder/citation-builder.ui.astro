@@ -6,6 +6,7 @@ import {
 	HISTORY_PHRASES,
 	MODES,
 	MONTHS,
+	NUMERIC_PATTERN,
 	SIGNALS,
 	SOURCE_TYPES,
 } from '@components/citation-builder/state';
@@ -118,7 +119,7 @@ const CASE_IDENTITY_FIELDS: FieldSpec[] = [
 		name: 'year',
 		label: 'Decision year',
 		inputmode: 'numeric',
-		pattern: '\\d+',
+		pattern: NUMERIC_PATTERN,
 	},
 	{
 		kind: 'text',
@@ -197,7 +198,7 @@ const UNREPORTED_FIELDS: FieldSpec[] = [
 		name: 'day',
 		label: 'Day decided',
 		inputmode: 'numeric',
-		pattern: '\\d+',
+		pattern: NUMERIC_PATTERN,
 	},
 ];
 
@@ -250,7 +251,7 @@ const STATUTE_FIELDS: FieldSpec[] = [
 		name: 'supplementYear',
 		label: 'Supplement year',
 		inputmode: 'numeric',
-		pattern: '\\d+',
+		pattern: NUMERIC_PATTERN,
 	},
 ];
 ---

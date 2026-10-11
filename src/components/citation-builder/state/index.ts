@@ -64,3 +64,14 @@ export type { SavedCitation } from './saved-citations';
 
 export { HISTORY_PHRASES, isHistoryPhrase } from '../domain/case-history';
 export type { HistoryPhrase } from '../domain/case-history';
+
+export {
+	isCitationComplete,
+	missingFields,
+	NUMERIC_PATTERN,
+} from './citation-validity';
+
+export { citationForms, currentFormId } from './citation-forms';
+export type { CitationForm } from './citation-forms';
+
+export { renderCitation } from './render-citation';
