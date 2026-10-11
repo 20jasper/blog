@@ -19,18 +19,16 @@ const label =
 
 <nav aria-label={label}>
 	<ul class="mx-auto flex justify-center">
-		{
-			links.map((link) => (
-				<li class="px-2 py-4">
-					<NavLink
-						class="px-2 py-4"
-						href={link.href}
-						border={border}
-					>
-						{link.text}
-					</NavLink>
-				</li>
-			))
-		}
+		{links.map((link) => (
+			<li class="px-2 py-4">
+				<NavLink
+					class="px-2 py-4"
+					href={link.href}
+					border={border}
+				>
+					{link.text}
+				</NavLink>
+			</li>
+		))}
 	</ul>
 </nav>

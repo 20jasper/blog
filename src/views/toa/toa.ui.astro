@@ -6,23 +6,23 @@ import Button from '@components/button.astro';
 	id="toa-empty"
 	class="text-foreground-secondary"
 >
-	No saved citations yet. <a
+	No saved citations yet.{' '}
+	<a
 		href="/tools/citations/builder"
 		class="text-accent underline"
-		>Build one</a
-	> to get started.
+	>
+		Build one
+	</a>{' '}
+	to get started.
 </p>
 
 <ol
 	id="toa-list"
 	class="flex flex-col gap-3"
->
-</ol>
+></ol>
 
 <template id="toa-item-template">
-	<li
-		class="border-foreground-secondary/30 bg-background-secondary flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3"
-	>
+	<li class="border-foreground-secondary/30 bg-background-secondary flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3">
 		<span class="toa-item-label"></span>
 		<span class="flex items-center gap-2">
 			<a class="toa-item-edit text-accent underline">Edit</a>
