@@ -273,6 +273,14 @@ export function createFormState(form: HTMLFormElement) {
 		signalSelect.value = defaultDisplay.signal;
 	}
 
+	function readNotes(): string {
+		return refs.notesInput.value.trim();
+	}
+
+	function setNotes(notes: string): void {
+		refs.notesInput.value = notes;
+	}
+
 	function setFields(values: Partial<Record<FieldId, string>>): void {
 		// oxlint-disable-next-line no-unsafe-type-assertion
 		for (const [id, value] of Object.entries(values) as [FieldId, string][]) {
@@ -315,6 +323,8 @@ export function createFormState(form: HTMLFormElement) {
 	return {
 		readFields,
 		readDisplay,
+		readNotes,
+		setNotes,
 		updateFieldState,
 		resetToDefaults,
 		setFields,

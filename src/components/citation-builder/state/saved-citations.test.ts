@@ -105,6 +105,41 @@ describe('saveCitation', () => {
 	});
 });
 
+describe('notes', () => {
+	it('saves the notes with the citation and loads it back', () => {
+		const saved = saveCitation(FIELDS, DISPLAY, 'label', 'The court held...');
+
+		expect(saved.notes).toBe('The court held...');
+		expect(findSavedCitation(saved.id)?.notes).toBe('The court held...');
+	});
+
+	it('defaults to an empty notes', () => {
+		expect(saveCitation(FIELDS, DISPLAY, 'label').notes).toBe('');
+	});
+
+	it('loads entries saved before notes existed with an empty notes', () => {
+		const { notes: _notes, ...legacy } = saveCitation(FIELDS, DISPLAY, 'old');
+		localStorage.setItem(STORAGE_KEY, JSON.stringify([legacy]));
+
+		expect(loadSavedCitations()[0]?.notes).toBe('');
+	});
+
+	it('replaces the notes on update', () => {
+		const saved = saveCitation(FIELDS, DISPLAY, 'label', 'before');
+
+		const updated = updateSavedCitation(
+			saved.id,
+			FIELDS,
+			DISPLAY,
+			'label',
+			'after',
+		);
+
+		expect(updated?.notes).toBe('after');
+		expect(findSavedCitation(saved.id)?.notes).toBe('after');
+	});
+});
+
 describe('updateSavedCitation', () => {
 	it('mutates only the matching id and leaves others untouched', () => {
 		const first = saveCitation(FIELDS, DISPLAY, 'first');

@@ -1,4 +1,4 @@
-import { array, object, safeParse, string, unknown } from 'valibot';
+import { array, object, optional, safeParse, string, unknown } from 'valibot';
 import type { CitationFields } from './citation-fields';
 import { citationFieldsSchema, displayStateSchema } from './citation-schemas';
 import type { DisplayState } from './display-state';
@@ -11,6 +11,8 @@ const savedCitationSchema = object({
 	id: string(),
 	savedAt: string(),
 	label: string(),
+	// Entries saved before notes existed have no notes.
+	notes: optional(string(), ''),
 	fields: citationFieldsSchema,
 	display: displayStateSchema,
 });
@@ -19,6 +21,7 @@ export type SavedCitation = {
 	id: string;
 	savedAt: string;
 	label: string;
+	notes: string;
 	fields: CitationFields;
 	display: DisplayState;
 };
@@ -76,11 +79,13 @@ export function saveCitation(
 	fields: CitationFields,
 	display: DisplayState,
 	label: string,
+	notes = '',
 ): SavedCitation {
 	const citation: SavedCitation = {
 		id: crypto.randomUUID(),
 		savedAt: new Date().toISOString(),
 		label,
+		notes,
 		fields,
 		display,
 	};
@@ -93,6 +98,7 @@ export function updateSavedCitation(
 	fields: CitationFields,
 	display: DisplayState,
 	label: string,
+	notes = '',
 ): SavedCitation | undefined {
 	const rawList = readRawList();
 	const index = rawList.findIndex((entry) => hasId(entry, id));
@@ -109,6 +115,7 @@ export function updateSavedCitation(
 		fields,
 		display,
 		label,
+		notes,
 	};
 	writeRawList(rawList.with(index, updated));
 	return updated;

@@ -16,6 +16,7 @@ import CheckboxGroup from './components/checkbox-group.astro';
 import Choice from './components/choice.astro';
 import Field from './components/field.astro';
 import FieldGrid from './components/field-grid.astro';
+import NotesField from './components/notes-field.astro';
 import Fieldset from './components/fieldset.astro';
 import RadioGroup from './components/radio-group.astro';
 import SelectField from './components/select-field.astro';
@@ -318,6 +319,12 @@ const STATUTE_FIELDS: FieldSpec[] = [
 				name="spanSeparator"
 				options={SPAN_SEPARATOR_OPTIONS}
 			/>
+		</FieldGrid>
+	</Fieldset>
+
+	<Fieldset legend="Your notes">
+		<FieldGrid>
+			<NotesField />
 		</FieldGrid>
 	</Fieldset>
 

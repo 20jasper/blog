@@ -44,13 +44,27 @@ describe('loadPersistedState', () => {
 		const fields = { ...initialCitationFields(), party1: 'Beaven' };
 		const display = { ...initialDisplayState(), signal: 'see' } as const;
 
-		savePersistedState(fields, display, 'citation-1');
+		savePersistedState(fields, display, 'citation-1', 'Some notes');
 
 		expect(loadPersistedState()).toEqual({
 			fields,
 			display,
 			citationId: 'citation-1',
+			notes: 'Some notes',
 		});
+	});
+
+	it('loads drafts saved before notes existed with an empty notes', () => {
+		localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				fields: initialCitationFields(),
+				display: initialDisplayState(),
+				citationId: null,
+			}),
+		);
+
+		expect(loadPersistedState()?.notes).toBe('');
 	});
 
 	it('round-trips a null citationId', () => {

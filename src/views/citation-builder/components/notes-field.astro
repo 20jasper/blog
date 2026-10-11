@@ -1,0 +1,21 @@
+---
+import FieldRow from './field-row.astro';
+import { FIELD_CONTROL_CLASS } from './field-control-class';
+
+const id = 'notes';
+const hintId = `${id}-hint`;
+---
+
+<FieldRow
+	for={id}
+	label="Notes"
+	hint="Optional. Saved with the citation, not part of it."
+>
+	<textarea
+		id={id}
+		name={id}
+		rows="3"
+		aria-describedby={hintId}
+		class={FIELD_CONTROL_CLASS}
+	></textarea>
+</FieldRow>
