@@ -79,7 +79,7 @@ test.describe('citation builder keyboard navigation', () => {
 		await expect(saveButton).toBeVisible();
 	});
 
-	test('tabbing on Saved Citations reaches Edit, Copy, and Delete for a saved item', async ({
+	test('tabbing on Saved Citations reaches Edit, Delete, the form picker, and Copy for a saved item', async ({
 		page,
 	}) => {
 		await page.goto('/tools/citations/builder');
@@ -105,17 +105,23 @@ test.describe('citation builder keyboard navigation', () => {
 		await page.waitForURL('**/tools/citations');
 
 		const { editLink, copyButton, deleteButton } = getToaLocators(page);
+		const picker = page.getByRole('combobox', { name: /^Form to copy for /u });
+		// Tab order follows the visual order: Edit, Delete, then the picker and Copy.
 		expect(
 			await tabUntilFocused(page, editLink, 40),
 			'Tab should reach the Edit link',
 		).toBe(true);
 		expect(
-			await tabUntilFocused(page, copyButton, 40),
-			'Tab should reach the Copy button',
-		).toBe(true);
-		expect(
 			await tabUntilFocused(page, deleteButton, 40),
 			'Tab should reach the Delete button',
+		).toBe(true);
+		expect(
+			await tabUntilFocused(page, picker, 40),
+			'Tab should reach the form picker',
+		).toBe(true);
+		expect(
+			await tabUntilFocused(page, copyButton, 40),
+			'Tab should reach the Copy button',
 		).toBe(true);
 	});
 });
