@@ -1,5 +1,17 @@
 export type LastCitation = { html: string; plain: string };
 
+export async function writeCitationToClipboard({
+	html,
+	plain,
+}: LastCitation): Promise<void> {
+	await navigator.clipboard.write([
+		new ClipboardItem({
+			'text/html': new Blob([html], { type: 'text/html' }),
+			'text/plain': new Blob([plain], { type: 'text/plain' }),
+		}),
+	]);
+}
+
 // r[impl copy.stale-permitted]
 export function createClipboardController(
 	button: HTMLButtonElement,
@@ -23,14 +35,8 @@ export function createClipboardController(
 		if (lastCitation === undefined) {
 			return;
 		}
-		const { html, plain } = lastCitation;
 		try {
-			await navigator.clipboard.write([
-				new ClipboardItem({
-					'text/html': new Blob([html], { type: 'text/html' }),
-					'text/plain': new Blob([plain], { type: 'text/plain' }),
-				}),
-			]);
+			await writeCitationToClipboard(lastCitation);
 			button.textContent = 'Copied!';
 		} catch {
 			const selection = globalThis.getSelection();

@@ -12,13 +12,12 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 	<CitationBuilderUi />
 	<script>
 		import {
-			assemble,
-			buildCitationInput,
 			findSavedCitation,
+			isCitationComplete,
+			renderCitation,
 			saveCitation,
 			updateSavedCitation,
 		} from '@components/citation-builder/state';
-		import { render } from '@components/citation-builder/domain/render';
 		import { createClipboardController } from './clipboard';
 		import { queryButtonRefs } from './dom-refs';
 		import { EXAMPLES, REPORTED_EXAMPLE } from './examples';
@@ -30,7 +29,6 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 		import type {
 			CitationFields,
 			DisplayState,
-			Emphasis,
 		} from '@components/citation-builder/state';
 
 		const form = document.querySelector<HTMLFormElement>('form')!;
@@ -55,26 +53,15 @@ import { CITATION_BUILDER_NAV_LINKS } from './nav-links';
 			clipboard.setCitation(undefined);
 		}
 
-		function setCitationOutput(
-			segments: Parameters<typeof render>[0],
-			emphasis: Emphasis,
-		): void {
-			const { html, plain } = render(segments, { emphasis });
-			output.innerHTML = html;
-			lastRendered = { html, plain };
-			clipboard.setCitation({ html, plain });
-		}
-
 		function updateOutput(fields: CitationFields, display: DisplayState): void {
-			if (!form.checkValidity()) {
+			if (!isCitationComplete(fields, display)) {
 				fillInPlaceholder();
 				return;
 			}
-			const segments = assemble(buildCitationInput(fields, display), {
-				spanSeparator: display.spanSeparator,
-				signal: display.signal,
-			});
-			setCitationOutput(segments, display.emphasis);
+			const { html, plain } = renderCitation(fields, display);
+			output.innerHTML = html;
+			lastRendered = { html, plain };
+			clipboard.setCitation({ html, plain });
 		}
 
 		function refresh(): void {

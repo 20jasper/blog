@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { getCitationBuilderLocators } from './citation-builder-locators';
 import { getToaLocators } from './toa-locators';
+import { expectNoHorizontalScroll } from './zoom';
 
 test('editing and re-saving a citation updates it instead of duplicating it', async ({
 	page,
@@ -76,4 +77,47 @@ test('saved notes show in the list and comes back when editing', async ({
 	await getToaLocators(page).editLink.click();
 	await page.waitForURL('**/tools/citations/builder?edit=*');
 	await expect(notesInput).toHaveValue(notes);
+});
+
+test('the form picker disables forms the saved fields cannot fill', async ({
+	page,
+}) => {
+	await page.goto('/tools/citations/builder');
+	await getCitationBuilderLocators(page).pincite.fill('');
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForURL('**/tools/citations');
+
+	const picker = page.getByRole('combobox', { name: /^Form to copy for /u });
+	await expect(picker).toHaveValue('full');
+	await expect(
+		picker.getByRole('option', { name: 'Full citation' }),
+	).toBeEnabled();
+	await expect(picker.getByRole('option', { name: 'Id.' })).toBeDisabled();
+	await expect(
+		page.getByText('Disabled selections mean some fields are missing'),
+	).toBeVisible();
+});
+
+test('a saved citation fits on screen with its form picker and notes', async ({
+	page,
+}) => {
+	await page.goto('/tools/citations/builder');
+	await getCitationBuilderLocators(page).notes.fill(
+		'Cited for the standard of review.\nSee also the dissent.',
+	);
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForURL('**/tools/citations');
+
+	const { copyButton, editLink, deleteButton } = getToaLocators(page);
+	const picker = page.getByRole('combobox', { name: /^Form to copy for /u });
+	await Promise.all(
+		[picker, copyButton, editLink, deleteButton].map((control) =>
+			expect(control).toBeInViewport(),
+		),
+	);
+	await expectNoHorizontalScroll(page);
+	await expect(page).toHaveScreenshot('saved-list.png', {
+		fullPage: true,
+		animations: 'disabled',
+	});
 });
