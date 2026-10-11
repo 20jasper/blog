@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { getCitationBuilderLocators } from './citation-builder-locators';
 import { getToaLocators } from './toa-locators';
+import { expectNoHorizontalScroll } from './zoom';
 
 test('editing and re-saving a citation updates it instead of duplicating it', async ({
 	page,
@@ -95,4 +96,26 @@ test('the form picker disables forms the saved fields cannot fill', async ({
 	await expect(
 		page.getByText('Disabled selections mean some fields are missing'),
 	).toBeVisible();
+});
+
+test('a saved citation fits on screen with its form picker and notes', async ({
+	page,
+}) => {
+	await page.goto('/tools/citations/builder');
+	await getCitationBuilderLocators(page).notes.fill(
+		'Cited for the standard of review.\nSee also the dissent.',
+	);
+	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForURL('**/tools/citations');
+
+	const { copyButton, editLink, deleteButton } = getToaLocators(page);
+	const picker = page.getByRole('combobox', { name: /^Form to copy for /u });
+	for (const control of [picker, copyButton, editLink, deleteButton]) {
+		await expect(control).toBeInViewport();
+	}
+	await expectNoHorizontalScroll(page);
+	await expect(page).toHaveScreenshot('saved-list.png', {
+		fullPage: true,
+		animations: 'disabled',
+	});
 });

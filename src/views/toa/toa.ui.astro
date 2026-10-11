@@ -30,17 +30,30 @@ import { FIELD_CONTROL_CLASS } from '@src/views/citation-builder/components/fiel
 ></ol>
 
 <template id="toa-item-template">
-	<li class="border-foreground-secondary/30 bg-background-secondary flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3">
-		<div class="flex flex-col gap-1">
-			<span class="toa-item-label"></span>
-			<p class="toa-item-notes text-foreground-secondary text-base whitespace-pre-wrap"></p>
+	<li class="border-foreground-secondary/30 bg-background-secondary flex flex-col gap-3 rounded-2xl border px-4 py-3">
+		<div class="flex flex-wrap items-start justify-between gap-3">
+			<div class="flex min-w-0 flex-1 basis-64 flex-col gap-1">
+				<span class="toa-item-label"></span>
+				<p class="toa-item-notes text-foreground-secondary text-base whitespace-pre-wrap"></p>
+			</div>
+			<span class="flex items-center gap-2">
+				<a class="toa-item-edit text-accent px-2 underline">Edit</a>
+				<Button
+					type="button"
+					variant="flat"
+					class="toa-item-delete"
+				>
+					Delete
+				</Button>
+			</span>
 		</div>
-		<span class="flex items-center gap-2">
-			<select
-				class={`toa-item-form ${FIELD_CONTROL_CLASS} w-auto`}
-				aria-describedby="toa-forms-help"
-			></select>
-			<a class="toa-item-edit text-accent underline">Edit</a>
+		<div class="flex items-center gap-2">
+			<div class="max-w-xs min-w-0 flex-1">
+				<select
+					class={`toa-item-form ${FIELD_CONTROL_CLASS}`}
+					aria-describedby="toa-forms-help"
+				></select>
+			</div>
 			<Button
 				type="button"
 				variant="flat"
@@ -48,13 +61,6 @@ import { FIELD_CONTROL_CLASS } from '@src/views/citation-builder/components/fiel
 			>
 				Copy
 			</Button>
-			<Button
-				type="button"
-				variant="flat"
-				class="toa-item-delete"
-			>
-				Delete
-			</Button>
-		</span>
+		</div>
 	</li>
 </template>
