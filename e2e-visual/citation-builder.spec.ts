@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { getCitationBuilderLocators } from './citation-builder-locators';
 
 test.beforeEach(async ({ page }) => {
-	await page.goto('/tools/citation-builder');
+	await page.goto('/tools/citations/builder');
 });
 
 test('reported case golden path: signal, weight of authority, case history, italicized', async ({

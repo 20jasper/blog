@@ -1,4 +1,4 @@
-import { HYPHEN } from '../domain/pincite';
+import { EN_DASH, HYPHEN } from '../domain/pincite';
 import type { Availability } from '../domain/availability';
 import type { SpanSeparator } from '../domain/assemble';
 import type { CodeType } from '../domain/code-type';
@@ -17,6 +17,10 @@ export type NameVariant = 'full' | 'party1' | 'party2' | 'none';
 export type Emphasis = 'italic' | 'underline';
 export type { SpanSeparator, SourceType };
 
+export function isMode(value: string): value is Mode {
+	return MODES.some((mode) => mode.value === value);
+}
+
 export function isNameVariant(value: string): value is NameVariant {
 	return (
 		value === 'full' ||
@@ -24,6 +28,14 @@ export function isNameVariant(value: string): value is NameVariant {
 		value === 'party2' ||
 		value === 'none'
 	);
+}
+
+export function isEmphasis(value: string): value is Emphasis {
+	return value === 'italic' || value === 'underline';
+}
+
+export function isSpanSeparator(value: string): value is SpanSeparator {
+	return value === HYPHEN || value === EN_DASH;
 }
 
 export type DisplayState = {
