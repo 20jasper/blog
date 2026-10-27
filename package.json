@@ -41,7 +41,7 @@
 		"valibot": "^1.5.0"
 	},
 	"devDependencies": {
-		"@axe-core/playwright": "^4.13.0",
+		"@axe-core/playwright": "^4.14.0",
 		"@playwright/test": "^1.63.0",
 		"@types/hast": "^3.0.5",
 		"@vitest/coverage-v8": "^5.0.0",
