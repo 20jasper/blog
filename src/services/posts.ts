@@ -1,7 +1,6 @@
 import { getCollection } from 'astro:content';
-import { Order } from 'effect';
 
 export const getPostsDescending = async () =>
-	(await getCollection('blog')).toSorted(
-		Order.mapInput(Order.reverse(Order.Date), ({ data }) => data.pubDate),
+	(await getCollection('blog')).toSorted((a, b) =>
+		new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
 	);

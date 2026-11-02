@@ -1,12 +1,14 @@
 import type { Book } from '@src/content.config';
 
-import { Option, Order } from 'effect';
+const compareDatesDesc = (a: Date | null, b: Date | null) => {
+	if (a === null && b === null) return 0;
+	if (a === null) return 1;
+	if (b === null) return -1;
+	return b.getTime() - a.getTime();
+};
 
-const byDateDesc = (key: keyof Book['readDate']) =>
-	Order.mapInput(
-		Option.getOrder(Order.reverse(Order.Date)),
-		({ readDate }: Book) => Option.fromNullable(readDate[key]),
-	);
+const byDateDesc = (key: keyof Book['readDate']) => (a: Book, b: Book) =>
+	compareDatesDesc(a.readDate[key], b.readDate[key]);
 
 export const booksStarted: Book[] = [
 	{
@@ -262,7 +264,7 @@ export const booksStarted: Book[] = [
 		readDate: { start: new Date('2026-9-24'), end: null },
 		rating: null,
 	},
-].toSorted(Order.combine(byDateDesc('end'), byDateDesc('start')));
+].toSorted((a, b) => byDateDesc('end')(a, b) || byDateDesc('start')(a, b));
 
 type UnreadBook = Omit<Book, 'readDate' | 'rating'>;
 const toRead: UnreadBook[] = [

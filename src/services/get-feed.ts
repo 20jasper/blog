@@ -12,7 +12,6 @@ import {
 	DESCRIPTION as QUIZ_DESCRIPTION,
 	JSONWTF_BASE_URL,
 } from '@content/questions/questions';
-import { Order } from 'effect';
 
 const id = '0a923b0a-3099-483b-bdd9-283b9f48b17d';
 
@@ -50,7 +49,7 @@ export const getFeed = async (baseUrl: string): Promise<Feed> => {
 			date: new Date(data.pubDate),
 		})),
 		quizAnnouncement,
-	].toSorted(Order.mapInput(Order.reverse(Order.Date), ({ date }) => date));
+	].toSorted((a, b) => b.date.getTime() - a.date.getTime());
 
 	items.forEach((x) => {
 		feed.addItem(x);
