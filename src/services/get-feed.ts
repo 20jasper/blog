@@ -50,9 +50,7 @@ export const getFeed = async (baseUrl: string): Promise<Feed> => {
 			date: new Date(data.pubDate),
 		})),
 		quizAnnouncement,
-	].toSorted(
-		Order.mapInput(Order.flip(Order.Date), ({ date }) => date),
-	);
+	].toSorted(Order.mapInput(Order.flip(Order.Date), ({ date }) => date));
 
 	items.forEach((x) => {
 		feed.addItem(x);
