@@ -9,57 +9,80 @@ async function forceLoadLazyImages(page: Page): Promise<void> {
 		const images = Array.from(
 			document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]'),
 		);
-		const promises = images.map((image) => {
-			return new Promise<void>((resolve) => {
-				image.setAttribute('loading', 'eager');
-				image.setAttribute('decoding', 'sync');
-				image.loading = 'eager';
-				image.decoding = 'sync';
+		const promises = images.map(
+			(image) =>
+				new Promise<void>((resolve) => {
+					image.setAttribute('loading', 'eager');
+					image.setAttribute('decoding', 'sync');
+					image.loading = 'eager';
+					image.decoding = 'sync';
 
-				const done = () => resolve();
-				if (image.complete && image.naturalWidth > 0) {
-					resolve();
-					return;
-				}
-				image.addEventListener('load', done, { once: true });
-				image.addEventListener('error', done, { once: true });
+					const done = () => {
+						resolve();
+					};
+					if (image.complete && image.naturalWidth > 0) {
+						resolve();
+						return;
+					}
+					image.addEventListener('load', done, { once: true });
+					image.addEventListener('error', done, { once: true });
 
-				const { src } = image;
-				image.src = '';
-				image.src = src;
-			});
-		});
+					const { src } = image;
+					image.src = '';
+					image.src = src;
+				}),
+		);
 		await Promise.all(promises);
 		await Promise.all(
-			Array.from(document.images).map((image) => {
+			Array.from(document.images).map(async (image) => {
 				const loadPromise =
 					image.complete && image.naturalWidth > 0
 						? Promise.resolve()
 						: new Promise<void>((resolve) => {
-								image.addEventListener('load', () => resolve(), {
-									once: true,
-								});
-								image.addEventListener('error', () => resolve(), {
-									once: true,
-								});
+								image.addEventListener(
+									'load',
+									() => {
+										resolve();
+									},
+									{ once: true },
+								);
+								image.addEventListener(
+									'error',
+									() => {
+										resolve();
+									},
+									{ once: true },
+								);
 							});
-				return loadPromise.then(() =>
-					typeof image.decode === 'function'
-						? image.decode().catch(() => {})
-						: undefined,
-				);
+				await loadPromise;
+				if (typeof image.decode === 'function') {
+					await image.decode().catch(() => {});
+				}
 			}),
 		);
-		await (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts
-			?.ready;
-		await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
-		await new Promise((resolve) => setTimeout(resolve, 3000));
+		await (document as Document & { fonts: { ready: Promise<unknown> } }).fonts
+			.ready;
+		await new Promise<void>((resolve) => {
+			requestAnimationFrame(() => {
+				resolve();
+			});
+		});
+		await new Promise<void>((resolve) => {
+			setTimeout(() => {
+				resolve();
+			}, 3000);
+		});
 		// Wait until layout stops shifting.
 		await (async () => {
 			let last = document.documentElement.scrollHeight;
 			let stable = 0;
 			while (stable < 1000) {
-				await new Promise((r) => setTimeout(r, 100));
+				// eslint-disable-next-line no-await-in-loop
+				await new Promise<void>((resolve) => {
+					setTimeout(() => {
+						resolve();
+					}, 100);
+				});
 				const cur = document.documentElement.scrollHeight;
 				if (cur === last) stable += 100;
 				else {
