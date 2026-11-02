@@ -1,11 +1,11 @@
-import type { Book } from '@src/content.config';
-
 import { Option, Order } from 'effect';
+
+import type { Book } from '@src/content.config';
 
 const byDateDesc = (key: keyof Book['readDate']) =>
 	Order.mapInput(
-		Option.getOrder(Order.reverse(Order.Date)),
-		({ readDate }: Book) => Option.fromNullable(readDate[key]),
+		Option.makeOrder(Order.flip(Order.Date)),
+		({ readDate }: Book) => Option.fromNullishOr(readDate[key]),
 	);
 
 export const booksStarted: Book[] = [

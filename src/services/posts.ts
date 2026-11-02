@@ -3,5 +3,5 @@ import { Order } from 'effect';
 
 export const getPostsDescending = async () =>
 	(await getCollection('blog')).toSorted(
-		Order.mapInput(Order.reverse(Order.Date), ({ data }) => data.pubDate),
+		Order.mapInput(Order.flip(Order.Date), ({ data }) => data.pubDate),
 	);

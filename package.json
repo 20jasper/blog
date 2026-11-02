@@ -27,7 +27,7 @@
 		"@tailwindcss/typography": "^0.5.20",
 		"@tailwindcss/vite": "^4.3.3",
 		"astro": "^7.4.1",
-		"effect": "^3.22.1",
+		"effect": "^4.0.6",
 		"katex": "0.19.0",
 		"rehype-autolink-headings": "^7.1.0",
 		"rehype-external-links": "^3.0.0",
