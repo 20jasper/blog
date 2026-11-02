@@ -44,7 +44,9 @@ async function forceLoadLazyImages(page: Page): Promise<void> {
 								});
 							});
 				return loadPromise.then(() =>
-					typeof image.decode === 'function' ? image.decode().catch(() => {}) : undefined,
+					typeof image.decode === 'function'
+						? image.decode().catch(() => {})
+						: undefined,
 				);
 			}),
 		);
