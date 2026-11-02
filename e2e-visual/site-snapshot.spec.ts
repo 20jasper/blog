@@ -6,23 +6,66 @@ import { expectNoHorizontalScroll } from './zoom';
 
 async function forceLoadLazyImages(page: Page): Promise<void> {
 	await page.evaluate(async () => {
-		const promises: Promise<unknown>[] = [];
-		for (const image of Array.from(
+		const images = Array.from(
 			document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]'),
-		)) {
-			image.setAttribute('loading', 'eager');
-			image.setAttribute('decoding', 'sync');
-			image.loading = 'eager';
-			image.decoding = 'sync';
-			const { src } = image;
-			image.src = '';
-			image.src = src;
-			const { promise, resolve, reject } = Promise.withResolvers();
-			image.addEventListener('load', resolve, { once: true });
-			image.addEventListener('error', reject, { once: true });
-			promises.push(promise);
-		}
+		);
+		const promises = images.map((image) => {
+			return new Promise<void>((resolve) => {
+				image.setAttribute('loading', 'eager');
+				image.setAttribute('decoding', 'sync');
+				image.loading = 'eager';
+				image.decoding = 'sync';
+
+				const done = () => resolve();
+				if (image.complete && image.naturalWidth > 0) {
+					resolve();
+					return;
+				}
+				image.addEventListener('load', done, { once: true });
+				image.addEventListener('error', done, { once: true });
+
+				const { src } = image;
+				image.src = '';
+				image.src = src;
+			});
+		});
 		await Promise.all(promises);
+		await Promise.all(
+			Array.from(document.images).map((image) => {
+				const loadPromise =
+					image.complete && image.naturalWidth > 0
+						? Promise.resolve()
+						: new Promise<void>((resolve) => {
+								image.addEventListener('load', () => resolve(), {
+									once: true,
+								});
+								image.addEventListener('error', () => resolve(), {
+									once: true,
+								});
+							});
+				return loadPromise.then(() =>
+					typeof image.decode === 'function' ? image.decode().catch(() => {}) : undefined,
+				);
+			}),
+		);
+		await (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts
+			?.ready;
+		await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+		await new Promise((resolve) => setTimeout(resolve, 3000));
+		// Wait until layout stops shifting.
+		await (async () => {
+			let last = document.documentElement.scrollHeight;
+			let stable = 0;
+			while (stable < 1000) {
+				await new Promise((r) => setTimeout(r, 100));
+				const cur = document.documentElement.scrollHeight;
+				if (cur === last) stable += 100;
+				else {
+					stable = 0;
+					last = cur;
+				}
+			}
+		})();
 	});
 
 	await page.waitForLoadState('networkidle');
