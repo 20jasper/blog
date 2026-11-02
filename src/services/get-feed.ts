@@ -1,3 +1,4 @@
+import { Order } from 'effect';
 import {
 	SITE_TITLE,
 	SITE_DESCRIPTION,
@@ -49,7 +50,12 @@ export const getFeed = async (baseUrl: string): Promise<Feed> => {
 			date: new Date(data.pubDate),
 		})),
 		quizAnnouncement,
-	].toSorted((a, b) => b.date.getTime() - a.date.getTime());
+	].toSorted(
+		Order.mapInput(
+			Order.mapInput(Order.Number, (date: Date) => -date.getTime()),
+			({ date }) => date,
+		),
+	);
 
 	items.forEach((x) => {
 		feed.addItem(x);
