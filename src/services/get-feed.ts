@@ -51,10 +51,7 @@ export const getFeed = async (baseUrl: string): Promise<Feed> => {
 		})),
 		quizAnnouncement,
 	].toSorted(
-		Order.mapInput(
-			Order.mapInput(Order.Number, (date: Date) => -date.getTime()),
-			({ date }) => date,
-		),
+		Order.mapInput(Order.flip(Order.Date), ({ date }) => date),
 	);
 
 	items.forEach((x) => {

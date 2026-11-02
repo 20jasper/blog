@@ -4,9 +4,7 @@ import type { Book } from '@src/content.config';
 
 const byDateDesc = (key: keyof Book['readDate']) =>
 	Order.mapInput(
-		Option.makeOrder(
-			Order.mapInput(Order.Number, (date: Date) => -date.getTime()),
-		),
+		Option.makeOrder(Order.flip(Order.Date)),
 		({ readDate }: Book) => Option.fromNullishOr(readDate[key]),
 	);
 
