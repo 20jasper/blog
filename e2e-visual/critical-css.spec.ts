@@ -12,6 +12,15 @@ test('body is styled correctly even if the stylesheet is slow to arrive', async 
 
 	const navigation = page.goto('/blog');
 	await page.waitForSelector('body');
+	// WebKit can lag slightly behind in applying the inlined critical CSS,
+	// so wait for the expected background before sampling.
+	await page
+		.waitForFunction(
+			() => getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 19)',
+			undefined,
+			{ timeout: 1000 },
+		)
+		.catch(() => {});
 	// Sampled well before the 2s-delayed stylesheet can have arrived --
 	// only the inlined critical CSS could have applied by this point.
 	const background = await page.evaluate(
