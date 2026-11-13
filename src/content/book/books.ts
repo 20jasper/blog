@@ -235,8 +235,8 @@ export const booksStarted: Book[] = [
 	{
 		title: 'Building Evolutionary Architectures: Support Constant Change',
 		author: 'Neal Ford, Patrick Kua, and Rebecca Parsons',
-		readDate: { start: new Date('2026-8-20'), end: null },
-		rating: null,
+		readDate: { start: new Date('2026-8-20'), end: new Date('2026-10-30') },
+		rating: 4,
 	},
 	{
 		title: 'Advanced Rust',
@@ -247,8 +247,8 @@ export const booksStarted: Book[] = [
 	{
 		title: 'Learning Domain-Driven Design',
 		author: 'Vlad Khononov',
-		readDate: { start: new Date('2026-8-28'), end: null },
-		rating: null,
+		readDate: { start: new Date('2026-8-28'), end: new Date('2026-10-30') },
+		rating: 4,
 	},
 	{
 		title: 'PostgreSQL Mistakes and How to Avoid Them',
@@ -260,6 +260,19 @@ export const booksStarted: Book[] = [
 		title: "The Developer's Guide to AI",
 		author: 'Jacob Orshalick, Jerry M. Reghunadh, and Danny Thompson',
 		readDate: { start: new Date('2026-9-24'), end: null },
+		rating: null,
+	},
+	{
+		title: 'Learning Spring Boot 4, Fourth Edition',
+		author:
+			'Wanderson Xesquevixos, Ranga Rao Karanam, Magnus Larsson, and Greg L. Turnquist',
+		readDate: { start: new Date('2026-10-30'), end: new Date('2026-11-13') },
+		rating: 5,
+	},
+	{
+		title: 'Data-Oriented Programming: Reduce Software Complexity',
+		author: 'Yehonathan Sharvit',
+		readDate: { start: new Date('2026-11-13'), end: null },
 		rating: null,
 	},
 ].toSorted(Order.combine(byDateDesc('end'), byDateDesc('start')));
